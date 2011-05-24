@@ -105,7 +105,7 @@ void setupShaders(){
 				gl_Position = ftransform();}"};
 
 
-	const int vslen[] = {strlen(vscode[0])};
+	const GLint vslen[] = {strlen(vscode[0])};
 
 	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vs, 1, vscode, vslen);
@@ -142,7 +142,7 @@ void main()\
 		gl_FragColor = color;\
 \
 }"};
-	const int fslen[] = {strlen(fscode[0])};
+	const GLint fslen[] = {strlen(fscode[0])};
 
 	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fs, 1, fscode, fslen);

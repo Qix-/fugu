@@ -9,7 +9,7 @@ CMake 2.8
 To Start
 --------
 Make sure you have the required libraries/tools as above
-Run eclipse-build.bat or xcode-build.sh
+Run one of the build shell scripts (e.g., osx-make-build.sh)
 Open the respective project file in build/ and away you go ...
 
 Directory Structure
