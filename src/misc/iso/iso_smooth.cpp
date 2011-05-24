@@ -475,8 +475,8 @@ int main(int argc, char *argv[])
 
 void printShaderInfoLog(GLuint obj)
 {
-    int infologLength = 0;
-    int charsWritten  = 0;
+    GLint infologLength = 0;
+    GLsizei charsWritten  = 0;
     char *infoLog;
 
     glGetShaderiv(obj, GL_INFO_LOG_LENGTH,&infologLength);
@@ -492,8 +492,8 @@ void printShaderInfoLog(GLuint obj)
 
 void printProgramInfoLog(GLuint obj)
 {
-    int infologLength = 0;
-    int charsWritten  = 0;
+    GLint infologLength = 0;
+    GLsizei charsWritten  = 0;
     char *infoLog;
 
     glGetProgramiv(obj, GL_INFO_LOG_LENGTH,&infologLength);

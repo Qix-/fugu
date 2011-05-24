@@ -26,11 +26,8 @@ endif(APPLE)
 add_executable(iso iso.cpp)
 target_link_libraries(iso ${EXTRA_LIBS})
 
-#add_executable(iso_off iso_off.cpp ${BASE_DIR}/include/vcg/wrap/ply/plylib.cpp)
-#target_link_libraries(iso_off ${EXTRA_LIBS})
+add_executable(iso_off iso_off.cpp ${BASE_DIR}/include/vcg/wrap/ply/plylib.cpp)
+target_link_libraries(iso_off ${EXTRA_LIBS})
 
-#add_executable(iso_smooth iso_smooth.cpp)
-#target_link_libraries(iso_smooth ${EXTRA_LIBS})
-
-#add_executable(smoothtest smoothtest.cpp)
-#target_link_libraries(smoothtest ${EXTRA_LIBS})
+add_executable(iso_smooth iso_smooth.cpp)
+target_link_libraries(iso_smooth ${EXTRA_LIBS})
