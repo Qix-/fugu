@@ -18,7 +18,7 @@ extern "C" {
 
 #include "GL/glew.h"
 #include "GL/glfw.h"
-#include <GL/gl.h>
+// #include <GL/gl.h>
 
 #include <vcg/space/point3.h>
 #include <vcg/space/box3.h>
