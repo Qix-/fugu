@@ -3,3 +3,4 @@ syntax:glob
 *.swp
 build
 *.DS_Store
+.project
