@@ -3,6 +3,8 @@
 
 #include <fstream>
 #include <string>
+#include <list>
+
 #include <lua.hpp>
 
 namespace fg {
@@ -16,7 +18,6 @@ namespace fg {
 		~Universe();
 
 		void addScriptDirectory(std::string scriptPath);
-
 		void loadScript(std::string scriptName);
 
 		/**
@@ -26,6 +27,7 @@ namespace fg {
 
 	private:
 		lua_State *L;
+		std::list<std::string> loadedScripts;
 
 	private: // helpers
 		int setLuaPath( std::string path );
