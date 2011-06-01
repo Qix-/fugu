@@ -113,11 +113,11 @@ int main(int argc, char *argv[])
 
 	// MARCHING CUBES
 	MyMesh mesh;
-	vcg::tri::Icosahedron<MyMesh>(mesh);
+	vcg::tri::Dodecahedron<MyMesh>(mesh);
 	vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
 	vcg::tri::UpdateTopology<MyMesh>::FaceFace(mesh);
 
-	for(int i=0;i<5;i++)
+	for(int i=0;i<4;i++)
 		Refine(mesh,MidPoint<MyMesh>(&mesh));
 
 	vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
@@ -158,6 +158,15 @@ int main(int argc, char *argv[])
 
 		double now = glfwGetTime();
 
+		// fade the colour to white
+		MyMesh::FaceIterator it = mesh.face.begin();
+		for (;it!=mesh.face.end();++it){
+			unsigned char col[] = {it->C()[0],it->C()[1],it->C()[2]};
+			it->C()[0] = std::min(255,col[0]+1);
+			it->C()[1] = std::min(255,col[1]+1);
+			it->C()[2] = std::min(255,col[2]+1);
+		}
+
 		// randomly add spots, for clusters of faces surrounding vertices
 
 		/*
@@ -175,31 +184,27 @@ int main(int argc, char *argv[])
 		while (p.F()!=f);
 		*/
 
-		// Or we can use the n-ring helper class, choose a 5-ring
+		// Or we can use the n-ring helper class
 
 		Color4b rand;
 		rand[0] = (unsigned char)(random()*255);
 		rand[1] = (unsigned char)(random()*255);
 		rand[2] = (unsigned char)(random()*255);
 
+		vcg::tri::Nring<MyMesh>::clearFlags(&mesh); // Probably necessary..
 		vcg::tri::Nring<MyMesh> n(&mesh.vert[(int)(random()*(mesh.vert.size()-1))],&mesh);
-		int sz = (int) random(0,5);
+		int sz = (int) random(1,10);
 		n.expand(sz);
+
 		BOOST_FOREACH(MyMesh::FaceType* f, n.allF)
 		{
 			f->C() = rand;
 		}
 
-
-		/*
-		// debug, check that all verts have a valid vf pointer
-		BOOST_FOREACH(MyMesh::VertexType v, mesh.vert){
-			assert(v.VFp()!=0);
+		BOOST_FOREACH(MyMesh::FaceType* f, n.lastF)
+		{
+			f->C() = Color4b::Black;
 		}
-		*/
-
-		//vcg::tri::UpdateNormals<MyMesh>::PerFace(mesh);
-		//vcg::tri::UpdateNormals<MyMesh>::PerVertexFromCurrentFaceNormal(mesh);
 
 		tm.Update();
 

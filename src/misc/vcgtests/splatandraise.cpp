@@ -113,11 +113,11 @@ int main(int argc, char *argv[])
 
 	// MARCHING CUBES
 	MyMesh mesh;
-	vcg::tri::Icosahedron<MyMesh>(mesh);
+	vcg::tri::Dodecahedron<MyMesh>(mesh);
 	vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
 	vcg::tri::UpdateTopology<MyMesh>::FaceFace(mesh);
 
-	for(int i=0;i<5;i++)
+	for(int i=0;i<1;i++)
 		Refine(mesh,MidPoint<MyMesh>(&mesh));
 
 	vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
@@ -153,10 +153,37 @@ int main(int argc, char *argv[])
 
 	int running = GL_TRUE;
 
+	double raiseTime = glfwGetTime();
+
+	double startTime = glfwGetTime();
+	int numRefines = 0;
+
 	while(running){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		double now = glfwGetTime();
+
+		// fade the colour to white
+		/*
+		MyMesh::FaceIterator it = mesh.face.begin();
+		for (;it!=mesh.face.end();++it){
+			unsigned char col[] = {it->C()[0],it->C()[1],it->C()[2]};
+			it->C()[0] = std::min(255,col[0]+1);
+			it->C()[1] = std::min(255,col[1]+1);
+			it->C()[2] = std::min(255,col[2]+1);
+		}
+		*/
+
+		// Refine the mesh every N seconds
+		if (now-startTime > 5 && numRefines<4){
+			numRefines++;
+			startTime = now;
+			Refine(mesh,MidPoint<MyMesh>(&mesh));
+			vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
+			vcg::tri::UpdateTopology<MyMesh>::FaceFace(mesh);
+			vcg::tri::UpdateNormals<MyMesh>::PerVertexNormalizedPerFace(mesh);
+			vcg::tri::UpdateNormals<MyMesh>::PerFaceNormalized(mesh);
+		}
 
 		// randomly add spots, for clusters of faces surrounding vertices
 
@@ -175,31 +202,42 @@ int main(int argc, char *argv[])
 		while (p.F()!=f);
 		*/
 
-		// Or we can use the n-ring helper class, choose a 5-ring
+		if (now - raiseTime > .05){
+			raiseTime = now;
 
-		Color4b rand;
-		rand[0] = (unsigned char)(random()*255);
-		rand[1] = (unsigned char)(random()*255);
-		rand[2] = (unsigned char)(random()*255);
+			// Or we can use the n-ring helper class
+			vcg::tri::Nring<MyMesh>::clearFlags(&mesh); // Probably necessary..
+			vcg::tri::Nring<MyMesh> n(&mesh.vert[(int)(random()*(mesh.vert.size()-1))],&mesh);
+			int sz = (int) random(1,2*(numRefines+1));
+			n.expand(sz);
 
-		vcg::tri::Nring<MyMesh> n(&mesh.vert[(int)(random()*(mesh.vert.size()-1))],&mesh);
-		int sz = (int) random(0,5);
-		n.expand(sz);
-		BOOST_FOREACH(MyMesh::FaceType* f, n.allF)
-		{
-			f->C() = rand;
+			double r = random(0,(1+numRefines))*0.01;
+			BOOST_FOREACH(MyMesh::VertexType* v, n.allV)
+			{
+				v->P() -= v->N()*r;
+			}
+
+			BOOST_FOREACH(MyMesh::FaceType* f, n.lastF)
+			{
+				f->V(0)->P() += f->V(0)->N()*r;
+				f->V(1)->P() += f->V(1)->N()*r;
+				f->V(2)->P() += f->V(2)->N()*r;
+			}
+
+			BOOST_FOREACH(MyMesh::FaceType* f, n.allF)
+			{
+				f->C().lerp(f->C(),Color4b::Red,std::min(1.,.05*(numRefines+1))); // f->C()[0] - 1;
+			}
+
+			vcg::tri::UpdateNormals<MyMesh>::PerVertexNormalizedPerFace(mesh);
+			vcg::tri::UpdateNormals<MyMesh>::PerFaceNormalized(mesh);
+
+			// zoom out
+			vcg::tri::UpdateBounding<MyMesh>::Box(mesh);
+			c = mesh.bbox.Center();
+			meshSize = mesh.bbox.DimY();
 		}
 
-
-		/*
-		// debug, check that all verts have a valid vf pointer
-		BOOST_FOREACH(MyMesh::VertexType v, mesh.vert){
-			assert(v.VFp()!=0);
-		}
-		*/
-
-		//vcg::tri::UpdateNormals<MyMesh>::PerFace(mesh);
-		//vcg::tri::UpdateNormals<MyMesh>::PerVertexFromCurrentFaceNormal(mesh);
 
 		tm.Update();
 
