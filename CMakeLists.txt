@@ -9,21 +9,22 @@ if(WIN32)
 	SET(GL_LIBS glew32s glfw opengl32 glu32)
 	SET(LUA_LIBS lua luabind)
 	SET(BOOST_LIBS 
-		libboost_filesystem-mgw45-mt-1_46_1
-		libboost_system-mgw45-mt-1_46_1)
+		boost_filesystem-mgw45-mt-1_46_1
+		boost_system-mgw45-mt-1_46_1)
 	link_directories(${BASE_DIR}/lib/msw) 
 endif(WIN32)
 
 if(APPLE)
 	FIND_LIBRARY(COCOA_LIBRARY Cocoa)
-	find_package(Boost COMPONENTS system filesystem REQUIRED)
-	include_directories(${Boost_INCLUDE_DIRS})
+	#find_package(Boost COMPONENTS system filesystem REQUIRED)
+	#include_directories(${Boost_INCLUDE_DIRS})
 	FIND_PACKAGE(OpenGL)
 	include_directories(${OPENGL_INCLUDES})
 	link_directories(${BASE_DIR}/lib/osx ${Boost_LIBRARY_DIRS})
 	SET(GL_LIBS GLEW GLFW ${COCOA_LIBRARY} ${OPENGL_LIBRARIES})
 	SET(LUA_LIBS lua5.1 luabind)
-	SET(BOOST_LIBS ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY}) 
+	#SET(BOOST_LIBS ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY}) 
+	SET(BOOST_LIBS boost_filesystem boost_system)
 endif(APPLE)
 
 include_directories(${BASE_DIR}/include)

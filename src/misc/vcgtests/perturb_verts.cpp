@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
+#include <ctime>
 
 extern "C" {
 #include <lua.h>
