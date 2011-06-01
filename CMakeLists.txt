@@ -8,8 +8,9 @@ if(WIN32)
 	set(CMAKE_CXX_FLAGS "-D GLEW_STATIC")
 	SET(GL_LIBS glew32s glfw opengl32 glu32)
 	SET(LUA_LIBS lua luabind)
-	SET(BOOST_LIBS libboost_filesystem-mgw34-mt-1_40
-	libboost_system-mgw34-mt-1_40)
+	SET(BOOST_LIBS 
+		libboost_filesystem-mgw45-mt-1_46_1
+		libboost_system-mgw45-mt-1_46_1)
 	link_directories(${BASE_DIR}/lib/msw) 
 endif(WIN32)
 
@@ -22,7 +23,6 @@ if(APPLE)
 	link_directories(${BASE_DIR}/lib/osx ${Boost_LIBRARY_DIRS})
 	SET(GL_LIBS GLEW GLFW ${COCOA_LIBRARY} ${OPENGL_LIBRARIES})
 	SET(LUA_LIBS lua5.1 luabind)
-
 	SET(BOOST_LIBS ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY}) 
 endif(APPLE)
 
