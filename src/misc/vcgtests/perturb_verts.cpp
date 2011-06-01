@@ -97,12 +97,12 @@ void GLFWCALL keyCallback(int key, int action)
 
 void setupGL();
 
-double random(){
+double _random(){
 	return 1.0*rand()/RAND_MAX;
 }
 
-double random(double low, double high){
-	return random()*(high-low) + low;
+double _random(double low, double high){
+	return _random()*(high-low) + low;
 }
 
 int main(int argc, char *argv[])
@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
 			double p[3] = {it->P()[0],it->P()[1],it->P()[2]};
 			double val = math::Perlin::Noise(p[0],p[1],p[2]+now);
 			for (int i=0;i<3;i++)
-				it->P()[i] += val*random(0,.01);
+				it->P()[i] += val*_random(0,.01);
 		}
 
 		// then smooth the positions a bit

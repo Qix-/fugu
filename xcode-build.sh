@@ -6,7 +6,7 @@ mkdir -p build/xcode
 cp lib/osx/*.dylib build/xcode
 cd build/xcode
 rm CMakeCache.txt
-cmake -G "Xcode" ../../src/misc/iso
+cmake -G "Xcode" ../..
 cd ../..
 echo Done!
 

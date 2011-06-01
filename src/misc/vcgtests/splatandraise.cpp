@@ -98,12 +98,12 @@ void GLFWCALL keyCallback(int key, int action)
 
 void setupGL();
 
-double random(){
+double _random(){
 	return 1.0*rand()/RAND_MAX;
 }
 
-double random(double low, double high){
-	return random()*(high-low) + low;
+double _random(double low, double high){
+	return _random()*(high-low) + low;
 }
 
 int main(int argc, char *argv[])
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 	for (;it!=mesh.face.end();++it){
 		it->C()[0] = 255;
 		it->C()[1] = 255;
-		it->C()[2] = 255; //(unsigned char) (255*random());
+		it->C()[2] = 255; //(unsigned char) (255*_random());
 	}
 	*/
 
@@ -185,14 +185,14 @@ int main(int argc, char *argv[])
 			vcg::tri::UpdateNormals<MyMesh>::PerFaceNormalized(mesh);
 		}
 
-		// randomly add spots, for clusters of faces surrounding vertices
+		// _randomly add spots, for clusters of faces surrounding vertices
 
 		/*
-		MyMesh::FaceType* f = &mesh.face[(int)(random()*mesh.face.size())];
+		MyMesh::FaceType* f = &mesh.face[(int)(_random()*mesh.face.size())];
 		Color4b rand;
-		rand[0] = (unsigned char)(random()*255);
-		rand[1] = (unsigned char)(random()*255);
-		rand[2] = (unsigned char)(random()*255);
+		rand[0] = (unsigned char)(_random()*255);
+		rand[1] = (unsigned char)(_random()*255);
+		rand[2] = (unsigned char)(_random()*255);
 
 		vcg::face::Pos<MyMesh::FaceType> p(f,f->V(0));
 		do {
@@ -207,11 +207,11 @@ int main(int argc, char *argv[])
 
 			// Or we can use the n-ring helper class
 			vcg::tri::Nring<MyMesh>::clearFlags(&mesh); // Probably necessary..
-			vcg::tri::Nring<MyMesh> n(&mesh.vert[(int)(random()*(mesh.vert.size()-1))],&mesh);
-			int sz = (int) random(1,2*(numRefines+1));
+			vcg::tri::Nring<MyMesh> n(&mesh.vert[(int)(_random()*(mesh.vert.size()-1))],&mesh);
+			int sz = (int) _random(1,2*(numRefines+1));
 			n.expand(sz);
 
-			double r = random(0,(1+numRefines))*0.01;
+			double r = _random(0,(1+numRefines))*0.01;
 			BOOST_FOREACH(MyMesh::VertexType* v, n.allV)
 			{
 				v->P() -= v->N()*r;

@@ -98,12 +98,12 @@ void GLFWCALL keyCallback(int key, int action)
 
 void setupGL();
 
-double random(){
+double _random(){
 	return 1.0*rand()/RAND_MAX;
 }
 
-double random(double low, double high){
-	return random()*(high-low) + low;
+double _random(double low, double high){
+	return _random()*(high-low) + low;
 }
 
 int main(int argc, char *argv[])
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 	for (;it!=mesh.face.end();++it){
 		it->C()[0] = 255;
 		it->C()[1] = 255;
-		it->C()[2] = 255; //(unsigned char) (255*random());
+		it->C()[2] = 255; //(unsigned char) (255*_random());
 	}
 	*/
 
@@ -167,14 +167,14 @@ int main(int argc, char *argv[])
 			it->C()[2] = std::min(255,col[2]+1);
 		}
 
-		// randomly add spots, for clusters of faces surrounding vertices
+		// _randomly add spots, for clusters of faces surrounding vertices
 
 		/*
-		MyMesh::FaceType* f = &mesh.face[(int)(random()*mesh.face.size())];
+		MyMesh::FaceType* f = &mesh.face[(int)(_random()*mesh.face.size())];
 		Color4b rand;
-		rand[0] = (unsigned char)(random()*255);
-		rand[1] = (unsigned char)(random()*255);
-		rand[2] = (unsigned char)(random()*255);
+		rand[0] = (unsigned char)(_random()*255);
+		rand[1] = (unsigned char)(_random()*255);
+		rand[2] = (unsigned char)(_random()*255);
 
 		vcg::face::Pos<MyMesh::FaceType> p(f,f->V(0));
 		do {
@@ -187,13 +187,13 @@ int main(int argc, char *argv[])
 		// Or we can use the n-ring helper class
 
 		Color4b rand;
-		rand[0] = (unsigned char)(random()*255);
-		rand[1] = (unsigned char)(random()*255);
-		rand[2] = (unsigned char)(random()*255);
+		rand[0] = (unsigned char)(_random()*255);
+		rand[1] = (unsigned char)(_random()*255);
+		rand[2] = (unsigned char)(_random()*255);
 
 		vcg::tri::Nring<MyMesh>::clearFlags(&mesh); // Probably necessary..
-		vcg::tri::Nring<MyMesh> n(&mesh.vert[(int)(random()*(mesh.vert.size()-1))],&mesh);
-		int sz = (int) random(1,10);
+		vcg::tri::Nring<MyMesh> n(&mesh.vert[(int)(_random()*(mesh.vert.size()-1))],&mesh);
+		int sz = (int) _random(1,10);
 		n.expand(sz);
 
 		BOOST_FOREACH(MyMesh::FaceType* f, n.allF)

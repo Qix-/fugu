@@ -4,7 +4,7 @@ mkdir -p build/osx-make
 cp lib/osx/*.dylib build/osx-make
 cd build/osx-make
 rm CMakeCache.txt
-cmake -G "Unix Makefiles" ../../src/misc/iso
+cmake -G "Unix Makefiles" ../..
 cd ../..
 echo Done!
 
