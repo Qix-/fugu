@@ -7,19 +7,33 @@
 #include <cstdlib>
 #include <cstdio>
 #include <iostream>
+#include <sstream>
+#include <cstdarg>
 
 //#define BOOST_FILESYSTEM_VERSION 3
 //#include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 
 namespace fg {
+	/*
 	void error(const char* msg){
 		std::cerr << msg;
 		std::exit(-1);
 	}
+	*/
 
+	/*
 	void error(const char* msg, const char* args){
 		std::fprintf(stderr, msg, args);
+		std::exit(-1);
+	}
+	*/
+
+	void error(const char* msg, ... ){
+		va_list arg_list;
+		va_start(arg_list, msg);
+		std::vfprintf(stderr, msg, arg_list);
+		va_end(arg_list);
 		std::exit(-1);
 	}
 
@@ -32,6 +46,8 @@ namespace fg {
 		// init(L);
 		fg::loadLuaBindings(L);
 
+		// setup a debugging error function
+		lua_register(L, "fgerrorfunc", debugFileAndLine);
 	}
 
 	Universe::~Universe() {
@@ -67,22 +83,25 @@ namespace fg {
 				error("Script %s is not a module",scriptFileName.c_str());
 			}
 			else {
+				// handle setup with fg's error handler
+				lua_getglobal(L, "fgerrorfunc");
+
 				// check that the module has a setup function
-				lua_pushstring(L,"setup");
-				lua_gettable(L,-2);
+				lua_getfield(L,-2,"setup");
+
 				if (!lua_isfunction(L,-1)){
 					error("Script \"%s\" doesn't have a setup function",scriptFileName.c_str());
 				}
 				else // call the setup function now..
 				{
-					if (lua_pcall(L, 0, 0, 0)!=0){
-						error("Error running function: %s",lua_tostring(L, -1));
+					if (lua_pcall(L, 0, 0, -2)!=0){ // NB: The "-2" references fgerrorfunc
+						error("! Error in %s.setup()\n! %s", scriptFileName.c_str(), lua_tostring(L, -1));
+						// debugFileAndLine(L);
 					}
 				}
 
 				// check that the module has an update function
-				lua_pushstring(L,"update");
-				lua_gettable(L,-2);
+				lua_getfield(L,-2,"update");
 				if (!lua_isfunction(L,-1)){
 					error("Script \"%s\" doesn't have a update function",scriptFileName.c_str());
 				}
@@ -106,6 +125,7 @@ namespace fg {
 			if (lua_isfunction(L,-1)){
 				lua_pushnumber(L, dt);
 				if (lua_pcall(L, 1, 0, 0)!=0) {
+					// debugFileAndLine(L);
 					error("Error running function: %s",lua_tostring(L, -1));
 				}
 			}
@@ -130,5 +150,24 @@ namespace fg {
 	    lua_setfield( L, -2, "path" ); // set the field "path" in table at -2 with value at top of stack
 	    lua_pop( L, 1 ); // get rid of package table from top of stack
 	    return 0; // all done!
+	}
+
+	int Universe::debugFileAndLine(lua_State* L)
+	{
+	   lua_Debug d;
+	   lua_getstack(L, 1, &d);
+	   lua_getinfo(L, "Sln", &d);
+	   std::string err = lua_tostring(L, -1);
+	   lua_pop(L, 1);
+	   std::stringstream msg;
+	   msg << d.short_src << ":" << d.currentline;
+
+	   if (d.name != 0)
+	   {
+	      msg << "(" << d.namewhat << " " << d.name << ")";
+	   }
+	   msg << " " << err;
+	   lua_pushstring(L, msg.str().c_str());
+	   return 1;
 	}
 }

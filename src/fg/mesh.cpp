@@ -2,9 +2,6 @@
 
 #include <vcg/complex/algorithms/smooth.h>
 
-#include <vcg/complex/algorithms/create/marching_cubes.h>
-#include <vcg/complex/algorithms/create/extended_marching_cubes.h>
-#include <vcg/complex/algorithms/create/mc_trivial_walker.h>
 #include <vcg/complex/algorithms/create/platonic.h>
 
 #include <vcg/complex/algorithms/update/bounding.h>
@@ -12,10 +9,7 @@
 #include <vcg/complex/algorithms/update/topology.h>
 #include <vcg/complex/algorithms/update/flag.h>
 
-
-
 using namespace vcg;
-
 namespace fg {
 	Mesh::Mesh()
 	:mMesh()
@@ -61,4 +55,8 @@ namespace fg {
 		vcg::tri::Icosahedron<MyMesh>(m->mMesh);
 		return boost::shared_ptr<Mesh>(m);
 	}
+}
+
+std::ostream& operator<<(std::ostream& o, const fg::Mesh& mesh){
+	return o << "mesh " << &mesh;
 }

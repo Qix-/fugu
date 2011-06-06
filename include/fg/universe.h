@@ -31,6 +31,7 @@ namespace fg {
 
 	private: // helpers
 		int setLuaPath( std::string path );
+		static int debugFileAndLine(lua_State* L);
 	};
 }
 

@@ -9,6 +9,7 @@
  *
  */
 
+#include <ostream>
 #include <vector>
 
 #include <vcg/space/point3.h>
@@ -75,5 +76,8 @@ namespace fg {
 		vcg::GlTrimesh<MyMesh> glTriMesh; // wraps the mesh and draws it
 	};
 }
+
+// For basic printing
+std::ostream& operator<<(std::ostream&, const fg::Mesh&);
 
 #endif

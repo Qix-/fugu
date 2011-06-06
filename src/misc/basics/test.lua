@@ -1,8 +1,10 @@
 module(...,package.seeall)
 
+local m = {}
 function setup()
 	print("Setting up module")
-	print("fg.min(5.5,2.1)=" .. fg.min(5.5,2.1))
+	-- print("icosahedron: " .. tostring(fg.mesh.primitives.icosahedron))
+	print(fg.mesh.primitives.icosahedron())	
 end
 
 local t = 0
