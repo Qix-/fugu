@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
 	u.loadScript(argv[2]);
 
 	// Update it a number of time steps
-	for (int i=0;i<10;i++){
+	for (int i=0;i<2;i++){
 		u.update(0.01);
 	}
 

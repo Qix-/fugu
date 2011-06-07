@@ -10,11 +10,15 @@
 #include <sstream>
 #include <cstdarg>
 
-//#define BOOST_FILESYSTEM_VERSION 3
-//#include <boost/filesystem.hpp>
+#include <luabind/luabind.hpp>
+#include <luabind/object.hpp>
+#include <luabind/function.hpp>
+
+#include <boost/ref.hpp>
 #include <boost/foreach.hpp>
 
 namespace fg {
+
 	/*
 	void error(const char* msg){
 		std::cerr << msg;
@@ -39,7 +43,8 @@ namespace fg {
 
 	Universe::Universe():
 	L(NULL),
-	loadedScripts()
+	mLoadedScripts(),
+	mMeshes()
 	{
 		L = lua_open();   /* opens Lua */
 		luaL_openlibs(L); /* opens the base libraries */
@@ -71,6 +76,10 @@ namespace fg {
 	}
 
 	void Universe::loadScript(std::string scriptFileName){
+		// Load the script, and give it access to this universe
+		// which is called "fgu"
+
+
 		// // Adapted from lua.c:  static int dolibrary (lua_State *L, const char *name) {
 		lua_getglobal(L, "require");
 		lua_pushstring(L, scriptFileName.c_str());
@@ -83,6 +92,24 @@ namespace fg {
 				error("Script %s is not a module",scriptFileName.c_str());
 			}
 			else {
+				// add the encompassing universe fgu object
+				// first check to see that it doesnt exist
+				lua_getfield(L,-1,"fgu");
+				if(!lua_isnil(L,-1)){
+					error("Script \"%s\" overrides the \"fgu\" universe!", scriptFileName.c_str());
+				}
+				lua_pop(L,1); // pop fgu ref
+
+				// then add it
+				// get the module table
+				luabind::object table(luabind::from_stack(L,-1));
+				if (luabind::type(table) == LUA_TTABLE){
+					table["fgu"] = this;
+				}
+				else {
+					error("Script \"%s\" doesn't look like a table to luabind", scriptFileName.c_str());
+				}
+
 				// handle setup with fg's error handler
 				lua_getglobal(L, "fgerrorfunc");
 
@@ -90,7 +117,7 @@ namespace fg {
 				lua_getfield(L,-2,"setup");
 
 				if (!lua_isfunction(L,-1)){
-					error("Script \"%s\" doesn't have a setup function",scriptFileName.c_str());
+					error("Script \"%s\" doesn't have a setup function", scriptFileName.c_str());
 				}
 				else // call the setup function now..
 				{
@@ -108,18 +135,26 @@ namespace fg {
 				else // keep a reference to this function so we can call it later
 				{
 					lua_setglobal(L,(scriptFileName + "_update").c_str());
-					loadedScripts.push_back(scriptFileName);
+					mLoadedScripts.push_back(scriptFileName);
 				}
 			}
 			lua_pop(L,1); // pop table
 		}
 	}
 
+	void Universe::addMesh(boost::shared_ptr<Mesh> m){
+		mMeshes.push_back(m);
+	}
+
+	Universe::MeshContainer& Universe::meshes(){
+		return mMeshes;
+	}
+
 	/**
 	 * Update all objects in the universe by a specified time increment.
 	 */
 	void Universe::update(double dt){
-		BOOST_FOREACH(std::string s, loadedScripts)
+		BOOST_FOREACH(std::string s, mLoadedScripts)
 		{
 			lua_getglobal(L,(s + "_update").c_str());
 			if (lua_isfunction(L,-1)){
@@ -170,4 +205,8 @@ namespace fg {
 	   lua_pushstring(L, msg.str().c_str());
 	   return 1;
 	}
+}
+
+std::ostream& operator<<(std::ostream& o, const fg::Universe& u){
+	return o << "universe " << &u;
 }

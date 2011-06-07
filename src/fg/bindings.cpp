@@ -5,11 +5,14 @@
 #include <luabind/function.hpp>
 #include <luabind/object.hpp>
 #include <luabind/operator.hpp>
+#include <luabind/iterator_policy.hpp>
 
 #include <sstream>
 
+#include "fg/universe.h"
 #include "fg/functions.h"
 #include "fg/mesh.h"
+#include "fg/vec3.h"
 
 int debugFileAndLine(lua_State* L);
 
@@ -20,15 +23,40 @@ namespace fg {
 		//set_pcall_callback(debugFileAndLine);
 		open(L);
 
+		// fg/universe
+		module(L,"fg")[
+		   class_<fg::Universe>("universe")
+		   .def(tostring(const_self))
+		   .def("addMesh", &fg::Universe::addMesh)
+		];
+
 		// fg/functions.h
 		module(L,"fg")[
 		   def("min", &min<double>),
 		   def("lerp", &lerp<double>)
 		   ];
 
+		// fg/vec3.h
+		module(L, "fg")[
+		   class_<fg::Vec3>("vec3")
+		   .property("x", &fg::Vec3::getX, &fg::Vec3::setX)
+		   .property("y", &fg::Vec3::getY, &fg::Vec3::setY)
+		   .property("z", &fg::Vec3::getZ, &fg::Vec3::setZ)
+		   .def(tostring(const_self))
+		];
+
+		// fg/mesh.h
 		module(L,"fg")[
+		   class_<fg::Mesh::Vertex>("vertex")
+		   .def("getPosition", &fg::Mesh::Vertex::pos)
+		   .property("pos", &fg::Mesh::Vertex::pos)
+		   .def(tostring(const_self)),
+
+		   class_<fg::Mesh::VertexContainer>("vertexcontainer"),
+
 		   class_<fg::Mesh>("mesh")
-		   .def(luabind::tostring(luabind::const_self)) // or const_self?
+		   .def("vertices",&Mesh::vertices, return_stl_iterator)
+		   .def(tostring(const_self))
 		   .scope [
 			   class_<fg::Mesh::Primitives>("primitives")
 			   .scope [
@@ -36,6 +64,8 @@ namespace fg {
 			   ]
 		   ]
 		];
+
+
 
 		return 0;
 	}

@@ -1,13 +1,13 @@
 #include "fg/mesh.h"
 
 #include <vcg/complex/algorithms/smooth.h>
-
 #include <vcg/complex/algorithms/create/platonic.h>
-
 #include <vcg/complex/algorithms/update/bounding.h>
 #include <vcg/complex/algorithms/update/normal.h>
 #include <vcg/complex/algorithms/update/topology.h>
 #include <vcg/complex/algorithms/update/flag.h>
+
+#include <boost/foreach.hpp>
 
 using namespace vcg;
 namespace fg {
@@ -18,6 +18,14 @@ namespace fg {
 	}
 
 	Mesh::~Mesh(){
+	}
+
+	Mesh::VertexSet Mesh::vertices(){
+		VertexSet vs;
+		BOOST_FOREACH(Vertex& v, mMesh.vert){
+			vs.push_back(&v);
+		}
+		return vs;
 	}
 
 	void Mesh::getBounds(double& minx, double& miny, double& minz, double& maxx, double& maxy, double& maxz){
@@ -59,4 +67,8 @@ namespace fg {
 
 std::ostream& operator<<(std::ostream& o, const fg::Mesh& mesh){
 	return o << "mesh " << &mesh;
+}
+
+std::ostream& operator<<(std::ostream& o, const fg::Mesh::Vertex& v){
+	return o << "vertex " << &v;
 }

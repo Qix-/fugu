@@ -6,6 +6,9 @@ set(ALL_LIBS fg
 add_executable(hello_universe hello_universe.cpp)
 target_link_libraries(hello_universe ${ALL_LIBS})
 
+add_executable(view_universe view_universe.cpp)
+target_link_libraries(view_universe ${ALL_LIBS})
+
 add_executable(hello_mesh hello_mesh.cpp)
 target_link_libraries(hello_mesh ${ALL_LIBS})
 	
