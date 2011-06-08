@@ -18,7 +18,7 @@ OSX/Make
 > cd build/osx-make
 > make 
 
-Running an example
+Running an example (from directory build/osx-make)
 > src/misc/basics/view_universe ../../scripts/test basic3
 
 Windows/MinGW/Eclipse
@@ -27,7 +27,7 @@ Windows/MinGW/Eclipse
 > cd build\eclipse-msw
 > make
 
-Running an example
+Running an example (from directory build/eclipse-msw)
 > src\misc\basics\view_universe.exe ..\..\scripts\test basic3
 
 NB: The eclipse build script generates TWO eclipse projects. One in the root directory that contains all the source. And one in build\eclipse-msw that contains the targets. This discrepancy is due to the way eclipse works.
