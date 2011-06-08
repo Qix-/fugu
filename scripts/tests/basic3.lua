@@ -10,21 +10,13 @@ function setup()
 	fgu:addMesh(m)
 end
 
--- do nothing
-function update(dt)
-	--[[
-	for v in m:vertices() do
-		print(v)
-		break
+function update(dt)	
+	vs = m:selectAllVertices()
+	local foo = function() return 10*(1-2*math.random())*dt*math.sin(fgu.t) end
+	for v in vs.all do		
+		v.pos.x = v.pos.x + foo()
+		v.pos.y = v.pos.y + foo()
+		v.pos.z = v.pos.z + foo()
 	end
-	--] ]	
-	for v in m:vertices() do		
-		-- v.pos.x = v.pos.x + (1-2*math.random())*dt
-		-- v.pos.y = v.pos.y + (1-2*math.random())
-		-- v.pos.z = v.pos.z+0.01 -- v.pos.z + (1-2*math.random())		
-		-- v:getPosition().z = 0
-	end
-	--]]
 end
-
 

@@ -11,6 +11,12 @@
 #include <lua.hpp>
 namespace fg {
 	int loadLuaBindings(lua_State* L);
+
+	// Helpers
+	template <class STLContainer>
+	STLContainer& luaAllAdapter(STLContainer* s){
+		return *s;
+	}
 }
 
 #endif

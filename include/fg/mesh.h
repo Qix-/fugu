@@ -74,8 +74,9 @@ namespace fg {
 		~Mesh();
 
 		// Accessors
-		// VertexContainer& vertices();
-		VertexSet vertices();
+		VertexContainer& vertices();
+		// VertexSet vertices();
+		boost::shared_ptr<VertexSet> selectAllVertices();
 
 		// Queries
 		void getBounds(double& minx, double& miny, double& minz, double& maxx, double& maxy, double& maxz);
@@ -94,5 +95,6 @@ namespace fg {
 // For basic printing
 std::ostream& operator<<(std::ostream&, const fg::Mesh&);
 std::ostream& operator<<(std::ostream&, const fg::Mesh::Vertex&);
+
 
 #endif

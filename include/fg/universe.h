@@ -40,10 +40,14 @@ namespace fg {
 		 */
 		void update(double dt);
 
+		double time() const; ///< Returns the current time in the universe
+
 	private:
 		lua_State *L;
 		std::list<std::string> mLoadedScripts;
 		MeshContainer mMeshes;
+
+		double mTime; ///< universe time
 
 	private: // helpers
 		int setLuaPath( std::string path );

@@ -95,10 +95,12 @@ int main(int argc, char *argv[])
 			// Can manually move vertices from here, but why not from lua side?
 			// std::cout << "cvrtex " << &*m->vertices().begin() << std::endl;
 
-			BOOST_FOREACH(fg::Mesh::Vertex* v, m->vertices()){
+			/*
+			BOOST_FOREACH(fg::Mesh::Vertex& v, m->vertices()){
 				// v.pos().setX(v.pos().getX() + dt*0.1);
 				v->pos().setX(v->pos().getX() + dt*0.1);
 			}
+			*/
 
 			m->drawGL();
 		}

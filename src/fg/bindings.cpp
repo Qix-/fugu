@@ -23,11 +23,13 @@ namespace fg {
 		//set_pcall_callback(debugFileAndLine);
 		open(L);
 
-		// fg/universe
+		// fg/universe.h
 		module(L,"fg")[
 		   class_<fg::Universe>("universe")
 		   .def(tostring(const_self))
 		   .def("addMesh", &fg::Universe::addMesh)
+		   .property("t", &fg::Universe::time)
+		   .def("time", &fg::Universe::time)
 		];
 
 		// fg/functions.h
@@ -52,10 +54,14 @@ namespace fg {
 		   .property("pos", &fg::Mesh::Vertex::pos)
 		   .def(tostring(const_self)),
 
-		   class_<fg::Mesh::VertexContainer>("vertexcontainer"),
+		   // class_<fg::Mesh::VertexContainer>("vertexcontainer"),
+
+		   class_<fg::Mesh::VertexSet>("vertexset")
+		   .property("all", &fg::luaAllAdapter<fg::Mesh::VertexSet>, return_stl_iterator),
 
 		   class_<fg::Mesh>("mesh")
-		   .def("vertices",&Mesh::vertices, return_stl_iterator)
+		   // .def("vertices",&Mesh::vertices, return_stl_iterator)
+		   .def("selectAllVertices", &Mesh::selectAllVertices)
 		   .def(tostring(const_self))
 		   .scope [
 			   class_<fg::Mesh::Primitives>("primitives")

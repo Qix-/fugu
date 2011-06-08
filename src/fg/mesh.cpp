@@ -20,12 +20,16 @@ namespace fg {
 	Mesh::~Mesh(){
 	}
 
-	Mesh::VertexSet Mesh::vertices(){
-		VertexSet vs;
+	Mesh::VertexContainer& Mesh::vertices(){
+		return mMesh.vert;
+	}
+
+	boost::shared_ptr<Mesh::VertexSet> Mesh::selectAllVertices(){
+		boost::shared_ptr<VertexSet> r(new VertexSet());
 		BOOST_FOREACH(Vertex& v, mMesh.vert){
-			vs.push_back(&v);
+			r->push_back(&v);
 		}
-		return vs;
+		return r;
 	}
 
 	void Mesh::getBounds(double& minx, double& miny, double& minz, double& maxx, double& maxy, double& maxz){

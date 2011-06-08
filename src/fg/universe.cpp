@@ -44,7 +44,8 @@ namespace fg {
 	Universe::Universe():
 	L(NULL),
 	mLoadedScripts(),
-	mMeshes()
+	mMeshes(),
+	mTime(0)
 	{
 		L = lua_open();   /* opens Lua */
 		luaL_openlibs(L); /* opens the base libraries */
@@ -168,6 +169,13 @@ namespace fg {
 				error("Script \"%s\" doesn't have a update function",s.c_str());
 			}
 		}
+
+		mTime += dt;
+	}
+
+	double Universe::time() const ///< Returns the current time in the universe
+	{
+		return mTime;
 	}
 
 	// from http://stackoverflow.com/questions/4125971/setting-the-global-lua-path-variable-from-c-c
