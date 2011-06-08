@@ -62,6 +62,7 @@ namespace fg {
 		   class_<fg::Mesh>("mesh")
 		   // .def("vertices",&Mesh::vertices, return_stl_iterator)
 		   .def("selectAllVertices", &Mesh::selectAllVertices)
+		   .def("subdivide", &Mesh::subdivide)
 		   .def(tostring(const_self))
 		   .scope [
 			   class_<fg::Mesh::Primitives>("primitives")
@@ -69,6 +70,7 @@ namespace fg {
 					   def("icosahedron",&fg::Mesh::Primitives::Icosahedron)
 			   ]
 		   ]
+
 		];
 
 

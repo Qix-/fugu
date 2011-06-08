@@ -81,6 +81,9 @@ namespace fg {
 		// Queries
 		void getBounds(double& minx, double& miny, double& minz, double& maxx, double& maxy, double& maxz);
 
+		// Common modifiers
+		void subdivide(int levels); ///< Perform smooth subdivision on the mesh
+
 		// OpenGL helpers
 		void drawGL();
 

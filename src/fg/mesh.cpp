@@ -1,11 +1,24 @@
 #include "fg/mesh.h"
 
+#include <vcg/simplex/vertex/base.h>
+#include <vcg/simplex/face/base.h>
+
+#include <vcg/complex/complex.h>
+#include <vcg/complex/allocate.h>
+
 #include <vcg/complex/algorithms/smooth.h>
+#include <vcg/complex/algorithms/refine.h>
+
 #include <vcg/complex/algorithms/create/platonic.h>
+
 #include <vcg/complex/algorithms/update/bounding.h>
 #include <vcg/complex/algorithms/update/normal.h>
 #include <vcg/complex/algorithms/update/topology.h>
 #include <vcg/complex/algorithms/update/flag.h>
+
+#include <vcg/simplex/vertex/component_ocf.h>
+#include <vcg/simplex/face/component_ocf.h>
+
 
 #include <boost/foreach.hpp>
 
@@ -40,6 +53,23 @@ namespace fg {
 		maxx = mMesh.bbox.max.X();
 		maxy = mMesh.bbox.max.Y();
 		maxz = mMesh.bbox.max.Z();
+	}
+
+	// Modifiers
+	void Mesh::subdivide(int levels){
+		if (levels <= 0) return;
+
+		// TODO
+		/*
+		vcg::tri::UpdateTopology<MyMesh>::FaceFace(mMesh);
+		vcg::tri::UpdateTopology<MyMesh>::VertexFace(mMesh);
+
+		for(int i=0;i<levels;i++)
+			vcg::Refine(mMesh,MidPoint<MyMesh>(&mMesh));
+
+		vcg::tri::UpdateNormals<MyMesh>::PerVertexNormalizedPerFace(mMesh);
+		vcg::tri::UpdateNormals<MyMesh>::PerFaceNormalized(mMesh);
+		*/
 	}
 
 	void Mesh::drawGL(){
