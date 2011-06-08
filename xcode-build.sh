@@ -1,5 +1,5 @@
-echo Warning, Xcode project doesnt work yet, try osx-make instead for now..
-exit 
+# echo Warning, Xcode project doesnt work yet, try osx-make instead for now..
+# exit 
 
 echo Building XCode Project...
 mkdir -p build/xcode
