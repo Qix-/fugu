@@ -35,7 +35,11 @@ namespace fg {
 		// fg/functions.h
 		module(L,"fg")[
 		   def("min", &min<double>),
-		   def("lerp", &lerp<double>)
+		   def("lerp", &lerp<double>),
+
+		   def("noise", (double(*)(double)) &noise),
+		   def("noise", (double(*)(double,double)) &noise),
+		   def("noise", (double(*)(double,double,double)) &noise)
 		   ];
 
 		// fg/vec3.h
@@ -49,9 +53,8 @@ namespace fg {
 
 		// fg/mesh.h
 		module(L,"fg")[
-		   class_<fg::Mesh::Vertex>("vertex")
-		   .def("getPosition", &fg::Mesh::Vertex::pos)
-		   .property("pos", &fg::Mesh::Vertex::pos)
+		   class_<fg::Vertex>("vertex")
+		   .property("pos", &fg::Vertex::pos)
 		   .def(tostring(const_self)),
 
 		   // class_<fg::Mesh::VertexContainer>("vertexcontainer"),

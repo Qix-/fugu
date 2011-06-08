@@ -1,11 +1,10 @@
 #ifndef FG_MESH_H
 #define FG_MESH_H
 
-/**
- * fg::Mesh is a triangular mesh.
+/** \brief A triangular mesh.
  *
  * Implementation notes:
- * - It wraps a VCG mesh with as much info as we can jam in...
+ * - It wraps a vcglib mesh with as much info as we can jam in...
  *
  */
 
@@ -17,22 +16,6 @@
 #include <vector>
 #include <list>
 
-// VCG
-#include <vcg/space/point3.h>
-#include <vcg/space/box3.h>
-
-#include <vcg/math/perlin_noise.h>
-
-#include <vcg/simplex/vertex/base.h>
-#include <vcg/simplex/face/base.h>
-
-#include <vcg/complex/complex.h>
-#include <vcg/complex/allocate.h>
-
-#include <vcg/simplex/vertex/component_ocf.h>
-#include <vcg/simplex/face/component_ocf.h>
-#include <vcg/complex/algorithms/refine.h>
-
 // BOOST
 #include <boost/shared_ptr.hpp>
 
@@ -41,29 +24,21 @@
 #include <wrap/gl/trimesh.h>
 
 namespace fg {
+
+	// A facade to the vertex implementation
+	class Vertex {
+	public:
+		virtual Vec3& pos() = 0;
+	};
+
+	class Face {
+	public:
+
+	};
+
+	class MeshImpl;
 	class Mesh {
-		/** VCG Implementation **/
 		public:
-		class MyVertex;
-		class MyFace;
-
-		struct MyUsedTypes : public vcg::UsedTypes<
-			vcg::Use<MyVertex>::AsVertexType,
-			vcg::Use<MyFace>::AsFaceType>{};
-
-		public:
-		class MyVertex: public vcg::Vertex< MyUsedTypes, vcg::vertex::Coord3d, vcg::vertex::Normal3d, vcg::vertex::BitFlags, vcg::vertex::VFAdj, vcg::vertex::InfoOcf, vcg::vertex::Mark>{
-			// Adapt the interface
-			public:
-			Vec3& pos(){return static_cast<Vec3&>(P());}
-		};
-		class MyFace: public vcg::Face< MyUsedTypes, vcg::face::FFAdj, vcg::face::Mark, vcg::face::VertexRef, vcg::face::Normal3d, vcg::face::BitFlags, vcg::face::InfoOcf> {};
-		class MyMesh: public vcg::tri::TriMesh< std::vector< MyVertex>, std::vector< MyFace > > {};
-		/************************/
-
-		public:
-		typedef MyVertex Vertex;
-		typedef MyMesh::VertContainer VertexContainer;
 		typedef std::list<Vertex*> VertexSet;
 
 		// Mesh factories
@@ -74,7 +49,7 @@ namespace fg {
 		~Mesh();
 
 		// Accessors
-		VertexContainer& vertices();
+		// VertexContainer& vertices();
 		// VertexSet vertices();
 		boost::shared_ptr<VertexSet> selectAllVertices();
 
@@ -88,16 +63,14 @@ namespace fg {
 		void drawGL();
 
 		private:
-		Mesh(); // can't create a mesh from nothing .. yet
-		MyMesh mMesh;
-
-		vcg::GlTrimesh<MyMesh> glTriMesh; // wraps the mesh and draws it
+		Mesh(); // Can't construct a blank mesh.
+		MeshImpl* mpMesh;
 	};
 }
 
 // For basic printing
 std::ostream& operator<<(std::ostream&, const fg::Mesh&);
-std::ostream& operator<<(std::ostream&, const fg::Mesh::Vertex&);
+std::ostream& operator<<(std::ostream&, const fg::Vertex&);
 
 
 #endif

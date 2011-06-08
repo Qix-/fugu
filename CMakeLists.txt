@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(FG)
 
 set(BASE_DIR ${FG_SOURCE_DIR}) 
+set(CMAKE_INSTALL_PREFIX ${FG_SOURCE_DIR}/bin)
 
 if(WIN32)
 	#MAYBE NEED THIS FOR VCG/GL stuff?!
@@ -36,3 +37,4 @@ add_subdirectory(src/fg)
 add_subdirectory(src/misc/basics)
 add_subdirectory(src/misc/vcgtests)
 add_subdirectory(src/misc/luabind)
+  

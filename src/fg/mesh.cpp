@@ -1,7 +1,13 @@
 #include "fg/mesh.h"
 
+// VCG
+#include <vcg/space/point3.h>
+#include <vcg/space/box3.h>
+
 #include <vcg/simplex/vertex/base.h>
 #include <vcg/simplex/face/base.h>
+#include <vcg/simplex/face/pos.h>
+#include <vcg/simplex/face/topology.h> // NB: Needed this for Refine!
 
 #include <vcg/complex/complex.h>
 #include <vcg/complex/allocate.h>
@@ -19,40 +25,74 @@
 #include <vcg/simplex/vertex/component_ocf.h>
 #include <vcg/simplex/face/component_ocf.h>
 
-
 #include <boost/foreach.hpp>
 
 using namespace vcg;
 namespace fg {
-	Mesh::Mesh()
-	:mMesh()
-	{
 
+	/** Mesh Implementation is via VCG **/
+	class VertexImpl;
+	class FaceImpl;
+	struct MyUsedTypes : public vcg::UsedTypes<
+		vcg::Use<VertexImpl>::AsVertexType,
+		vcg::Use<FaceImpl>::AsFaceType>{};
+	class VertexImpl: public vcg::Vertex<
+		MyUsedTypes,
+		vcg::vertex::Coord3d,
+		vcg::vertex::Normal3d,
+		vcg::vertex::BitFlags,
+		vcg::vertex::VFAdj,
+		vcg::vertex::InfoOcf,
+		vcg::vertex::Mark>, public Vertex {
+		// Adapt the interface
+		public:
+		virtual Vec3& pos(){return static_cast<Vec3&>(P());}
+	};
+	class FaceImpl: public vcg::Face<
+		MyUsedTypes,
+		vcg::face::FFAdj,
+		vcg::face::VFAdj,
+		vcg::face::Mark,
+		vcg::face::VertexRef,
+		vcg::face::Normal3d,
+		vcg::face::BitFlags,
+		vcg::face::InfoOcf> {};
+	class MeshImpl: public vcg::tri::TriMesh< std::vector< VertexImpl>, std::vector< FaceImpl > > {};
+	/************************/
+
+
+	Mesh::Mesh()
+	:mpMesh(NULL)
+	{
+		mpMesh = new MeshImpl();
 	}
 
 	Mesh::~Mesh(){
+		delete mpMesh;
 	}
 
+	/*
 	Mesh::VertexContainer& Mesh::vertices(){
 		return mMesh.vert;
 	}
+	*/
 
 	boost::shared_ptr<Mesh::VertexSet> Mesh::selectAllVertices(){
 		boost::shared_ptr<VertexSet> r(new VertexSet());
-		BOOST_FOREACH(Vertex& v, mMesh.vert){
-			r->push_back(&v);
+		BOOST_FOREACH(VertexImpl& v, mpMesh->vert){
+			r->push_back(static_cast<Vertex*>(&v));
 		}
 		return r;
 	}
 
 	void Mesh::getBounds(double& minx, double& miny, double& minz, double& maxx, double& maxy, double& maxz){
-		vcg::tri::UpdateBounding<MyMesh>::Box(mMesh);
-		minx = mMesh.bbox.min.X();
-		miny = mMesh.bbox.min.Y();
-		minz = mMesh.bbox.min.Z();
-		maxx = mMesh.bbox.max.X();
-		maxy = mMesh.bbox.max.Y();
-		maxz = mMesh.bbox.max.Z();
+		vcg::tri::UpdateBounding<MeshImpl>::Box(*mpMesh);
+		minx = mpMesh->bbox.min.X();
+		miny = mpMesh->bbox.min.Y();
+		minz = mpMesh->bbox.min.Z();
+		maxx = mpMesh->bbox.max.X();
+		maxy = mpMesh->bbox.max.Y();
+		maxz = mpMesh->bbox.max.Z();
 	}
 
 	// Modifiers
@@ -60,29 +100,37 @@ namespace fg {
 		if (levels <= 0) return;
 
 		// TODO
-		/*
-		vcg::tri::UpdateTopology<MyMesh>::FaceFace(mMesh);
-		vcg::tri::UpdateTopology<MyMesh>::VertexFace(mMesh);
+
+		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*mpMesh);
+		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*mpMesh);
+
+		//vcg::face::IsManifold<MeshImpl>;
+		//vcg::face::IsBorder<MeshImpl>;
+
+		// vcg::face::IsManifold<MeshImpl::FaceType>(mMesh.face[0], 0);
 
 		for(int i=0;i<levels;i++)
-			vcg::Refine(mMesh,MidPoint<MyMesh>(&mMesh));
+			vcg::Refine(*mpMesh,vcg::MidPoint<MeshImpl>(mpMesh));
 
-		vcg::tri::UpdateNormals<MyMesh>::PerVertexNormalizedPerFace(mMesh);
-		vcg::tri::UpdateNormals<MyMesh>::PerFaceNormalized(mMesh);
-		*/
+		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*mpMesh);
+		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*mpMesh);
+
+		//vcg::tri::UpdateNormals<MeshImpl>::PerVertexNormalizedPerFace(mMesh);
+		//vcg::tri::UpdateNormals<MeshImpl>::PerFaceNormalized(mMesh);
 	}
 
 	void Mesh::drawGL(){
+		static vcg::GlTrimesh<MeshImpl> glTriMesh; // wraps the mesh and draws it
 		if (glTriMesh.m == NULL){
-			glTriMesh.m = &mMesh;
+			glTriMesh.m = mpMesh;
 		}
-		vcg::tri::UpdateNormals<MyMesh>::PerFace(mMesh);
-		vcg::tri::UpdateNormals<MyMesh>::PerVertexFromCurrentFaceNormal(mMesh);
+		vcg::tri::UpdateNormals<MeshImpl>::PerFace(*mpMesh);
+		vcg::tri::UpdateNormals<MeshImpl>::PerVertexFromCurrentFaceNormal(*mpMesh);
 
 		glTriMesh.Update();
-
 		glTriMesh.Draw<vcg::GLW::DMFlat, vcg::GLW::CMNone, vcg::GLW::TMNone> ();
 
+		/*
 		glPushAttrib(GL_LIGHTING_BIT);
 		glPushAttrib(GL_CURRENT_BIT);
 		glDisable(GL_LIGHTING);
@@ -90,11 +138,12 @@ namespace fg {
 		glTriMesh.Draw<vcg::GLW::DMHidden,   vcg::GLW::CMNone,vcg::GLW::TMNone> ();
 		glPopAttrib();
 		glPopAttrib();
+		*/
 	}
 
 	boost::shared_ptr<Mesh> Mesh::Primitives::Icosahedron(){
 		Mesh* m = new Mesh();
-		vcg::tri::Icosahedron<MyMesh>(m->mMesh);
+		vcg::tri::Icosahedron<MeshImpl>(*(m->mpMesh));
 		return boost::shared_ptr<Mesh>(m);
 	}
 }
@@ -103,6 +152,6 @@ std::ostream& operator<<(std::ostream& o, const fg::Mesh& mesh){
 	return o << "mesh " << &mesh;
 }
 
-std::ostream& operator<<(std::ostream& o, const fg::Mesh::Vertex& v){
+std::ostream& operator<<(std::ostream& o, const fg::Vertex& v){
 	return o << "vertex " << &v;
 }

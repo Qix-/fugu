@@ -10,6 +10,10 @@ namespace fg {
 	template <typename T> T min(T a, T b);
 	template <typename T> T lerp(T a, T b, T t);
 
+	double noise(double x);
+	double noise(double x, double y);
+	double noise(double x, double y, double z);
+
 	// step
 	// pulse
 	// clamp
