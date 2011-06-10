@@ -80,7 +80,10 @@ namespace fg {
 	boost::shared_ptr<Mesh::VertexSet> Mesh::selectAllVertices(){
 		boost::shared_ptr<VertexSet> r(new VertexSet());
 		BOOST_FOREACH(VertexImpl& v, mpMesh->vert){
-			r->push_back(static_cast<Vertex*>(&v));
+			// only return non-dead vertices
+			if (!v.IsD()){
+				r->push_back(static_cast<Vertex*>(&v));
+			}
 		}
 		return r;
 	}
