@@ -17,8 +17,6 @@ namespace fg {
 	 * This command selects all faces adjacent to a vertex and extrudes
 	 * them along the vertex normal.
 	 *
-	 * NOTE: It destroys all faces adjacent to v.
-	 *
 	 * @param v
 	 * @param distance
 	 */

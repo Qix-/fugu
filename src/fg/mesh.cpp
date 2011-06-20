@@ -1,4 +1,5 @@
 #include "fg/mesh.h"
+#include "fg/meshimpl.h"
 
 // VCG
 #include <vcg/space/point3.h>
@@ -28,39 +29,8 @@
 #include <boost/foreach.hpp>
 
 using namespace vcg;
+
 namespace fg {
-
-	/** Mesh Implementation is via VCG **/
-	class VertexImpl;
-	class FaceImpl;
-	struct MyUsedTypes : public vcg::UsedTypes<
-		vcg::Use<VertexImpl>::AsVertexType,
-		vcg::Use<FaceImpl>::AsFaceType>{};
-	class VertexImpl: public vcg::Vertex<
-		MyUsedTypes,
-		vcg::vertex::Coord3d,
-		vcg::vertex::Normal3d,
-		vcg::vertex::BitFlags,
-		vcg::vertex::VFAdj,
-		vcg::vertex::InfoOcf,
-		vcg::vertex::Mark>, public Vertex {
-		// Adapt the interface
-		public:
-		virtual Vec3& pos(){return static_cast<Vec3&>(P());}
-	};
-	class FaceImpl: public vcg::Face<
-		MyUsedTypes,
-		vcg::face::FFAdj,
-		vcg::face::VFAdj,
-		vcg::face::Mark,
-		vcg::face::VertexRef,
-		vcg::face::Normal3d,
-		vcg::face::BitFlags,
-		vcg::face::InfoOcf> {};
-	class MeshImpl: public vcg::tri::TriMesh< std::vector< VertexImpl>, std::vector< FaceImpl > > {};
-	/************************/
-
-
 	Mesh::Mesh()
 	:mpMesh(NULL)
 	{

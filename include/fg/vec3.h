@@ -9,12 +9,6 @@ namespace fg {
 	// typedef vcg::Point3d Vec3;
 
 	class Vec3: public vcg::Point3d {
-
-
-
-
-
-
 		// interface for lua bindings
 		public:
 			double getX(){return X();}
