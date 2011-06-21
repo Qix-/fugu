@@ -25,10 +25,36 @@
 
 namespace fg {
 
-	// A facade to the vertex implementation
-	class Vertex {
+	/*
+	 * All the proxies follow the following general pattern.
+	 */
+	/*
+	template <class T>
+	class Proxy {
 	public:
-		virtual Vec3& pos() = 0;
+		Proxy(T* t):mImpl(t){}
+		T* impl(){return mImpl;}
+	protected:
+		T* mImpl;
+	};
+	*/
+
+	// A proxy to the vertex implementation
+	class VertexImpl;
+	class VertexProxy {
+	public:
+		VertexProxy(VertexImpl* vi);
+		~VertexProxy();
+
+		//Vec3& pos();
+		//Vec3& normal();
+		Vec3 getPos() const;
+		void setPos(Vec3 v);
+		void setPos(double x, double y, double z);
+
+		VertexImpl* impl();
+	private:
+		VertexImpl* mImpl;
 	};
 
 	class Face {
@@ -39,12 +65,13 @@ namespace fg {
 	class MeshImpl;
 	class Mesh {
 		public:
-		typedef std::list<Vertex*> VertexSet;
+		typedef std::list<VertexProxy> VertexSet;
 
 		// Mesh factories
 		class Primitives {
 			public:
 			static boost::shared_ptr<Mesh> Icosahedron();
+			static boost::shared_ptr<Mesh> Sphere();
 		};
 		~Mesh();
 
@@ -62,6 +89,9 @@ namespace fg {
 		// OpenGL helpers
 		void drawGL();
 
+		// return the VCG implementation in this mesh
+		MeshImpl* impl();
+
 		private:
 		Mesh(); // Can't construct a blank mesh.
 		MeshImpl* mpMesh;
@@ -70,7 +100,7 @@ namespace fg {
 
 // For basic printing
 std::ostream& operator<<(std::ostream&, const fg::Mesh&);
-std::ostream& operator<<(std::ostream&, const fg::Vertex&);
+std::ostream& operator<<(std::ostream&, const fg::VertexProxy&);
 
 
 #endif

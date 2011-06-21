@@ -17,10 +17,9 @@ function update(dt)
 	
 	vs = m:selectAllVertices()	
 	for v in vs.all do
-		p = perturb(v.pos.x,v.pos.y,v.pos.z)
-		v.pos.x = v.pos.x + p*rnd(.01)
-		v.pos.y = v.pos.y + p*rnd(.01)
-		v.pos.z = v.pos.z + p*rnd(.01)
+		pos = v:getPos()
+		p = perturb(pos.x,pos.y,pos.z)
+		v:setPos(pos.x + p*rnd(.01), pos.y + p*rnd(.01), pos.z + p*rnd(.01))
 	end
 end
 

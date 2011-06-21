@@ -9,10 +9,12 @@
 
 #include <sstream>
 
+#include "fg/vec3.h"
 #include "fg/universe.h"
 #include "fg/functions.h"
 #include "fg/mesh.h"
-#include "fg/vec3.h"
+#include "fg/meshoperators.h"
+
 
 int debugFileAndLine(lua_State* L);
 
@@ -53,8 +55,11 @@ namespace fg {
 
 		// fg/mesh.h
 		module(L,"fg")[
-		   class_<fg::Vertex>("vertex")
-		   .property("pos", &fg::Vertex::pos)
+		   class_<fg::VertexProxy>("vertex")
+		   .def("getPos", &fg::VertexProxy::getPos)
+		   .def("setPos", (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setPos))
+		   .def("setPos", (void(fg::VertexProxy::*)(double,double,double)) (&fg::VertexProxy::setPos))
+		   // .property("pos", &fg::VertexProxy::getPos, &fg::VertexProxy::setPos)
 		   .def(tostring(const_self)),
 
 		   // class_<fg::Mesh::VertexContainer>("vertexcontainer"),
@@ -70,13 +75,17 @@ namespace fg {
 		   .scope [
 			   class_<fg::Mesh::Primitives>("primitives")
 			   .scope [
-					   def("icosahedron",&fg::Mesh::Primitives::Icosahedron)
+					   def("icosahedron",&fg::Mesh::Primitives::Icosahedron),
+					   def("sphere",&fg::Mesh::Primitives::Sphere)
 			   ]
 		   ]
 
 		];
 
-
+		// fg/meshoperators.h
+		module(L,"fg")[
+		   def("extrude", &fg::extrude)
+		];
 
 		return 0;
 	}

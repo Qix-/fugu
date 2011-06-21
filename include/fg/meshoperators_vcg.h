@@ -9,6 +9,8 @@
 #include "fg/meshimpl.h"
 
 #include <vector>
+#include <set>
+
 #include <vcg/space/point3.h>
 
 namespace fg {
@@ -23,7 +25,7 @@ namespace fg {
 
 		typedef std::vector<VertexPointer*> VPUpdateList;
 
-		static void extrude(MyMesh* m, Vertex*& v, VPUpdateList& vpul, int width, vcg::Point3d direction, double length, double expand);
+		static std::set<VertexPointer> extrude(MyMesh* m, Vertex*& v, VPUpdateList& vpul, int width, vcg::Point3d direction, double length, double expand);
 
 		static bool isEdgeLoop(std::vector<VertexPointer>& loop);
 	private:

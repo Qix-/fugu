@@ -18,5 +18,9 @@ target_link_libraries(extrude ${ALL_LIBS})
 add_executable(extrude_new extrude_new.cpp)
 target_link_libraries(extrude_new ${ALL_LIBS})
 
+add_executable(extrude_continuous extrude_continuous.cpp)
+target_link_libraries(extrude_continuous ${ALL_LIBS})
+
+
 add_executable(nringtest nringtest.cpp)
 target_link_libraries(nringtest ${ALL_LIBS})

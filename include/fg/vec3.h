@@ -9,6 +9,14 @@ namespace fg {
 	// typedef vcg::Point3d Vec3;
 
 	class Vec3: public vcg::Point3d {
+		public:
+			Vec3(const vcg::Point3d& p){
+				vcg::Point3d();
+				X() = p.X();
+				Y() = p.Y();
+				Z() = p.Z();
+			}
+
 		// interface for lua bindings
 		public:
 			double getX(){return X();}
@@ -18,13 +26,10 @@ namespace fg {
 			double getZ(){return Z();}
 			void setZ(double z){Z() = z;}
 	};
-
-	/*
-	class Vec3 {
-		// TODO?
-	}
-	*/
 }
+
+// conversion
+//vcg::Point3d& operator=(vcg::Point3d& p, const fg::Vec3& v);
 
 // For basic printing
 std::ostream& operator<<(std::ostream&, const fg::Vec3&);

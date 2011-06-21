@@ -31,6 +31,19 @@
 using namespace vcg;
 
 namespace fg {
+
+	VertexProxy::VertexProxy(VertexImpl* vi):mImpl(vi){}
+	VertexProxy::~VertexProxy(){}
+	Vec3 VertexProxy::getPos() const {return mImpl->P();}
+	void VertexProxy::setPos(Vec3 v){mImpl->P() = v;}
+	void VertexProxy::setPos(double x, double y, double z){
+		mImpl->P().X() = x;
+		mImpl->P().Y() = y;
+		mImpl->P().Z() = z;
+	}
+
+	VertexImpl* VertexProxy::impl(){return mImpl;}
+
 	Mesh::Mesh()
 	:mpMesh(NULL)
 	{
@@ -52,7 +65,7 @@ namespace fg {
 		BOOST_FOREACH(VertexImpl& v, mpMesh->vert){
 			// only return non-dead vertices
 			if (!v.IsD()){
-				r->push_back(static_cast<Vertex*>(&v));
+				r->push_back(VertexProxy(&v));
 			}
 		}
 		return r;
@@ -114,9 +127,28 @@ namespace fg {
 		*/
 	}
 
+	MeshImpl* Mesh::impl(){
+		return mpMesh;
+	}
+
 	boost::shared_ptr<Mesh> Mesh::Primitives::Icosahedron(){
 		Mesh* m = new Mesh();
 		vcg::tri::Icosahedron<MeshImpl>(*(m->mpMesh));
+
+		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*(m->mpMesh));
+		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*(m->mpMesh));
+
+		return boost::shared_ptr<Mesh>(m);
+	}
+
+	boost::shared_ptr<Mesh> Mesh::Primitives::Sphere(){
+		Mesh* m = new Mesh();
+		vcg::tri::Sphere<MeshImpl>(*(m->mpMesh));
+
+		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*(m->mpMesh));
+		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*(m->mpMesh));
+
+
 		return boost::shared_ptr<Mesh>(m);
 	}
 }
@@ -125,6 +157,6 @@ std::ostream& operator<<(std::ostream& o, const fg::Mesh& mesh){
 	return o << "mesh " << &mesh;
 }
 
-std::ostream& operator<<(std::ostream& o, const fg::Vertex& v){
+std::ostream& operator<<(std::ostream& o, const fg::VertexProxy& v){
 	return o << "vertex " << &v;
 }

@@ -33,11 +33,7 @@ namespace fg {
 		vcg::vertex::BitFlags,
 		vcg::vertex::VFAdj,
 		vcg::vertex::InfoOcf,
-		vcg::vertex::Mark>, public Vertex {
-		// Adapt the interface
-		public:
-		virtual Vec3& pos(); // {return static_cast<Vec3&>(P());}
-	};
+		vcg::vertex::Mark> {};
 	class FaceImpl: public vcg::Face<
 		MyUsedTypes,
 		vcg::face::FFAdj,

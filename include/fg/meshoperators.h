@@ -20,7 +20,7 @@ namespace fg {
 	 * @param v
 	 * @param distance
 	 */
-	void extrude(Vertex* v, double distance);
+	void extrude(Mesh* m, VertexProxy v, double distance);
 }
 
 #endif

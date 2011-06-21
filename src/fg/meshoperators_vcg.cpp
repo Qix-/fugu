@@ -29,7 +29,7 @@ namespace fg {
 		exit(-1);
 	}
 
-	void Extrude::extrude(MyMesh* m, Vertex*& v, VPUpdateList& vpul, int width, vcg::Point3d direction, double length, double expand){
+	std::set<Extrude::VertexPointer>  Extrude::extrude(MyMesh* m, Vertex*& v, VPUpdateList& vpul, int width, vcg::Point3d direction, double length, double expand){
 		assert (width >= 1);
 
 		vcg::Point3d center = v->P();
@@ -262,6 +262,8 @@ namespace fg {
 		// TODO: can efficiencize this by manually fixing ptrs etc above
 		vcg::tri::UpdateTopology<MyMesh>::FaceFace(*m);
 		vcg::tri::UpdateTopology<MyMesh>::VertexFace(*m);
+
+		return internalVerts;
 	}
 
 	/**
