@@ -18,10 +18,10 @@ namespace fg {
 	public:
 		typedef MeshImpl MyMesh;
 		// typedef typename MyMesh::VertexType VertexType;
-		typedef typename MyMesh::VertexType Vertex;
-		typedef typename MyMesh::VertexPointer VertexPointer;
-		typedef typename MyMesh::FaceType Face;
-		typedef typename MyMesh::FacePointer FacePointer;
+		typedef MyMesh::VertexType Vertex;
+		typedef MyMesh::VertexPointer VertexPointer;
+		typedef MyMesh::FaceType Face;
+		typedef MyMesh::FacePointer FacePointer;
 
 		typedef std::vector<VertexPointer*> VPUpdateList;
 
