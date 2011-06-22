@@ -32,17 +32,6 @@ using namespace vcg;
 
 namespace fg {
 
-	VertexProxy::VertexProxy(VertexImpl* vi):mImpl(vi){}
-	VertexProxy::~VertexProxy(){}
-	Vec3 VertexProxy::getPos() const {return mImpl->P();}
-	void VertexProxy::setPos(Vec3 v){mImpl->P() = v;}
-	void VertexProxy::setPos(double x, double y, double z){
-		mImpl->P().X() = x;
-		mImpl->P().Y() = y;
-		mImpl->P().Z() = z;
-	}
-
-	VertexImpl* VertexProxy::impl(){return mImpl;}
 
 	Mesh::Mesh()
 	:mpMesh(NULL)

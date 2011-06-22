@@ -61,6 +61,22 @@ std::ostream& operator<<(std::ostream& o, const Foo& f){
 }
 
 /**
+ * Set this to true to check if the proxy is valid whenever code
+ * calls either pImpl or constImpl. Meant for debugging memory leaks.
+ *
+ * Default: false
+ */
+bool PROXY_DEBUG_CHECK_IS_VALID = false;
+
+/**
+ * The ostream to push debugging information down.
+ *
+ * Default: std::cerr;
+ */
+std::ostream& PROXY_DEBUG_OSTREAM = std::cerr;
+
+
+/**
  * Proxy provides a simple wrapper around a pointer to an object of type T.
  *
  */
@@ -72,12 +88,26 @@ public:
 	/**
 	 * @return Reference to the internal pointer
 	 */
-	T*& pImpl() {return mImpl;}
+	T*& pImpl() {
+		if (PROXY_DEBUG_CHECK_IS_VALID){
+			if (mImpl==NULL){
+				PROXY_DEBUG_OSTREAM << "<Warning> Accessing invalid proxy! (Proxy@" << this << ")";
+			}
+		}
+		return mImpl;
+	}
 
 	/**
 	 * @return Const reference to the internal object. Assumes it is valid.
 	 */
-	const T& constImpl() const {return *mImpl;}
+	const T& constImpl() const {
+		if (PROXY_DEBUG_CHECK_IS_VALID){
+			if (mImpl==NULL){
+				PROXY_DEBUG_OSTREAM << "<Warning> Accessing invalid proxy! (Proxy@" << this << ")";
+			}
+		}
+		return *mImpl;
+	}
 
 	/**
 	 * @return True if the pointer is valid (non-null)
@@ -92,6 +122,7 @@ private:
 	T* mImpl;
 };
 
+// Foo proxy
 class FooProxy: public Proxy<Foo> {
 public:
 	FooProxy(Foo* f):Proxy(f){}
@@ -175,6 +206,20 @@ public:
 			std::cout << "FooContainer: " << count << " proxies cleaned up.\n";
 	}
 
+	void doSomethingThatDeletesSomeFoos(){
+		// Delete a foo from container
+		Foo* f = *mFoos.begin();
+		mFoos.erase(mFoos.begin());
+
+		// Before we delete the foo, we have to invalidate the proxies
+		// (and containers) which reference it
+		BOOST_FOREACH(boost::shared_ptr<FooProxy>& sp, mFooProxies){
+			if (sp->pImpl()==f) sp->invalidate();
+		}
+
+		delete f;
+	}
+
 private:
 	std::list<Foo*> mFoos;
 
@@ -185,6 +230,10 @@ FooContainer* gFooContainer;
 
 void shuffle(){gFooContainer->shuffle();}
 void shuffleAndUpdateProxies(){gFooContainer->shuffleAndUpdateProxies();}
+void deleteSomeFoos(){gFooContainer->doSomethingThatDeletesSomeFoos();}
+
+void setDebugProxy(bool f){PROXY_DEBUG_CHECK_IS_VALID = f;}
+
 Foo* select1(int i){return gFooContainer->select(i);}
 boost::shared_ptr<Foo> select2(int i){return boost::shared_ptr<Foo>(gFooContainer->select(i));}
 FooProxy select3(int i){return gFooContainer->selectP(i);}
@@ -208,6 +257,9 @@ int doBindings(lua_State* L){
 
 	    def("shuffle", &shuffle),
 	    def("shuffleAndUpdateProxies", &shuffleAndUpdateProxies),
+	    def("deleteSomeFoos", &deleteSomeFoos),
+	    def("setDebugProxy", &setDebugProxy),
+
 	    def("select1", &select1),
 	    def("select2", &select2),
 	    def("select3", &select3),
@@ -224,7 +276,7 @@ int main(){
 	doBindings(L);
 
 	gFooContainer = new FooContainer();
-	for(int i=0;i<10;i++)
+	for(int i=0;i<4;i++)
 		gFooContainer->newFoo(i);
 
 	// These should cause memory access errors/crashes at x.x = 3;
@@ -233,15 +285,21 @@ int main(){
 	// doTest(L, "select3", "local x = BP.select3(0); print(x); BP.shuffle(); x.x = 666; print(x);");
 
 	// This solution will work :)
-	for (int i=0;i<3;i++){
+	for (int i=0;i<2;i++){
 		doTest(L, "selectP2",
-				"do local x = BP.selectP2(0);"
-				"print(x);"
-				"BP.shuffleAndUpdateProxies();"
-				"x.x = 666;"
-				"print(x);"
-				"print(\"Valid?\",x.valid);"
-				"end;");
+				"do local x = BP.selectP2(0);\n"
+				"print(x);\n"
+				"BP.shuffleAndUpdateProxies();\n"
+				"x.x = 666;\n" // x still points to the proper element
+				"print(x);\n"
+				"BP.deleteSomeFoos();\n" // x may now be deleted
+				"if (x.valid) then print(\"x is still valid, x.x=\", x.x);\n"
+				"else print(\"x is not valid anymore\");\n end;\n"
+				"print(\"Enabling proxy debugger\");\n"
+				"BP.setDebugProxy(true);"
+				"print(\"Accessing x\");\n"
+				"x.x = 777;\n"
+				"end;\n");
 		// manually call garbage collector, to force deletion of refs
 		lua_gc(L,LUA_GCCOLLECT,0);
 	}
@@ -257,7 +315,7 @@ int main(){
 
 void doTest(lua_State* L, const char* testName, const char* src){
 	std::cout << "Test: " << testName << "\n";
-	std::cout << "\"" << src << "\"\n";
+	// std::cout << "\"" << src << "\"\n";
 	if (luaL_dostring(L, src)){
 		std::cerr << "Error: " << lua_tostring(L, -1);
 		lua_pop(L,1);

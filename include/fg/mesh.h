@@ -10,6 +10,7 @@
 
 // fg dependencies
 #include "fg/vec3.h"
+#include "fg/vertex.h"
 
 // Stdlibs
 #include <ostream>
@@ -24,39 +25,6 @@
 #include <wrap/gl/trimesh.h>
 
 namespace fg {
-
-	/*
-	 * All the proxies follow the following general pattern.
-	 */
-	/*
-	template <class T>
-	class Proxy {
-	public:
-		Proxy(T* t):mImpl(t){}
-		T* impl(){return mImpl;}
-	protected:
-		T* mImpl;
-	};
-	*/
-
-	// A proxy to the vertex implementation
-	class VertexImpl;
-	class VertexProxy {
-	public:
-		VertexProxy(VertexImpl* vi);
-		~VertexProxy();
-
-		//Vec3& pos();
-		//Vec3& normal();
-		Vec3 getPos() const;
-		void setPos(Vec3 v);
-		void setPos(double x, double y, double z);
-
-		VertexImpl* impl();
-	private:
-		VertexImpl* mImpl;
-	};
-
 	class Face {
 	public:
 
@@ -100,7 +68,6 @@ namespace fg {
 
 // For basic printing
 std::ostream& operator<<(std::ostream&, const fg::Mesh&);
-std::ostream& operator<<(std::ostream&, const fg::VertexProxy&);
 
 
 #endif

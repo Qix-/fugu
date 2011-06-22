@@ -5,7 +5,7 @@
 namespace fg {
 	void extrude(Mesh* m, VertexProxy v, double distance){
 		Extrude::VPUpdateList vpul;
-		VertexImpl* impl = v.impl();
+		VertexImpl* impl = v.pImpl();
 		Extrude::extrude(
 				// static_cast<Extrude::MyMesh*>(m->impl()),
 				m->impl(),
@@ -13,7 +13,7 @@ namespace fg {
 				impl,
 				vpul,
 				1,
-				static_cast<vcg::Point3d>(v.impl()->N()),
+				static_cast<vcg::Point3d>(v.pImpl()->N()),
 				distance,
 				0.);
 	}

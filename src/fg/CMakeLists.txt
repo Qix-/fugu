@@ -7,6 +7,8 @@ add_library(fg
 	functions.cpp 
 	meshimpl.cpp
 	meshoperators.cpp 
-	meshoperators_vcg.cpp)
+	meshoperators_vcg.cpp
+	proxy.cpp
+	vertex.cpp)
 
 target_link_libraries(fg ${LUA_LIBS} ${GL_LIBS})
