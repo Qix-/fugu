@@ -8,7 +8,21 @@ local m = nil -- the mesh
 local v = nil -- a vertex selected randomly at the start
 local time = 0
 local ex = 0 -- num extrusions 
-local maxEx = 20 
+local maxEx = 10 -- max extrusions 
+
+-- returns the length and expansion at each extrusion
+local exF = function(x) 
+	local dx = x/maxEx
+	local length = fg.random()*0.3 + (1+dx)*(1+dx)*.5
+	local expansion = -0.2*(1 - dx) -- math.sin(dx*10)*.1 * (0.01 + 1-dx)
+	if (dx > .8) then
+		expansion = .5
+		if (dx > .9) then
+			expansion = -.01
+		end
+	end
+	return length, expansion
+end 
 
 function setup()
 	m = fg.mesh.primitives.sphere()	
@@ -20,8 +34,9 @@ end
 
 function update(dt)
 	time = time + dt
-	if (time > .1) then		
-		fg.extrude(m,v,1,v:getN(),.2,-.1)
+	if (time > .01) then		
+		length, expansion = exF(ex)
+		fg.extrude(m,v,1,v:getN(),length,expansion)
 		time = 0
 		ex = ex + 1
 		

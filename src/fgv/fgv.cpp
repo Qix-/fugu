@@ -1,8 +1,14 @@
 /**
- * A simple universe viewer app.
+ * A simple fg viewer.
+ *
+ * @author ben
+ * @date 27.06.2011
  */
 
 #include "fg/fg.h"
+#include "fg/functions.h"
+
+#include "fgv/trackball.h"
 
 #include <iostream>
 #include <cmath>
@@ -15,11 +21,22 @@
 #include "GL/glew.h"
 #include "GL/glfw.h"
 
-int width = 800;
-int height = 600;
+int gWidth = 800;
+int gHeight = 600;
+
+float gRotationQuat[4] = {0,0,0,1};
+float gRotationMatrix[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
+struct MouseState {
+	bool leftButtonDown;
+	int lastX;
+	int lastY;
+} gMouseState = {false,0,0};
 
 void GLFWCALL resizeWindow(int width, int height);
 void setupWindowAndGL();
+
+void mouseMoved(int x, int y);
+void mouseButtoned(int button, int state);
 
 int main(int argc, char *argv[])
 {
@@ -77,19 +94,14 @@ int main(int argc, char *argv[])
 		m->drawGL();
 		*/
 
+		glPushMatrix();
+		glMultMatrixf((GLfloat*) gRotationMatrix);
+
 		BOOST_FOREACH(boost::shared_ptr<fg::Mesh> m, u.meshes()){
-			// Can manually move vertices from here, but why not from lua side?
-			// std::cout << "cvrtex " << &*m->vertices().begin() << std::endl;
-
-			/*
-			BOOST_FOREACH(fg::Mesh::Vertex& v, m->vertices()){
-				// v.pos().setX(v.pos().getX() + dt*0.1);
-				v->pos().setX(v->pos().getX() + dt*0.1);
-			}
-			*/
-
 			m->drawGL();
 		}
+
+		glPopMatrix();
 
 		glfwSwapBuffers();
 		running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
@@ -106,7 +118,7 @@ void setupWindowAndGL(){
 		exit(EXIT_FAILURE);
 	}
 
-	if (!glfwOpenWindow(width,height, 0,0,0,0,8,0, GLFW_WINDOW)){
+	if (!glfwOpenWindow(gWidth,gHeight, 0,0,0,0,8,0, GLFW_WINDOW)){
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
@@ -117,7 +129,10 @@ void setupWindowAndGL(){
 		exit(EXIT_FAILURE);
 	}
 
+	glfwSetWindowTitle("fugu viewer");
 	glfwSetWindowSizeCallback(resizeWindow);
+	glfwSetMousePosCallback(mouseMoved);
+	glfwSetMouseButtonCallback(mouseButtoned);
 
 	glClearColor(0, 0, 0, 1);
 	glEnable(GL_CULL_FACE);
@@ -135,12 +150,53 @@ void setupWindowAndGL(){
 }
 
 void GLFWCALL resizeWindow(int _width, int _height){
-	width = _width;
-	height = _height;
+	gWidth = _width;
+	gHeight = _height;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(60, 1.0*width/height, 0.1, 100);
-	glViewport(0,0,width,height);
+	gluPerspective(60, 1.0*gWidth/gHeight, 0.1, 100);
+	glViewport(0,0,gWidth,gHeight);
 	glMatrixMode(GL_MODELVIEW);
+}
+
+void GLFWCALL mouseMoved(int x, int y){
+	if (gMouseState.leftButtonDown){
+		// std::cout << "Dragging: " << x << "," << y << "\n";
+		float q[4];
+
+		float invWidth = 1.f/gWidth;
+		float invHeight = 1.f/gHeight;
+
+		float dLastX = 2 * gMouseState.lastX * invWidth - 1;
+		float dLastY = -2 * (gMouseState.lastY * invHeight) + 1;
+		float dX = 2*x*invWidth - 1;
+		float dY = -2*y*invHeight + 1;
+
+		trackball(q,dLastX,dLastY,dX,dY);
+
+		float oldQ[4] = {gRotationQuat[0],gRotationQuat[1],gRotationQuat[2],gRotationQuat[3]};
+		add_quats(q,oldQ,gRotationQuat);
+
+		build_rotmatrix(gRotationMatrix, gRotationQuat);
+
+		gMouseState.lastX = x;
+		gMouseState.lastY = y;
+	}
+}
+
+void GLFWCALL mouseButtoned(int button, int state){
+	if (button == GLFW_MOUSE_BUTTON_LEFT){
+		if (state==GLFW_PRESS){
+			gMouseState.leftButtonDown = true;
+			glfwGetMousePos(&gMouseState.lastX,&gMouseState.lastY);
+		}
+		else if (state==GLFW_RELEASE){
+			gMouseState.leftButtonDown = false;
+		}
+	}
+	else {
+		// avoid any mouse button trickery
+		gMouseState.leftButtonDown = false;
+	}
 }

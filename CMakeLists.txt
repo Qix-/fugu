@@ -33,6 +33,7 @@ include_directories(${BASE_DIR}/include/vcg)
 include_directories(${BASE_DIR}/include/lua)
 
 add_subdirectory(src/fg)
+add_subdirectory(src/fgv)
 # add_subdirectory(src/misc/iso)
 add_subdirectory(src/misc/basics)
 add_subdirectory(src/misc/vcgtests)
