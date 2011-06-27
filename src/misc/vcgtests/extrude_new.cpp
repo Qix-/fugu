@@ -396,7 +396,7 @@ void growSucker(MyMesh* m, MyMesh::VertexType*& v, VPUpdateList& vpul, double sz
 void extrude(MyMesh* m, MyMesh::VertexType*& v, VPUpdateList& vpul, int width, Point3d direction, double length, double expand){
 
 	// Call the encapsulated version
-	return fg::Extrude::extrude(m,
+	fg::Extrude::extrude(m,
 			//static_cast<fg::Extrude<MyMesh>::Vertex*&>(v),
 			//static_cast<fg::Extrude<MyMesh>::VPUpdateList&>(vpul),
 			v,

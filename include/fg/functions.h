@@ -14,6 +14,9 @@ namespace fg {
 	double noise(double x, double y);
 	double noise(double x, double y, double z);
 
+	double random(); ///< Returns a random number between 0 and 1 inclusive
+	double random(double low, double high); ///< Returns a random number between low and high inclusive
+
 	// step
 	// pulse
 	// clamp

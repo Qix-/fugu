@@ -41,7 +41,10 @@ namespace fg {
 
 		   def("noise", (double(*)(double)) &noise),
 		   def("noise", (double(*)(double,double)) &noise),
-		   def("noise", (double(*)(double,double,double)) &noise)
+		   def("noise", (double(*)(double,double,double)) &noise),
+
+		   def("random", (double(*)()) &fg::random),
+		   def("random", (double(*)(double,double)) &fg::random)
 		   ];
 
 		// fg/vec3.h
@@ -56,20 +59,27 @@ namespace fg {
 		// fg/mesh.h
 		module(L,"fg")[
 		   class_<fg::VertexProxy>("vertex")
+		   .def(tostring(const_self))
+
+		   // Properties
 		   .def("getPos", &fg::VertexProxy::getPos)
 		   .def("setPos", (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setPos))
 		   .def("setPos", (void(fg::VertexProxy::*)(double,double,double)) (&fg::VertexProxy::setPos))
 		   // .property("pos", &fg::VertexProxy::getPos, &fg::VertexProxy::setPos)
-		   .def(tostring(const_self)),
 
+		   .def("getN", &fg::VertexProxy::getN),
 		   // class_<fg::Mesh::VertexContainer>("vertexcontainer"),
 
 		   class_<fg::Mesh::VertexSet>("vertexset")
 		   .property("all", &fg::luaAllAdapter<fg::Mesh::VertexSet>, return_stl_iterator),
 
 		   class_<fg::Mesh>("mesh")
-		   // .def("vertices",&Mesh::vertices, return_stl_iterator)
+
+		   // Selectors
 		   .def("selectAllVertices", &Mesh::selectAllVertices)
+		   .def("selectRandomVertex", &Mesh::selectRandomVertex)
+
+
 		   .def("subdivide", &Mesh::subdivide)
 		   .def(tostring(const_self))
 		   .scope [
@@ -84,7 +94,9 @@ namespace fg {
 
 		// fg/meshoperators.h
 		module(L,"fg")[
-		   def("extrude", &fg::extrude)
+		   // def("extrude", &fg::extrude),
+		   def("extrude", (void(*)(Mesh*,VertexProxy,double))&fg::extrude),
+		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double,double))&fg::extrude)
 		];
 
 		return 0;

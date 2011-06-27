@@ -9,6 +9,9 @@
 #include <iostream>
 #include <sstream>
 #include <cstdarg>
+#include <cmath>
+#include <cstring>
+#include <ctime>
 
 #include <luabind/luabind.hpp>
 #include <luabind/object.hpp>
@@ -47,6 +50,10 @@ namespace fg {
 	mMeshes(),
 	mTime(0)
 	{
+		// Global setup
+		std::srand(std::time(NULL));
+
+		// Lua setup
 		L = lua_open();   /* opens Lua */
 		luaL_openlibs(L); /* opens the base libraries */
 		// init(L);

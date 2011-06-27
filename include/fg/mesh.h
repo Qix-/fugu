@@ -44,9 +44,17 @@ namespace fg {
 		~Mesh();
 
 		// Accessors
-		// VertexContainer& vertices();
-		// VertexSet vertices();
+		/**
+		 * Select all the vertices
+		 * TODO: Update to new VertexProxy system
+		 * @return
+		 */
 		boost::shared_ptr<VertexSet> selectAllVertices();
+
+		/**
+		 * @return A random vertex
+		 */
+		boost::shared_ptr<VertexProxy> selectRandomVertex();
 
 		// Queries
 		void getBounds(double& minx, double& miny, double& minz, double& maxx, double& maxy, double& maxz);
@@ -57,12 +65,22 @@ namespace fg {
 		// OpenGL helpers
 		void drawGL();
 
-		// return the VCG implementation in this mesh
-		MeshImpl* impl();
+
+		/**
+		 * Low-level implementation access.
+		 * Only use these if you know what you are doing.
+		 */
+
+		/// return the VCG implementation in this mesh
+		MeshImpl* _impl();
+
+		/// return the VertexProxyList, so vertices can get their references updated
+		VertexProxyList* _vpl();
 
 		private:
 		Mesh(); // Can't construct a blank mesh.
 		MeshImpl* mpMesh;
+		VertexProxyList mVertexProxyList;
 	};
 }
 

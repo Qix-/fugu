@@ -21,6 +21,9 @@ namespace fg {
 	 * @param distance
 	 */
 	void extrude(Mesh* m, VertexProxy v, double distance);
+
+	void extrude(Mesh* m, VertexProxy v, int width, Vec3 direction, double length, double expand);
+
 }
 
 #endif

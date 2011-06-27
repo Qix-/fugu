@@ -1,5 +1,6 @@
 #include "fg/mesh.h"
 #include "fg/meshimpl.h"
+#include "fg/functions.h"
 
 // VCG
 #include <vcg/space/point3.h>
@@ -35,6 +36,7 @@ namespace fg {
 
 	Mesh::Mesh()
 	:mpMesh(NULL)
+	,mVertexProxyList()
 	{
 		mpMesh = new MeshImpl();
 	}
@@ -58,6 +60,13 @@ namespace fg {
 			}
 		}
 		return r;
+	}
+
+	boost::shared_ptr<VertexProxy> Mesh::selectRandomVertex(){
+		VertexProxy* vp = new VertexProxy(&mpMesh->vert[(int)(fg::random(0,mpMesh->vert.size()))]);
+		boost::shared_ptr<VertexProxy> pvp(vp);
+		mVertexProxyList.add(pvp);
+		return pvp;
 	}
 
 	void Mesh::getBounds(double& minx, double& miny, double& minz, double& maxx, double& maxy, double& maxz){
@@ -116,8 +125,12 @@ namespace fg {
 		*/
 	}
 
-	MeshImpl* Mesh::impl(){
+	MeshImpl* Mesh::_impl(){
 		return mpMesh;
+	}
+
+	VertexProxyList* Mesh::_vpl(){
+		return &mVertexProxyList;
 	}
 
 	boost::shared_ptr<Mesh> Mesh::Primitives::Icosahedron(){
