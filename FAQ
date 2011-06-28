@@ -1,6 +1,10 @@
 fugu FAQ
 --------
 
+
+Q. XCode issues
+A. Maybe BaseSDK (Use Mac OS..)
+
 Q. fgv crashes with a message like:
 	error loading module 'tests/basic5' from file '/Users/beporter/dev/lib/lua-5.1.4':
 	cannot read /Users/beporter/dev/lib/lua-5.1.4: Is a directory

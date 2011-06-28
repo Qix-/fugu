@@ -3,7 +3,7 @@
 
 echo Building XCode Project...
 mkdir -p build/xcode
-cp lib/osx/*.dylib build/xcode
+# cp lib/osx/*.dylib build/xcode
 cd build/xcode
 rm CMakeCache.txt
 cmake -G "Xcode" ../..

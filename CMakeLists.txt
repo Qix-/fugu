@@ -17,6 +17,7 @@ if(WIN32)
 endif(WIN32)
 
 if(APPLE)
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -D GLEW_STATIC")
 	FIND_LIBRARY(COCOA_LIBRARY Cocoa)
 	#find_package(Boost COMPONENTS system filesystem REQUIRED)
 	#include_directories(${Boost_INCLUDE_DIRS})
@@ -32,31 +33,35 @@ if(APPLE)
 	SET(BOOST_LIBS boost_filesystem boost_system)
 
 # use, i.e. don't skip the full RPATH for the build tree
-SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+#SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 
 # when building, don't use the install RPATH already
 # (but later on when installing)
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+#SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
 
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+#SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
 # add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+#SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 
 # the RPATH to be used when installing, but only if it's not a system directory
-LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
-IF("${isSystemDir}" STREQUAL "-1")
-   SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-ENDIF("${isSystemDir}" STREQUAL "-1")
+#LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+#IF("${isSystemDir}" STREQUAL "-1")
+#   SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+#ENDIF("${isSystemDir}" STREQUAL "-1")
 
 
 endif(APPLE)
 
+# dependencies
 include_directories(${BASE_DIR}/include)
 include_directories(${BASE_DIR}/include/vcg)
 include_directories(${BASE_DIR}/include/lua)
+
+# fg includes
+include_directories(${BASE_DIR}/src)
 
 add_subdirectory(src/fg)
 add_subdirectory(src/fgv)

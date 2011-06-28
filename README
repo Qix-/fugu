@@ -1,5 +1,5 @@
-fg|fugu|fugue readme.txt
-Updated: 8 June 2011 (Ben Porter)
+fg|fugu|fugue readme
+Updated: 28 June 2011 (Ben Porter)
 
 fg is a system for procedurally generating animated geometric forms in real-time. It is currently under heavy development and as such should not be used at all, by anyone, under any circumstances.
 
@@ -8,27 +8,30 @@ Building Instructions
 First make sure you have the following dependencies:
 
 CMake 2.8
-GLEW and GLFW (libs included for Windows/MinGW)
 
-fg uses CMake to build. As such, it should be possible to output project files for Xcode, Visual Studio, etc. Some build scripts are provided (osx-make-build.sh and eclipse-msw-build.bat) that generate a basic Unix Makefile project for OSX and an Eclipse Makefile project under windows. To generate other projects you will need to write your own scripts (patches welcome!).
+fg uses CMake to build. As such, it should be possible to output project files for Xcode, Visual Studio, etc. Some build scripts are provided for some of these, to generate other projects you will need to write your own scripts (patches welcome!).
+
+
+XCode
+-----
+> ./xcode-build.sh
+> open build/xcode/FG.xcodeproj
+> Select "install" target and run
+> Open a terminal, cd to fg/bin/fgv and run "./fgv tests/basic5" for example
 
 OSX/Make
 --------
 > ./osx-make-build.sh
 > cd build/osx-make
-> make 
-
-Running an example (from directory build/osx-make)
-> src/misc/basics/view_universe ../../scripts/test basic3
+> make install
+> then e.g., "cd ../../bin/fgv; ./fgv tests/basic5"
 
 Windows/MinGW/Eclipse
 ---------------------
 > eclipse-msw-build.bat
 > cd build\eclipse-msw
-> make
-
-Running an example (from directory build/eclipse-msw)
-> src\misc\basics\view_universe.exe ..\..\scripts\test basic3
+> make install
+> cd ..\..\bin; fgv.exe tests\basic5
 
 NB: The eclipse build script generates TWO eclipse projects. One in the root directory that contains all the source. And one in build\eclipse-msw that contains the targets. This discrepancy is due to the way eclipse works.
 
