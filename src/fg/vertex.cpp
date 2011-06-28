@@ -2,7 +2,7 @@
 #include "fg/meshimpl.h" // VertexImpl
 
 namespace fg {
-	VertexProxy::VertexProxy(VertexImpl* vi):Proxy(vi){}
+	VertexProxy::VertexProxy(VertexImpl* vi):Proxy<VertexImpl>(vi){}
 	VertexProxy::~VertexProxy(){}
 
 	Vec3 VertexProxy::getPos() const {

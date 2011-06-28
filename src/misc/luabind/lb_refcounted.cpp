@@ -125,7 +125,7 @@ private:
 // Foo proxy
 class FooProxy: public Proxy<Foo> {
 public:
-	FooProxy(Foo* f):Proxy(f){}
+	FooProxy(Foo* f):Proxy<Foo>(f){}
 	int getX() const {return constImpl().x;}
 	void setX(int x) {pImpl()->x = x;}
 	int getOX() const {return constImpl().ox;}
