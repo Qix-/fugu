@@ -33,7 +33,7 @@ namespace fg {
 	class MeshImpl;
 	class Mesh {
 		public:
-		typedef std::list<VertexProxy> VertexSet;
+		typedef std::list<boost::shared_ptr<VertexProxy> > VertexSet;
 
 		// Mesh factories
 		class Primitives {
@@ -61,6 +61,9 @@ namespace fg {
 
 		// Common modifiers
 		void subdivide(int levels); ///< Perform smooth subdivision on the mesh
+
+		/// Sync will make sure all the topology, normals, etc are fixed..
+		void sync();
 
 		// OpenGL helpers
 		void drawGL();

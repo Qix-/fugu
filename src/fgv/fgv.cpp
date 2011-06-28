@@ -21,16 +21,34 @@
 #include "GL/glew.h"
 #include "GL/glfw.h"
 
+// opengl viz, hack
+#include "fg/meshimpl.h"
+#include <wrap/gl/trimesh.h>
+using vcg::GlTrimesh;
+
 int gWidth = 800;
 int gHeight = 600;
 
+float gZoom = 0;
 float gRotationQuat[4] = {0,0,0,1};
 float gRotationMatrix[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
 struct MouseState {
 	bool leftButtonDown;
+	bool middleButtonDown;
 	int lastX;
 	int lastY;
 } gMouseState = {false,0,0};
+
+int DRAW_MODE = 2; // start in flat
+const int NUM_DRAW_MODES = 5;
+
+void GLFWCALL keyCallback(int key, int action)
+{
+	if (key==GLFW_KEY_TAB and action==GLFW_PRESS){
+		DRAW_MODE = (DRAW_MODE + 1)%NUM_DRAW_MODES;
+	}
+}
+
 
 void GLFWCALL resizeWindow(int width, int height);
 void setupWindowAndGL();
@@ -99,8 +117,24 @@ int main(int argc, char *argv[])
 		glPushMatrix();
 		glMultMatrixf((GLfloat*) gRotationMatrix);
 
+		float z = std::exp(-gZoom);
+		glScalef(z,z,z);
+
 		BOOST_FOREACH(boost::shared_ptr<fg::Mesh> m, u.meshes()){
-			m->drawGL();
+			// m->drawGL();
+			m->sync(); // make sure topologies, normals, etc are updated..
+
+			GlTrimesh<fg::MeshImpl> tm;
+			tm.m = m->_impl();
+			tm.Update();
+
+			switch (DRAW_MODE){
+				case 0: tm.Draw<vcg::GLW::DMSmooth, vcg::GLW::CMPerFace, vcg::GLW::TMNone> ();	break;
+				case 1: tm.Draw<vcg::GLW::DMWire,     vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
+				case 2: tm.Draw<vcg::GLW::DMFlat, vcg::GLW::CMPerFace, vcg::GLW::TMNone> (); break;
+				case 3: tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
+				case 4: tm.Draw<vcg::GLW::DMHidden,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
+			}
 		}
 
 		glPopMatrix();
@@ -132,6 +166,7 @@ void setupWindowAndGL(){
 	}
 
 	glfwSetWindowTitle("fugu viewer");
+	glfwSetKeyCallback(keyCallback);
 	glfwSetWindowSizeCallback(resizeWindow);
 	glfwSetMousePosCallback(mouseMoved);
 	glfwSetMouseButtonCallback(mouseButtoned);
@@ -185,6 +220,11 @@ void GLFWCALL mouseMoved(int x, int y){
 		gMouseState.lastX = x;
 		gMouseState.lastY = y;
 	}
+	else if (gMouseState.middleButtonDown) {
+		double dy = -1.0*(gMouseState.lastY - y)/gHeight;
+		gZoom += dy*5;
+		gMouseState.lastY = y;
+	}
 }
 
 void GLFWCALL mouseButtoned(int button, int state){
@@ -197,8 +237,18 @@ void GLFWCALL mouseButtoned(int button, int state){
 			gMouseState.leftButtonDown = false;
 		}
 	}
+	else if (button==GLFW_MOUSE_BUTTON_MIDDLE){
+		if (state==GLFW_PRESS){
+			gMouseState.middleButtonDown = true;
+			glfwGetMousePos(&gMouseState.lastX,&gMouseState.lastY);
+		}
+		else if (state==GLFW_RELEASE){
+			gMouseState.middleButtonDown = false;
+		}
+	}
 	else {
 		// avoid any mouse button trickery
 		gMouseState.leftButtonDown = false;
+		gMouseState.middleButtonDown = false;
 	}
 }

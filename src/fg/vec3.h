@@ -17,6 +17,8 @@ namespace fg {
 				Z() = p.Z();
 			}
 
+			Vec3(double x, double y, double z);
+
 		// interface for lua bindings
 		public:
 			double getX(){return X();}
@@ -25,11 +27,17 @@ namespace fg {
 			void setY(double y){Y() = y;}
 			double getZ(){return Z();}
 			void setZ(double z){Z() = z;}
+
+			void normalise();
+
+			Vec3 operator+(const Vec3& b) const;
+			Vec3 operator*(double d) const;
 	};
 }
 
 // conversion
 //vcg::Point3d& operator=(vcg::Point3d& p, const fg::Vec3& v);
+
 
 // For basic printing
 std::ostream& operator<<(std::ostream&, const fg::Vec3&);

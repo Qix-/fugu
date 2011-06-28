@@ -56,7 +56,9 @@ namespace fg {
 		BOOST_FOREACH(VertexImpl& v, mpMesh->vert){
 			// only return non-dead vertices
 			if (!v.IsD()){
-				r->push_back(VertexProxy(&v));
+				boost::shared_ptr<VertexProxy> pvp(new VertexProxy(&v));
+				r->push_back(pvp);
+				mVertexProxyList.add(pvp);
 			}
 		}
 		return r;
@@ -108,8 +110,7 @@ namespace fg {
 		if (glTriMesh.m == NULL){
 			glTriMesh.m = mpMesh;
 		}
-		vcg::tri::UpdateNormals<MeshImpl>::PerFace(*mpMesh);
-		vcg::tri::UpdateNormals<MeshImpl>::PerVertexFromCurrentFaceNormal(*mpMesh);
+		sync();
 
 		glTriMesh.Update();
 		glTriMesh.Draw<vcg::GLW::DMFlat, vcg::GLW::CMNone, vcg::GLW::TMNone> ();
@@ -123,6 +124,11 @@ namespace fg {
 		glPopAttrib();
 		glPopAttrib();
 		*/
+	}
+
+	void Mesh::sync(){
+		vcg::tri::UpdateNormals<MeshImpl>::PerFace(*mpMesh);
+		vcg::tri::UpdateNormals<MeshImpl>::PerVertexFromCurrentFaceNormal(*mpMesh);
 	}
 
 	MeshImpl* Mesh::_impl(){
@@ -140,6 +146,8 @@ namespace fg {
 		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*(m->mpMesh));
 		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*(m->mpMesh));
 
+		m->sync();
+
 		return boost::shared_ptr<Mesh>(m);
 	}
 
@@ -150,6 +158,7 @@ namespace fg {
 		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*(m->mpMesh));
 		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*(m->mpMesh));
 
+		m->sync();
 
 		return boost::shared_ptr<Mesh>(m);
 	}

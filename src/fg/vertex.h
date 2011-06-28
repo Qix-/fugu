@@ -33,6 +33,9 @@ namespace fg {
 		void setPos(double x, double y, double z);
 
 		Vec3 getN(); // hmm, can't be const (because of vcg...)
+
+		// Special functions
+
 	};
 
 	/**

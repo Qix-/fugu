@@ -50,10 +50,15 @@ namespace fg {
 		// fg/vec3.h
 		module(L, "fg")[
 		   class_<fg::Vec3>("vec3")
+		   .def(constructor<double,double,double>())
 		   .property("x", &fg::Vec3::getX, &fg::Vec3::setX)
 		   .property("y", &fg::Vec3::getY, &fg::Vec3::setY)
 		   .property("z", &fg::Vec3::getZ, &fg::Vec3::setZ)
 		   .def(tostring(const_self))
+
+		   .def("normalise",&fg::Vec3::normalise)
+		   .def(const_self + other<fg::Vec3>())
+		   .def(const_self * double())
 		];
 
 		// fg/mesh.h
@@ -67,21 +72,24 @@ namespace fg {
 		   .def("setPos", (void(fg::VertexProxy::*)(double,double,double)) (&fg::VertexProxy::setPos))
 		   // .property("pos", &fg::VertexProxy::getPos, &fg::VertexProxy::setPos)
 
-		   .def("getN", &fg::VertexProxy::getN),
+		   .def("getN", &fg::VertexProxy::getN)
 		   // class_<fg::Mesh::VertexContainer>("vertexcontainer"),
+
+		   .property("valid", &fg::VertexProxy::isValid),
 
 		   class_<fg::Mesh::VertexSet>("vertexset")
 		   .property("all", &fg::luaAllAdapter<fg::Mesh::VertexSet>, return_stl_iterator),
 
 		   class_<fg::Mesh>("mesh")
+		   .def(tostring(const_self))
 
 		   // Selectors
 		   .def("selectAllVertices", &Mesh::selectAllVertices)
 		   .def("selectRandomVertex", &Mesh::selectRandomVertex)
 
-
 		   .def("subdivide", &Mesh::subdivide)
-		   .def(tostring(const_self))
+		   .def("sync", &Mesh::sync)
+
 		   .scope [
 			   class_<fg::Mesh::Primitives>("primitives")
 			   .scope [
@@ -96,7 +104,9 @@ namespace fg {
 		module(L,"fg")[
 		   // def("extrude", &fg::extrude),
 		   def("extrude", (void(*)(Mesh*,VertexProxy,double))&fg::extrude),
-		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double,double))&fg::extrude)
+		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double,double))&fg::extrude),
+
+		   def("getVerticesAtDistance", getVerticesAtDistance)
 		];
 
 		return 0;

@@ -23,6 +23,11 @@ namespace fg {
 		return pImpl()->N();
 	}
 
+
+
+
+	// VertexProxyList
+
 	VertexProxyList::VertexProxyList():mProxies(){}
 	VertexProxyList::~VertexProxyList(){}
 

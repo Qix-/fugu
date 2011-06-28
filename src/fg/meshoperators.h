@@ -7,6 +7,11 @@
  */
 
 #include "fg/mesh.h"
+#include "fg/vertex.h"
+
+#include <list>
+
+#include <boost/shared_ptr.hpp>
 
 namespace fg {
 
@@ -24,6 +29,11 @@ namespace fg {
 
 	void extrude(Mesh* m, VertexProxy v, int width, Vec3 direction, double length, double expand);
 
+
+	/**
+	 * Get all vertices a distance n (in edges) surrounding a vertex.
+	 */
+	boost::shared_ptr<Mesh::VertexSet> getVerticesAtDistance(Mesh* m, VertexProxy v, int n);
 }
 
 #endif

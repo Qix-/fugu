@@ -8,6 +8,26 @@
 	p.Z() = v.Z();
 }*/
 
+namespace fg{
+	Vec3::Vec3(double x, double y, double z)
+	:vcg::Point3d(x,y,z)
+	{}
+
+	void Vec3::normalise(){
+		double n = vcg::Norm(*this);
+		*this /= n;
+	}
+
+	Vec3 Vec3::operator+(const Vec3& b) const{
+		return Vec3(this->X()+b.X(),this->Y()+b.Y(),this->Z()+b.Z());
+	}
+
+	Vec3 Vec3::operator*(double d) const{
+		return Vec3((vcg::Point3d)(*this) * d);
+	}
+
+}
+
 std::ostream& operator<<(std::ostream& o, const fg::Vec3& v){
 	o << "{" << v.X() << "," << v.Y() << "," << v.Z() << "}";
 }
