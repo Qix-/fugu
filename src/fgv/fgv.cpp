@@ -40,8 +40,9 @@ void mouseButtoned(int button, int state);
 
 int main(int argc, char *argv[])
 {
-	if (argc!=3){
-		std::cout << "Usage: " << argv[0] << " <script-directory> <script>";
+	if (argc!=2){
+		std::cout << "Usage: " << argv[0] << " <script>\n";
+		std::cout << "Example <script> is \"tests/basic5\" (note no .lua suffix needed\n";
 		return 1;
 	}
 
@@ -51,11 +52,12 @@ int main(int argc, char *argv[])
 	fg::Universe u = fg::Universe();
 
 	// Load a script
-	boost::filesystem::path p(argv[1]);
-	if (!boost::filesystem::is_directory(p))
-		p.remove_filename();
-	u.addScriptDirectory(p.string() + "/?.lua");
-	u.loadScript(argv[2]);
+	//boost::filesystem::path p(argv[1]);
+	//if (!boost::filesystem::is_directory(p))
+	//	p.remove_filename();
+	//u.addScriptDirectory(p.string() + "/?.lua");
+	u.addScriptDirectory("scripts/?.lua");
+	u.loadScript(argv[1]);
 
 	bool running = true;
 
