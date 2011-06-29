@@ -103,15 +103,23 @@ Overview</h2>
 <tr>
 <th class="modules" width="5%"><b>Framework</b> </th><th class="modules"><b>Description</b>  </th></tr>
 <tr>
-<td class="modules">SimplCore </td><td class="modules">  </td></tr>
-<tr>
-<td class="modules">SimplGui </td><td class="modules">  </td></tr>
-<tr>
-<td class="modules">SimplAudio </td><td class="modules">  </td></tr>
+<td class="modules"><a class="el" href="namespacefg.html">fg</a> </td><td class="modules"><p><a class="el" href="class_a.html">A</a> triangular mesh. </p>
+<p><a class="el" href="namespacefg.html#a9a87f054b2acd5f11e924547debf14b6">fg::loadLuaBindings</a> loads the lua bindings for the fg library into the current lua state.</p>
+<p>All bindings should go in <a class="el" href="bindings_8cpp.html">bindings.cpp</a>.</p>
+<p>Useful mathematical and geometric functions. NB: Implementation is in <a class="el" href="functions_8inc.html">functions.inc</a>.</p>
+<p>Implementation notes:</p>
+<ul>
+<li>It wraps a vcglib mesh with as much info as we can jam in...</li>
+</ul>
+<p>This header contains the VCG implementation details of a <a class="el" href="classfg_1_1_mesh.html">Mesh</a>. It only needs to be #included in files which do low vcg-level manipulations of a mesh.</p>
+<p>Some standard mesh operators.</p>
+<p>Operators which act directly on the vcg implementation of a mesh. NB: Vertex* is a vcg::Mesh::Vertex, not a fg::Vertex!</p>
+<p>TODO: Figure out what the interface to an operator is... </p>
+  </td></tr>
 </table>
 <h2><a class="anchor" id="download"></a>
 Download</h2>
-<p>Check the code our of the Bitbucket Mecurial repository:</p>
+<p>Check the code out of the Bitbucket Mercurial repository:</p>
 <div class="fragment"><pre class="fragment"> https:<span class="comment">//bitbucket.org/bpio/fg</span>
 </pre></div><p>See Ben for login details.</p>
 <h2><a class="anchor" id="start"></a>
@@ -173,7 +181,7 @@ License</h2>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Wed Jun 29 2011 16:17:36 for fg by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed Jun 29 2011 17:02:00 for fg by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>
