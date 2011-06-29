@@ -26,16 +26,8 @@
  <th class="modules"><B>Description</B></th>
  </TR>
  <TR>
- <TD class="modules">\ref SimplCore</TD>
- <TD class="modules">\copydoc SimplCore</TD>
- </TR>
- <TR>
- <TD class="modules">\ref SimplGui</TD>
- <TD class="modules">\copydoc SimplGui</TD>
- </TR> 
- <TR>
- <TD class="modules">\ref SimplAudio</TD>
- <TD class="modules">\copydoc SimplAudio</TD>
+ <TD class="modules">\ref fg</TD>
+ <TD class="modules">\copydoc fg</TD>
  </TR>
  </table>
  
@@ -43,7 +35,7 @@
  
  \section download Download
  
- Check the code our of the Bitbucket Mecurial repository:
+ Check the code out of the Bitbucket Mercurial repository:
  
  \code
  https://bitbucket.org/bpio/fg
@@ -86,6 +78,7 @@
  <i>fg</i>\n
  Copyright (c) 2011 Centre for Electronic Media Art (CEMA)\n
  Monash University, Australia. All rights reserved.
+
  
  Permission is hereby granted, free of charge, to any person
  obtaining a copy of this software and associated documentation files
