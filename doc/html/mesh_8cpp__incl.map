@@ -1,9 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" href="$mesh_8h.html" title="fg/mesh.h" alt="" coords="35,155,115,182" />
-<area shape="rect" href="$meshimpl_8h.html" title="fg/meshimpl.h" alt="" coords="796,80,900,107" />
-<area shape="rect" href="$functions_8h.html" title="fg/functions.h" alt="" coords="1787,80,1885,107" />
-<area shape="rect" href="$vec3_8h.html" title="fg/vec3.h" alt="" coords="515,304,589,331" />
-<area shape="rect" href="$vertex_8h.html" title="fg/vertex.h" alt="" coords="263,230,345,256" />
-<area shape="rect" href="$proxy_8h.html" title="fg/proxy.h" alt="" coords="411,304,491,331" />
-<area shape="rect" href="$functions_8inc.html" title="functions.inc" alt="" coords="1805,155,1901,182" />
-</map>
