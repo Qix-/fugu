@@ -58,6 +58,7 @@ namespace fg {
 
 		   .def("normalise",&fg::Vec3::normalise)
 		   .def(const_self + other<fg::Vec3>())
+		   .def(const_self - other<fg::Vec3>())
 		   .def(const_self * double())
 		];
 

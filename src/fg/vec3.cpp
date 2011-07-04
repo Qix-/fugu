@@ -24,6 +24,10 @@ namespace fg{
 		return Vec3(this->X()+b.X(),this->Y()+b.Y(),this->Z()+b.Z());
 	}
 
+	Vec3 Vec3::operator-(const Vec3& b) const{
+		return Vec3(this->X()-b.X(),this->Y()-b.Y(),this->Z()-b.Z());
+	}
+
 	Vec3 Vec3::operator*(double d) const{
 		return Vec3((vcg::Point3d)(*this) * d);
 	}
