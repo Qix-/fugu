@@ -21,8 +21,6 @@ namespace fg {
 			case RENDER_VERTICES: tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
 			default: {}
 		}
-
-		tm.Draw<vcg::GLW::DMFlat, vcg::GLW::CMPerFace, vcg::GLW::TMNone> ();
 	}
 
 	void GLRenderer::renderInterpolator(const spline::Interpolator<Vec3>& s, int n){

@@ -1,32 +1,19 @@
 /**
- * A simple fg viewer...
- *
- * TODO: Handle middle mouse zoom for mac
- *
- * @author ben
- * @date 27.06.2011
+ * Hello spline!
  */
 
-#include "fg/fg.h"
-#include "fg/functions.h"
-
-#include "fgv/trackball.h"
 
 #include <iostream>
 #include <cmath>
-
-#define BOOST_FILESYSTEM_VERSION 3
-#include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/foreach.hpp>
-
 #include "GL/glew.h"
 #include "GL/glfw.h"
 
-// opengl viz, hack
-#include "fg/meshimpl.h"
-#include <wrap/gl/trimesh.h>
-using vcg::GlTrimesh;
+#include "fg/fg.h"
+#include "fg/functions.h"
+#include "fg/glrenderer.h"
+#include "fg/mesh.h"
+
+#include "fgv/trackball.h"
 
 int gWidth = 800;
 int gHeight = 600;
@@ -41,8 +28,18 @@ struct MouseState {
 	int lastY;
 } gMouseState = {false,0,0};
 
-int DRAW_MODE = 2; // start in flat
-const int NUM_DRAW_MODES = 5;
+
+void GLFWCALL resizeWindow(int width, int height);
+void setupWindowAndGL();
+
+void mouseMoved(int x, int y);
+void mouseButtoned(int button, int state);
+
+using namespace fg;
+
+
+int DRAW_MODE = 0; // start in flat
+const int NUM_DRAW_MODES = 4;
 
 void GLFWCALL keyCallback(int key, int action)
 {
@@ -51,44 +48,49 @@ void GLFWCALL keyCallback(int key, int action)
 	}
 }
 
-
-void GLFWCALL resizeWindow(int width, int height);
-void setupWindowAndGL();
-
-void mouseMoved(int x, int y);
-void mouseButtoned(int button, int state);
+// cube code shamelessly ripped from
+// http://www.opengl.org/resources/code/samples/glut_examples/examples/cube.c
+int faces[6][4] = {  /* Vertex indices for the 6 faces of a cube. */
+  {0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
+  {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
+double v[8][3];  /* Will be filled in with X,Y,Z vertexes. */
 
 int main(int argc, char *argv[])
 {
-	if (argc!=2){
-		std::cout << "Usage: " << argv[0] << " <script>\n";
-		std::cout << "Example <script> is \"tests/basic5\" (note no .lua suffix needed\n";
-		return 1;
-	}
-
 	setupWindowAndGL();
 
-	// Create a new universe
-	fg::Universe u = fg::Universe();
+	// ** Manually create a mesh
+	fg::Mesh::MeshBuilder mb;
 
-	// Load a script
-	//boost::filesystem::path p(argv[1]);
-	//if (!boost::filesystem::is_directory(p))
-	//	p.remove_filename();
-	//u.addScriptDirectory(p.string() + "/?.lua");
-	u.addScriptDirectory("scripts/?.lua");
-	u.loadScript(argv[1]);
+	// ** cUBOId!
+	/* Setup cube vertex data. */
+	v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;
+	v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1;
+	v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1;
+	v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1;
+	v[0][2] = v[3][2] = v[4][2] = v[7][2] = 1;
+	v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
 
+	for(int i=0;i<8;i++){
+		mb.addVertex(v[i][0],v[i][1],v[i][2]);
+	}
+
+	for(int i=0;i<6;i++){
+		mb.addFace(faces[i][0],faces[i][2],faces[i][1]);
+		mb.addFace(faces[i][2],faces[i][0],faces[i][3]);
+	}
+	boost::shared_ptr<Mesh> mesh = mb.createMesh();
+
+	mesh->smoothSubdivide(2);
+	// mesh->sync();
+
+	// Run as fast as I can
 	bool running = true;
 
 	double time = glfwGetTime();
 	double dt = 0.01;
 
-	// Run as fast as I can
 	while(running){
-		// Update the universe
-		u.update(dt);
-
 		// Recompute delta t
 		double now = glfwGetTime();
 		dt = now - time;
@@ -105,39 +107,14 @@ int main(int argc, char *argv[])
 		GLfloat lp[] = {.1, 1, .1, 0};
 		glLightfv(GL_LIGHT0,GL_POSITION,lp);
 
-		// TODO: Need some basic view manipulation
-		/*
-		// Center and squish into a 1x1 cube
-		glScalef(1./meshScale,1./meshScale,1./meshScale);
-		glTranslatef(-meshCenter[0],-meshCenter[1],-meshCenter[2]);
-
-		// Rotate slowly around the y-axis
-		glRotatef(time*20,0,1,0);
-		m->drawGL();
-		*/
-
 		glPushMatrix();
 		glMultMatrixf((GLfloat*) gRotationMatrix);
 
 		float z = std::exp(-gZoom);
 		glScalef(z,z,z);
 
-		BOOST_FOREACH(boost::shared_ptr<fg::Mesh> m, u.meshes()){
-			// m->drawGL();
-			m->sync(); // make sure topologies, normals, etc are updated..
-
-			GlTrimesh<fg::MeshImpl> tm;
-			tm.m = m->_impl();
-			tm.Update();
-
-			switch (DRAW_MODE){
-				case 0: tm.Draw<vcg::GLW::DMSmooth, vcg::GLW::CMPerFace, vcg::GLW::TMNone> ();	break;
-				case 1: tm.Draw<vcg::GLW::DMWire,     vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
-				case 2: tm.Draw<vcg::GLW::DMFlat, vcg::GLW::CMPerFace, vcg::GLW::TMNone> (); break;
-				case 3: tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
-				case 4: tm.Draw<vcg::GLW::DMHidden,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
-			}
-		}
+		// Draw stuff here
+		fg::GLRenderer::renderMesh(&*mesh,fg::GLRenderer::RenderMeshMode(DRAW_MODE));
 
 		glPopMatrix();
 
@@ -167,7 +144,7 @@ void setupWindowAndGL(){
 		exit(EXIT_FAILURE);
 	}
 
-	glfwSetWindowTitle("fugu viewer");
+	glfwSetWindowTitle("hello mesh builder!");
 	glfwSetKeyCallback(keyCallback);
 	glfwSetWindowSizeCallback(resizeWindow);
 	glfwSetMousePosCallback(mouseMoved);
