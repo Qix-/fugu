@@ -32,6 +32,7 @@ namespace fg {
 			void normalise();
 
 			Vec3 operator+(const Vec3& b) const;
+			Vec3 operator-(const Vec3& b) const;
 			Vec3 operator*(double d) const;
 	};
 }
