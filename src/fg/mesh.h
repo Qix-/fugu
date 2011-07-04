@@ -19,6 +19,7 @@
 
 // BOOST
 #include <boost/shared_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
 
 // for opengl
 #include "GL/glew.h"
@@ -35,12 +36,41 @@ namespace fg {
 		public:
 		typedef std::list<boost::shared_ptr<VertexProxy> > VertexSet;
 
-		// Mesh factories
+		/**
+		 * Pre-defined mesh primitives
+		 */
 		class Primitives {
 			public:
 			static boost::shared_ptr<Mesh> Icosahedron();
 			static boost::shared_ptr<Mesh> Sphere();
 		};
+
+		/**
+		 * \brief Construct a mesh manually from vertices and triangles
+		 *
+		 * A MeshBuilder can be used as a factory object, e.g.,
+		 *
+		 * MeshBuilder mb;
+		 * mb.addVertex(...)
+		 * mb.addFace(...)
+		 * mb.createMesh()
+		 *
+		 * ...or with the static function MeshBuilder::createMesh(vert_array,face_array)
+		 */
+		class MeshBuilder {
+		public:
+			MeshBuilder();
+			~MeshBuilder();
+			void addVertex(double x, double y, double z);
+			void addFace(int v1, int v2, int v3);
+			boost::shared_ptr<Mesh> createMesh();
+
+			static boost::shared_ptr<Mesh> createMesh(const std::vector<Vec3>& verts, const std::vector<boost::tuple<int,int,int> >& faces);
+		protected:
+			std::vector<Vec3> mVertices;
+			std::vector<boost::tuple<int,int,int> > mTriangles;
+		};
+
 		~Mesh();
 
 		// Accessors
@@ -60,13 +90,15 @@ namespace fg {
 		void getBounds(double& minx, double& miny, double& minz, double& maxx, double& maxy, double& maxz);
 
 		// Common modifiers
-		void subdivide(int levels); ///< Perform smooth subdivision on the mesh
+		void subdivide(int levels); ///< Perform flat subdivision on the mesh
+		void smoothSubdivide(int levels); ///< Perform smooth subdivision on the mesh
 
 		/// Sync will make sure all the topology, normals, etc are fixed..
 		void sync();
 
-		// OpenGL helpers
+		/// @deprecated see GLRenderer
 		void drawGL();
+
 
 
 		/**

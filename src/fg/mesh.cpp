@@ -90,9 +90,8 @@ namespace fg {
 		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*mpMesh);
 		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*mpMesh);
 
-		//vcg::face::IsManifold<MeshImpl>;
-		//vcg::face::IsBorder<MeshImpl>;
-
+		// vcg::face::IsManifold<MeshImpl>;
+		// vcg::face::IsBorder<MeshImpl>;
 		// vcg::face::IsManifold<MeshImpl::FaceType>(mMesh.face[0], 0);
 
 		for(int i=0;i<levels;i++)
@@ -101,8 +100,30 @@ namespace fg {
 		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*mpMesh);
 		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*mpMesh);
 
-		//vcg::tri::UpdateNormals<MeshImpl>::PerVertexNormalizedPerFace(mMesh);
-		//vcg::tri::UpdateNormals<MeshImpl>::PerFaceNormalized(mMesh);
+		sync();
+	}
+
+	void Mesh::smoothSubdivide(int levels){
+		if (levels <= 0) return;
+
+		// TODO
+
+		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*mpMesh);
+		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*mpMesh);
+
+		// vcg::face::IsManifold<MeshImpl>;
+		// vcg::face::IsBorder<MeshImpl>;
+		// vcg::face::IsManifold<MeshImpl::FaceType>(mMesh.face[0], 0);
+
+		for(int i=0;i<levels;i++){
+			vcg::Refine(*mpMesh,vcg::MidPointButterfly<MeshImpl>());
+			//vcg::Refine(*mpMesh,vcg::MidPoint<MeshImpl>(mpMesh));
+		}
+
+		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*mpMesh);
+		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*mpMesh);
+
+		sync();
 	}
 
 	void Mesh::drawGL(){
@@ -139,6 +160,9 @@ namespace fg {
 		return &mVertexProxyList;
 	}
 
+
+	// PRIMITIVES
+
 	boost::shared_ptr<Mesh> Mesh::Primitives::Icosahedron(){
 		Mesh* m = new Mesh();
 		vcg::tri::Icosahedron<MeshImpl>(*(m->mpMesh));
@@ -162,6 +186,71 @@ namespace fg {
 
 		return boost::shared_ptr<Mesh>(m);
 	}
+
+	// MESHBUILDER
+
+	// std::vector<Vec3> mVertices;
+	// std::vector<boost::tuple<int,int,int> > mTriangles;
+
+	Mesh::MeshBuilder::MeshBuilder():mVertices(),mTriangles(){}
+	Mesh::MeshBuilder::~MeshBuilder(){
+
+	}
+
+	void Mesh::MeshBuilder::addVertex(double x, double y, double z){
+		mVertices.push_back(Vec3(x,y,z));
+	}
+
+	void Mesh::MeshBuilder::addFace(int v1, int v2, int v3){
+		mTriangles.push_back(boost::make_tuple(v1,v2,v3));
+	}
+
+	boost::shared_ptr<Mesh> Mesh::MeshBuilder::createMesh(){
+		Mesh* m = new Mesh();
+
+		vcg::tri::Allocator<MeshImpl>::AddVertices(*m->_impl(),mVertices.size());
+		for(int i=0;i<mVertices.size();i++){
+			m->_impl()->vert[i].P() = mVertices[i];
+		}
+
+		vcg::tri::Allocator<MeshImpl>::AddFaces(*m->_impl(),mTriangles.size());
+		for(int i=0;i<mTriangles.size();i++){
+			FaceImpl* f = &m->_impl()->face[i];
+			f->V(0) = &m->_impl()->vert[mTriangles[i].get<0>()];
+			f->V(1) = &m->_impl()->vert[mTriangles[i].get<1>()];
+			f->V(2) = &m->_impl()->vert[mTriangles[i].get<2>()];
+		}
+
+		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*(m->_impl()));
+		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*(m->_impl()));
+		m->sync();
+		return boost::shared_ptr<Mesh>(m);
+	}
+
+	boost::shared_ptr<Mesh> Mesh::MeshBuilder::createMesh(const std::vector<Vec3>& verts, const std::vector<boost::tuple<int,int,int> >& faces)
+	{
+		Mesh* m = new Mesh();
+
+		vcg::tri::Allocator<MeshImpl>::AddVertices(*m->_impl(),verts.size());
+		for(int i=0;i<verts.size();i++){
+			m->_impl()->vert[i].P() = verts[i];
+		}
+
+		vcg::tri::Allocator<MeshImpl>::AddFaces(*m->_impl(),faces.size());
+		for(int i=0;i<faces.size();i++){
+			FaceImpl* f = &m->_impl()->face[i];
+			f->V(0) = &m->_impl()->vert[faces[i].get<0>()];
+			f->V(1) = &m->_impl()->vert[faces[i].get<1>()];
+			f->V(2) = &m->_impl()->vert[faces[i].get<2>()];
+		}
+
+		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*(m->_impl()));
+		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*(m->_impl()));
+		m->sync();
+		return boost::shared_ptr<Mesh>(m);
+	}
+
+
 }
 
 std::ostream& operator<<(std::ostream& o, const fg::Mesh& mesh){

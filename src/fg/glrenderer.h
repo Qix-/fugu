@@ -16,7 +16,7 @@ namespace fg {
 	 */
 	class GLRenderer {
 	public:
-		enum RenderMeshMode{RENDER_FLAT,RENDER_SMOOTH,RENDER_WIRE,RENDER_VERTICES};
+		enum RenderMeshMode{RENDER_FLAT=0,RENDER_SMOOTH,RENDER_WIRE,RENDER_VERTICES};
 
 		/**
 		 * Render a mesh.
