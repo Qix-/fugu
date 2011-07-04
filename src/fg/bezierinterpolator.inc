@@ -3,6 +3,9 @@ namespace fg {
 
 template<class T>
 BezierInterpolator<T>::BezierInterpolator (int degree, T* controlPoints)
+:Interpolator<T>()
+,mDer1ControlPoint(NULL)
+,mDer2ControlPoint(NULL)
 {
     if (degree < 2)
         exit(0);
@@ -58,7 +61,7 @@ BezierInterpolator<T>::~BezierInterpolator ()
 {
     deleteData();
 
-    Interpolator<T>::delete2dArray(mChoose);
+    Interpolator<double>::delete2dArray(mChoose);
 }
 
 template<class T>
@@ -85,16 +88,16 @@ T BezierInterpolator<T>::getPosition (double t) const
 {
     double oneMinusT = (double)1 - t;
     double powT = t;
-    T result = oneMinusT*Interpolator<T>::mControlPoints[0];
+    T result = Interpolator<T>::mControlPoints[0]*oneMinusT;
 
     for (int i = 1; i < mDegree; ++i)
     {
         double coeff = mChoose[mDegree][i]*powT;
-        result = (result+coeff*Interpolator<T>::mControlPoints[i])*oneMinusT;
+        result = (result+Interpolator<T>::mControlPoints[i]*coeff)*oneMinusT;
         powT *= t;
     }
 
-    result += powT*Interpolator<T>::mControlPoints[mDegree];
+    result += Interpolator<T>::mControlPoints[mDegree]*powT;
 
     return result;
 }
@@ -104,17 +107,17 @@ T BezierInterpolator<T>::getDerivative (double t) const
 {
     double oneMinusT = (double)1 - t;
     double powT = t;
-    T result = oneMinusT*mDer1ControlPoint[0];
+    T result = mDer1ControlPoint[0]*oneMinusT;
 
     int degreeM1 = mDegree - 1;
     for (int i = 1; i < degreeM1; ++i)
     {
         double coeff = mChoose[degreeM1][i]*powT;
-        result = (result+coeff*mDer1ControlPoint[i])*oneMinusT;
+        result = (result+mDer1ControlPoint[i]*coeff)*oneMinusT;
         powT *= t;
     }
 
-    result += powT*mDer1ControlPoint[degreeM1];
+    result += mDer1ControlPoint[degreeM1]*powT;
     result *= double(mDegree);
 
     return result;
@@ -125,17 +128,17 @@ T BezierInterpolator<T>::getSecondDerivative (double t) const
 {
     double oneMinusT = (double)1 - t;
     double powT = t;
-    T result = oneMinusT*mDer2ControlPoint[0];
+    T result = mDer2ControlPoint[0]*oneMinusT;
 
     int degreeM2 = mDegree - 2;
     for (int i = 1; i < degreeM2; ++i)
     {
         double coeff = mChoose[degreeM2][i]*powT;
-        result = (result+coeff*mDer2ControlPoint[i])*oneMinusT;
+        result = (result+mDer2ControlPoint[i]*coeff)*oneMinusT;
         powT *= t;
     }
 
-    result += powT*mDer2ControlPoint[degreeM2];
+    result += mDer2ControlPoint[degreeM2]*powT;
     result *= double(mDegree*(mDegree-1));
 
     return result;

@@ -9,7 +9,8 @@ set(SRC
 	meshoperators.cpp
 	meshoperators_vcg.cpp
 	proxy.cpp
-	vertex.cpp)
+	vertex.cpp
+	glrenderer.cpp)
 
 FILE(GLOB HEADERS "*.h")
 FILE(GLOB HEADER_INC "*.inc")
