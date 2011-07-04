@@ -9,6 +9,8 @@
 }*/
 
 namespace fg{
+	Vec3::Vec3():vcg::Point3d(){}
+
 	Vec3::Vec3(double x, double y, double z)
 	:vcg::Point3d(x,y,z)
 	{}

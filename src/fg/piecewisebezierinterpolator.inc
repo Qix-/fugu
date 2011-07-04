@@ -3,11 +3,20 @@ namespace fg {
 
 template<class T>
 PiecewiseBezierInterpolator<T>::PiecewiseBezierInterpolator(int numControlPoints, const T *controlPoints, const T *gradients )
+:Interpolator<T>()
+,mSegInterpolators(NULL)
+,mGradients(NULL)
 {
-	mSegInterpolators = NULL;
-	mGradients = NULL;
-
 	setControlPoints(numControlPoints, controlPoints, gradients);
+}
+
+template<class T>
+PiecewiseBezierInterpolator<T>::PiecewiseBezierInterpolator(int numControlPoints, const T *controlPoints)
+:Interpolator<T>()
+,mSegInterpolators(NULL)
+,mGradients(NULL)
+{
+	setControlPoints(numControlPoints, controlPoints);
 }
 
 template<class T>
@@ -121,7 +130,7 @@ template < class T >
 int PiecewiseBezierInterpolator < T >::getSegment(double t) const
 {
     int ti = (int) t;
-	ti = utils::clamp(ti, 0, getNumSegments() - 1);
+	ti = Interpolator<T>::clamp(ti, 0, getNumSegments() - 1);
     return ti;
 }
 

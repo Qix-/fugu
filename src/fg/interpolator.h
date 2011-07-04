@@ -69,7 +69,7 @@ protected:
     T * mControlPoints;
     int mNumControlPoints;
 
-private:
+public:
 	static double clamp(double num, double min, double range);
 	static int clamp(int num, int min, int range);
 	
@@ -80,8 +80,8 @@ private:
 	static double rootLinear(double m, double c);
 	static int roots(double a, double b, double c, double *r1, double *r2);
 	
-static T** allocate2dArray (const int bound0, const int bound1);
-static void delete2dArray (T **data);
+	static T** allocate2dArray (const int bound0, const int bound1);
+	static void delete2dArray (T **data);
 };
 }
 }

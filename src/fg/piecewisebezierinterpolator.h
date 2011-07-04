@@ -12,6 +12,7 @@ namespace fg {
  */
 template < class T > class PiecewiseBezierInterpolator : public Interpolator<T> {
 public:
+
     /**
 	 * \brief Constructs a peicewise Bezier interpolator.
 	 *
@@ -21,6 +22,13 @@ public:
 	 *
 	 */
     PiecewiseBezierInterpolator(int numControlPoints, const T *controlPoints, const T *gradients);
+
+    /**
+     * \brief Constructs a piecewise Bezier interpolator with inferred gradient
+     * @param numControlPoints
+     * @param controlPoints
+     */
+    PiecewiseBezierInterpolator(int numControlPoints, const T *controlPoints);
 
     ~PiecewiseBezierInterpolator();
 

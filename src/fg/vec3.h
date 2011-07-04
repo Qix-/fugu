@@ -17,15 +17,16 @@ namespace fg {
 				Z() = p.Z();
 			}
 
+			Vec3();
 			Vec3(double x, double y, double z);
 
 		// interface for lua bindings
 		public:
-			double getX(){return X();}
+			double getX() const {return X();}
 			void setX(double x){X() = x;}
-			double getY(){return Y();}
+			double getY() const {return Y();}
 			void setY(double y){Y() = y;}
-			double getZ(){return Z();}
+			double getZ() const {return Z();}
 			void setZ(double z){Z() = z;}
 
 			void normalise();

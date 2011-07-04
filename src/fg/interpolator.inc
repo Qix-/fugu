@@ -3,9 +3,8 @@ namespace spline {
 
 template<class T>
 Interpolator<T>::Interpolator( )
-{
-    mControlPoints = NULL;
-}
+:mControlPoints(NULL)
+{}
 
 template<class T>
 Interpolator<T>::~Interpolator( )
