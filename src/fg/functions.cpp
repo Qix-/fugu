@@ -18,4 +18,12 @@ namespace fg {
 	double random(double low, double high){
 		return fg::random()*(high-low) + low;
 	}
+
+	bool approx(double a, double b, double epsilon){
+		return (std::abs(a-b) < epsilon);
+	}
+
+	bool approx(const Vec3& a, const Vec3& b, double epsilon){
+		return approx(a.getX(),b.getX(),epsilon) && approx(a.getY(),b.getY(),epsilon) && approx(a.getZ(),b.getZ(),epsilon);
+	}
 }
