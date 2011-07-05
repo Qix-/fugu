@@ -52,10 +52,11 @@ int test_main(int argc, char* argv[]){
 	BOOST_CHECK(approx(v,v));
 	BOOST_CHECK(approx(v,id*v));
 
-	std::cout << "v:" << v << "\n";
-	std::cout << "twoId:\n" << twoId << "\n";
-	std::cout << "twoId*v:\n" << twoId*v << "\n";
-	BOOST_CHECK(!approx(v,twoId*v));
+	twoId.get(3,3) = 1; // w coord should be 1
+	fg::Vec3 twoIdTimesV = twoId*v;
+	BOOST_CHECK(!approx(v,twoIdTimesV));
+
+
 
 	return 0;
 }

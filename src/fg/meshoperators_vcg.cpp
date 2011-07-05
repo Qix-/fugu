@@ -75,7 +75,7 @@ namespace fg {
 
 			if (foundNextItem==false) {
 				// the
-				error("Didn't find the next vertex in the edge loop");
+				throw("Didn't find the next vertex in the edge loop");
 				break;
 			}
 		}
@@ -86,7 +86,7 @@ namespace fg {
 		ring.clear();
 
 		if (!isEdgeLoop(edgeLoop)){
-			error("Edge loop is either not connected or not closed.");
+			throw("Edge loop is either not connected or not closed.");
 		}
 
 		// Duplicate vertices of edge ring
@@ -163,7 +163,7 @@ namespace fg {
 				// An error has occurred
 				// The edge ring is not connected properly
 				// TODO: Throw an informative error message
-				error("edge loop probably not fully connected or closed");
+				throw("edge loop probably not fully connected or closed");
 			}
 
 			// 2. Next, iterate from this face, until we find the endFace
@@ -190,7 +190,7 @@ namespace fg {
 				cycle++;
 			} while (cycle < 100); // shouldnt have more than 100 neighbour faces!
 			if (cycle==100){
-				error("Either your verts have a really high degree, or the algorithm might be caught in an infinite loop around a vertex! Check your edge-ring or topology correctness.");
+				throw("Either your verts have a really high degree, or the algorithm might be caught in an infinite loop around a vertex! Check your edge-ring or topology correctness.");
 			}
 		}
 

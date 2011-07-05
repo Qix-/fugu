@@ -14,6 +14,12 @@ namespace fg {
 		return ElementAt(r,c);
 	}
 
+	/*
+	Vec3 Mat4::operator*(const Vec3& v) const {
+		return Vec3(*this * (vcg::Point3<double>)(v));
+	}
+	*/
+
 	// Static
 	Mat4 Mat4::Identity(){return vcg::Matrix44<double>::Identity();}
 	Mat4 Mat4::Zero(){Mat4 m; m.SetZero(); return m;}

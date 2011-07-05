@@ -43,9 +43,37 @@ namespace fg {
 		vcg::face::Normal3d,
 		vcg::face::Color4b,
 		vcg::face::BitFlags,
-		vcg::face::Normal3d,
+		//vcg::face::Normal3d,
 		vcg::face::InfoOcf> {};
 	class MeshImpl: public vcg::tri::TriMesh< std::vector< VertexImpl>, std::vector< FaceImpl > > {};
+
+	// Implementations of meh that use float (used for importing/exporting/...)
+	class _FloatVertexImpl;
+	class _FloatFaceImpl;
+	struct _FloatMyUsedTypes : public vcg::UsedTypes<
+		vcg::Use<_FloatVertexImpl>::AsVertexType,
+		vcg::Use<_FloatFaceImpl>::AsFaceType>{};
+	class _FloatVertexImpl: public vcg::Vertex<
+			_FloatMyUsedTypes,
+			vcg::vertex::Coord3f,
+			vcg::vertex::Normal3f,
+			vcg::vertex::BitFlags,
+			vcg::vertex::VFAdj,
+			vcg::vertex::InfoOcf,
+			vcg::vertex::Mark> {};
+	class _FloatFaceImpl: public vcg::Face<
+		_FloatMyUsedTypes,
+		vcg::face::FFAdj,
+		vcg::face::VFAdj,
+		vcg::face::Mark,
+		vcg::face::VertexRef,
+		vcg::face::Color4b,
+		vcg::face::BitFlags,
+		vcg::face::Normal3d,
+		vcg::face::InfoOcf> {};
+	class _FloatMeshImpl: public vcg::tri::TriMesh< std::vector< _FloatVertexImpl>, std::vector< _FloatFaceImpl > > {};
+
+	void _copyFloatMeshIntoMesh(_FloatMeshImpl& fm, MeshImpl& m);
 }
 
 #endif

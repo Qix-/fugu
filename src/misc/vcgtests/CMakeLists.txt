@@ -9,18 +9,11 @@ target_link_libraries(splatter ${ALL_LIBS})
 add_executable(splatandraise splatandraise.cpp)
 target_link_libraries(splatandraise ${ALL_LIBS})
 
-# add_executable(walker walker.cpp)
-# target_link_libraries(walker ${ALL_LIBS})
-
 add_executable(extrude extrude.cpp)
 target_link_libraries(extrude ${ALL_LIBS})
 
 add_executable(extrude_new extrude_new.cpp)
 target_link_libraries(extrude_new ${ALL_LIBS})
-
-add_executable(extrude_continuous extrude_continuous.cpp)
-target_link_libraries(extrude_continuous ${ALL_LIBS})
-
 
 add_executable(nringtest nringtest.cpp)
 target_link_libraries(nringtest ${ALL_LIBS})
