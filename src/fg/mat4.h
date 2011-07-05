@@ -21,6 +21,8 @@ namespace fg {
 
 		///brief Access a const matrix element (row,col)
 		double get(int r, int c) const;
+
+		//Vec3 operator*(const Vec3& v) const;
 	public:
 		static Mat4 Identity();
 		static Mat4 Zero();

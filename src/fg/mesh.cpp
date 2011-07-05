@@ -27,6 +27,9 @@
 #include <vcg/simplex/vertex/component_ocf.h>
 #include <vcg/simplex/face/component_ocf.h>
 
+#include <wrap/io_trimesh/import.h>
+
+
 #include <boost/foreach.hpp>
 
 using namespace vcg;
@@ -250,7 +253,21 @@ namespace fg {
 		return boost::shared_ptr<Mesh>(m);
 	}
 
+	boost::shared_ptr<Mesh> Mesh::Load(std::string path){
+		return Load(boost::filesystem::path(path));
+	}
 
+	boost::shared_ptr<Mesh> Mesh::Load(boost::filesystem::path file){
+		_FloatMeshImpl fm;
+		std::string filepath = file.string();
+		vcg::tri::io::Importer<_FloatMeshImpl>::Open(fm,filepath.c_str());
+
+		// copy
+		Mesh* m = new Mesh();
+		_copyFloatMeshIntoMesh(fm,*m->_impl());
+		m->sync();
+		return boost::shared_ptr<Mesh>(m);
+	}
 }
 
 std::ostream& operator<<(std::ostream& o, const fg::Mesh& mesh){

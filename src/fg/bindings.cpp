@@ -89,6 +89,7 @@ namespace fg {
 		   .def("selectRandomVertex", &Mesh::selectRandomVertex)
 
 		   .def("subdivide", &Mesh::subdivide)
+		   .def("smoothSubdivide", &Mesh::smoothSubdivide)
 		   .def("sync", &Mesh::sync)
 
 		   .scope [
@@ -99,6 +100,9 @@ namespace fg {
 			   ]
 		   ]
 
+		   .scope [
+		        def("load", (boost::shared_ptr<Mesh>(*)(std::string)) &Mesh::Load)
+		   ]
 		];
 
 		// fg/meshoperators.h

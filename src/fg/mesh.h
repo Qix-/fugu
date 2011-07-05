@@ -20,6 +20,8 @@
 // BOOST
 #include <boost/shared_ptr.hpp>
 #include <boost/tuple/tuple.hpp>
+#define BOOST_FILESYSTEM_VERSION 3
+#include <boost/filesystem.hpp>
 
 // for opengl
 #include "GL/glew.h"
@@ -71,6 +73,9 @@ namespace fg {
 			std::vector<boost::tuple<int,int,int> > mTriangles;
 		};
 
+		static boost::shared_ptr<Mesh> Load(std::string path);
+		static boost::shared_ptr<Mesh> Load(boost::filesystem::path file);
+
 		~Mesh();
 
 		// Accessors
@@ -98,8 +103,6 @@ namespace fg {
 
 		/// @deprecated see GLRenderer
 		void drawGL();
-
-
 
 		/**
 		 * Low-level implementation access.

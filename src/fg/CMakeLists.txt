@@ -12,7 +12,8 @@ set(SRC
 	vertex.cpp
 	glrenderer.cpp
 	node.cpp
-	mat4.cpp)
+	mat4.cpp
+	plylib.cpp)
 
 FILE(GLOB HEADERS "*.h")
 FILE(GLOB HEADER_INC "*.inc")
