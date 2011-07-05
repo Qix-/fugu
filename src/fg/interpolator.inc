@@ -73,10 +73,11 @@ T* Interpolator<T>::getApprox( int &n ) const
         n = getNumControlPoints() * 5;
 
     T *data = new T[n+1];
-    double t = 0.f;
+    double t;
     double min, max;
     getDomain(min, max);
-    double inc = max / (double) (n);
+	t = min;
+    double inc = (max - min) / (double) (n);
 
     for (int i = 0; i <= n; ++i) {
         data[i] = getPosition( t );
@@ -87,7 +88,7 @@ T* Interpolator<T>::getApprox( int &n ) const
 }
 
 template< class T >
-void Interpolator<T>::get( double t, T *pos, T *der1, T *der2)
+void Interpolator<T>::get( double t, T *pos, T *der1, T *der2) const
 {
     if (pos)
     {
@@ -142,73 +143,6 @@ bool Interpolator<T>::AlmostEqual2sComplement(double A, double B, int maxUlps)
     return false;
 }
 
-template< class T >
-double Interpolator<T>::determinant(double a, double b, double c)
-{
-    return (b * b) - (4 * a * c);
-}
-
-/**
- * Assumes a != 0.
- */
-template< class T >
-int Interpolator<T>::rootsQuad(double a, double b, double det, double *r1, double *r2)
-{
-    if (AlmostEqual2sComplement(det, 0.f)) {
-        *r1 = (-b / (2.f * a));
-        *r2 = *r1;
-        return 1;
-    }
-
-    if (det < 0.f) {
-        return 0;
-    }
-
-    if (a >= 0.f) {
-        *r1 = (-b - sqrt(det)) / (2.f * a);
-        *r2 = (-b + sqrt(det)) / (2.f * a);
-    } else {
-        *r1 = (-b + sqrt(det)) / (2.f * a);
-        *r2 = (-b - sqrt(det)) / (2.f * a);
-    }
-
-//      cout << "r1 = " << *r1 << ", r2 = " << *r2 << endl;
-    return 2;
-}
-
-/**
- * Assumes m != 0.
- */
-template< class T >
-double Interpolator<T>::rootLinear(double m, double c)
-{
-    return -c / m;
-}
-
-template< class T >
-int Interpolator<T>::roots(double a, double b, double c, double *r1, double *r2)
-{
-    // Not a quadratic
-    if (AlmostEqual2sComplement(a, 0.f, 1000000000)) {
-        // if it not linear
-        if (AlmostEqual2sComplement(b, 0.f, 1000000000)) {
-            // zero every where
-            if (AlmostEqual2sComplement(c, 0.f, 1000000000)) {
-                return -1;
-            } else {		// Zero nowhere
-                return 0;
-            }
-        } else {		// Solve the linear eq
-            *r1 = rootLinear(b, c);
-            *r2 = *r1;
-            return 1;
-        }
-    } else {			// Solve the quadratic
-        double det = determinant(a, b, c);
-        return rootsQuad(a, b, det, r1, r2);
-    }
-}
-
 template <typename T>
 T** Interpolator<T>::allocate2dArray (const int bound0, const int bound1)
 {
@@ -240,5 +174,177 @@ void Interpolator<T>::delete2dArray (T **data)
     }
 }
 
+//void Interpolator<Vec3>::getFrenetFrame(double t, Vec3 *T, Vec3 *N, Vec3 *B) const
+//{
+//    Vec3 vel = getDerivative( t );
+//    Vec3 tangent = vel;
+//	tangent.normalise();
+//
+//    if (T){
+//		*T = tangent;
+//		if(!(N && B))
+//			return;
+//	}
+//    
+//    Vec3 acc = getSecondDerivative( t );
+//
+//    float vDotV = vel.dot( vel );
+//    float vDotA = vel.dot( acc );
+//    Vec3 norm = acc * vDotV - vel * vDotA;
+//    norm.normalise();
+//
+//	if (N)
+//	{
+//		*N = norm;
+//	}
+//
+//    if (B)
+//	{
+//      *B = norm^tangent;
+//	}
+//}
+//
+//Vec3 Interpolator<Vec3>::getTangent(double t) const
+//{
+//	Vec3 T;
+//    get(t, &T, 0, 0);
+//	return T;
+//}
+//
+//Vec3 Interpolator<Vec3>::getNormal(double t) const
+//{
+//	Vec3 N;
+//    get(t, 0, &N, 0);
+//	return N;
+//}
+//
+//Vec3 Interpolator<Vec3>::getBinormal(double t) const
+//{
+//	Vec3 B;
+//    get(t, 0, 0, &B);
+//	return B;
+//}
+//
+//const Vec3 *Interpolator<Vec3>::getControlPoints() const
+//{
+//    return mControlPoints;
+//}
+//
+//int Interpolator < Vec3 >::getNumControlPoints() const
+//{
+//    return mNumControlPoints;
+//}
+//
+//void Interpolator < Vec3 >::setControlPoints(int numControlPoints, const Vec3 *newControlPoints)
+//{
+//    if (numControlPoints < 1)
+//        return;
+//
+//    deleteData();
+//    mControlPoints = new Vec3[numControlPoints];
+//
+//    for (int i = 0; i < numControlPoints; ++i)
+//    {
+//        mControlPoints[i] = newControlPoints[i];
+//    }
+//    mNumControlPoints = numControlPoints;
+//}
+//
+//const Vec3 & Interpolator<Vec3>::getControlPoint( int i ) const
+//{
+//    Interpolator<float>::clamp( i, 0, getNumControlPoints() );
+//
+//    return mControlPoints[i];
+//}
+//
+//void Interpolator<Vec3>::setControlPoint(int index, const Vec3 &cp)
+//{
+//    if( index < 0 || index >= getNumControlPoints())
+//        return;
+//
+//    mControlPoints[index] = cp;
+//}
+//
+//void Interpolator<Vec3>::deleteData( )
+//{
+//    if(mControlPoints)
+//        delete[] mControlPoints;
+//
+//    mNumControlPoints = 0;
+//    mControlPoints = NULL;
+//}
+//
+//Vec3* Interpolator<Vec3>::getApprox( int &n ) const
+//{
+//    if (n < 1)
+//        n = getNumControlPoints() * 5;
+//
+//    Vec3 *data = new Vec3[n+1];
+//    double t = 0.f;
+//    double min, max;
+//    getDomain(min, max);
+//    double inc = max / (double) (n);
+//
+//    for (int i = 0; i <= n; ++i) {
+//        data[i] = getPosition( t );
+//        t += inc;
+//    }
+//
+//    return data;
+//}
+//
+//void Interpolator<Vec3>::get( double t, Vec3 *pos, Vec3 *der1, Vec3 *der2) const
+//{
+//    if (pos)
+//    {
+//        *pos = getPosition(t);
+//    }
+//    if (der1)
+//    {
+//        *der1 = getDerivative(t);
+//    }
+//    if (der2)
+//    {
+//        *der2 = getSecondDerivative(t);
+//    }
+//}
+//
+//double Interpolator<Vec3>::clamp(double num, double min, double range)
+//{
+//    num = AlmostEqual2sComplement(num, min)
+//          || num < min ? min : num;
+//    num = AlmostEqual2sComplement(num, min + range)
+//          || num > min + range ? min + range : num;
+//    return num;
+//}
+//
+//int Interpolator<Vec3>::clamp(int num, int min, int range)
+//{
+//    num = num < min ? min : num;
+//    num = num > min + range ? min + range : num;
+//    return num;
+//}
+//
+//bool Interpolator<Vec3>::AlmostEqual2sComplement(double A, double B, int maxUlps)
+//{
+//    // Make sure maxUlps is non-negative and small enough that the
+//    // default NAN won't compare as equal to anything.
+//    if (maxUlps < 0 && maxUlps > 4 * 1024 * 1024)
+//        maxUlps = 1;
+//    int aInt = *(int *) &A;
+//    // Make aInt lexicographically ordered as a twos-complement int
+//    if (aInt < 0)
+//        aInt = 0x80000000 - aInt;
+//    // Make bInt lexicographically ordered as a twos-complement int
+//    int bInt = *(int *) &B;
+//    if (bInt < 0)
+//        bInt = 0x80000000 - bInt;
+//    int intDiff = abs(aInt - bInt);
+//    if (intDiff <= maxUlps)
+//        return true;
+//    return false;
+//}
+
 }
+
 }

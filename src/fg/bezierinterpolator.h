@@ -16,6 +16,7 @@ public:
     virtual ~BezierInterpolator ();
 
     virtual int getDegree () const;
+	virtual int getNumSegments () const;
 
     virtual void setControlPoints (int degree, T* controlPoints);
 

@@ -20,6 +20,10 @@ namespace fg{
 		*this /= n;
 	}
 
+//	double Vec3::dot(const Vec3 &otherV) const{
+//		return
+//	}
+
 	Vec3 Vec3::operator+(const Vec3& b) const{
 		return Vec3(this->X()+b.X(),this->Y()+b.Y(),this->Z()+b.Z());
 	}

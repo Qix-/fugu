@@ -66,10 +66,14 @@ public:
 	 * Get the number of cubic Bezier segments.
 	 */
 	virtual int getNumSegments() const;
+	/**
+	 * Gets the control points that define the segment/
+	 */
+	virtual const T * getSegmentControlPoints(int seg) const;
 
+    virtual int getSegment(double t) const;
 protected:
     virtual void deleteData();
-    virtual int getSegment(double t) const;
 
     BezierInterpolator<T> **mSegInterpolators;
 	T *mGradients;
