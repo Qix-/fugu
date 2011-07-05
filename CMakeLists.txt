@@ -4,6 +4,8 @@ project(FG)
 set(BASE_DIR ${FG_SOURCE_DIR}) 
 set(CMAKE_INSTALL_PREFIX ${FG_SOURCE_DIR}/bin)
 
+ENABLE_TESTING()
+
 if(WIN32)
 	#set(CMAKE_CXX_FLAGS "-D LUABIND_DYNAMIC_LINK")
 	#MAYBE NEED THIS FOR VCG/GL stuff?!
@@ -68,4 +70,5 @@ add_subdirectory(src/fgv)
 add_subdirectory(src/misc/basics)
 add_subdirectory(src/misc/vcgtests)
 add_subdirectory(src/misc/luabind)
+add_subdirectory(src/tests)
   
