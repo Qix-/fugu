@@ -4,12 +4,19 @@
 namespace fg {
 	Mat4::Mat4():vcg::Matrix44<double>(){}
 
-	Mat4::Mat4(const vcg::Matrix44<double>& m){
-		*this = (Mat4)(m);
+	Mat4::Mat4(const vcg::Matrix44<double>& m):vcg::Matrix44<double>(m){}
+
+	double& Mat4::get(int r, int c){
+		return ElementAt(r,c);
+	}
+
+	double Mat4::get(int r, int c) const {
+		return ElementAt(r,c);
 	}
 
 	// Static
 	Mat4 Mat4::Identity(){return vcg::Matrix44<double>::Identity();}
+	Mat4 Mat4::Zero(){Mat4 m; m.SetZero(); return m;}
 }
 
 std::ostream& operator<<(std::ostream& o, const fg::Mat4& m){

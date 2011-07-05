@@ -16,9 +16,14 @@ namespace fg {
 		Mat4();
 		Mat4(const vcg::Matrix44<double>& m);
 
+		///brief Access a matrix element (row,col)
+		double& get(int r, int c);
 
+		///brief Access a const matrix element (row,col)
+		double get(int r, int c) const;
 	public:
 		static Mat4 Identity();
+		static Mat4 Zero();
 	};
 };
 
