@@ -4,6 +4,7 @@
 #include "GL/glew.h"
 
 #include "fg/interpolator.h"
+#include "fg/carriercurve.h"
 #include "fg/meshimpl.h"
 #include <wrap/gl/trimesh.h>
 
@@ -21,6 +22,23 @@ namespace fg {
 			case RENDER_VERTICES: tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
 			default: {}
 		}
+	}
+
+    void GLRenderer::renderCarrier(const spline::CarrierCurve &c, int n, double time){
+		renderInterpolator(c.getInterpolator(), n);
+
+        // Draw a tangent
+		time = time * 0.2;
+		if (time > 3.f) time = 3.f;
+		Vec3 pos = c.getInterpolator().getPosition(time);
+		Vec3 U;
+
+		U = pos + c.orient(time,1.,0.);
+
+		glBegin(GL_LINES);
+		glVertex3d(pos.getX(),pos.getY(),pos.getZ());
+		glVertex3d(U.getX(),U.getY(),U.getZ());
+		glEnd();
 	}
 
 	void GLRenderer::renderInterpolator(const spline::Interpolator<Vec3>& s, int n){

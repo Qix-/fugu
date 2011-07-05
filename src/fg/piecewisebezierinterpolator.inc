@@ -28,7 +28,7 @@ void PiecewiseBezierInterpolator<T>::setControlPoints(int numControlPoints, cons
     gradients[numControlPoints - 1] = (controlPoints[numControlPoints - 1] - controlPoints[numControlPoints - 2]) * .5f;
 	for(int i = 1; i < numControlPoints - 1; ++i)
 		{
-			gradients[i] = (controlPoints[i + 1] - controlPoints[i-1]) * 0.5f;
+			gradients[i] = (controlPoints[i + 1] - controlPoints[i-1]) * 0.5f + Vec3(1., 1., 1.);
 		}
 	setControlPoints(numControlPoints, controlPoints, gradients);
 }
@@ -51,7 +51,7 @@ void PiecewiseBezierInterpolator<T>::setControlPoints(int numControlPoints, cons
     {
 		cp[0] = controlPoints[i];
 		cp[1] = controlPoints[i] + gradients[i];
-		cp[2] = controlPoints[i + 1] - gradients[i];
+		cp[2] = controlPoints[i + 1] - gradients[i+1];
 		cp[3] = controlPoints[i + 1];
         mSegInterpolators[i] = new BezierInterpolator<T>(3, cp);
     }
@@ -77,7 +77,7 @@ template < class T >
 void PiecewiseBezierInterpolator < T >::getDomain(double &min, double &max) const
 {
 	min = 0.f;
-	max = (double) (getNumSegments() - 1);
+	max = (double) getNumSegments();
 }
 
 template< class T >
@@ -104,7 +104,7 @@ void PiecewiseBezierInterpolator<T>::deleteData( )
 template< class T >
 int PiecewiseBezierInterpolator<T>::getNumSegments() const 
 {
-	Interpolator<T>::getNumControlPoints() - 1;
+	return Interpolator<T>::getNumControlPoints() - 1;
 }
 
 template<class T>
@@ -117,13 +117,15 @@ T PiecewiseBezierInterpolator<T>::getPosition (double t) const
 template<class T>
 T PiecewiseBezierInterpolator<T>::getDerivative (double t) const
 {
-    return Interpolator<T>::getControlPoint( 0 );
+	int seg = getSegment(t);
+    return mSegInterpolators[seg]->getDerivative( t - (double) seg );
 }
 
 template<class T>
 T PiecewiseBezierInterpolator<T>::getSecondDerivative (double t) const
 {
-    return Interpolator<T>::getControlPoint( 0 );
+	int seg = getSegment(t);
+    return mSegInterpolators[seg]->getSecondDerivative( t - (double) seg );
 }
 
 template < class T >
@@ -132,6 +134,13 @@ int PiecewiseBezierInterpolator < T >::getSegment(double t) const
     int ti = (int) t;
 	ti = Interpolator<T>::clamp(ti, 0, getNumSegments() - 1);
     return ti;
+}
+
+template <class T>
+const T* PiecewiseBezierInterpolator<T>::getSegmentControlPoints(int seg) const
+{
+	seg = Interpolator<T>::clamp(seg, 0, getNumSegments() - 1);
+	return mSegInterpolators[seg]->getControlPoints();
 }
 
 	}

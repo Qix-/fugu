@@ -144,4 +144,9 @@ T BezierInterpolator<T>::getSecondDerivative (double t) const
     return result;
 }
 
+template<class T>
+int BezierInterpolator<T>::getNumSegments () const
+{
+	return 1;
+}
 	}}

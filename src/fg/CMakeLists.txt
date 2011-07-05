@@ -11,6 +11,10 @@ set(SRC
 	proxy.cpp
 	vertex.cpp
 	glrenderer.cpp
+	carriercurve.cpp
+	carriercurvepiecewisebezier.cpp
+	crosssectioncircular.cpp
+	generalisedcylinder.cpp
 	node.cpp
 	mat4.cpp
 	plylib.cpp)

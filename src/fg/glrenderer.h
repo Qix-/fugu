@@ -3,7 +3,7 @@
 
 #include "fg/vec3.h"
 #include "fg/mesh.h"
-// #include "fg/interpolator.h"
+#include "fg/carriercurve.h"
 
 namespace fg {
 	// Forward decl
@@ -30,6 +30,7 @@ namespace fg {
 		 * @param n the number of segments
 		 */
 		static void renderInterpolator(const spline::Interpolator<Vec3>& s, int n);
+        static void renderCarrier(const spline::CarrierCurve &c, int n, double time);
 	};
 }
 

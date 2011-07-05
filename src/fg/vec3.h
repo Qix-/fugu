@@ -34,6 +34,8 @@ namespace fg {
 			Vec3 operator+(const Vec3& b) const;
 			Vec3 operator-(const Vec3& b) const;
 			Vec3 operator*(double d) const;
+
+//			double dot(const Vec3 &otherV) const;
 	};
 }
 
