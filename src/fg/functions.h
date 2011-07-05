@@ -6,13 +6,16 @@
  */
 
 #include <cfloat>
+#include <cmath>
 
 #include "fg/vec3.h"
 #include "fg/mat4.h"
 
 namespace fg {
-        
+
+	// common constants
     const double EPSILON = DBL_EPSILON; // A small double..
+	const double LOG05 = -0.693147180559945;
 
 	template <class T> 
     T min(const T& a, const T& b);
@@ -36,7 +39,7 @@ namespace fg {
 	Real smoothstep(Real a, Real b, Real x);
     
 	template <class Real>
-	Real spline(Real x, int knots, Real * knot);
+	Real catmullSpline(Real x, int knots, Real * knot);
     
 	template <class Real>
 	Real bias(Real b, Real x);
@@ -54,7 +57,45 @@ namespace fg {
 	Real gammaCorrect(Real gamma, Real x);
 
 
-    /**
+	template <typename Real>
+	Real invSqrt (Real fValue) { return 1.0/std::sqrt(fValue); }
+
+	template <typename Real>
+	inline Real sqr (Real fValue) { return fValue * fValue; }
+
+	template <typename Real>
+	Real sign (Real fValue);
+
+	// Fast, approximate routines
+	// The input must be in [0,pi/2]
+	template <typename Real>  Real fastSin0 (Real fAngle);
+	template <typename Real>  Real fastSin1 (Real fAngle);
+
+	// The input must be in [0,pi/2]
+	template <typename Real>  Real fastCos0 (Real fAngle);
+	template <typename Real>  Real fastCos1 (Real fAngle);
+
+	// The input must be in [0,pi/4].
+	template <typename Real>  Real fastTan0 (Real fAngle);
+	template <typename Real>  Real fastTan1 (Real fAngle);
+
+	// The input must be in [0,1].
+	template <typename Real>  Real fastInvSin0 (Real fValue);
+	template <typename Real>  Real fastInvSin1 (Real fValue);
+
+	// The input must be in [0,1].
+	template <typename Real>  Real fastInvCos0 (Real fValue);
+	template <typename Real>  Real fastInvCos1 (Real fValue);
+
+	// The input must be in [-1,1].
+	// max error invtan0 = 1.2e-05, speed up = 2.8
+	// max error invtan1 = 2.3e-08, speed up = 1.8
+	template <typename Real>  Real fastInvTan0 (Real fValue);
+	template <typename Real>  Real fastInvTan1 (Real fValue);
+
+	template <typename Real>  Real fastInvSqrt (Real fValue);
+
+    /*
      * noise functions currently use vcg's Perlin noise function
      */
 	double noise(double x);
