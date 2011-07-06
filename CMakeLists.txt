@@ -67,13 +67,11 @@ include_directories(${BASE_DIR}/src)
 
 add_subdirectory(src/fg)
 add_subdirectory(src/fgv)
-add_subdirectory(src/misc/basics)
-add_subdirectory(src/misc/james)
-
-add_subdirectory(src/tests)
-
+#add_subdirectory(src/misc/basics)
+#add_subdirectory(src/misc/james)
+#add_subdirectory(src/tests)
 if(WIN32) # ben's test code
-	add_subdirectory(src/misc/ben)
+# add_subdirectory(src/misc/ben)
 # add_subdirectory(src/misc/vcgtests)
 endif(WIN32)
 

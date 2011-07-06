@@ -20,6 +20,14 @@ namespace fg {
 	}
 	*/
 
+	void Mat4::setTranslate(double x, double y, double z){
+		vcg::Matrix44<double>::SetTranslate(x,y,z);
+	}
+
+	void Mat4::setRotateRad(double radians, double x, double y, double z){
+		vcg::Matrix44<double>::SetRotateRad(radians,vcg::Point3<double>(x,y,z));
+	}
+
 	// Static
 	Mat4 Mat4::Identity(){return vcg::Matrix44<double>::Identity();}
 	Mat4 Mat4::Zero(){Mat4 m; m.SetZero(); return m;}
