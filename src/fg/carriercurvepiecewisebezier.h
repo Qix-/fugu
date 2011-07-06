@@ -1,32 +1,43 @@
-#ifndef FG_SPLINE_CARRIER_CURVE_PIECEWISE_BEZIER_H
-#define FG_SPLINE_CARRIER_CURVE_PIECEWISE_BEZIER_H
+#ifndef FG_GC_CARRIER_CURVE_PIECEWISE_BEZIER_H
+#define FG_GC_CARRIER_CURVE_PIECEWISE_BEZIER_H
 
 #include "fg/fg.h"
 #include "fg/carriercurve.h"
 #include "fg/piecewisebezierinterpolator.h"
+#include "fg/linearinterpolator.h"
 
 #include <vector>
 #include <utility>
 
 namespace fg {
-	namespace spline {
+	namespace gc {
 class CarrierCurvePiecewiseBezier : public CarrierCurve
 {
 public:
-    CarrierCurvePiecewiseBezier(const PiecewiseBezierInterpolator<Vec3> &it);
+    CarrierCurvePiecewiseBezier(int numControlPoints, const Mat4 *refFrames, const std::pair<double,double> *stiffness);
+    CarrierCurvePiecewiseBezier(int numControlPoints, const Mat4 *refFrames);
+	~CarrierCurvePiecewiseBezier();
     virtual Vec3 orient(double v, double x, double y) const;
     virtual Vec3 dOrientDv(double v, double x, double y) const;
     virtual Vec3 dOrientDx(double v, double x, double y) const;
     virtual Vec3 dOrientDy(double v, double x, double y) const;
-	virtual const PiecewiseBezierInterpolator<Vec3> & getInterpolator() const;
+	virtual const spline::PiecewiseBezierInterpolator<Vec3> * getInterpolator() const;
 
+    virtual void setControlPoints(int numControlPoints, const Mat4 *refFrames, const std::pair<double,double> *stiffness);
 private:
     virtual void getOrientation(double t, Vec3 *H, Vec3 *U, Vec3 *L) const;
-    virtual double getQuasiNormalTheta(double t) const;
+    virtual void getFrenetFrame(double t, Vec3 *H, Vec3 *U, Vec3 *L) const;
+    void updateInflectionPoints( int seg );
+	void deleteData();
 
-	std::vector< std::pair<double, double> > mNormalTheta;
-	std::vector< std::pair<int, Vec3> > mLinearSegs;
-	const PiecewiseBezierInterpolator<Vec3> &mInterpolator;
+    int * mSegType;
+	std::pair <double, double> * mInflectionPoints;
+
+	spline::PiecewiseBezierInterpolator<Vec3> * mInterpolator;
+	spline::LinearInterpolator<double> * mAlphaInt;
+	spline::LinearInterpolator<double> * mBetaInt;
+	spline::LinearInterpolator<double> * mGammaInt;
+	Mat4 * mOrients;
 
 // These should go somewhere else!
 public:

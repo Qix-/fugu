@@ -47,7 +47,7 @@ namespace fg {
 		// fg/functions.h
 		module(L,"fg")[
 		   def("min", &min<double>),
-		   def("lerp", &lerp<double>),
+		   //def("lerp", &lerp<double>),
 
 		   def("noise", (double(*)(double)) &noise),
 		   def("noise", (double(*)(double,double)) &noise),

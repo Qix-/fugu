@@ -1,5 +1,5 @@
 /**
- * Hello carrier!!
+ * Hello turtle
  */
 
 
@@ -12,7 +12,8 @@
 #include "fg/functions.h"
 #include "fgv/trackball.h"
 
-#include "fg/carriercurvepiecewisebezier.h"
+#include "fg/turtle.h"
+
 #include "fg/glrenderer.h"
 
 // opengl viz, hack
@@ -54,16 +55,10 @@ int main(int argc, char *argv[])
 {
 	setupWindowAndGL();
 
-	// ** Create new carrier here
-	const int numPoints = 4;
-	Mat4* arr = new Mat4[numPoints];
-	for(int i=0;i<numPoints;i++){
-		arr[i] = Mat4();
-		arr[i].SetTranslate(fg::random(-2,2),fg::random(-2,2),fg::random(-2,2));
-	}
-
-	const fg::gc::CarrierCurve& carrier = gc::CarrierCurvePiecewiseBezier(numPoints, arr);
-	delete[]arr;
+    gc::Turtle bert;
+	bert.beginCarrier();
+	bert.move(2.);
+	gc::CarrierCurveLinear c = bert.endCarrier();
 
 	// Run as fast as I can
 	bool running = true;
@@ -94,9 +89,27 @@ int main(int argc, char *argv[])
 		float z = std::exp(-gZoom);
 		glScalef(z,z,z);
 
-		// Draw stuff here
-		fg::GLRenderer::renderCarrier(carrier,91,time);
+		Vec3 zero = Vec3(0.,0.,0.);
+		Vec3 xaxis = Vec3(1.,0.,0.);
+		Vec3 yaxis = Vec3(0.,1.,0.);
+		Vec3 zaxis = Vec3(0.,0.,1.);
 
+		glColor3f(0.,1.,0.);
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(xaxis.getX(),xaxis.getY(),xaxis.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(yaxis.getX(),yaxis.getY(),yaxis.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(zaxis.getX(),zaxis.getY(),zaxis.getZ());
+		glEnd();
+
+		fg::GLRenderer::renderCarrier(c,91,time);
+		
 		glPopMatrix();
 
 		glfwSwapBuffers();
@@ -125,7 +138,7 @@ void setupWindowAndGL(){
 		exit(EXIT_FAILURE);
 	}
 
-	glfwSetWindowTitle("hello carrier!");
+	glfwSetWindowTitle("hello spline!");
 	//glfwSetKeyCallback(keyCallback);
 	glfwSetWindowSizeCallback(resizeWindow);
 	glfwSetMousePosCallback(mouseMoved);

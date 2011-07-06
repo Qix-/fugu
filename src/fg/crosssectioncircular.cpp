@@ -1,7 +1,7 @@
 #include "crosssectioncircular.h"
 
 namespace fg{
-	namespace spline {
+	namespace gc {
 		
   CrossSectionCircular::CrossSectionCircular(double radius)
   {

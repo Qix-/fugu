@@ -1,5 +1,5 @@
 /**
- * Hello spline!
+ * Hello gc!
  */
 
 
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 {
 	setupWindowAndGL();
 
-	// ** Create new spline here
+	// ** Create new gc here
 	const int numPoints = 4;
 	Vec3* arr = new Vec3[numPoints];
 	for(int i=0;i<numPoints;i++){
