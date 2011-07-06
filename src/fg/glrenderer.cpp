@@ -3,10 +3,12 @@
 #include <cassert>
 #include "GL/glew.h"
 
+#include <wrap/gl/trimesh.h>
+
 #include "fg/interpolator.h"
 #include "fg/carriercurve.h"
 #include "fg/meshimpl.h"
-#include <wrap/gl/trimesh.h>
+#include "fg/mat4.h"
 
 namespace fg {
 
@@ -22,6 +24,28 @@ namespace fg {
 			case RENDER_VERTICES: tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
 			default: {}
 		}
+	}
+
+	void GLRenderer::renderMesh(boost::shared_ptr<Mesh> m, RenderMeshMode rmm){
+		vcg::GlTrimesh<fg::MeshImpl> tm;
+		tm.m = m->_impl();
+		tm.Update();
+
+		switch (rmm){
+			case RENDER_FLAT: tm.Draw<vcg::GLW::DMFlat, vcg::GLW::CMPerFace, vcg::GLW::TMNone> (); break;
+			case RENDER_SMOOTH: tm.Draw<vcg::GLW::DMSmooth, vcg::GLW::CMPerFace, vcg::GLW::TMNone> ();	break;
+			case RENDER_WIRE: tm.Draw<vcg::GLW::DMWire,     vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
+			case RENDER_VERTICES: tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
+			default: {}
+		}
+	}
+
+	void GLRenderer::renderMeshNode(boost::shared_ptr<MeshNode> m, RenderMeshMode rmm){
+		glPushMatrix();
+		Mat4 t = m->getCompoundTransform().transpose();
+		glMultMatrixd(t.V());
+		renderMesh(m->mesh(),rmm);
+		glPopMatrix();
 	}
 
     void GLRenderer::renderCarrier(const spline::CarrierCurve &c, int n, double time){

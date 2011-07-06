@@ -1,26 +1,20 @@
 /**
- * A simple fg viewer...
- *
- * @author ben
- * @date 06.07.2011
+ * Hello
  */
+
+#include <iostream>
+#include <cmath>
+#include "GL/glew.h"
+#include "GL/glfw.h"
 
 #include "fg/fg.h"
 #include "fg/functions.h"
 #include "fg/glrenderer.h"
+#include "fg/mesh.h"
+#include "fg/node.h"
+#include "fg/meshnode.h"
 
 #include "fgv/trackball.h"
-
-#include <iostream>
-#include <cmath>
-
-#define BOOST_FILESYSTEM_VERSION 3
-#include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/foreach.hpp>
-
-#include "GL/glew.h"
-#include "GL/glfw.h"
 
 int gWidth = 800;
 int gHeight = 600;
@@ -35,6 +29,15 @@ struct MouseState {
 	int lastY;
 } gMouseState = {false,0,0};
 
+
+void GLFWCALL resizeWindow(int width, int height);
+void setupWindowAndGL();
+
+void mouseMoved(int x, int y);
+void mouseButtoned(int button, int state);
+
+using namespace fg;
+
 int DRAW_MODE = 0; // start in flat
 const int NUM_DRAW_MODES = 4;
 
@@ -46,45 +49,36 @@ void GLFWCALL keyCallback(int key, int action)
 }
 
 
-void GLFWCALL resizeWindow(int width, int height);
-void setupWindowAndGL();
-
-void mouseMoved(int x, int y);
-void mouseButtoned(int button, int state);
-
 int main(int argc, char *argv[])
 {
-	if (argc!=2){
-		std::cout << "Usage: " << argv[0] << " <script>\n";
-		std::cout << "Example <script> is \"tests/basic5\" (note no .lua suffix needed\n";
-		return 1;
-	}
-	else {
-		std::cout << "fgv: fugu viewer (c) 2011\n";
-		std::cout << "Left Mouse: Rotate, Middle/Right Mouse: Zoom\n";
-	}
-
 	setupWindowAndGL();
 
-	// Create a new universe
-	fg::Universe u = fg::Universe();
-	u.addScriptDirectory("../scripts/?.lua");
-	u.loadScript(argv[1]);
+	boost::shared_ptr<Mesh> mesh = fg::Mesh::Primitives::Icosahedron();
+	boost::shared_ptr<MeshNode> mn(new MeshNode(mesh));
 
+	boost::shared_ptr<Mesh> orbiterMesh = fg::Mesh::Primitives::Icosahedron();
+	boost::shared_ptr<MeshNode> orbiterNode(new MeshNode(orbiterMesh));
+	orbiterNode->getRelativeTransform().SetTranslate(4,0,0);
+
+	NodeGraph ng;
+	ng.addNode(mn);
+	ng.addNode(orbiterNode);
+	ng.addEdge(mn,orbiterNode); // make orbiter node a child of mn
+
+	// Run as fast as I can
 	bool running = true;
-
 	double time = glfwGetTime();
 	double dt = 0.01;
 
-	// Run as fast as I can
 	while(running){
-		// Update the universe
-		u.update(dt);
-
 		// Recompute delta t
 		double now = glfwGetTime();
 		dt = now - time;
 		time = now;
+
+		// Update the nodegraph
+		mn->getRelativeTransform().SetRotateDeg(time*90,Vec3(1,1,1));
+		ng.update();
 
 		// Draw all the meshes in the universe
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -97,33 +91,28 @@ int main(int argc, char *argv[])
 		GLfloat lp[] = {.1, 1, .1, 0};
 		glLightfv(GL_LIGHT0,GL_POSITION,lp);
 
-		// TODO: Need some basic view manipulation
-		/*
-		// Center and squish into a 1x1 cube
-		glScalef(1./meshScale,1./meshScale,1./meshScale);
-		glTranslatef(-meshCenter[0],-meshCenter[1],-meshCenter[2]);
-
-		// Rotate slowly around the y-axis
-		glRotatef(time*20,0,1,0);
-		m->drawGL();
-		*/
-
 		glPushMatrix();
-		glMultMatrixf((GLfloat*) gRotationMatrix);
+			glMultMatrixf((GLfloat*) gRotationMatrix);
 
-		float z = std::exp(-gZoom);
-		glScalef(z,z,z);
+			float z = std::exp(-gZoom);
+			glScalef(z,z,z);
 
-		BOOST_FOREACH(boost::shared_ptr<fg::MeshNode> m, u.meshNodes()){
-			m->mesh()->sync(); // make sure normals are okay
-			fg::GLRenderer::renderMeshNode(m,fg::GLRenderer::RenderMeshMode(DRAW_MODE));
-		}
+			glPushMatrix();
+			Mat4 t = mn->getCompoundTransform().transpose();
+			glMultMatrixd(t.V());
+			fg::GLRenderer::renderMesh(&*mesh,fg::GLRenderer::RenderMeshMode(DRAW_MODE));
+			glPopMatrix();
+
+			glPushMatrix();
+			t = orbiterNode->getCompoundTransform().transpose();
+			glMultMatrixd(t.V());
+			fg::GLRenderer::renderMesh(&*orbiterMesh,fg::GLRenderer::RenderMeshMode(DRAW_MODE));
+			glPopMatrix();
 
 		glPopMatrix();
 
 		glfwSwapBuffers();
 		running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
-
 	}
 
 	glfwTerminate();
@@ -147,7 +136,7 @@ void setupWindowAndGL(){
 		exit(EXIT_FAILURE);
 	}
 
-	glfwSetWindowTitle("fugu viewer");
+	glfwSetWindowTitle("node transform tests");
 	glfwSetKeyCallback(keyCallback);
 	glfwSetWindowSizeCallback(resizeWindow);
 	glfwSetMousePosCallback(mouseMoved);
@@ -219,7 +208,7 @@ void GLFWCALL mouseButtoned(int button, int state){
 			gMouseState.leftButtonDown = false;
 		}
 	}
-	else if (button==GLFW_MOUSE_BUTTON_MIDDLE || button==GLFW_MOUSE_BUTTON_RIGHT){
+	else if (button==GLFW_MOUSE_BUTTON_MIDDLE){
 		if (state==GLFW_PRESS){
 			gMouseState.middleButtonDown = true;
 			glfwGetMousePos(&gMouseState.lastX,&gMouseState.lastY);

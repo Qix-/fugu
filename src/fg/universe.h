@@ -8,6 +8,10 @@
 #include <lua.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include "fg/node.h"
+#include "fg/meshnode.h"
+#include "fg/nodegraph.h"
+
 namespace fg {
 
 	// Forward Decl
@@ -33,10 +37,37 @@ namespace fg {
 		 */
 		void loadScript(std::string scriptName);
 
+		/**
+		 * /brief Add a mesh to the universe
+		 *
+		 * @deprecated Use add(node) instead. (This function now adds a mesh node internally)
+		 */
+
 		void addMesh(boost::shared_ptr<Mesh> m);
+
+		/**
+		 * /brief Retrieve all the meshes in this universe
+		 *
+		 * @deprecated Use meshNodes() instead. This function will now throw an exception.
+		 */
 		MeshContainer& meshes();
 
-		/** Update all objects in the universe by a specified time increment.
+		/// Add a node to this universe
+		// void add(boost::shared_ptr<Node> n);
+
+		/// Add a mesh node to this universe
+		void add(boost::shared_ptr<MeshNode> n);
+
+		// retrieve all the mesh nodes
+		std::list<boost::shared_ptr<MeshNode> >& meshNodes();
+
+		/// Bind a child node to the coordinate system of a parent node
+		void makeChildOf(boost::shared_ptr<Node> parent, boost::shared_ptr<Node> child);
+
+		/**
+		 * /brief Update all modules and nodes in the universe by a specified time increment.
+		 *
+		 * NOTE: nodes are updated after the module updates
 		 */
 		void update(double dt);
 
@@ -48,6 +79,9 @@ namespace fg {
 		MeshContainer mMeshes;
 
 		double mTime; ///< universe time
+		NodeGraph mNodeGraph;
+
+		std::list<boost::shared_ptr<MeshNode> > mMeshNodes;
 
 	private: // helpers
 		int setLuaPath( std::string path );
