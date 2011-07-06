@@ -31,7 +31,7 @@ namespace fg {
 		 * @param n the number of segments
 		 */
 		static void renderInterpolator(const spline::Interpolator<Vec3>& s, int n);
-        static void renderCarrier(const spline::CarrierCurve &c, int n, double time);
+        static void renderCarrier(const gc::CarrierCurve &c, int n, double time);
 	};
 }
 

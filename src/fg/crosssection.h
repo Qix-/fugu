@@ -1,11 +1,10 @@
-#ifndef FG_SPLINE_CROSS_SECTION_H
-#define FG_SPLINE_CROSS_SECTION_H
+#ifndef FG_GC_CROSS_SECTION_H
+#define FG_GC_CROSS_SECTION_H
 
 #include "fg/fg.h"
-#include "fg/interpolator.h"
 
 namespace fg{
-	namespace spline {
+	namespace gc {
 /**
  * \brief Provides a variyng cross section function.
  */

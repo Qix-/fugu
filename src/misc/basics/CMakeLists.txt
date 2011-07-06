@@ -15,9 +15,6 @@ target_link_libraries(hello_mesh ${ALL_LIBS})
 add_executable(view_mesh view_mesh.cpp)
 target_link_libraries(view_mesh ${ALL_LIBS})
 
-add_executable(hello_spline hello_spline.cpp trackball.cpp)
-target_link_libraries(hello_spline ${ALL_LIBS})
-
 add_executable(hello_meshbuilder hello_meshbuilder.cpp trackball.cpp)
 target_link_libraries(hello_meshbuilder ${ALL_LIBS})
 	

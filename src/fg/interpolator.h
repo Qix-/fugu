@@ -1,7 +1,7 @@
 #ifndef FG_SPLINE_INTERPOLATOR_H
 #define FG_SPLINE_INTERPOLATOR_H
 
-#include "fg.h"
+#include "fg/fg.h"
 
 namespace fg {
 namespace spline {

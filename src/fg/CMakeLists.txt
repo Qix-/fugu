@@ -12,9 +12,11 @@ set(SRC
 	vertex.cpp
 	glrenderer.cpp
 	carriercurve.cpp
+	carriercurvelinear.cpp
 	carriercurvepiecewisebezier.cpp
 	crosssectioncircular.cpp
 	generalisedcylinder.cpp
+	turtle.cpp
 	node.cpp
 	mat4.cpp
 	plylib.cpp

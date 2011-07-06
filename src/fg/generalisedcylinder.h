@@ -1,5 +1,5 @@
-#ifndef FG_SPLINE_GENERALISED_CYLINDER_H
-#define FG_SPLINE_GENERALISED_CYLINDER_H
+#ifndef FG_GC_GENERALISED_CYLINDER_H
+#define FG_GC_GENERALISED_CYLINDER_H
 
 #include <boost/shared_ptr.hpp>
 
@@ -10,7 +10,7 @@
 #include "fg/crosssection.h"
 
 namespace fg{
-	namespace spline {
+	namespace gc {
 /**
  * \brief Provides a variyng cross section function.
  */

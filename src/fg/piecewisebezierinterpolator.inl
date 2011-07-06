@@ -2,15 +2,6 @@ namespace fg {
 	namespace spline {
 
 template<class T>
-PiecewiseBezierInterpolator<T>::PiecewiseBezierInterpolator(int numControlPoints, const T *controlPoints, const T *gradients )
-:Interpolator<T>()
-,mSegInterpolators(NULL)
-,mGradients(NULL)
-{
-	setControlPoints(numControlPoints, controlPoints, gradients);
-}
-
-template<class T>
 PiecewiseBezierInterpolator<T>::PiecewiseBezierInterpolator(int numControlPoints, const T *controlPoints)
 :Interpolator<T>()
 ,mSegInterpolators(NULL)
@@ -20,29 +11,41 @@ PiecewiseBezierInterpolator<T>::PiecewiseBezierInterpolator(int numControlPoints
 }
 
 template<class T>
+PiecewiseBezierInterpolator<T>::PiecewiseBezierInterpolator(int numControlPoints, const T *controlPoints, const std::pair<T, T> *gradients)
+:Interpolator<T>()
+,mSegInterpolators(NULL)
+,mGradients(NULL)
+{
+	setControlPoints(numControlPoints, controlPoints, gradients);
+}
+
+template<class T>
 void PiecewiseBezierInterpolator<T>::setControlPoints(int numControlPoints, const T *controlPoints)
 {
-	T *gradients = new T[numControlPoints];
+	std::pair<T,T> *gradients = new std::pair<T,T>[numControlPoints-1];
 
-    gradients[0] = (controlPoints[1] - controlPoints[0]) * .5f;
-    gradients[numControlPoints - 1] = (controlPoints[numControlPoints - 1] - controlPoints[numControlPoints - 2]) * .5f;
-	for(int i = 1; i < numControlPoints - 1; ++i)
+    gradients[0].first = (controlPoints[1] - controlPoints[0]) * .5f;
+    gradients[numControlPoints - 2].second = (controlPoints[numControlPoints - 1] - controlPoints[numControlPoints - 2]) * .5f;
+	std::cout << "g4 = " << gradients[numControlPoints - 2].second << std::endl;
+	for(int i = 0; i < numControlPoints - 1; ++i)
 		{
-			gradients[i] = (controlPoints[i + 1] - controlPoints[i-1]) * 0.5f + Vec3(1., 1., 1.);
+			gradients[i].second = (controlPoints[i + 1] - controlPoints[i-1]) * 0.5f + Vec3(1., 1., 1.);
+			gradients[i+1].first = gradients[i].first;
 		}
 	setControlPoints(numControlPoints, controlPoints, gradients);
 }
 
 template<class T>
-void PiecewiseBezierInterpolator<T>::setControlPoints(int numControlPoints, const T *controlPoints, const T *gradients)
+void PiecewiseBezierInterpolator<T>::setControlPoints(int numControlPoints, const T *controlPoints, const std::pair<T, T> *gradients)
 {
 	deleteData();
     Interpolator<T>::setControlPoints(numControlPoints, controlPoints);
 
-    mGradients = new T[numControlPoints];
-    for (int i = 0; i < numControlPoints; ++i)
+    mGradients = new std::pair<T,T>[numControlPoints-1];
+    for (int i = 0; i < numControlPoints-1; ++i)
     {
-		mGradients[i] = gradients[i];
+		mGradients[i].first = gradients[i].first;
+		mGradients[i].second = gradients[i].second;
 	}
 
 	mSegInterpolators = new BezierInterpolator<T>*[getNumSegments()];
@@ -50,8 +53,8 @@ void PiecewiseBezierInterpolator<T>::setControlPoints(int numControlPoints, cons
     for (int i = 0; i < getNumSegments(); ++i)
     {
 		cp[0] = controlPoints[i];
-		cp[1] = controlPoints[i] + gradients[i];
-		cp[2] = controlPoints[i + 1] - gradients[i+1];
+		cp[1] = controlPoints[i] + gradients[i].first;
+		cp[2] = controlPoints[i + 1] - gradients[i].second;
 		cp[3] = controlPoints[i + 1];
         mSegInterpolators[i] = new BezierInterpolator<T>(3, cp);
     }

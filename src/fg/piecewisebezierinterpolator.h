@@ -2,8 +2,10 @@
 #define FG_SPLINE_PIECEWISE_BEZIER_H
 
 #include <vector>
+#include <utility>
 
-#include "BezierInterpolator.h"
+#include "fg/BezierInterpolator.h"
+#include "fg/linearinterpolator.h"
 
 namespace fg {
 	namespace spline {
@@ -18,10 +20,10 @@ public:
 	 *
 	 * \param numControlPoints The number of control points.
 	 * \param controlPoints An array of length n. The curve will pass through these points.
-	 * \param gradients An array of length n. The gradient at each control point.
+	 * \param gradients An array of length (n-1). The gradient at each end of each segment
 	 *
 	 */
-    PiecewiseBezierInterpolator(int numControlPoints, const T *controlPoints, const T *gradients);
+    PiecewiseBezierInterpolator(int numControlPoints, const T *controlPoints, const std::pair<T,T> *gradients);
 
     /**
      * \brief Constructs a piecewise Bezier interpolator with inferred gradient
@@ -47,7 +49,7 @@ public:
     /**
      * Sets the control points that will be interpolated between.
      */
-    virtual void setControlPoints(int numControlPoints, const T *controlPoints, const T *gradients);
+    virtual void setControlPoints(int numControlPoints, const T *controlPoints, const std::pair<T, T> *gradients);
 
     /**
      * Sets the control points that will be interpolated between.
@@ -76,7 +78,7 @@ protected:
     virtual void deleteData();
 
     BezierInterpolator<T> **mSegInterpolators;
-	T *mGradients;
+	std::pair<T,T> *mGradients;
 };
 
 	}}

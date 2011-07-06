@@ -48,13 +48,14 @@ namespace fg {
 		glPopMatrix();
 	}
 
-    void GLRenderer::renderCarrier(const spline::CarrierCurve &c, int n, double time){
-		renderInterpolator(c.getInterpolator(), n);
+    void GLRenderer::renderCarrier(const gc::CarrierCurve &c, int n, double time){
+		if (c.getInterpolator())
+		  renderInterpolator(*c.getInterpolator(), n);
 
         // Draw a tangent
 		time = time * 0.2;
 		if (time > 3.f) time = 3.f;
-		Vec3 pos = c.getInterpolator().getPosition(time);
+		Vec3 pos = c.getInterpolator()->getPosition(time);
 		Vec3 U;
 
 		U = pos + c.orient(time,1.,0.);
