@@ -163,6 +163,10 @@ namespace fg {
 		throw("Universe::meshes() is deprecated!");
 	}
 
+	void Universe::add(boost::shared_ptr<Node> n){
+		mNodeGraph.addNode(n);
+	}
+
 	void Universe::add(boost::shared_ptr<MeshNode> n){
 		mNodeGraph.addNode(n);
 		mMeshNodes.push_back(n);

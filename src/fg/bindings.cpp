@@ -10,11 +10,15 @@
 #include <sstream>
 
 #include "fg/vec3.h"
+#include "fg/mat4.h"
 #include "fg/universe.h"
 #include "fg/functions.h"
-#include "fg/mesh.h"
-#include "fg/meshoperators.h"
 
+#include "fg/node.h"
+
+#include "fg/mesh.h"
+#include "fg/meshnode.h"
+#include "fg/meshoperators.h"
 
 int debugFileAndLine(lua_State* L);
 
@@ -29,7 +33,13 @@ namespace fg {
 		module(L,"fg")[
 		   class_<fg::Universe>("universe")
 		   .def(tostring(const_self))
-		   .def("addMesh", &fg::Universe::addMesh)
+		   .def("addMesh", &fg::Universe::addMesh) // deprecated..
+		   .def("add", (void(fg::Universe::*) (boost::shared_ptr<MeshNode>)) &fg::Universe::add)
+		   .def("add", (void(fg::Universe::*) (boost::shared_ptr<Node>)) &fg::Universe::add)
+		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
+		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
+		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
+		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
 		   .property("t", &fg::Universe::time)
 		   .def("time", &fg::Universe::time)
 		];
@@ -60,6 +70,33 @@ namespace fg {
 		   .def(const_self + other<fg::Vec3>())
 		   .def(const_self - other<fg::Vec3>())
 		   .def(const_self * double())
+		];
+
+		// fg/mat4.h
+		module(L, "fg")[
+		   class_<fg::Mat4>("mat4")
+		   .def(constructor<>())
+		   .def(tostring(const_self))
+
+		   .def("setTranslate", (void(fg::Mat4::*)(double,double,double)) &fg::Mat4::setTranslate)
+		   .def("setRotateRad", (void(fg::Mat4::*)(double,double,double,double)) &fg::Mat4::setRotateRad)
+
+		   .def(const_self + other<fg::Mat4>())
+		   .def(const_self - other<fg::Mat4>())
+		   .def(const_self * double())
+		];
+
+		// fg/node.h
+		module(L, "fg")[
+		  class_<fg::Node, boost::shared_ptr<fg::Node> >("node")
+		  .def(constructor<>())
+		  .property("transform", &fg::Node::getRelativeTransform)
+		];
+
+		// fg/meshnode.h
+		module(L, "fg")[
+		   class_<fg::MeshNode, fg::Node, boost::shared_ptr<fg::MeshNode> >("meshnode")
+		   .def(constructor<boost::shared_ptr<fg::Mesh> >())
 		];
 
 		// fg/mesh.h

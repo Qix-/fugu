@@ -53,7 +53,7 @@ namespace fg {
 		MeshContainer& meshes();
 
 		/// Add a node to this universe
-		// void add(boost::shared_ptr<Node> n);
+		void add(boost::shared_ptr<Node> n);
 
 		/// Add a mesh node to this universe
 		void add(boost::shared_ptr<MeshNode> n);
