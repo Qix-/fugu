@@ -156,5 +156,5 @@ public:
 }
 }
 
-#include "interpolator.inc"
+#include "interpolator.inl"
 #endif

@@ -81,5 +81,5 @@ protected:
 
 	}}
 
-#include "piecewiseBezierInterpolator.inc"
+#include "piecewiseBezierInterpolator.inl"
 #endif
