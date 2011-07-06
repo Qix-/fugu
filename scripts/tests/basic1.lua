@@ -7,22 +7,21 @@ module(...,package.seeall)
 local m = {}
 function setup()
 	print("> setup()")
-	-- print("icosahedron: " .. tostring(fg.mesh.primitives.icosahedron))
 	m = fg.mesh.primitives.icosahedron()
 	print(m)
 	print(type(m))
 	print("Mesh vertex information: ")
-	for v in m:vertices() do
+	for v in m:selectAllVertices().all do
 		print("--"); 
 		print(v)
-		print("v.pos = ", tostring(v.pos))
-		print("v.pos.x = ", tostring(v.pos.x))
-		print("setting v.pos.x to pi ...")
-		v.pos.x = math.pi
-		print("new v.pos = ", v.pos)
+		p = v:getPos()
+		print("v.pos = ", tostring(p))
+		print("setting v.pos.x to pi ...")		
+		v:setPos(math.pi,p.y,p.z)
+		print("new v.pos = ", v:getPos())
 		print("randomising position ...")
-		v.pos.x, v.pos.y, v.pos.z = math.random(),math.random(),math.random()
-		print("new v.pos = ", v.pos)
+		v:setPos(math.random(),math.random(),math.random())
+		print("new v.pos = ", v:getPos())
 	end
 	print("< setup()")
 end

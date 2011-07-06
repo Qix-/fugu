@@ -6,7 +6,7 @@ module(...,package.seeall)
 
 local m
 function setup()
-	m = fg.mesh.load("C:\\Users\\ben\\Documents\\blender\\suzanne.obj")
+	m = fg.mesh.load("..\\assets\\suzanne.obj")
 	fgu:addMesh(m)	
 end
 

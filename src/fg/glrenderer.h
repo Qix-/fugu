@@ -5,6 +5,8 @@
 #include "fg/mesh.h"
 #include "fg/carriercurve.h"
 
+#include <boost/shared_ptr.hpp>
+
 namespace fg {
 	// Forward decl
 	namespace spline {
@@ -18,10 +20,9 @@ namespace fg {
 	public:
 		enum RenderMeshMode{RENDER_FLAT=0,RENDER_SMOOTH,RENDER_WIRE,RENDER_VERTICES};
 
-		/**
-		 * Render a mesh.
-		 */
 		static void renderMesh(Mesh* m, RenderMeshMode rmm = RENDER_FLAT);
+		static void renderMesh(boost::shared_ptr<Mesh> m, RenderMeshMode rmm = RENDER_FLAT);
+		static void renderMeshNode(boost::shared_ptr<MeshNode> m, RenderMeshMode rmm = RENDER_FLAT);
 
 		/**
 		 * Render an approximation of a curve interpolator

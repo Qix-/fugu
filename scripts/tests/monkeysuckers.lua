@@ -27,7 +27,7 @@ end
 
 function setup()	
 	-- m = fg.mesh.load("..\\..\\assets\\blob.obj")	
-	m = fg.mesh.load("..\\..\\assets\\suzanne.obj")	
+	m = fg.mesh.load("..\\assets\\suzanne.obj")	
 	fgu:addMesh(m)
 	
 	sphereVerts = convertToTable(m:selectAllVertices())

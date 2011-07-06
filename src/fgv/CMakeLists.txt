@@ -10,7 +10,10 @@ FILE(GLOB HEADER_INC "*.inc")
 add_executable(fgv ${SRC} ${HEADERS} ${HEADER_INC})
 target_link_libraries(fgv ${ALL_LIBS}) 
 
-install(TARGETS fgv DESTINATION fgv)
-install(DIRECTORY ${BASE_DIR}/scripts DESTINATION fgv)
+# install fgv into bin
+install(TARGETS fgv DESTINATION .)
+
+# don't install scripts, just use the fg/scripts directory as is 
+# install(DIRECTORY ${BASE_DIR}/scripts DESTINATION fgv)
  
 

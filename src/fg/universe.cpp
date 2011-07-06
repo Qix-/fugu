@@ -20,6 +20,10 @@
 #include <boost/ref.hpp>
 #include <boost/foreach.hpp>
 
+#include "fg/node.h"
+#include "fg/meshnode.h"
+#include "fg/nodegraph.h"
+
 namespace fg {
 
 	/*
@@ -48,7 +52,8 @@ namespace fg {
 	L(NULL),
 	mLoadedScripts(),
 	mMeshes(),
-	mTime(0)
+	mTime(0),
+	mNodeGraph()
 	{
 		// Global setup
 		std::srand(std::time(NULL));
@@ -151,11 +156,24 @@ namespace fg {
 	}
 
 	void Universe::addMesh(boost::shared_ptr<Mesh> m){
-		mMeshes.push_back(m);
+		add(boost::shared_ptr<MeshNode>(new MeshNode(m)));
 	}
 
 	Universe::MeshContainer& Universe::meshes(){
-		return mMeshes;
+		throw("Universe::meshes() is deprecated!");
+	}
+
+	void Universe::add(boost::shared_ptr<MeshNode> n){
+		mNodeGraph.addNode(n);
+		mMeshNodes.push_back(n);
+	}
+
+	std::list<boost::shared_ptr<MeshNode> >& Universe::meshNodes(){
+		return mMeshNodes;
+	}
+
+	void Universe::makeChildOf(boost::shared_ptr<Node> parent, boost::shared_ptr<Node> child){
+		mNodeGraph.addEdge(parent,child);
 	}
 
 	/**
@@ -176,6 +194,8 @@ namespace fg {
 				error("Script \"%s\" doesn't have a update function",s.c_str());
 			}
 		}
+
+		mNodeGraph.update();
 
 		mTime += dt;
 	}
@@ -225,3 +245,4 @@ namespace fg {
 std::ostream& operator<<(std::ostream& o, const fg::Universe& u){
 	return o << "universe " << &u;
 }
+
