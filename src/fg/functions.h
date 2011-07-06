@@ -113,6 +113,6 @@ namespace fg {
 	
 }
 
-#include "functions.inc"
+#include "functions.inl"
 
 #endif

@@ -43,6 +43,6 @@ protected:
 }
 }
 
-#include "bezierInterpolator.inc"
+#include "bezierInterpolator.inl"
 
 #endif
