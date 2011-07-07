@@ -14,27 +14,27 @@ namespace fg{
  */
 template<class T> class LinearInterpolator : public Interpolator< T >{
 public:
-    LinearInterpolator(int numControlPoints, const T *mControlPoints);
-
     /**
-     * Gets the position along the curve for parameter value t.
-     */
+	 * \brief Constructs a linear interpolator for the given points.
+	 */
+    LinearInterpolator(const std::vector<T> &mControlPoints);
+	/**
+	 * \brief Constructs an invalid interpolator.
+	 */
+    LinearInterpolator();
+
+	LinearInterpolator(const LinearInterpolator<T> &other);
+
+    LinearInterpolator<T>& operator=(const LinearInterpolator<T> &other);
+
     virtual T getPosition(double t) const;
 
     virtual T getDerivative(double t) const;
 
     virtual T getSecondDerivative(double t) const;
 
-    /**
-     * Returns an array of points to approximated the curve with striaght
-     * segments.
-     *
-     * \param n The suggested number of segments. If the interpolator creates
-     *          a different number of segments this value is updated accordingly.
-     *
-     * @return An array of points of length n + 1.
-     */
     virtual T *getApprox(int &n) const;
+    virtual std::vector<T> getApproxVector(int &n) const;
 
 	virtual void getDomain(double &min, double &max) const;
 

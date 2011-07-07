@@ -2,66 +2,107 @@ namespace fg {
 	namespace spline {
 
 template<class T>
-PiecewiseBezierInterpolator<T>::PiecewiseBezierInterpolator(int numControlPoints, const T *controlPoints)
+PiecewiseBezierInterpolator<T>::PiecewiseBezierInterpolator(const std::vector<T> &controlPoints)
 :Interpolator<T>()
-,mSegInterpolators(NULL)
-,mGradients(NULL)
 {
-	setControlPoints(numControlPoints, controlPoints);
+	setControlPoints(controlPoints);
 }
 
 template<class T>
-PiecewiseBezierInterpolator<T>::PiecewiseBezierInterpolator(int numControlPoints, const T *controlPoints, const std::pair<T, T> *gradients)
+PiecewiseBezierInterpolator<T>::PiecewiseBezierInterpolator(const std::vector<T> &controlPoints, const std::vector< std::pair<T, T> > &gradients)
 :Interpolator<T>()
-,mSegInterpolators(NULL)
-,mGradients(NULL)
 {
-	setControlPoints(numControlPoints, controlPoints, gradients);
+	setControlPoints(controlPoints, gradients);
 }
 
 template<class T>
-void PiecewiseBezierInterpolator<T>::setControlPoints(int numControlPoints, const T *controlPoints)
+PiecewiseBezierInterpolator<T>::PiecewiseBezierInterpolator()
+:Interpolator<T>()
 {
-	std::pair<T,T> *gradients = new std::pair<T,T>[numControlPoints-1];
-
-    gradients[0].first = (controlPoints[1] - controlPoints[0]) * .5f;
-    gradients[numControlPoints - 2].second = (controlPoints[numControlPoints - 1] - controlPoints[numControlPoints - 2]) * .5f;
-	std::cout << "g4 = " << gradients[numControlPoints - 2].second << std::endl;
-	for(int i = 0; i < numControlPoints - 1; ++i)
-		{
-			gradients[i].second = (controlPoints[i + 1] - controlPoints[i-1]) * 0.5f + Vec3(1., 1., 1.);
-			gradients[i+1].first = gradients[i].first;
-		}
-	setControlPoints(numControlPoints, controlPoints, gradients);
+	mNumControlPoints = 0;
 }
 
 template<class T>
-void PiecewiseBezierInterpolator<T>::setControlPoints(int numControlPoints, const T *controlPoints, const std::pair<T, T> *gradients)
+PiecewiseBezierInterpolator<T>::PiecewiseBezierInterpolator(const PiecewiseBezierInterpolator<T> &other)
+{
+	*this = other;
+}
+
+template<class T>
+PiecewiseBezierInterpolator<T>& PiecewiseBezierInterpolator<T>::operator=(const PiecewiseBezierInterpolator<T> &other)
+{
+	Interpolator<T>::operator=(other);
+	mNumControlPoints = other.mNumControlPoints;
+	mFirstControlPoint = other.mFirstControlPoint;
+	mSegInterpolators = other.mSegInterpolators;
+	return *this;
+}
+
+template<class T>
+void PiecewiseBezierInterpolator<T>::setControlPoints(const std::vector<T> &controlPoints)
+{
+	std::vector< std::pair<T,T> > gradients(controlPoints.size()-1, std::pair<T,T>(Vec3(0.,0.,0.),Vec3(0.,0.,0.)));
+	
+	setControlPoints(controlPoints,gradients);
+}
+
+template<class T>
+void PiecewiseBezierInterpolator<T>::smoothGradients()
+{
+}
+
+template<class T>
+void PiecewiseBezierInterpolator<T>::setControlPoints(const std::vector<T> &controlPoints, const std::vector< std::pair<T, T> > &gradients)
 {
 	deleteData();
-    Interpolator<T>::setControlPoints(numControlPoints, controlPoints);
 
-    mGradients = new std::pair<T,T>[numControlPoints-1];
-    for (int i = 0; i < numControlPoints-1; ++i)
-    {
-		mGradients[i].first = gradients[i].first;
-		mGradients[i].second = gradients[i].second;
-	}
+    mNumControlPoints = controlPoints.size();
 
-	mSegInterpolators = new BezierInterpolator<T>*[getNumSegments()];
-	T cp[4];
-    for (int i = 0; i < getNumSegments(); ++i)
+	std::vector<T> cp;
+    for (int i = 0; i < controlPoints.size() - 1; ++i)
     {
-		cp[0] = controlPoints[i];
-		cp[1] = controlPoints[i] + gradients[i].first;
-		cp[2] = controlPoints[i + 1] - gradients[i].second;
-		cp[3] = controlPoints[i + 1];
-        mSegInterpolators[i] = new BezierInterpolator<T>(3, cp);
+		cp.push_back(controlPoints[i]);
+		cp.push_back(controlPoints[i] + gradients[i].first);
+		cp.push_back(controlPoints[i + 1] - gradients[i].second);
+		cp.push_back(controlPoints[i + 1]);
+        mSegInterpolators.push_back( BezierInterpolator<T>(cp) );
+		cp.clear();
     }
 }
 
+template <class T>
+void PiecewiseBezierInterpolator<T>::appendControlPoint(const T &controlPoint)
+{
+	std::pair<T,T> grad;
+	appendControlPoint(controlPoint, grad);
+}
+
+template <class T>
+void PiecewiseBezierInterpolator<T>::appendControlPoint(const T &controlPoint, const std::pair<T,T> &g)
+{
+	if (getNumSegments() > 0) {
+	  std::vector<T> cp(4);
+	  cp[0] = getControlPoint(getNumSegments());
+	  cp[1] = cp[0] + g.first;
+	  cp[2] = controlPoint - g.second;
+	  cp[3] = controlPoint;
+      mSegInterpolators.push_back( BezierInterpolator<T>(cp) );
+	} else if (getNumControlPoints() == 0){
+	  mFirstControlPoint = controlPoint;
+	} else {
+	  std::vector<T> cp(4);
+	  cp[0] = mFirstControlPoint;
+	  cp[1] = cp[0] + g.first;
+	  cp[2] = controlPoint - g.second;
+	  cp[3] = controlPoint;
+      mSegInterpolators.push_back( BezierInterpolator<T>(cp) );
+	}
+
+	++mNumControlPoints;
+}
+
 template<class T>
-void PiecewiseBezierInterpolator<T>::setControlPoint(int index, const T &cp, const T &grad)
+void PiecewiseBezierInterpolator<T>::setControlPoint(int index, const T &cp, const std::pair<T,T> &grad)
 {
 }
 
@@ -86,65 +127,82 @@ void PiecewiseBezierInterpolator < T >::getDomain(double &min, double &max) cons
 template< class T >
 void PiecewiseBezierInterpolator<T>::deleteData( )
 {
-	if (mSegInterpolators)
-	{
-		for(int i = 0; i < getNumSegments(); ++i)
-		{
-			if(mSegInterpolators[i])
-				delete mSegInterpolators[i];
-		}
-		delete[] mSegInterpolators;
-	}
-	if (mGradients)
-		delete[] mGradients;
-
-	mSegInterpolators = NULL;
-	mGradients = NULL;
+	mSegInterpolators.clear();
+	mNumControlPoints = 0;
 
 	Interpolator<T>::deleteData( );
 }
 
 template< class T >
+int PiecewiseBezierInterpolator<T>::getNumControlPoints() const 
+{
+	return mNumControlPoints;
+}
+
+template< class T >
 int PiecewiseBezierInterpolator<T>::getNumSegments() const 
 {
-	return Interpolator<T>::getNumControlPoints() - 1;
+	return getNumControlPoints() - 1;
 }
 
 template<class T>
 T PiecewiseBezierInterpolator<T>::getPosition (double t) const
 {
 	int seg = getSegment(t);
-    return mSegInterpolators[seg]->getPosition( t - (double) seg );
+    return mSegInterpolators[seg].getPosition( t - (double) seg );
 }
 
 template<class T>
 T PiecewiseBezierInterpolator<T>::getDerivative (double t) const
 {
 	int seg = getSegment(t);
-    return mSegInterpolators[seg]->getDerivative( t - (double) seg );
+    return mSegInterpolators[seg].getDerivative( t - (double) seg );
 }
 
 template<class T>
 T PiecewiseBezierInterpolator<T>::getSecondDerivative (double t) const
 {
 	int seg = getSegment(t);
-    return mSegInterpolators[seg]->getSecondDerivative( t - (double) seg );
+    return mSegInterpolators[seg].getSecondDerivative( t - (double) seg );
 }
 
 template < class T >
 int PiecewiseBezierInterpolator < T >::getSegment(double t) const
 {
     int ti = (int) t;
-	ti = Interpolator<T>::clamp(ti, 0, getNumSegments() - 1);
+	ti = clamp(ti, 0, getNumSegments() - 1);
     return ti;
 }
 
 template <class T>
-const T* PiecewiseBezierInterpolator<T>::getSegmentControlPoints(int seg) const
+std::vector< T > PiecewiseBezierInterpolator<T>::getSegmentControlPoints(int seg) const
 {
 	seg = Interpolator<T>::clamp(seg, 0, getNumSegments() - 1);
-	return mSegInterpolators[seg]->getControlPoints();
+	return mSegInterpolators[seg].getControlPoints();
 }
+
+template <class T>
+T PiecewiseBezierInterpolator<T>::getControlPoint(int i) const
+{
+	i = clamp(i, 0, getNumControlPoints()-1);
+
+	if (i = getNumSegments())
+		return getSegmentControlPoints(i-1)[4];
+	
+	return getSegmentControlPoints(i)[0];
+}
+
+template <class T>
+std::vector<T> PiecewiseBezierInterpolator<T>::getControlPoints() const
+{
+	std::vector<T> cp;
+	for(int i = 0; i < getNumSegments(); ++i) {
+		cp.push_back(getSegmentControlPoints(i)[0]);
+	}
+	cp.push_back(getSegmentControlPoints(getNumSegments()-1)[3]);
+	return cp;
+}
+
 
 	}
 }

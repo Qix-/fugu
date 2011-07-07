@@ -30,12 +30,16 @@ namespace fg {
 			void setZ(double z){Z() = z;}
 
 			void normalise();
+			double length() const { return vcg::Norm(*this); }
+			double lengthSquared() const { return vcg::SquaredNorm(*this); }
+
+			Vec3 cross(const Vec3 &other) const { return vcg::Point3d::operator^(other); }
+			double dot(const Vec3 &other) const { return vcg::Point3d::operator*(other); }
 
 			Vec3 operator+(const Vec3& b) const;
 			Vec3 operator-(const Vec3& b) const;
 			Vec3 operator*(double d) const;
-
-//			double dot(const Vec3 &otherV) const;
+			Vec3 & operator=(const Vec3& other);
 	};
 }
 

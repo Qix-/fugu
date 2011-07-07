@@ -20,8 +20,8 @@ public:
   boost::shared_ptr<Mesh> createMesh(int n = 10, int m = 10) const;
 
 protected:
-  const CarrierCurve &mCarrier;
-  const CrossSection &mCrossSection;
+  const CarrierCurve & mCarrier;
+  const CrossSection & mCrossSection;
 };
 
 	}
