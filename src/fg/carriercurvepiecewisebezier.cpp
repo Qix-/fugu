@@ -2,8 +2,6 @@
 #include "fg/mat4.h"
 #include "fg/carriercurvepiecewisebezier.h"
 
-#include <iostream>
-
 namespace fg {
 namespace gc {
 
@@ -127,8 +125,6 @@ void CarrierCurvePiecewiseBezier::updateInflectionPoints( int seg )
         mSegType[seg] = findInflectionPointsVec( cp, &ip1, &ip2 );
         mInflectionPoints[seg] = std::pair<float, float>( ip1, ip2 );
     }
-    //cout << "Seg = " << seg << ", ni = " << segmentType[seg] << endl;
-    //cout << "if = " << inflectionPoints[seg].first << endl;
 }
 
 const spline::PiecewiseBezierInterpolator<Vec3> * CarrierCurvePiecewiseBezier::getInterpolator() const

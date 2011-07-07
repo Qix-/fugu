@@ -16,7 +16,7 @@ namespace fg {
 		mFrame = trans*mFrame;
 	}
 
-	void Turtle::beginCarrier()
+	void Turtle::beginCylinder()
 	{
 		mPrevFrames.clear();
 		mPrevFrames.push_back(mFrame);
@@ -27,7 +27,7 @@ namespace fg {
 		mPrevFrames.push_back(mFrame);
 	}
 
-	CarrierCurveLinear Turtle::endCarrier()
+	GeneralisedCylinder Turtle::endCylinder()
 	{
 		mPrevFrames.push_back(mFrame);
 
@@ -37,7 +37,6 @@ namespace fg {
 			cp[i] = mPrevFrames[i];
 		}
 
-		return CarrierCurveLinear(mPrevFrames.size(), cp);
 	}
 	}
 }

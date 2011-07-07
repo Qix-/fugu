@@ -1,6 +1,8 @@
 #ifndef FG_SPLINE_INTERPOLATOR_H
 #define FG_SPLINE_INTERPOLATOR_H
 
+#include <vector>
+
 #include "fg/fg.h"
 
 namespace fg {
@@ -11,43 +13,67 @@ namespace spline {
 template < class T > class Interpolator {
 public:
     ~Interpolator();
+	Interpolator(const Interpolator<T> &other);
+
+    Interpolator<T>& operator=(const Interpolator<T> &other);
 
     /**
-     * Gets the position along the curve for parameter value t.
+     * \brief Gets the position along the curve for parameter value t.
      */
     virtual T getPosition(double t) const = 0;
 
+    /**
+     *\brief  Gets the derivative along the curve for parameter value t.
+     */
     virtual T getDerivative(double t) const = 0;
 
+    /**
+     * \brief Gets the second derivative along the curve for parameter value t.
+     */
     virtual T getSecondDerivative(double t) const = 0;
 
+    /**
+	 * \brief Gets all derivatives along the curve for the given value of t.
+	 *
+	 * For some interpolators this may be more efficient.
+	 */
     virtual void get(double t, T *pos, T *dev1, T *dev2) const;
 
     /**
-     * Returns a vector of the control points to be interpolated between.
+     * \brief Returns a vector of the control points to be interpolated between.
      */
-    virtual const T* getControlPoints() const;
-    virtual const T & getControlPoint( int i ) const;
+    virtual std::vector<T> getControlPoints() const;
+	/**
+     * \brief Returns the control point at the given index.
+	 */
+    virtual T getControlPoint( int i ) const;
 
     /**
-     * Returns the number of control points.
+     * \brief Returns the number of control points.
      */
     virtual int getNumControlPoints() const;
+    /**
+     * \brief Returns the number of segments.
+     */
 	virtual int getNumSegments() const = 0;
 
     /**
-     * Sets the control points that will be interpolated between.
+     * \brief Sets the control points that will be interpolated between.
      */
-    virtual void setControlPoints(int numControlPoints, const T *controlPoints);
+    virtual void setControlPoints(const std::vector<T> &controlPoints);
 
     /**
-     * Sets the given control point to the one given.
+     * \brief Sets the given control point to the one given.
      */
     virtual void setControlPoint(int index, const T &cp);
 
+	/**
+	 * \brief Adds the given point to the end of the cylinder
+	 */
+	virtual void appendControlPoint(const T &cp);
 
     /**
-     * Returns an array of points to approximated the curve with striaght
+     * \brief Returns an array of points to approximated the curve with striaght
      * segments.
      *
      * \param n The suggested number of segments. If the interpolator creates
@@ -56,9 +82,19 @@ public:
      * @return An array of points of length n + 1.
      */
     virtual T *getApprox(int &n) const;
+    /**
+     * \brief Returns an vector of points to approximated the curve with striaght
+     * segments.
+     *
+     * \param n The suggested number of segments. If the interpolator creates
+     *          a different number of segments this value is updated accordingly.
+     *
+     * @return An vector of points of length n + 1.
+     */
+    virtual std::vector<T> getApproxVector(int &n) const;
 
     /**
-     * Gets the domain of the parameter.
+     * \brief Gets the domain of the parameter.
      *
      * \param min Gets set to the minimum value of the parameter.
      * \param max Gets set to the maximum value of the parameter.
@@ -67,8 +103,7 @@ public:
 protected:
     virtual void deleteData();
     Interpolator();
-    T * mControlPoints;
-    int mNumControlPoints;
+    std::vector<T> mControlPoints;
 
 public:
 	static double clamp(double num, double min, double range);

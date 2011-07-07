@@ -69,8 +69,8 @@ namespace fg {
 	void GLRenderer::renderInterpolator(const spline::Interpolator<Vec3>& s, int n){
 		assert (n>0);
 
-		Vec3* arr = s.getApprox(n); // returns new array of length (n+1)
-		const Vec3* cp = s.getControlPoints();
+		std::vector<Vec3> arr = s.getApproxVector(n);
+		std::vector<Vec3> cp = s.getControlPoints();
 
 		glPushAttrib(GL_CURRENT_BIT);
 		glPushAttrib(GL_LIGHTING_BIT);
@@ -113,10 +113,16 @@ namespace fg {
 		}
 		glEnd();
 
-		glPopAttrib();
-		glPopAttrib();
-		glPopAttrib();
+        glPointSize(6);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,1);
+		for(int i=0;i<s.getNumControlPoints();i++){
+			glVertex3d(s.getPosition(0.).getX(),s.getPosition(0.).getY(),s.getPosition(0.).getZ());
+		}
+		glEnd();
 
-		delete[]arr;
+		glPopAttrib();
+		glPopAttrib();
+		glPopAttrib();
 	}
 }

@@ -1,25 +1,51 @@
 namespace fg {
-	namespace spline {
+namespace spline {
 
 template<class T>
-BezierInterpolator<T>::BezierInterpolator (int degree, T* controlPoints)
-:Interpolator<T>()
-,mDer1ControlPoint(NULL)
-,mDer2ControlPoint(NULL)
+BezierInterpolator<T>::BezierInterpolator (const std::vector<T> &controlPoints)
+    :Interpolator<T>()
+    ,mChoose(NULL)
 {
-    if (degree < 2)
-        exit(0);
+    setControlPoints(controlPoints);
+}
 
+template<class T>
+BezierInterpolator<T>::BezierInterpolator ()
+    :Interpolator<T>()
+    ,mChoose(NULL)
+{
+}
+
+template<class T>
+BezierInterpolator<T>::BezierInterpolator(const BezierInterpolator<T> &other)
+:Interpolator<T>(other)
+,mChoose(NULL)
+{
+	setControlPoints( other.getControlPoints() );
+}
+
+template<class T>
+BezierInterpolator<T>& BezierInterpolator<T>::operator=(const BezierInterpolator<T> &other)
+{
+	Interpolator<T>::operator=(other);
+	setControlPoints( other.getControlPoints() );
+	return *this;
+}
+
+template<class T>
+void BezierInterpolator<T>::allocateChoose()
+{
     int i, j;
 
-    setControlPoints(degree, controlPoints);
+    if (Interpolator<T>::getNumControlPoints() < 2)
+        return;
 
-    mChoose = Interpolator<double>::allocate2dArray(mNumControlPoints, mNumControlPoints);
+    mChoose = Interpolator<double>::allocate2dArray(Interpolator<T>::getNumControlPoints (),Interpolator<T>::getNumControlPoints());
 
     mChoose[0][0] = (double)1;
     mChoose[1][0] = (double)1;
     mChoose[1][1] = (double)1;
-    for (i = 2; i <= mDegree; ++i)
+    for (i = 2; i <= getDegree(); ++i)
     {
         mChoose[i][0] = (double)1;
         mChoose[i][i] = (double)1;
@@ -30,74 +56,86 @@ BezierInterpolator<T>::BezierInterpolator (int degree, T* controlPoints)
     }
 }
 
+template<class T>
+void BezierInterpolator<T>::deleteChoose()
+{
+    if(mChoose)
+       	Interpolator<double>::delete2dArray(mChoose);
+
+    mChoose = NULL;
+}
 
 template<class T>
-void BezierInterpolator<T>::setControlPoints (int degree, T * controlPoints)
+void BezierInterpolator<T>::setControlPoints (const std::vector<T> &controlPoints)
 {
     deleteData ();
 
-    int i, j;
+    Interpolator<T>::setControlPoints (controlPoints);
 
-    mDegree = degree;
-    mNumControlPoints = mDegree + 1;
-
-    Interpolator<T>::setControlPoints (mNumControlPoints, controlPoints);
-
-    mDer1ControlPoint = new T[mNumControlPoints - 1];
-    for (i = 0; i < mNumControlPoints - 1; ++i)
+    int i;
+    for (i = 0; i < Interpolator<T>::getNumControlPoints() - 1; ++i)
     {
-        mDer1ControlPoint[i] = Interpolator<T>::mControlPoints[i + 1] - Interpolator<T>::mControlPoints[i];
+        mDer1ControlPoint.push_back (Interpolator<T>::mControlPoints[i + 1] - Interpolator<T>::mControlPoints[i]);
     }
 
-    mDer2ControlPoint = new T[mNumControlPoints - 2];
-    for (i = 0; i < mNumControlPoints - 2; ++i)
+    for (i = 0; i < Interpolator<T>::getNumControlPoints() - 2; ++i)
     {
-        mDer2ControlPoint[i] = mDer1ControlPoint[i + 1] - mDer1ControlPoint[i];
+        mDer2ControlPoint.push_back(mDer1ControlPoint[i + 1] - mDer1ControlPoint[i]);
     }
+
+    allocateChoose ();
+}
+
+template<class T>
+void BezierInterpolator<T>::appendControlPoint(const T &cp)
+{
+    deleteChoose();
+
+    Interpolator<T>::appendControlPoint(cp);
+
+    mDer1ControlPoint.push_back (Interpolator<T>::mControlPoints[Interpolator<T>::getNumControlPoints()] - Interpolator<T>::mControlPoints[getDegree()]);
+    mDer2ControlPoint.push_back (mDer1ControlPoint[getDegree()] - mDer1ControlPoint[getDegree() - 1]);
+
+    allocateChoose();
 }
 
 template<class T>
 BezierInterpolator<T>::~BezierInterpolator ()
 {
     deleteData();
-
-    Interpolator<double>::delete2dArray(mChoose);
 }
 
 template<class T>
 void BezierInterpolator<T>::deleteData()
 {
-    if(mDer1ControlPoint)
-        delete[] mDer1ControlPoint;
-
-    if(mDer2ControlPoint)
-        delete[] mDer2ControlPoint;
-
-    mDer1ControlPoint = NULL;
-    mDer2ControlPoint = NULL;
+    mDer1ControlPoint.clear();
+    mDer2ControlPoint.clear();
+    Interpolator<T>::deleteData();
+    deleteChoose();
 }
 
 template<class T>
 int BezierInterpolator<T>::getDegree () const
 {
-    return mDegree;
+    return Interpolator<T>::getNumControlPoints() - 1;
 }
 
 template<class T>
 T BezierInterpolator<T>::getPosition (double t) const
 {
+	t = clamp<double>(t, 0., 1.);
     double oneMinusT = (double)1 - t;
     double powT = t;
     T result = Interpolator<T>::mControlPoints[0]*oneMinusT;
 
-    for (int i = 1; i < mDegree; ++i)
+    for (int i = 1; i < getDegree(); ++i)
     {
-        double coeff = mChoose[mDegree][i]*powT;
+        double coeff = mChoose[getDegree()][i]*powT;
         result = (result+Interpolator<T>::mControlPoints[i]*coeff)*oneMinusT;
         powT *= t;
     }
 
-    result += Interpolator<T>::mControlPoints[mDegree]*powT;
+    result += Interpolator<T>::mControlPoints[getDegree()]*powT;
 
     return result;
 }
@@ -105,11 +143,12 @@ T BezierInterpolator<T>::getPosition (double t) const
 template<class T>
 T BezierInterpolator<T>::getDerivative (double t) const
 {
+	t = clamp<double>(t, 0., 1.);
     double oneMinusT = (double)1 - t;
     double powT = t;
     T result = mDer1ControlPoint[0]*oneMinusT;
 
-    int degreeM1 = mDegree - 1;
+    int degreeM1 = Interpolator<T>::getNumControlPoints() - 2;
     for (int i = 1; i < degreeM1; ++i)
     {
         double coeff = mChoose[degreeM1][i]*powT;
@@ -118,7 +157,7 @@ T BezierInterpolator<T>::getDerivative (double t) const
     }
 
     result += mDer1ControlPoint[degreeM1]*powT;
-    result *= double(mDegree);
+    result *= double(Interpolator<T>::getNumControlPoints() - 1);
 
     return result;
 }
@@ -126,11 +165,12 @@ T BezierInterpolator<T>::getDerivative (double t) const
 template<class T>
 T BezierInterpolator<T>::getSecondDerivative (double t) const
 {
+	t = clamp<double>(t, 0., 1.);
     double oneMinusT = (double)1 - t;
     double powT = t;
     T result = mDer2ControlPoint[0]*oneMinusT;
 
-    int degreeM2 = mDegree - 2;
+    int degreeM2 = Interpolator<T>::getNumControlPoints() - 3;
     for (int i = 1; i < degreeM2; ++i)
     {
         double coeff = mChoose[degreeM2][i]*powT;
@@ -139,7 +179,7 @@ T BezierInterpolator<T>::getSecondDerivative (double t) const
     }
 
     result += mDer2ControlPoint[degreeM2]*powT;
-    result *= double(mDegree*(mDegree-1));
+    result *= double(getDegree()*(getDegree()-1));
 
     return result;
 }
@@ -147,6 +187,7 @@ T BezierInterpolator<T>::getSecondDerivative (double t) const
 template<class T>
 int BezierInterpolator<T>::getNumSegments () const
 {
-	return 1;
+    return 1;
 }
-	}}
+}
+}

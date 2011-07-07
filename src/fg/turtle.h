@@ -13,9 +13,9 @@ namespace fg {
 		public:
 		  Turtle();
 		  void move(double distance);
-		  void beginCarrier();
+		  void beginCylinder();
           void addPoint();
-		  CarrierCurveLinear endCarrier();
+		  GeneralisedCylinder endCylinder();
 
 		protected:
 		  Mat4 mFrame;

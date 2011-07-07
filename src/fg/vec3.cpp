@@ -36,6 +36,11 @@ namespace fg{
 		return Vec3((vcg::Point3d)(*this) * d);
 	}
 
+	Vec3 & Vec3::operator=(const Vec3& other){
+		vcg::Point3d::operator=(other);
+		return *this;
+	}
+
 }
 
 std::ostream& operator<<(std::ostream& o, const fg::Vec3& v){

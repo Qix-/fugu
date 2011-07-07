@@ -2,39 +2,31 @@
 #include "fg/mat4.h"
 #include "fg/carriercurvelinear.h"
 
-#include <iostream>
-
 namespace fg {
 namespace gc {
 
-CarrierCurveLinear::CarrierCurveLinear(int numControlPoints, const Mat4 *refFrames)
+CarrierCurveLinear::CarrierCurveLinear(const std::vector<Mat4> &refFrames)
+:mInterpolator(NULL)
+,mOrients(NULL)
 {
-    mInterpolator = NULL;
-	mAlphaInt = NULL;
-	mBetaInt = NULL;
-	mGammaInt = NULL;
-	mOrients = NULL;
-
-	setControlPoints(numControlPoints, refFrames);
+	setControlPoints(refFrames);
 }
 
-void CarrierCurveLinear::setControlPoints(int numControlPoints, const Mat4 *refFrames)
+void CarrierCurveLinear::setControlPoints(const std::vector<Mat4> &refFrames)
 {
 	deleteData();
 
-	mOrients = new Mat4[numControlPoints];
+	std::vector<Vec3> tmpCp;
 
-	Vec3 tmpCp[numControlPoints];
-
-    for (int i = 0; i < numControlPoints; ++i)
+    for (int i = 0; i < refFrames.size(); ++i)
 	{
 	    // Get the control points and headings PUT THIS INTO MAT4!!
 	    Vec3 p1 = refFrames[i]   * Vec3(0.,0.,0.); // The pos
-        tmpCp[i] = p1;
-		mOrients[i] = refFrames[i];
+        tmpCp.push_back(p1);
 	}
 
-	mInterpolator = new spline::LinearInterpolator<Vec3>(numControlPoints, tmpCp);
+	mInterpolator = new spline::LinearInterpolator<Vec3>(tmpCp);
+	mOrients = new spline::LinearInterpolator<Mat4>(refFrames);
 }
 
 CarrierCurveLinear::~CarrierCurveLinear()
@@ -47,19 +39,10 @@ void CarrierCurveLinear::deleteData()
     if(mInterpolator)
         delete mInterpolator;
 
-    if(mAlphaInt)
-//		delete mAlphaInt;
-    if(mBetaInt)
-//		delete mBetaInt;
-    if(mGammaInt)
-//		delete mGammaInt;
 	if(mOrients)
 		delete mOrients;
 
     mInterpolator = NULL;
-	mAlphaInt = NULL;
-	mBetaInt = NULL;
-	mGammaInt = NULL;
 	mOrients = NULL;
 }
 
@@ -70,6 +53,13 @@ const spline::LinearInterpolator<Vec3> * CarrierCurveLinear::getInterpolator() c
 
 void CarrierCurveLinear::getOrientation(double t, Vec3 *H, Vec3 *U, Vec3 *L) const
 {
+	if (H)
+		*H = mOrients->getPosition(t) * Vec3(0.,0.,1.) - mInterpolator->getPosition(t);
+	if (U)
+		*U = mOrients->getPosition(t) * Vec3(1.,0.,0.) - mInterpolator->getPosition(t);
+	if (L)
+		*L = mOrients->getPosition(t) * Vec3(0.,1.,0.) - mInterpolator->getPosition(t);
+	/*
 	Vec3 tangent = mInterpolator->getDerivative(t);
 	tangent.normalise();
 
@@ -89,6 +79,7 @@ void CarrierCurveLinear::getOrientation(double t, Vec3 *H, Vec3 *U, Vec3 *L) con
 		*U = normal;
 	if (L)
 		*L = biNorm;
+		*/
 }
 
 Vec3 CarrierCurveLinear::orient(double v, double x, double y) const
