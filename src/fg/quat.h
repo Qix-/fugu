@@ -38,7 +38,12 @@ namespace fg {
 		  double dot( const Quat &quat ) const;
 
           const Quat operator*( double rhs ) const;
+		  Vec3 operator*( const Vec3 &vec ) const;
+          const Quat operator-( const Quat &rhs ) const;
           Quat& operator+=( const Quat &rhs );
+
+          Quat inverted() const;
+		  void invert();
 		private:
 			static const double EPSILON = 4.37114e-05;
 	};
