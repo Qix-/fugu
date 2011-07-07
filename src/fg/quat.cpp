@@ -40,6 +40,13 @@ Quat::Quat( const Mat4 &m )
     set( m );
 }
 
+Quat& Quat::operator=( const Quat &rhs )
+{
+	v = rhs.v;
+	w = rhs.w;
+	return *this;
+}
+
 void Quat::set( double aW, double x, double y, double z )
 {
     w = aW;
@@ -194,19 +201,49 @@ Quat Quat::lerp( double t, const Quat &end ) const
 
 double Quat::dot( const Quat &quat ) const
 {
-	return w * quat.w + v.dot( quat.v );
+    return w * quat.w + v.dot( quat.v );
 }
 
-const Quat Quat::operator*( double rhs ) const 
-{ 
-	return Quat( w * rhs, v.getX() * rhs, v.getY() * rhs, v.getZ() * rhs );
+const Quat Quat::operator*( double rhs ) const
+{
+    return Quat( w * rhs, v.getX() * rhs, v.getY() * rhs, v.getZ() * rhs );
 }
 
 Quat& Quat::operator+=( const Quat &rhs )
 {
-	w += rhs.w;
-	v = v + rhs.v;
-	return *this;
+    w += rhs.w;
+    v = v + rhs.v;
+    return *this;
+}
+
+Quat Quat::inverted() const
+{
+    double qdot = this->dot( *this );
+    return Quat( v * -1. / qdot, w / qdot );
+}
+
+void Quat::invert()
+{
+    double qdot = this->dot( *this );
+    set( v * -1. / qdot, w / qdot );
+}
+
+const Quat Quat::operator-( const Quat &rhs ) const
+{
+    const Quat& lhs = *this;
+    return Quat( lhs.w - rhs.w, lhs.v.getX() - rhs.v.getX(), lhs.v.getY() - rhs.v.getY(), lhs.v.getZ() - rhs.v.getZ() );
+}
+
+// transform a vector by the quaternion
+Vec3 Quat::operator*( const Vec3 &vec ) const 
+{
+    double vMult = 2. * ( v.getX() * vec.getX() + v.getY() * vec.getY() + v.getZ() * vec.getZ() );
+    double crossMult = 2. * w;
+    double pMult = crossMult * w - 1.;
+
+    return Vec3( pMult * vec.getX() + vMult * v.getX() + crossMult * ( v.getY() * vec.getZ() - v.getZ() * vec.getY() ),
+                 pMult * vec.getY() + vMult * v.getY() + crossMult * ( v.getZ() * vec.getX() - v.getX() * vec.getZ() ),
+                 pMult * vec.getZ() + vMult * v.getZ() + crossMult * ( v.getX() * vec.getY() - v.getY() * vec.getX() ) );
 }
 
 }

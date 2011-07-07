@@ -7,7 +7,6 @@ namespace gc {
 
 CarrierCurveLinear::CarrierCurveLinear(const std::vector<Mat4> &refFrames)
 :mInterpolator(NULL)
-,mOrients(NULL)
 {
 	setControlPoints(refFrames);
 }
@@ -20,13 +19,14 @@ void CarrierCurveLinear::setControlPoints(const std::vector<Mat4> &refFrames)
 
     for (int i = 0; i < refFrames.size(); ++i)
 	{
-	    // Get the control points and headings PUT THIS INTO MAT4!!
+	    // Get the control points location PUT THIS INTO MAT4 OR RFRAME OR SOMETHING!!
 	    Vec3 p1 = refFrames[i]   * Vec3(0.,0.,0.); // The pos
         tmpCp.push_back(p1);
+		// Get the rotation
+		mOrients.push_back( Quat(refFrames[i] ) );
 	}
 
 	mInterpolator = new spline::LinearInterpolator<Vec3>(tmpCp);
-	mOrients = new spline::LinearInterpolator<Mat4>(refFrames);
 }
 
 CarrierCurveLinear::~CarrierCurveLinear()
@@ -39,11 +39,7 @@ void CarrierCurveLinear::deleteData()
     if(mInterpolator)
         delete mInterpolator;
 
-	if(mOrients)
-		delete mOrients;
-
     mInterpolator = NULL;
-	mOrients = NULL;
 }
 
 const spline::LinearInterpolator<Vec3> * CarrierCurveLinear::getInterpolator() const
@@ -53,12 +49,17 @@ const spline::LinearInterpolator<Vec3> * CarrierCurveLinear::getInterpolator() c
 
 void CarrierCurveLinear::getOrientation(double t, Vec3 *H, Vec3 *U, Vec3 *L) const
 {
+	int tint = (int) t;
+	double tfrac = t - tint;
+	Quat rot;
+
+	rot = mOrients[tint].lerp(tfrac, mOrients[tint+1]);
 	if (H)
-		*H = mOrients->getPosition(t) * Vec3(0.,0.,1.) - mInterpolator->getPosition(t);
+		*H = rot * Vec3(0.,0.,1.);
 	if (U)
-		*U = mOrients->getPosition(t) * Vec3(1.,0.,0.) - mInterpolator->getPosition(t);
+		*U = rot * Vec3(1.,0.,0.);
 	if (L)
-		*L = mOrients->getPosition(t) * Vec3(0.,1.,0.) - mInterpolator->getPosition(t);
+		*L = rot * Vec3(0.,1.,0.);
 	/*
 	Vec3 tangent = mInterpolator->getDerivative(t);
 	tangent.normalise();

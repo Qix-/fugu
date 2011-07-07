@@ -4,6 +4,7 @@
 #include "fg/fg.h"
 #include "fg/carriercurve.h"
 #include "fg/linearinterpolator.h"
+#include "fg/quat.h"
 
 #include <vector>
 #include <utility>
@@ -27,7 +28,7 @@ private:
 	void deleteData();
 
 	spline::LinearInterpolator<Vec3> * mInterpolator;
-	spline::LinearInterpolator<Mat4> * mOrients;
+	std::vector<Quat> mOrients;
 
 };
 }
