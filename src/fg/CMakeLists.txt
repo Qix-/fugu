@@ -16,7 +16,7 @@ set(SRC
 #	carriercurvepiecewisebezier.cpp
 	crosssectioncircular.cpp
 	generalisedcylinder.cpp
-#	turtle.cpp
+	turtle.cpp
 	quat.cpp
 	node.cpp
 	mat4.cpp
@@ -49,6 +49,7 @@ set(HDRS
 	piecewisebezierinterpolator.h
 	proxy.h
 	quat.h
+	turtle.h
 	universe.h
 	vec3.h
 	vertex.h)

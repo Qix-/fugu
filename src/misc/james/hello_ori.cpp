@@ -15,6 +15,7 @@
 #include "fg/interpolator.h"
 #include "fg/bezierinterpolator.h"
 #include "fg/piecewisebezierinterpolator.h"
+#include "fg/quat.h"
 
 #include "fg/glrenderer.h"
 
@@ -57,11 +58,11 @@ int main(int argc, char *argv[])
 {
 	setupWindowAndGL();
 
-    Mat4 mat,mat2;
-	mat.FromEulerAngles(0.5,0.,0.);
-	mat2.SetTranslate(0.,0.,1.);
-
-	mat = mat * mat2;
+    Mat4 mat;
+	mat.SetRotateDeg(15. ,Vec3(1.,0.,0.));
+	Quat q(mat);//Vec3(1.,0.,0.), M_PI*0.3);
+	std::cout << q <<"\n";
+	std::cout << mat;
 
 	// Run as fast as I can
 	bool running = true;
@@ -97,6 +98,7 @@ int main(int argc, char *argv[])
 		Vec3 yaxis = Vec3(0.,1.,0.);
 		Vec3 zaxis = Vec3(0.,0.,1.);
 
+        // Draw axis
 		glColor3f(0.,1.,0.);
 		glBegin(GL_LINES);
 		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
@@ -111,12 +113,39 @@ int main(int argc, char *argv[])
 		glVertex3d(zaxis.getX(),zaxis.getY(),zaxis.getZ());
 		glEnd();
 		
+		/*
 		zero = mat * zero;
 		xaxis = mat * xaxis;
 		yaxis = mat * yaxis;
 		zaxis = mat * zaxis;
 
 		glColor3f(0.,0.,1.);
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(xaxis.getX(),xaxis.getY(),xaxis.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(yaxis.getX(),yaxis.getY(),yaxis.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(zaxis.getX(),zaxis.getY(),zaxis.getZ());
+		glEnd();
+		*/
+
+		// Draw axis transformed by qaut
+		zero = Vec3(0.,0.,0.);
+		xaxis = Vec3(1.,0.,0.);
+		yaxis = Vec3(0.,1.,0.);
+		zaxis = Vec3(0.,0.,1.);
+
+		zero = q * zero;
+		xaxis = q * xaxis;
+		yaxis = q * yaxis;
+		zaxis = q * zaxis;
+
+		glColor3f(1.,1.,1.);
 		glBegin(GL_LINES);
 		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
 		glVertex3d(xaxis.getX(),xaxis.getY(),xaxis.getZ());

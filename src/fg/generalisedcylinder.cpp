@@ -23,8 +23,8 @@ boost::shared_ptr<Mesh> GeneralisedCylinder::createMesh(int n, int m) const
     for (unsigned int j = 0; j <= m; ++j) {
         for (unsigned int i = 0; i < n; ++i) {
 			Vec3 cs = mCrossSection.getPosition(u,v);
-			std::cout << "(u, v) = (" << u << ", " << v << ")\n";
-	        std::cout << cs << std::endl;
+//			std::cout << "(u, v) = (" << u << ", " << v << ")\n";
+//	        std::cout << cs << std::endl;
 			Vec3 pos = mCarrier.getInterpolator()->getPosition(v) + mCarrier.orient(v, cs.getX(), cs.getY());
 		    mb.addVertex(pos.getX(),pos.getY(),pos.getZ());
 			u += uinc;

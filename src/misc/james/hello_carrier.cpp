@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
 		arr.push_back( Mat4() );
 		arr[i].SetTranslate(fg::random(-2,2),fg::random(-2,2),fg::random(-2,2));
 	}
+	//arr[0].SetRotateDeg(30.,Vec3(1.,0.,0.));
 
 	const fg::gc::CarrierCurve& carrier = gc::CarrierCurveLinear(arr);
 

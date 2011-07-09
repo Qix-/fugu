@@ -54,7 +54,6 @@ namespace fg {
 
         // Draw a tangent
 		time = time * 0.2;
-		if (time > 3.f) time = 3.f;
 		Vec3 pos = c.getInterpolator()->getPosition(time);
 		Vec3 U;
 

@@ -56,9 +56,30 @@ int main(int argc, char *argv[])
 	setupWindowAndGL();
 
     gc::Turtle bert;
-	bert.beginCarrier();
-	bert.move(2.);
-	gc::CarrierCurveLinear c = bert.endCarrier();
+	bert.beginCylinder();
+	bert.move(1.);
+	bert.roll(M_PI);
+	bert.addPoint();
+	bert.move(1.);
+	/*
+	bert.yaw(M_PI*.25);
+	bert.move(1.);
+	bert.yaw(M_PI*.25);
+	bert.addPoint();
+	bert.yaw(M_PI*.25);
+	bert.move(1.);
+	bert.yaw(M_PI*.25);
+	bert.addPoint();
+	bert.yaw(M_PI*.25);
+	bert.move(1.);
+	bert.yaw(M_PI*.25);
+	bert.addPoint();
+	bert.yaw(M_PI*.25);
+	bert.move(1.);
+	bert.yaw(M_PI*.25);
+	*/
+	gc::GeneralisedCylinder c = bert.endCylinder();
+	boost::shared_ptr<Mesh> m = c.createMesh(40,700);
 
 	// Run as fast as I can
 	bool running = true;
@@ -108,7 +129,7 @@ int main(int argc, char *argv[])
 		glVertex3d(zaxis.getX(),zaxis.getY(),zaxis.getZ());
 		glEnd();
 
-		fg::GLRenderer::renderCarrier(c,91,time);
+		fg::GLRenderer::renderMesh(m);
 		
 		glPopMatrix();
 
