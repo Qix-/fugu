@@ -1,5 +1,6 @@
 #include "quat.h"
 
+#include <iostream>
 
 namespace fg {
 Quat::Quat()
@@ -42,9 +43,9 @@ Quat::Quat( const Mat4 &m )
 
 Quat& Quat::operator=( const Quat &rhs )
 {
-	v = rhs.v;
-	w = rhs.w;
-	return *this;
+    v = rhs.v;
+    w = rhs.w;
+    return *this;
 }
 
 void Quat::set( double aW, double x, double y, double z )
@@ -76,8 +77,8 @@ void Quat::set( const Vec3 &from, const Vec3 &to )
 
 void Quat::set( const Vec3 &axis, double radians )
 {
-    w = cos( radians / 2. );
-    v = axis / axis.length() * sin( radians / 2. );
+    w = cos( radians * .5 );
+    v = axis / axis.length() * sin( radians * .5 );
 }
 
 void Quat::set( double xRotation, double yRotation, double zRotation )
@@ -105,15 +106,14 @@ void Quat::set( double xRotation, double yRotation, double zRotation )
 
 void Quat::set( const Mat4 &m )
 {
-    double trace =  m.get(0,0) + m.get(2,2) + m.get(3,3);
-    if ( trace > 0. )
+    if (  m.get(0,0) + m.get(1,1) + m.get(2,2) > 0.)
     {
-        double s = sqrt( trace + 1.0 );
-        w = s * 0.5;
-        double recip = 0.5 / s;
-        v.setX( ( m.get(2,1) - m.get(1,2) ) * recip );
-        v.setY ( ( m.get(0,2) - m.get(2,0) ) * recip );
-        v.setZ ( ( m.get(1,0) - m.get(0,1) ) * recip );
+		double t = m.get(0,0) + m.get(1,1) + m.get(2,2) + 1.;
+		double s = 0.5 / sqrt(t);
+		w = s * t;
+		v.setX( ( m[2][1] - m[1][2] ) * s );
+		v.setY( ( m[0][2] - m[2][0] ) * s );
+		v.setZ( ( m[1][0] - m[0][1] ) * s );
     }
     else
     {
@@ -196,12 +196,21 @@ Quat Quat::lerp( double t, const Quat &end ) const
         result += *this * ( t - 1.0 );
     }
 
+//	std::cout << t << std::endl;
+//	std::cout << *this << std::endl;
+//	std::cout << end << std::endl;
+//	std::cout << result << std::endl;
     return result;
 }
 
 double Quat::dot( const Quat &quat ) const
 {
     return w * quat.w + v.dot( quat.v );
+}
+
+Vec3 Quat::rotate( const Vec3 &point ) const
+{
+	return operator*( point );
 }
 
 const Quat Quat::operator*( double rhs ) const
@@ -235,7 +244,7 @@ const Quat Quat::operator-( const Quat &rhs ) const
 }
 
 // transform a vector by the quaternion
-Vec3 Quat::operator*( const Vec3 &vec ) const 
+Vec3 Quat::operator*( const Vec3 &vec ) const
 {
     double vMult = 2. * ( v.getX() * vec.getX() + v.getY() * vec.getY() + v.getZ() * vec.getZ() );
     double crossMult = 2. * w;
@@ -246,4 +255,33 @@ Vec3 Quat::operator*( const Vec3 &vec ) const
                  pMult * vec.getZ() + vMult * v.getZ() + crossMult * ( v.getX() * vec.getY() - v.getY() * vec.getX() ) );
 }
 
+// get axis-angle representation's axis
+Vec3 Quat::getAxis() const
+{
+    double cos_angle = w;
+
+	if (fabs(w) - 1. < EPSILON)
+		return Vec3(1.,0.,0.);
+
+    double invLen = 1. / sqrt( 1.0 - cos_angle * cos_angle );
+
+    return v * invLen;
 }
+
+// get axis-angle representation's angle in radians
+double Quat::getAngle() const
+{
+    double cos_angle = w;
+
+    return acos( cos_angle ) * 2.;
+}
+
+
+}
+
+std::ostream& operator <<( std::ostream &oss, const fg::Quat &q )
+{
+    oss << q.getAxis() << " @ " << q.getAngle() * ( 180. / M_PI ) << "deg";
+    return oss;
+}
+

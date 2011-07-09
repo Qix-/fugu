@@ -59,20 +59,27 @@ int main(int argc, char *argv[])
 	// ** Create new carrier here
 	const int numPoints = 2;
 	std::vector<Mat4> arr;
+	Mat4 tmp;
 
 	arr.push_back( Mat4() );
-	arr[0].SetTranslate(0.,0.,0.);
+	arr[0].SetIdentity();
+
 	arr.push_back( Mat4() );
 	arr[1].SetTranslate(0.,0.,1.);
+	tmp.SetRotateDeg(-22.5, Vec3( 1., 0., 0.));
+	arr[1] = arr[1] * tmp;
+
 	arr.push_back( Mat4() );
 	arr[2].SetTranslate(0.,1.,2.);
+	tmp.SetRotateDeg(-45, Vec3( 1., 0., 0.));
+	arr[2] = arr[2] * tmp;
 
 	const fg::gc::CarrierCurve& carrier = gc::CarrierCurveLinear(arr);
 
 	const fg::gc::CrossSectionCircular& cs = gc::CrossSectionCircular(.1);
 	const fg::gc::GeneralisedCylinder& gc = gc::GeneralisedCylinder(carrier, cs);
 	boost::shared_ptr<Mesh> mMesh = gc.createMesh(4, 2);
-	//mMesh->smoothSubdivide(2);
+	mMesh->smoothSubdivide(3);
 
 	// Run as fast as I can
 	bool running = true;

@@ -28,6 +28,10 @@ namespace fg {
 		  void set( double xRotation, double yRotation, double zRotation );
 		  void set( const Mat4 &m );
 
+          Vec3 rotate( const Vec3 &point ) const;
+          Vec3 getAxis() const;
+          double getAngle() const;
+
 		  void normalise();
 
 		  double length() const;
@@ -44,8 +48,11 @@ namespace fg {
 
           Quat inverted() const;
 		  void invert();
+
 		private:
 			static const double EPSILON = 4.37114e-05;
 	};
 }
+
+std::ostream& operator <<( std::ostream &oss, const fg::Quat &q );
 #endif

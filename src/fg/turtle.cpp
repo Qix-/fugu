@@ -9,11 +9,44 @@ namespace fg {
 		mFrame.SetIdentity();
 	}
 
+	Turtle::~Turtle()
+	{
+		while(!mCarriers.empty()) {
+			delete mCarriers.front();
+			mCarriers.erase(mCarriers.begin());
+		}
+		while(!mCrossSections.empty()) {
+			delete mCrossSections.front();
+			mCrossSections.erase(mCrossSections.begin());
+		}
+	}
+
 	void Turtle::move(double distance)
 	{
 		Mat4 trans;
 		trans.SetTranslate(0.,0.,distance);
-		mFrame = trans*mFrame;
+		mFrame = mFrame*trans;
+	}
+
+	void Turtle::yaw(double theta)
+	{
+		Mat4 rot;
+		rot.SetRotateRad(theta, Vec3(0.,1.,0.));
+		mFrame = mFrame*rot;
+	}
+
+	void Turtle::pitch(double theta)
+	{
+		Mat4 rot;
+		rot.SetRotateRad(theta, Vec3(1.,0.,0.));
+		mFrame = mFrame*rot;
+	}
+
+	void Turtle::roll(double theta)
+	{
+		Mat4 rot;
+		rot.SetRotateRad(theta, Vec3(0.,0.,1.));
+		mFrame = mFrame*rot;
 	}
 
 	void Turtle::beginCylinder()
@@ -31,12 +64,9 @@ namespace fg {
 	{
 		mPrevFrames.push_back(mFrame);
 
-		Mat4 cp[mPrevFrames.size()];
-		for (int i = 0; i < mPrevFrames.size(); ++i)
-		{
-			cp[i] = mPrevFrames[i];
-		}
-
+        mCarriers.push_back(new CarrierCurveLinear(mPrevFrames));
+		mCrossSections.push_back(new CrossSectionCircular(0.1));
+		return GeneralisedCylinder(*(mCarriers.back()),*(mCrossSections.back()));
 	}
 	}
 }
