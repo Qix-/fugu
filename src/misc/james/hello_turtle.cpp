@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 	bert.yaw(M_PI*.25);
 	*/
 	gc::GeneralisedCylinder c = bert.endCylinder();
-	boost::shared_ptr<Mesh> m = c.createMesh(40,700);
+	boost::shared_ptr<Mesh> m = c.createMesh(4,700);
 
 	// Run as fast as I can
 	bool running = true;
@@ -231,7 +231,7 @@ void GLFWCALL mouseButtoned(int button, int state){
 			gMouseState.leftButtonDown = false;
 		}
 	}
-	else if (button==GLFW_MOUSE_BUTTON_MIDDLE){
+	else if (button==GLFW_MOUSE_BUTTON_RIGHT){
 		if (state==GLFW_PRESS){
 			gMouseState.middleButtonDown = true;
 			glfwGetMousePos(&gMouseState.lastX,&gMouseState.lastY);
