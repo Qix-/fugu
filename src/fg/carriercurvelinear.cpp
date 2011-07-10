@@ -2,7 +2,7 @@
 #include "fg/mat4.h"
 #include "fg/carriercurvelinear.h"
 
-#include <iostream>
+//#include <iostream>
 
 namespace fg {
 namespace gc {
@@ -48,7 +48,7 @@ void CarrierCurveLinear::setReferenceFrames(const std::vector<Mat4> &refFrames)
 		mOrients.push_back( Quat( refFrames[i] ) );
 		mRFrames.push_back( refFrames[i] );
 
-		std::cout << mOrients[i] << std::endl;
+		//std::cout << mOrients[i] << std::endl;
 	}
 
 	mInterpolator = new spline::LinearInterpolator<Vec3>(tmpCp);
@@ -84,7 +84,7 @@ void CarrierCurveLinear::getOrientation(double t, Vec3 *H, Vec3 *U, Vec3 *L) con
 	//std::cout << "t = " << t << ", tint = " << tint << ", tfrac = " << tfrac <<std::endl;
 
     //std::cout << mOrients[2] << std::endl;
-	rot = mOrients[tint].lerp(tfrac, mOrients[tint+1]);
+	rot = mOrients[tint].slerp(tfrac, mOrients[tint+1]);
 	if (H)
 		*H = rot * Vec3(0.,0.,1.);
 	if (U)

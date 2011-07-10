@@ -108,12 +108,12 @@ void Quat::set( const Mat4 &m )
 {
     if (  m.get(0,0) + m.get(1,1) + m.get(2,2) > 0.)
     {
-		double t = m.get(0,0) + m.get(1,1) + m.get(2,2) + 1.;
-		double s = 0.5 / sqrt(t);
-		w = s * t;
-		v.setX( ( m[2][1] - m[1][2] ) * s );
-		v.setY( ( m[0][2] - m[2][0] ) * s );
-		v.setZ( ( m[1][0] - m[0][1] ) * s );
+        double t = m.get(0,0) + m.get(1,1) + m.get(2,2) + 1.;
+        double s = 0.5 / sqrt(t);
+        w = s * t;
+        v.setX( ( m[2][1] - m[1][2] ) * s );
+        v.setY( ( m[0][2] - m[2][0] ) * s );
+        v.setZ( ( m[1][0] - m[0][1] ) * s );
     }
     else
     {
@@ -210,7 +210,7 @@ double Quat::dot( const Quat &quat ) const
 
 Vec3 Quat::rotate( const Vec3 &point ) const
 {
-	return operator*( point );
+    return operator*( point );
 }
 
 const Quat Quat::operator*( double rhs ) const
@@ -255,13 +255,19 @@ Vec3 Quat::operator*( const Vec3 &vec ) const
                  pMult * vec.getZ() + vMult * v.getZ() + crossMult * ( v.getX() * vec.getY() - v.getY() * vec.getX() ) );
 }
 
+const Quat Quat::operator+( const Quat &rhs ) const
+{
+	const Quat& lhs = *this;
+	return Quat( lhs.w + rhs.w, lhs.v.getX() + rhs.v.getX(), lhs.v.getY() + rhs.v.getY(), lhs.v.getZ() + rhs.v.getZ() );  
+}
+
 // get axis-angle representation's axis
 Vec3 Quat::getAxis() const
 {
     double cos_angle = w;
 
-	if (fabs(w) - 1. < EPSILON)
-		return Vec3(1.,0.,0.);
+    if (fabs(w) - 1. < EPSILON)
+        return Vec3(1.,0.,0.);
 
     double invLen = 1. / sqrt( 1.0 - cos_angle * cos_angle );
 
@@ -276,6 +282,51 @@ double Quat::getAngle() const
     return acos( cos_angle ) * 2.;
 }
 
+Quat Quat::slerp( double t, const Quat &end ) const
+{
+    // get cosine of "angle" between quaternions
+    double cosTheta = this->dot( end );
+    double startInterp, endInterp;
+
+    // if "angle" between quaternions is less than 90 degrees
+    if( cosTheta >= EPSILON ) {
+        // if angle is greater than zero
+        if( (1. - cosTheta ) > EPSILON ) {
+            // use standard slerp
+            double theta = acos( cosTheta );
+            double recipSinTheta = 1. / sin( theta );
+
+            startInterp = sin( ( 1. - t ) * theta ) * recipSinTheta;
+            endInterp = sin( t * theta ) * recipSinTheta;
+        }
+        // angle is close to zero
+        else {
+            // use linear interpolation
+            startInterp = 1. - t;
+            endInterp = t;
+        }
+    }
+    // otherwise, take the shorter route
+    else {
+        // if angle is less than 180 degrees
+        if( ( 1. + cosTheta ) > EPSILON ) {
+            // use slerp w/negation of start quaternion
+            double theta = acos( -cosTheta );
+            double recipSinTheta = 1. / sin( theta );
+
+            startInterp = sin( ( t - 1. ) * theta ) * recipSinTheta;
+            endInterp = sin( t * theta ) * recipSinTheta;
+        }
+        // angle is close to 180 degrees
+        else {
+            // use lerp w/negation of start quaternion
+            startInterp = t - 1.0;
+            endInterp = t;
+        }
+    }
+
+    return *this * startInterp + end * endInterp;
+}
 
 }
 

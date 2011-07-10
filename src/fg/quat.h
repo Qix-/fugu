@@ -38,12 +38,14 @@ namespace fg {
 		  double lengthSquared() const;
 
 		  Quat lerp( double t, const Quat &end ) const;
+		  Quat slerp( double t, const Quat &end ) const;
 
 		  double dot( const Quat &quat ) const;
 
           const Quat operator*( double rhs ) const;
 		  Vec3 operator*( const Vec3 &vec ) const;
           const Quat operator-( const Quat &rhs ) const;
+		  const Quat operator+( const Quat &rhs ) const;
           Quat& operator+=( const Quat &rhs );
 
           Quat inverted() const;
