@@ -1,37 +1,17 @@
 /*! \mainpage notitle
  
- \image html fg.png
- 
  <CENTER>
- \ref intro &nbsp;&nbsp;
  \ref overview &nbsp;&nbsp;
  \ref download &nbsp;&nbsp;
  \ref start &nbsp;&nbsp;
  \ref license
  </CENTER>
  
- 
- 
- \section intro Introduction
- 
-<i>fg</i> is a system for procedurally generating animated geometric forms in real-time. It is currently under heavy development and as such should not be used at all, by anyone, under any circumstances. 
- 
  \section overview Overview
  
- The following table lists the frameworks currently included as part of <i>fg</i>, along with a brief description of each.
- 
- <table class="modules" border="0" cellspacing="0" cellpadding="0">
- <TR>
- <th class="modules" WIDTH="5%"><B>Framework</B></th>
- <th class="modules"><B>Description</B></th>
- </TR>
- <TR>
- <TD class="modules">\ref fg</TD>
- <TD class="modules">\copydoc fg</TD>
- </TR>
- </table>
- 
- 
+ <b>fg</b> is a system for procedurally generating animated geometric forms in real-time. It is currently under heavy development and as such should not be used at all, by anyone, under any circumstances.
+
+ This documentation contains the c++ API to fg, and should be useful if developing in fg, extending fg, or embedding it within another application. The lua-side documentation for fg/fgv will be available elsewhere (in a non-developer-friendly form).
  
  \section download Download
  
@@ -43,42 +23,14 @@
  
  See Ben for login details.
  
- 
  \section start Getting Started
  
- Install the requirements:
- <OL>
- <LI>Cmake 2.8 http://www.cmake.org/
-	\n
-	<i>fg</i> uses CMake to build. As such, it should be possible to output project files for Xcode, Visual Studio, etc. Some build scripts are provided for some of these, to generate other projects you will need to write your own scripts (patches welcome!). 
- </LI>
- <LI>xcode for Mac </LI>
- <LI>Eclipse/MinGW for Windows </LI>
- </OL>
- 
- Building <i>fg</i>:
- <UL>
-  <LI>Mac</LI>
- 	<OL>
- 	<LI>./xcode-build.sh</LI>
- 	<LI>open build/xcode/FG.xcodeproj</LI>
-	<LI>Select "install" target and run</LI>
-	<LI>Open a terminal, cd to fg/bin/fgv and run "./fgv tests/basic5" for example</LI>
- 	</OL>
-  <LI>Windows</LI>
-	<OL>
-	<LI>Switch to Mac</LI>
-	<LI>Follow instruction steps above :-)</LI>
-	</OL>
-  </UL> 
- 
+ See the README for instructions on how to build and run fg.
  
  \section license License
  
- <i>fg</i>\n
  Copyright (c) 2011 Centre for Electronic Media Art (CEMA)\n
  Monash University, Australia. All rights reserved.
-
  
  Permission is hereby granted, free of charge, to any person
  obtaining a copy of this software and associated documentation files
