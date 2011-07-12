@@ -15,6 +15,7 @@ namespace fg {
 	public:
 		Mat4();
 		Mat4(const vcg::Matrix44<double>& m);
+		Mat4(const double v[]);
 
 		/// Access a matrix element (row,col)
 		double& get(int r, int c);

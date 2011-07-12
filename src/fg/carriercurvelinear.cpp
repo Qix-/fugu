@@ -46,7 +46,7 @@ void CarrierCurveLinear::setReferenceFrames(const std::vector<Mat4> &refFrames)
         tmpCp.push_back(p1);
 		// Get the rotation
 		mRFrames.push_back( refFrames[i] );
-		mOrients.push_back( Quat( refFrames[i] ) );
+		//mOrients.push_back( Quat( refFrames[i] ) );
 		//std::cout << mOrients[i] << std::endl;
 	}
 
@@ -60,7 +60,6 @@ CarrierCurveLinear::~CarrierCurveLinear()
 
 void CarrierCurveLinear::deleteData()
 {
-	mOrients.clear();
 	mRFrames.clear();
     if(mInterpolator)
         delete mInterpolator;
@@ -73,67 +72,98 @@ const spline::LinearInterpolator<Vec3> * CarrierCurveLinear::getInterpolator() c
     return mInterpolator;
 }
 
-void CarrierCurveLinear::getOrientation(double t, Vec3 *H, Vec3 *U, Vec3 *L) const
+std::pair<Quat,Quat> CarrierCurveLinear::getSegOrients(int seg) const
 {
-	int tint = (int) t;
-	tint = clamp<int>( tint, 0, mInterpolator->getNumSegments() - 1 );
-	double tfrac = t - tint;
-	Quat rot;
+	return std::pair<Quat,Quat>( Quat( ), Quat( ) );
+}
 
-	//std::cout << "t = " << t << ", tint = " << tint << ", tfrac = " << tfrac <<std::endl;
-
-    //std::cout << mOrients[2] << std::endl;
-	rot = mOrients[tint].slerp(tfrac, mOrients[tint+1]);
-	if (H)
-		*H = rot * Vec3(0.,0.,1.);
-	if (U)
-		*U = rot * Vec3(1.,0.,0.);
-	if (L)
-		*L = rot * Vec3(0.,1.,0.);
+Quat CarrierCurveLinear::orient(double v) const
+{
+	return Quat( );
 	/*
-	Vec3 tangent = mInterpolator->getDerivative(t);
-	tangent.normalise();
+	Vec3 tan = mInterpolator->getDerivative(v);
+	tan.normalise();
 
-	Vec3 normal;
+	Vec3 norm;
 
-	if ( tangent.dot( Vec3(0.,1.,0.) ) > 1.f ) {
-		 normal = tangent^Vec3(1., 0., 0.);
+	if ( tan.dot( Vec3(0.,1.,0.) ) > 1.f ) {
+		 norm = tan.cross(Vec3(1., 0., 0.));
 	} else {
-		 normal = tangent^Vec3(0., 1., 0.);
+		 norm = tan.cross(Vec3(0., 1., 0.));
 	}
 
-	Vec3 biNorm = normal^tangent;
+	Vec3 biNorm = norm.cross(tan);
 
-	if (H)
-		*H = tangent;
-	if (U)
-		*U = normal;
-	if (L)
-		*L = biNorm;
-		*/
+	return Quat( norm, biNorm, tan );
+	*/
 }
 
-Vec3 CarrierCurveLinear::orient(double v, double x, double y) const
+Quat CarrierCurveLinear::orientDer(double v) const
 {
-    Vec3 U, B;
-    getOrientation(v, 0, &U, &B);
-    return U*x + B*y;
+	return Quat();
 }
 
-Vec3 CarrierCurveLinear::dOrientDv(double v, double x, double y) const
-{
-    return Vec3(0.,0.,0.);
-}
-
-Vec3 CarrierCurveLinear::dOrientDx(double v, double x, double y) const
-{
-    return Vec3(0.,0.,0.);
-}
-
-Vec3 CarrierCurveLinear::dOrientDy(double v, double x, double y) const
-{
-    return Vec3(0.,0.,0.);
-}
-
+//void CarrierCurveLinear::getOrientation(double t, Vec3 *H, Vec3 *U, Vec3 *L) const
+//{
+//	int tint = (int) t;
+//	tint = clamp<int>( tint, 0, mInterpolator->getNumSegments() - 1 );
+//	double tfrac = t - tint;
+//	Quat rot;
+//
+//	//std::cout << "t = " << t << ", tint = " << tint << ", tfrac = " << tfrac <<std::endl;
+//
+//    //std::cout << mOrients[2] << std::endl;
+//	rot = mOrients[tint].slerp(tfrac, mOrients[tint+1]);
+//	if (H)
+//		*H = rot * Vec3(0.,0.,1.);
+//	if (U)
+//		*U = rot * Vec3(1.,0.,0.);
+//	if (L)
+//		*L = rot * Vec3(0.,1.,0.);
+//	/*
+//	Vec3 tangent = mInterpolator->getDerivative(t);
+//	tangent.normalise();
+//
+//	Vec3 normal;
+//
+//	if ( tangent.dot( Vec3(0.,1.,0.) ) > 1.f ) {
+//		 normal = tangent^Vec3(1., 0., 0.);
+//	} else {
+//		 normal = tangent^Vec3(0., 1., 0.);
+//	}
+//
+//	Vec3 biNorm = normal^tangent;
+//
+//	if (H)
+//		*H = tangent;
+//	if (U)
+//		*U = normal;
+//	if (L)
+//		*L = biNorm;
+//		*/
+//}
+//
+//Vec3 CarrierCurveLinear::orient(double v, double x, double y) const
+//{
+//    Vec3 U, B;
+//    getOrientation(v, 0, &U, &B);
+//    return U*x + B*y;
+//}
+//
+//Vec3 CarrierCurveLinear::dOrientDv(double v, double x, double y) const
+//{
+//    return Vec3(0.,0.,0.);
+//}
+//
+//Vec3 CarrierCurveLinear::dOrientDx(double v, double x, double y) const
+//{
+//    return Vec3(0.,0.,0.);
+//}
+//
+//Vec3 CarrierCurveLinear::dOrientDy(double v, double x, double y) const
+//{
+//    return Vec3(0.,0.,0.);
+//}
+//
 }
 }

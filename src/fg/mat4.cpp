@@ -6,6 +6,8 @@ namespace fg {
 
 	Mat4::Mat4(const vcg::Matrix44<double>& m):vcg::Matrix44<double>(m){}
 
+	Mat4::Mat4(const double v[]):vcg::Matrix44<double>(v){}
+
 	double& Mat4::get(int r, int c){
 		return ElementAt(r,c);
 	}

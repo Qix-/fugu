@@ -41,11 +41,43 @@ Quat::Quat( const Mat4 &m )
     set( m );
 }
 
+Quat::Quat( const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis )
+{
+	set( xaxis, yaxis, zaxis );
+}
+
 Quat& Quat::operator=( const Quat &rhs )
 {
     v = rhs.v;
     w = rhs.w;
     return *this;
+}
+
+void Quat::set (const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis)
+{
+	double kRot[16];
+
+    kRot[0] = xaxis.getX();
+    kRot[1] = xaxis.getY();
+    kRot[2] = xaxis.getZ();
+    kRot[3] = 0;
+
+    kRot[4] = yaxis.getX();
+    kRot[5] = yaxis.getY();
+    kRot[6] = yaxis.getZ();
+    kRot[7] = 0;
+
+    kRot[8] = zaxis.getX();
+    kRot[9] = zaxis.getY();
+    kRot[10] = zaxis.getZ();
+    kRot[11] = 0;
+
+    kRot[12] = 0;
+    kRot[13] = 0;
+    kRot[14] = 0;
+    kRot[15] = 1;
+
+	set( Mat4( kRot ) );
 }
 
 void Quat::set( double aW, double x, double y, double z )
@@ -213,6 +245,14 @@ Vec3 Quat::rotate( const Vec3 &point ) const
     return operator*( point );
 }
 
+const Quat Quat::operator*( const Quat &rhs ) const
+{
+	return Quat( rhs.w*w - rhs.v.getX()*v.getX() - rhs.v.getY()*v.getY() - rhs.v.getZ()*v.getZ(),
+				 rhs.w*v.getX() + rhs.v.getX()*w + rhs.v.getY()*v.getZ() - rhs.v.getZ()*v.getY(),
+			  	 rhs.w*v.getY() + rhs.v.getY()*w + rhs.v.getZ()*v.getX() - rhs.v.getX()*v.getZ(),
+			  	 rhs.w*v.getZ() + rhs.v.getZ()*w + rhs.v.getX()*v.getY() - rhs.v.getY()*v.getX() );
+}
+
 const Quat Quat::operator*( double rhs ) const
 {
     return Quat( w * rhs, v.getX() * rhs, v.getY() * rhs, v.getZ() * rhs );
@@ -327,7 +367,14 @@ Quat Quat::slerp( double t, const Quat &end ) const
 
     return *this * startInterp + end * endInterp;
 }
-
+	
+Quat Quat::inverse() const
+{
+	double norm = w * w + v.getX() * v.getX() + v.getY() * v.getY() + v.getZ() * v.getZ();
+		
+	double normRecip = 1. / norm;
+	return Quat( normRecip * w, -normRecip * v.getX(), -normRecip * v.getY(), -normRecip * v.getZ() );
+}
 }
 
 std::ostream& operator <<( std::ostream &oss, const fg::Quat &q )

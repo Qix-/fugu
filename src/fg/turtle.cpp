@@ -70,7 +70,7 @@ namespace fg {
 
         mCarriers.push_back(new CarrierCurveLinear(mPrevFrames));
 		mCrossSections.push_back(new CrossSectionCircular(0.1));
-		mCylinders.push_back( new GeneralisedCylinder(*(mCarriers.back()),*(mCrossSections.back())) );
+		mCylinders.push_back( new GeneralisedCylinder(*(mCarriers.back()),*(mCrossSections.back()), mPrevFrames) );
 	}
 
 	boost::shared_ptr< Mesh > Turtle::getMesh(int i, int n, int m)

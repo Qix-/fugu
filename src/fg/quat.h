@@ -21,12 +21,14 @@ namespace fg {
 		  Quat( const Vec3 &from, const Vec3 &to );
 		  Quat( double xRotation, double yRotation, double zRotation );
 		  Quat( const Mat4 &m );
+          Quat( const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis );
 
 		  void set( double aW, double x, double y, double z );
 		  void set( const Vec3 &from, const Vec3 &to );
 		  void set( const Vec3 &axis, double radians );
 		  void set( double xRotation, double yRotation, double zRotation );
 		  void set( const Mat4 &m );
+          void set( const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis );
 
           Vec3 rotate( const Vec3 &point ) const;
           Vec3 getAxis() const;
@@ -42,6 +44,7 @@ namespace fg {
 
 		  double dot( const Quat &quat ) const;
 
+		  const Quat operator*( const Quat &rhs ) const;
           const Quat operator*( double rhs ) const;
 		  Vec3 operator*( const Vec3 &vec ) const;
           const Quat operator-( const Quat &rhs ) const;
@@ -50,6 +53,7 @@ namespace fg {
 
           Quat inverted() const;
 		  void invert();
+		  Quat inverse() const;
 
 		private:
 			static const double EPSILON = 4.37114e-05;

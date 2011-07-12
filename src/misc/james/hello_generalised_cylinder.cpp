@@ -77,9 +77,9 @@ int main(int argc, char *argv[])
 	const fg::gc::CarrierCurve& carrier = gc::CarrierCurveLinear(arr);
 
 	const fg::gc::CrossSectionCircular& cs = gc::CrossSectionCircular(.1);
-	const fg::gc::GeneralisedCylinder& gc = gc::GeneralisedCylinder(carrier, cs);
+	const fg::gc::GeneralisedCylinder& gc = gc::GeneralisedCylinder(carrier, cs, arr);
 	boost::shared_ptr<Mesh> mMesh = gc.createMesh(4, 2);
-	mMesh->smoothSubdivide(3);
+	//mMesh->smoothSubdivide(3);
 
 	// Run as fast as I can
 	bool running = true;

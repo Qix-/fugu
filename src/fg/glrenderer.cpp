@@ -57,7 +57,7 @@ namespace fg {
 		Vec3 pos = c.getInterpolator()->getPosition(time);
 		Vec3 U;
 
-		U = pos + c.orient(time,1.,0.);
+		U = pos + c.orient(time)*Vec3(1.,0.,0.);
 
 		glBegin(GL_LINES);
 		glVertex3d(pos.getX(),pos.getY(),pos.getZ());

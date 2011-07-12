@@ -2,10 +2,12 @@
 #define FG_GC_CARRIER_CURVE_H
 
 #include <vector>
+#include <utility>
 #include <iostream>
 
 #include "fg/fg.h"
 #include "fg/interpolator.h"
+#include "fg/quat.h"
 
 namespace fg{
 	namespace gc {
@@ -18,13 +20,20 @@ public:
     CarrierCurve() {};
     CarrierCurve(const CarrierCurve &other) {  };
     /**
-	 * \brief Orients the point (x,y) in R^3 according to
-	 *        the position along the carrier curve at value v.
+	 * \brief Returns a quaternion representing the frame of the
+	 *        curve at parameter value v.
 	 */
-    virtual Vec3 orient(double v, double x, double y) const = 0;
-    virtual Vec3 dOrientDv(double v, double x, double y) const = 0;
-    virtual Vec3 dOrientDx(double v, double x, double y) const = 0;
-    virtual Vec3 dOrientDy(double v, double x, double y) const = 0;
+    virtual Quat orient(double v) const = 0;
+    /**
+	 * \brief Returns a quaternion representing rate of change of the frame of the
+	 *        curve at parameter value v.
+	 */
+	virtual Quat orientDer(double v) const = 0;
+
+	/**
+	 * \brief Returns the orientation at either end of the specified segment.
+	 */
+	virtual std::pair<Quat,Quat> getSegOrients(int seg) const = 0;
 
 	virtual const spline::Interpolator<Vec3> * getInterpolator() const = 0;
 
