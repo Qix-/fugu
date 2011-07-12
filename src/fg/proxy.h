@@ -1,3 +1,27 @@
+/**
+ * \file
+ * \author ben
+ * 
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #ifndef FG_PROXY_H
 #define FG_PROXY_H
 
@@ -6,7 +30,8 @@
 
 namespace fg {
 
-	/** A container for proxy debugging settings */
+	/** \brief Proxy debugging settings 
+	 */
 	class ProxySettings {
 	public:
 		/**
@@ -26,8 +51,9 @@ namespace fg {
 	};
 
 	/**
-	 * Proxy provides a simple wrapper around a pointer to an object of type T.
-	 *
+	 * \brief Proxy provides a simple wrapper around a pointer to an object of type T.
+	 * 
+	 * Proxy is used to provide safe access to a potentially volatile object across the C++/Lua boundary. See e.g., fg::VertexProxy .
 	 */
 	template <class T>
 	class Proxy {

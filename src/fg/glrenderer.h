@@ -1,3 +1,27 @@
+/**
+ * \file
+ * \author ben wetterj
+ *
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #ifndef FG_GLRENDERER_H
 #define FG_GLRENDERER_H
 
@@ -14,7 +38,7 @@ namespace fg {
 	}
 
 	/**
-	 * GLRenderer: Renders objects using OpenGL
+	 * \brief Renders fg objects using OpenGL
 	 */
 	class GLRenderer {
 	public:

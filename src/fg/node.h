@@ -1,3 +1,27 @@
+/**
+ * \file
+ * \author ben
+ * 
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #ifndef FG_NODE_H
 #define FG_NODE_H
 
@@ -11,7 +35,7 @@ std::ostream& operator<<(std::ostream& o, const fg::Node& n);
 
 namespace fg {
 	/**
-	 * A Node is a primitive (primarily spatial) entity in fg.
+	 * \brief A Node is a primitive (primarily spatial) entity in fg.
 	 *
 	 * Nodes can be linked together in hierarchical and other (spatial) relationships.
 	 */

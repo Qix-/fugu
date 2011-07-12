@@ -44,3 +44,10 @@ lib/ contains compiled libraries of some dependencies
 tools/ contains misc tools (e.g., a script for importing objs to blender for animation)
 
 
+License
+=======
+
+See LICENSE for the current software license governing fg.
+
+NOTE: vcg (a dependency of fg) is covered by the GPL, which means fg also has to be GPL. At some stage in the future, if a more liberal license is required, we will need to remove the vcg dependency and replace it with e.g., OpenMesh.
+

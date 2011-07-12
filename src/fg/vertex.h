@@ -1,3 +1,27 @@
+/**
+ * \file
+ * \author ben
+ * 
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #ifndef FG_VERTEX_H
 #define FG_VERTEX_H
 
@@ -12,15 +36,17 @@
 #include "fg/vec3.h"
 
 namespace fg {
-	/// Forward declaration of vertex implementation
+	// Forward declaration of vertex implementation
 	class VertexImpl;
 
 	/**
+	 * \brief Provides a proxy to a fg::Vertex
+	 *
 	 * A VertexProxy has a number of purposes:
 	 * - Provides access to the underlying vcg::Vertex implementation
 	 * - Adds helper methods for the lua bindings
-	 * - TODO: Add helper methods for accessing custom data
-	 *
+	 * 
+	 * TODO: Add helper methods for accessing custom data
 	 */
 	class VertexProxy: public Proxy<VertexImpl> {
 	public:
@@ -53,7 +79,7 @@ namespace fg {
 
 		/**
 		 * Add a new vertexproxy to this list. It will be removed when their are no
-		 * more references to the vertexproxy (besides this one).		 *
+		 * more references to the vertexproxy (besides this one).
 		 */
 		void add(boost::shared_ptr<VertexProxy>);
 

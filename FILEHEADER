@@ -1,7 +1,9 @@
 /**
  * \file
- * \brief Generates lua bindings for fg
- * \author ben
+ * \brief Brief description of this file
+ * \author Your name
+ * 
+ * Detailed description of file if needed.
  * 
  * \cond showlicense
  * \verbatim
@@ -23,21 +25,3 @@
  * \endcond
  */
 
-#ifndef FG_BINDINGS_H
-#define FG_BINDINGS_H
-
-#include <lua.hpp>
-namespace fg {
-	/**
-	 * \brief Loads the lua bindings for the fg library into the current lua state.
-	 */
-	int loadLuaBindings(lua_State* L);
-
-	// Helpers
-	template <class STLContainer>
-	STLContainer& luaAllAdapter(STLContainer* s){
-		return *s;
-	}
-}
-
-#endif

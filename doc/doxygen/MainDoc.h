@@ -1,4 +1,5 @@
-/*! \mainpage notitle
+/** 
+  \mainpage notitle
  
  <CENTER>
  \ref overview &nbsp;&nbsp;
@@ -29,30 +30,21 @@
  
  \section license License
  
- Copyright (c) 2011 Centre for Electronic Media Art (CEMA)\n
- Monash University, Australia. All rights reserved.
+ \verbatim
+ --------------------------------------------------------------
+     ___     
+    |  _|___ 
+    |  _| . | fg: real-time procedural 
+    |_| |_  | animation and generation 
+        |___| of 3D forms
  
- Permission is hereby granted, free of charge, to any person
- obtaining a copy of this software and associated documentation files
- (the "Software"), to deal in the Software without restriction,
- including without limitation the rights to use, copy, modify, merge,
- publish, distribute, sublicense, and/or sell copies of the Software,
- and to permit persons to whom the Software is furnished to do so,
- subject to the following conditions:
+    Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+    Monash University, Australia. All rights reserved.
  
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
+    Use of this software is governed by the terms outlined in 
+    the LICENSE file.
  
- Any person wishing to distribute modifications to the Software is
- requested to send the modifications to the original developer so that
- they can be incorporated into the canonical version.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
- ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ --------------------------------------------------------------
+ \endverbatim
  
  */

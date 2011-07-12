@@ -1,10 +1,31 @@
+/**
+ * \file
+ * \author ben
+ * 
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #ifndef FG_MESHOPERATORS_VCG_H
 #define FG_MESHOPERATORS_VCG_H
 
-/**
- * Operators which act directly on the vcg implementation of a mesh.
- * NB: Vertex* is a vcg::Mesh::Vertex, not a fg::Vertex!
- */
+
 
 #include "fg/meshimpl.h"
 
@@ -14,6 +35,11 @@
 #include <vcg/space/point3.h>
 
 namespace fg {
+	/**
+	 * \brief Operators which act directly on the vcg implementation of a mesh.
+	 *
+	 * NB: Vertex* is a vcg::Mesh::Vertex, not a fg::Vertex!
+	 */
 	class Extrude {
 	public:
 		typedef MeshImpl MyMesh;
