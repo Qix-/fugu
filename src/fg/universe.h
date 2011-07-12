@@ -1,3 +1,27 @@
+/**
+ * \file
+ * \author ben
+ * 
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #ifndef FG_UNIVERSE_H
 #define FG_UNIVERSE_H
 
@@ -18,7 +42,11 @@ namespace fg {
 	class Mesh;
 
 	/**
-	 * A universe contains all the objects, meshes, scripts, etc.
+	 * \brief Contains objects, meshes, scripts, etc. for an fg simulation.
+	 *
+	 * A fg::Universe provides the main entrypoint to an fg simulation. Typically, you will use
+	 * exactly one universe in your fg simulation. The universe has a C++ API as defined here, but also provides
+	 * functions to the lua scripts loaded within it.
 	 */
 	class Universe {
 	public:

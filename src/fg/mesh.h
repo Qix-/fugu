@@ -1,12 +1,32 @@
+/**
+ * \file
+ * \brief Declares fg::Mesh
+ * \author ben
+ * 
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+ 
 #ifndef FG_MESH_H
 #define FG_MESH_H
 
-/** \brief A triangular mesh.
- *
- * Implementation notes:
- * - It wraps a vcglib mesh with as much info as we can jam in...
- *
- */
+
 
 // fg dependencies
 #include "fg/vec3.h"
@@ -28,12 +48,23 @@
 #include <wrap/gl/trimesh.h>
 
 namespace fg {
+	/**
+	 * \brief A triangular face in an fg::Mesh
+	 */
 	class Face {
 	public:
-
+		// Currently empty
 	};
 
+	// forward decl
 	class MeshImpl;
+	
+	/** 
+	 * \brief A triangular mesh in an fg simulation
+	 *
+	 * NOTE: It wraps a vcglib mesh (see fg::MeshImpl)
+	 *
+	 */
 	class Mesh {
 		public:
 		typedef std::list<boost::shared_ptr<VertexProxy> > VertexSet;
@@ -79,15 +110,14 @@ namespace fg {
 		~Mesh();
 
 		// Accessors
+		
 		/**
-		 * Select all the vertices
-		 * TODO: Update to new VertexProxy system
-		 * @return
+		 * \brief Select (retrieve) all the vertices in this mesh
 		 */
 		boost::shared_ptr<VertexSet> selectAllVertices();
 
 		/**
-		 * @return A random vertex
+		 *\brief Select a random vertex
 		 */
 		boost::shared_ptr<VertexProxy> selectRandomVertex();
 
@@ -95,24 +125,24 @@ namespace fg {
 		void getBounds(double& minx, double& miny, double& minz, double& maxx, double& maxy, double& maxz);
 
 		// Common modifiers
-		void subdivide(int levels); ///< Perform flat subdivision on the mesh
-		void smoothSubdivide(int levels); ///< Perform smooth subdivision on the mesh
+		void subdivide(int levels); ///< \brief Perform flat subdivision on the mesh
+		void smoothSubdivide(int levels); ///< \brief Perform smooth subdivision on the mesh
 
-		/// Sync will make sure all the topology, normals, etc are fixed..
+		/// \brief Sync will make sure all the topology, normals, etc are fixed..
 		void sync();
 
-		/// @deprecated see GLRenderer
+		/// \deprecated see GLRenderer
 		void drawGL();
 
-		/**
+		/*
 		 * Low-level implementation access.
 		 * Only use these if you know what you are doing.
 		 */
 
-		/// return the VCG implementation in this mesh
+		/// \brief (LOW LEVEL) Return the VCG implementation in this mesh
 		MeshImpl* _impl();
 
-		/// return the VertexProxyList, so vertices can get their references updated
+		/// \brief (LOW LEVEL) return the VertexProxyList, so vertices can get their references updated
 		VertexProxyList* _vpl();
 
 		private:
