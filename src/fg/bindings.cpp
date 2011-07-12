@@ -20,6 +20,8 @@
 #include "fg/meshnode.h"
 #include "fg/meshoperators.h"
 
+#include "fg/turtle.h"
+
 int debugFileAndLine(lua_State* L);
 
 namespace fg {
@@ -149,6 +151,20 @@ namespace fg {
 		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double,double))&fg::extrude),
 
 		   def("getVerticesAtDistance", getVerticesAtDistance)
+		];
+
+		// fg/turtle.h
+		module(L,"fg")[
+		   class_<fg::gc::Turtle>("turtle")
+		   .def(constructor<>())
+		   .def("move",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::move)
+		   .def("yaw",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::yaw)
+		   .def("roll",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::roll)
+		   .def("pitch",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::pitch)
+		   .def("beginCylinder",&fg::gc::Turtle::beginCylinder)
+		   .def("endCylinder",&fg::gc::Turtle::endCylinder)
+		   .def("addPoint",&fg::gc::Turtle::addPoint)
+		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(int,int,int))&fg::gc::Turtle::getMesh)
 		];
 
 		return 0;

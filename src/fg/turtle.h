@@ -1,6 +1,7 @@
 #ifndef FG_GC_TURTLE_H
 #define FG_GC_TURTLE_H
 
+#include <boost/shared_ptr.hpp>
 #include <vector>
 
 #include "fg/fg.h"
@@ -21,13 +22,15 @@ namespace fg {
 		  void roll(double theta);
 		  void beginCylinder();
           void addPoint();
-		  GeneralisedCylinder endCylinder();
+		  void endCylinder();
+		  boost::shared_ptr<Mesh> getMesh(int i, int n = 10, int m = 10);
 
 		protected:
 		  Mat4 mFrame;
 		  std::vector<Mat4> mPrevFrames;
 		  std::vector<const CarrierCurve*> mCarriers;
 		  std::vector<const CrossSection*> mCrossSections;
+		  std::vector<const GeneralisedCylinder*> mCylinders;
 	};
 	}
 }

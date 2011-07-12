@@ -45,9 +45,8 @@ void CarrierCurveLinear::setReferenceFrames(const std::vector<Mat4> &refFrames)
 
         tmpCp.push_back(p1);
 		// Get the rotation
-		mOrients.push_back( Quat( refFrames[i] ) );
 		mRFrames.push_back( refFrames[i] );
-
+		mOrients.push_back( Quat( refFrames[i] ) );
 		//std::cout << mOrients[i] << std::endl;
 	}
 
