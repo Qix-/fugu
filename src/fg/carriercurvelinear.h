@@ -31,8 +31,8 @@ private:
 	void deleteData();
 
 	spline::LinearInterpolator<Vec3> * mInterpolator;
-	std::vector<Quat> mOrients;
 	std::vector<Mat4> mRFrames;
+	std::vector<Quat> mOrients;
 };
 }
 }

@@ -19,6 +19,10 @@ namespace fg {
 			delete mCrossSections.front();
 			mCrossSections.erase(mCrossSections.begin());
 		}
+		while(!mCylinders.empty()) {
+			delete mCylinders.front();
+			mCylinders.erase(mCylinders.begin());
+		}
 	}
 
 	void Turtle::move(double distance)
@@ -60,13 +64,18 @@ namespace fg {
 		mPrevFrames.push_back(mFrame);
 	}
 
-	GeneralisedCylinder Turtle::endCylinder()
+	void Turtle::endCylinder()
 	{
 		mPrevFrames.push_back(mFrame);
 
         mCarriers.push_back(new CarrierCurveLinear(mPrevFrames));
 		mCrossSections.push_back(new CrossSectionCircular(0.1));
-		return GeneralisedCylinder(*(mCarriers.back()),*(mCrossSections.back()));
+		mCylinders.push_back( new GeneralisedCylinder(*(mCarriers.back()),*(mCrossSections.back())) );
+	}
+
+	boost::shared_ptr< Mesh > Turtle::getMesh(int i, int n, int m)
+	{
+		return mCylinders[i]->createMesh(n, m);
 	}
 	}
 }

@@ -57,29 +57,30 @@ int main(int argc, char *argv[])
 
     gc::Turtle bert;
 	bert.beginCylinder();
+	/*
 	bert.move(1.);
 	bert.roll(M_PI);
 	bert.addPoint();
 	bert.move(1.);
-	/*
-	bert.yaw(M_PI*.25);
-	bert.move(1.);
-	bert.yaw(M_PI*.25);
-	bert.addPoint();
-	bert.yaw(M_PI*.25);
-	bert.move(1.);
-	bert.yaw(M_PI*.25);
-	bert.addPoint();
-	bert.yaw(M_PI*.25);
-	bert.move(1.);
-	bert.yaw(M_PI*.25);
-	bert.addPoint();
-	bert.yaw(M_PI*.25);
-	bert.move(1.);
-	bert.yaw(M_PI*.25);
 	*/
-	gc::GeneralisedCylinder c = bert.endCylinder();
-	boost::shared_ptr<Mesh> m = c.createMesh(4,700);
+	bert.yaw(M_PI*.25);
+	bert.move(1.);
+	bert.yaw(M_PI*.25);
+	bert.addPoint();
+	bert.yaw(M_PI*.25);
+	bert.move(1.);
+	bert.yaw(M_PI*.25);
+	bert.addPoint();
+	bert.yaw(M_PI*.25);
+	bert.move(1.);
+	bert.yaw(M_PI*.25);
+	bert.addPoint();
+	bert.yaw(M_PI*.25);
+	bert.move(1.);
+	bert.yaw(M_PI*.25);
+	bert.endCylinder();
+	boost::shared_ptr<Mesh> m = bert.getMesh(0,4,20);
+	//m->smoothSubdivide(4);
 
 	// Run as fast as I can
 	bool running = true;

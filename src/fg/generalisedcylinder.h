@@ -2,12 +2,13 @@
 #define FG_GC_GENERALISED_CYLINDER_H
 
 #include <boost/shared_ptr.hpp>
+#include <vector>
 
 #include "fg/fg.h"
 #include "fg/interpolator.h"
-
 #include "fg/carriercurve.h"
 #include "fg/crosssection.h"
+#include "fg/quat.h"
 
 namespace fg{
 	namespace gc {
