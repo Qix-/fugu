@@ -1,9 +1,30 @@
+/**
+ * \file
+ * \brief Useful mathematical and animation functions
+ * \author ben jonmc
+ * 
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #ifndef FG_FUNCTIONS_H
 #define FG_FUNCTIONS_H
-
-/**
- * Useful mathematical and geometric functions.
- */
 
 #include <cfloat>
 #include <cmath>
@@ -11,58 +32,128 @@
 #include "fg/vec3.h"
 #include "fg/mat4.h"
 
+/**
+ * \defgroup functions Functions
+ * \brief A collection of useful mathematical functions
+ */
+
 namespace fg {
 
 	// common constants
     const double EPSILON = DBL_EPSILON; // A small double..
 	const double LOG05 = -0.693147180559945;
 
+	/** 
+	 * \brief calculate the minimum of two values
+	 * \ingroup functions 
+	 */
 	template <class T> 
     T min(const T& a, const T& b);
     
+	/** 
+	 * \brief linearly interpolates between two values
+	 * \ingroup functions 
+	 */
 	template <class T, typename Real> 
     T lerp(const T& a, const T& b, Real t);
     
+	/** 
+	 * \brief Mixes two values, "a" and "b" by amount "mixValue"
+	 * mixValue should lie between 0 and 1
+	 *
+	 * \ingroup functions 
+	 */
     template <class T, typename Real>
 	T mix(const T& a, const T& b, Real mixValue);
     
+	/** 
+	 * \brief clamps x between a and b
+	 * \ingroup functions 
+	 */
 	template <class T>
 	T clamp(const T& x, const T& a, const T& b);
     
+	/** 
+	 * \brief Returns 0 when x < a, 1 otherwise
+	 * \ingroup functions 
+	 */
 	template <class T, typename Real >
 	Real step(const T& a, const T& x);
     
+	/** 
+	 * \brief combination of 2 steps: returns 1 if x is between a and b
+	 * \ingroup functions 
+	 */
 	template <class T, typename Real >
 	Real pulse(const T& a, const T&b, const T& x);
-    
+    	
+	/** 
+	 * \brief smooth interpolation using Horner's rule
+	 * \ingroup functions 
+	 */
 	template <typename Real>
 	Real smoothstep(Real a, Real b, Real x);
     
+	/** 
+	 * \brief 1D Catmull-Rom spline interpolation
+	 * \ingroup functions 
+	 */
 	template <class Real>
 	Real catmullSpline(Real x, int knots, Real * knot);
     
+	/** 
+	 * \brief 1D bias function
+	 * \ingroup functions 
+	 */
 	template <class Real>
 	Real bias(Real b, Real x);
     
+	/** 
+	 * \brief faster but slightly less accurate than Bias
+	 * \ingroup functions 
+	 */
 	template <class Real>
 	Real fastBias(Real b, Real x);
     
+	/** 
+	 * \brief Gain Control
+	 * \ingroup functions 
+	 */
 	template <class Real>
 	Real gain(Real g, Real x);
     
+	/** 
+	 * \brief faster but slightly less accurate than Gain
+	 * \ingroup functions 
+	 */
 	template <class Real>
 	Real fastGain(Real g, Real x);
     
+	/** 
+	 * \brief standard gamma correction function
+	 * \ingroup functions 
+	 */
 	template <class Real>
 	Real gammaCorrect(Real gamma, Real x);
 
-
+	/** 
+	 * \brief 
+	 * \ingroup functions 
+	 */
 	template <typename Real>
 	Real invSqrt (Real fValue) { return 1.0/std::sqrt(fValue); }
 
+	/** 
+	 * \brief 
+	 * \ingroup functions 
+	 */
 	template <typename Real>
 	inline Real sqr (Real fValue) { return fValue * fValue; }
 
+	/** 
+	 * \brief 
+	 * \ingroup functions 
+	 */
 	template <typename Real>
 	Real sign (Real fValue);
 
