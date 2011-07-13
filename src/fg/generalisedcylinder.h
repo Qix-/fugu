@@ -28,6 +28,7 @@ protected:
   std::vector< std::pair<Quat,Quat> > mOrients;
 
   void updateOrients( const std::vector<Quat> &orients );
+  Quat orient( double v ) const;
 };
 
 	}

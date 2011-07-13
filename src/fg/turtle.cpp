@@ -68,7 +68,7 @@ namespace fg {
 	{
 		mPrevFrames.push_back(mFrame);
 
-        mCarriers.push_back(new CarrierCurveLinear(mPrevFrames));
+        mCarriers.push_back(new CarrierCurvePiecewiseBezier(mPrevFrames));
 		mCrossSections.push_back(new CrossSectionCircular(0.1));
 		mCylinders.push_back( new GeneralisedCylinder(*(mCarriers.back()),*(mCrossSections.back()), mPrevFrames) );
 	}

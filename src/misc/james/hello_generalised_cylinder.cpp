@@ -13,6 +13,7 @@
 #include "fgv/trackball.h"
 
 #include "fg/carriercurvelinear.h"
+#include "fg/carriercurvepiecewisebezier.h"
 #include "fg/crosssectioncircular.h"
 #include "fg/generalisedcylinder.h"
 #include "fg/glrenderer.h"
@@ -65,20 +66,18 @@ int main(int argc, char *argv[])
 	arr[0].SetIdentity();
 
 	arr.push_back( Mat4() );
-	arr[1].SetTranslate(0.,0.,1.);
-	tmp.SetRotateDeg(-22.5, Vec3( 1., 0., 0.));
-	arr[1] = arr[1] * tmp;
+	arr[1].SetTranslate(0.5,0.,.5);
 
-	arr.push_back( Mat4() );
-	arr[2].SetTranslate(0.,1.,2.);
-	tmp.SetRotateDeg(-45, Vec3( 1., 0., 0.));
-	arr[2] = arr[2] * tmp;
+//	arr.push_back( Mat4() );
+//	arr[2].SetTranslate(0.,1.,2.);
+//	tmp.SetRotateDeg(-45, Vec3( 1., 0., 0.));
+//	arr[2] = arr[2] * tmp;
 
-	const fg::gc::CarrierCurve& carrier = gc::CarrierCurveLinear(arr);
+	const fg::gc::CarrierCurve& carrier = gc::CarrierCurvePiecewiseBezier(arr);
 
 	const fg::gc::CrossSectionCircular& cs = gc::CrossSectionCircular(.1);
 	const fg::gc::GeneralisedCylinder& gc = gc::GeneralisedCylinder(carrier, cs, arr);
-	boost::shared_ptr<Mesh> mMesh = gc.createMesh(4, 2);
+	boost::shared_ptr<Mesh> mMesh = gc.createMesh(10, 20);
 	//mMesh->smoothSubdivide(3);
 
 	// Run as fast as I can

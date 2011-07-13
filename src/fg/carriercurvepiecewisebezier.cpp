@@ -2,85 +2,107 @@
 #include "fg/mat4.h"
 #include "fg/carriercurvepiecewisebezier.h"
 
+using namespace std;
+
 namespace fg {
 namespace gc {
 
-CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier(int numControlPoints, const Mat4 *refFrames)
+CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier(const vector<Mat4> &refFrames)
+    :mInterpolator(NULL)
 {
-    mInterpolator = NULL;
-    mInflectionPoints = NULL;
-    mSegType = NULL;
-
-	mAlphaInt = NULL;
-	mBetaInt = NULL;
-	mGammaInt = NULL;
-
-	mOrients = NULL;
-
-	std::pair<double,double> stiffness[numControlPoints - 1];
-
-	for (int i = 0; i < numControlPoints - 1; ++i)
-	{
-		stiffness[i].first = 0.6;
-		stiffness[i].second = 0.6;
-	}
-
-	setControlPoints(numControlPoints, refFrames, stiffness);
+    setReferenceFrames(refFrames);
 }
 
-CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier(int numControlPoints, const Mat4 *refFrames, const std::pair<double, double> *stiffness)
+CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier(const vector<Mat4> &refFrames, const vector< pair<double, double> > &stiffness)
+    :mInterpolator(NULL)
 {
-    mInterpolator = NULL;
-    mInflectionPoints = NULL;
-    mSegType = NULL;
-
-	mAlphaInt = NULL;
-	mBetaInt = NULL;
-	mGammaInt = NULL;
-
-	mOrients = NULL;
-
-    assert(numControlPoints > 1);
-    
-	setControlPoints(numControlPoints, refFrames, stiffness);
+    setReferenceFrames(refFrames, stiffness);
 }
 
-void CarrierCurvePiecewiseBezier::setControlPoints(int numControlPoints, const Mat4 *refFrames, const std::pair<double,double> *stiffness)
+CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier(const CarrierCurvePiecewiseBezier &other)
+    :mInterpolator(NULL)
 {
-	deleteData();
+    *this = other;
+}
 
-    mSegType = new int[numControlPoints - 1];
-	mInflectionPoints = new std::pair<double,double>[numControlPoints - 1];
-	mOrients = new Mat4[numControlPoints];
+CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier()
+    :mInterpolator(NULL)
+{
+}
 
-	Vec3 tmpCp[numControlPoints];
-	std::pair<Vec3, Vec3> tmpGrad[numControlPoints];
+CarrierCurvePiecewiseBezier& CarrierCurvePiecewiseBezier::operator=(const CarrierCurvePiecewiseBezier &other)
+{
+    if (other.mInterpolator == NULL)
+        this->mInterpolator = NULL;
+    else
+        this->mInterpolator = new spline::PiecewiseBezierInterpolator<Vec3>( *(other.mInterpolator) );
 
-    for (int i = 0; i < numControlPoints - 1; ++i)
-	{
-	    // Get the control points and headings PUT THIS INTO MAT4!!
-	    Vec3 p1 = refFrames[i]   * Vec3(0.,0.,0.); // The pos
-	    Vec3 p2 = refFrames[i]   * Vec3(0.,0.,1.); // The head
-	    Vec3 p4 = refFrames[i+1] * Vec3(0.,0.,0.);
-	    Vec3 p3 = refFrames[i+1] * Vec3(0.,0.,1.);
-	
-	    // Calculate the tangents using coefficients
-	    float mag = (p1 - p4).Norm();
-	    p2 = p2 * mag * (stiffness[i].first);
-	    p3 = p3 * mag * (stiffness[i].second);
+    this->mInflectionPoints = other.mInflectionPoints;
+    this->mSegType = other.mSegType;
+    this->mRFrames = other.mRFrames;
+
+    return *this;
+}
+
+void CarrierCurvePiecewiseBezier::setReferenceFrames(const vector<Mat4> &rFrames)
+{
+    vector< pair<double,double> > stiffness( rFrames.size() - 1 );
+
+    for (int i = 0; i < rFrames.size() - 1; ++i)
+    {
+        stiffness[i].first = 0.6;
+        stiffness[i].second = 0.6;
+    }
+
+    setReferenceFrames(rFrames, stiffness);
+}
+
+void CarrierCurvePiecewiseBezier::setReferenceFrames(const vector<Mat4> &refFrames, const vector< pair<double,double> > &stiffness)
+{
+    deleteData();
+
+    vector<Vec3> tmpCp( refFrames.size() );
+    vector< pair<Vec3, Vec3> > tmpGrad( refFrames.size() );
+
+    for (int i = 0; i < refFrames.size() - 1; ++i)
+    {
+        // Get the control points and headings PUT THIS INTO MAT4!!
+        Vec3 p1 = refFrames[i]   * Vec3(0.,0.,0.); // The pos
+        Vec3 p2 = refFrames[i]   * Vec3(0.,0.,1.) - p1; // The head
+        Vec3 p4 = refFrames[i+1] * Vec3(0.,0.,0.);
+        Vec3 p3 = refFrames[i+1] * Vec3(0.,0.,1.) - p4;
+
+        // Calculate the tangents using coefficients
+        float mag = (p1 - p4).Norm();
+        p2 = p2 * mag * (stiffness[i].first);
+        p3 = p3 * mag * (stiffness[i].second);
 
         tmpCp[i] = p1;
-		tmpCp[i+1] = p4;
-		tmpGrad[i].first = p2;
-		tmpGrad[i].second = p3;
-	}
+        tmpCp[i+1] = p4;
+        tmpGrad[i].first = p2;
+        tmpGrad[i].second = p3;
+        //cout << p1 << endl;
+        //cout << p2 << endl;
+        //cout << p3 << endl;
+        //cout << p4 << endl;
+    }
+    mInterpolator = new spline::PiecewiseBezierInterpolator<Vec3>(tmpCp, tmpGrad);
 
-	mInterpolator = new spline::PiecewiseBezierInterpolator<Vec3>(numControlPoints, tmpCp, tmpGrad);
+    // Store our data
+    mRFrames = refFrames;
 
-    for (int i = 0; i < numControlPoints - 1; ++i)
-	{
-		updateInflectionPoints(i);
-	}
+    // Find inflection points
+    for (int i = 0; i < refFrames.size() - 1; ++i)
+    {
+        mSegType.push_back(0);
+        mInflectionPoints.push_back(pair<double,double>(0.,0.));
+        updateInflectionPoints(i);
+    }
+}
+
+vector<Mat4> CarrierCurvePiecewiseBezier::getReferenceFrames() const
+{
+    return mRFrames;
 }
 
 CarrierCurvePiecewiseBezier::~CarrierCurvePiecewiseBezier()
@@ -90,23 +112,12 @@ CarrierCurvePiecewiseBezier::~CarrierCurvePiecewiseBezier()
 
 void CarrierCurvePiecewiseBezier::deleteData()
 {
-    if(mInterpolator)
+    if (mInterpolator)
         delete mInterpolator;
 
-    if(mInflectionPoints)
-        delete[] mInflectionPoints;
-
-    if(mSegType)
-        delete[] mSegType;
-
-    if(mAlphaInt)
-		delete mAlphaInt;
-    if(mBetaInt)
-		delete mBetaInt;
-    if(mGammaInt)
-		delete mGammaInt;
-	if(mOrients)
-		delete mOrients;
+    mInflectionPoints.clear();
+    mSegType.clear();
+    mRFrames.clear();
 }
 
 void CarrierCurvePiecewiseBezier::updateInflectionPoints( int seg )
@@ -117,7 +128,7 @@ void CarrierCurvePiecewiseBezier::updateInflectionPoints( int seg )
     }
 
     // Check if the line is straight
-    const Vec3 *cp = mInterpolator->getSegmentControlPoints(seg);
+    vector<Vec3> cp = mInterpolator->getSegmentControlPoints(seg);
     if (collinear( cp )) {
         mSegType[seg] = 3;
     } else {
@@ -132,68 +143,88 @@ const spline::PiecewiseBezierInterpolator<Vec3> * CarrierCurvePiecewiseBezier::g
     return mInterpolator;
 }
 
-void CarrierCurvePiecewiseBezier::getOrientation(double t, Vec3 *H, Vec3 *U, Vec3 *L) const
+Quat CarrierCurvePiecewiseBezier::getFrenetFrame(double v) const
 {
-    getFrenetFrame(t, H, U, L);
-}
-
-void CarrierCurvePiecewiseBezier::getFrenetFrame(double t, Vec3 *H, Vec3 *U, Vec3 *L) const
-{
-    Vec3 vel = mInterpolator->getDerivative( t );
+    Vec3 vel = mInterpolator->getDerivative( v );
     Vec3 tangent = vel;
     tangent.normalise();
 
-    if (H) {
-        *H = tangent;
-        if(!(U && L))
-            return;
-    }
-
-    Vec3 acc = mInterpolator->getSecondDerivative( t );
+    Vec3 acc = mInterpolator->getSecondDerivative( v );
 
     double vDotV = vel.dot( vel );
     double vDotA = vel.dot( acc );
     Vec3 norm = acc * vDotV - vel * vDotA;
     norm.normalise();
 
-//    Mat4 rot;
-//    rot.SetRotateRad(getQuasiNormalTheta(t),tangent);
-//    norm = rot * norm;
+    Quat qt = Quat(Vec3(1.,0.,0.), tangent);
 
-    if (U)
+    //Quat qn = Quat(qt * Vec3(0.,1.,0.), norm);
+
+    return qt;//*qn;
+}
+
+Quat CarrierCurvePiecewiseBezier::orient(double v) const
+{
+    int vint = (int) v;
+    vint = clamp<int>(vint, 0, mInterpolator->getNumSegments() - 1);
+	double localV = v - (double) vint;
+
+	Quat ff = getFrenetFrame(v);
+/*
+    switch (segmentType[vint]) {
+    case 0: // No inflection
+        break;
+    case 1: // One inflection
+        if (spline::Interpoloator<double>::AlmostEqual2sComplement( localV, inflectionPoints[seg].first, 10000 )) {
+            ff = getFrenetFrame( v - 0.05 );
+        } else if (localU > inflectionPoints[seg].first) {
+            mat.rotate( Vec3f(0.f, 0.f, 1.f), M_PI );
+        }
+        break;
+    case 2:
+        if (miscUtils::AlmostEqual2sComplement( localU, inflectionPoints[seg].first, 10000 )) {
+            mat = getFrenetFrame( seg, localU - 0.05 );
+        } else if (localU > inflectionPoints[seg].first) {
+            mat.rotate( Vec3f(0.f, 0.f, 1.f), M_PI );
+        }
+        break;
+        if (miscUtils::AlmostEqual2sComplement( localU, inflectionPoints[seg].second, 10000 )) {
+            mat = getFrenetFrame( seg, localU - 0.05 );
+        } else if (localU > inflectionPoints[seg].second) {
+            mat.rotate( Vec3f(0.f, 0.f, 1.f), M_PI );
+        }
+        break;
+    case 3: // Straight
     {
-        *U = norm;
+        mat = Matrix44<float>( norm, binorm, tan ).inverted();
+        break;
+    }
+    default:
+        break;
     }
 
-    if (L)
-    {
-        *L = norm^tangent;
-    }
+	*/
+	return ff;
 }
 
-Vec3 CarrierCurvePiecewiseBezier::orient(double v, double x, double y) const
+Quat CarrierCurvePiecewiseBezier::orientDer(double v) const
 {
-    Vec3 U, B;
-    getOrientation(v, 0, &U, &B);
-    return U*x + B*y;
+    return Quat();
 }
 
-Vec3 CarrierCurvePiecewiseBezier::dOrientDv(double v, double x, double y) const
+pair<Quat,Quat> CarrierCurvePiecewiseBezier::getSegOrients(int seg) const
 {
-    return Vec3(0.,0.,0.);
+    double min, max;
+    min = (double) seg;
+    max = min + 0.99999;
+    min = clamp<double>(min, min + 0.000001, min + 1.);
+
+    Quat q1 = orient(min);
+    Quat q2 = orient(max);
+    return pair<Quat, Quat>(q1,q2);
 }
 
-Vec3 CarrierCurvePiecewiseBezier::dOrientDx(double v, double x, double y) const
-{
-    return Vec3(0.,0.,0.);
-}
-
-Vec3 CarrierCurvePiecewiseBezier::dOrientDy(double v, double x, double y) const
-{
-    return Vec3(0.,0.,0.);
-}
-
-int CarrierCurvePiecewiseBezier::findInflectionPointsVec( const Vec3 *cp, double *i1, double *i2 )
+int CarrierCurvePiecewiseBezier::findInflectionPointsVec( const vector<Vec3> &cp, double *i1, double *i2 )
 {
     Vec3 a = cp[1] - cp[0];
     Vec3 b = cp[2] - cp[1] - a;
@@ -363,7 +394,7 @@ int CarrierCurvePiecewiseBezier::roots(double a, double b, double c, double *r1,
     }
 }
 
-bool CarrierCurvePiecewiseBezier::collinear( const Vec3 *p )
+bool CarrierCurvePiecewiseBezier::collinear( const vector<Vec3> &p )
 {
     Vec3 v1 = p[3] - p[1];
     Vec3 v2 = p[2] - p[1];

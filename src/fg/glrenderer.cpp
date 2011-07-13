@@ -79,13 +79,25 @@ namespace fg {
         // Draw a tangent
 		time = time * 0.2;
 		Vec3 pos = c.getInterpolator()->getPosition(time);
-		Vec3 U;
+		Vec3 X = c.orient(time)*Vec3(1.,0.,0.);
+		Vec3 Y = c.orient(time)*Vec3(0.,1.,0.);
+		Vec3 Z = c.orient(time)*Vec3(0.,0.,1.);
 
-		U = pos + c.orient(time)*Vec3(1.,0.,0.);
+		X = pos + X;
+		Y = pos + Y;
+		Z = pos + Z;
 
 		glBegin(GL_LINES);
 		glVertex3d(pos.getX(),pos.getY(),pos.getZ());
-		glVertex3d(U.getX(),U.getY(),U.getZ());
+		glVertex3d(X.getX(),X.getY(),X.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(pos.getX(),pos.getY(),pos.getZ());
+		glVertex3d(Y.getX(),Y.getY(),Y.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(pos.getX(),pos.getY(),pos.getZ());
+		glVertex3d(Z.getX(),Z.getY(),Z.getZ());
 		glEnd();
 	}
 

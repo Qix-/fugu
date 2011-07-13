@@ -61,13 +61,9 @@ int main(int argc, char *argv[])
     //fg::spline::PiecewiseBezierInterpolator<Vec3> spline = spline::PiecewiseBezierInterpolator<Vec3>();
 	std::vector<Vec3> arr;
 	std::vector< std::pair<Vec3,Vec3> > grad;
-//	for(int i=0;i<numPoints;i++){
-//		//spline.appendControlPoint(Vec3(fg::random(-2,2),fg::random(-2,2),fg::random(-2,2)));
-//		arr.push_back(Vec3(fg::random(-2,2),fg::random(-2,2),fg::random(-2,2)));
-//	}
     arr.push_back(Vec3(0.,0.,0.));
     arr.push_back(Vec3(1.,0.,0.));
-	grad.push_back( std::pair<Vec3,Vec3> (Vec3(.5,.5,0.), Vec3(.5, -.5, 0.)));
+	grad.push_back( std::pair<Vec3,Vec3> (Vec3(.3,.4,0.), Vec3(.3, -.4, 0.)));
     fg::spline::PiecewiseBezierInterpolator<Vec3> spline = spline::PiecewiseBezierInterpolator<Vec3>(arr, grad);
 
 	// Run as fast as I can

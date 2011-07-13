@@ -44,6 +44,11 @@ namespace fg{
 		*this /= n;
 	}
 
+	Vec3 Vec3::normalised() const{
+		Vec3 tmp( *this );
+		tmp.normalise();
+		return Vec3( tmp );
+	}
 //	double Vec3::dot(const Vec3 &otherV) const{
 //		return
 //	}
