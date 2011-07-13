@@ -47,7 +47,19 @@ namespace fg {
 		// fg/functions.h
 		module(L,"fg")[
 		   def("min", &min<double>),
-		   def("lerp", &lerp<double>),
+		   def("lerp", &lerp<double, double>),
+           def("mix", &mix<double, double>),
+           def("clamp", &clamp<double>),
+           def("step", &step<double, double>),
+           def("pulse", &pulse<double, double>),
+           def("smoothstep", &smoothstep<double>),
+           def("catmullSpline", &catmullSpline<double>),
+           def("bias", &fg::bias<double>),
+           def("gain", &fg::gain<double>),
+           def("gamma", &gammaCorrect<double>),
+           def("invSqrt", &invSqrt<double>),
+           def("sqr", &sqr<double>),
+           def("sign", &sign<double>),
 
 		   def("noise", (double(*)(double)) &noise),
 		   def("noise", (double(*)(double,double)) &noise),
