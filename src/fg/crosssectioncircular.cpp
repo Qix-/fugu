@@ -1,4 +1,6 @@
-#include "crosssectioncircular.h"
+#include "fg/crosssectioncircular.h"
+
+using namespace std;
 
 namespace fg{
 	namespace gc {
@@ -19,5 +21,21 @@ namespace fg{
   {
 	  return Vec3(0., 0., 0.);
   }
+
+  vector<Vec3> CrossSectionCircular::getCrossSection(double v) const
+  {
+	  vector<Vec3> ret;
+	  
+	  double u = 0.;
+	  double inc = 2.*M_PI / SEGS;
+	  for(int i = 0; i < SEGS; ++i)
+	  {
+		  ret.push_back( getPosition( u, v ) );
+		  u += inc;
+	  }
+
+	  return vector<Vec3>( ret );
+  }
+
 	}
 }

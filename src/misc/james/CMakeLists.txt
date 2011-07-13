@@ -17,3 +17,6 @@ target_link_libraries(hello_ori ${ALL_LIBS})
 
 add_executable(hello_turtle hello_turtle.cpp trackball.cpp)
 target_link_libraries(hello_turtle ${ALL_LIBS})
+
+add_executable(hello_recsubdiv hello_recsubdiv.cpp trackball.cpp)
+target_link_libraries(hello_recsubdiv ${ALL_LIBS})

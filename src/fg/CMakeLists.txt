@@ -13,9 +13,10 @@ set(SRC
 	glrenderer.cpp
 	carriercurve.cpp
 	carriercurvelinear.cpp
-#	carriercurvepiecewisebezier.cpp
+	carriercurvepiecewisebezier.cpp
 	crosssectioncircular.cpp
 	generalisedcylinder.cpp
+	recsubdiv.cpp
 	turtle.cpp
 	quat.cpp
 	node.cpp
@@ -49,6 +50,7 @@ set(HDRS
 	piecewisebezierinterpolator.h
 	proxy.h
 	quat.h
+	recsubdiv.h
 	turtle.h
 	universe.h
 	vec3.h

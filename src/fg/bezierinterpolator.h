@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "interpolator.h"
+#include "fg/interpolator.h"
 
 namespace fg {
 namespace spline {

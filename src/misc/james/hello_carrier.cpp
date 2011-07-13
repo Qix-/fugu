@@ -13,6 +13,7 @@
 #include "fgv/trackball.h"
 
 #include "fg/carriercurvelinear.h"
+#include "fg/carriercurvepiecewisebezier.h"
 #include "fg/glrenderer.h"
 
 // opengl viz, hack
@@ -57,13 +58,13 @@ int main(int argc, char *argv[])
 	// ** Create new carrier here
 	const int numPoints = 2;
 	std::vector<Mat4> arr;
-	for(int i=0;i<numPoints;i++){
-		arr.push_back( Mat4() );
-		arr[i].SetTranslate(fg::random(-2,2),fg::random(-2,2),fg::random(-2,2));
-	}
-	//arr[0].SetRotateDeg(30.,Vec3(1.,0.,0.));
+	Mat4 tmp;
+	arr.push_back( Mat4() );
+	arr[0].SetIdentity();
+	arr.push_back( Mat4() );
+	arr[1].SetTranslate(0.5,0.,0.5);
 
-	const fg::gc::CarrierCurve& carrier = gc::CarrierCurveLinear(arr);
+	const fg::gc::CarrierCurve& carrier = gc::CarrierCurvePiecewiseBezier(arr);
 
 	// Run as fast as I can
 	bool running = true;

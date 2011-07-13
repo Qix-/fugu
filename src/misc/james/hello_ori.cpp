@@ -58,11 +58,8 @@ int main(int argc, char *argv[])
 {
 	setupWindowAndGL();
 
-    Mat4 mat;
-	mat.SetRotateDeg(15. ,Vec3(1.,0.,0.));
-	Quat q(mat);//Vec3(1.,0.,0.), M_PI*0.3);
+	Quat q(Vec3(0.707,0.707,0.), Vec3(0.,0.,-1.), Vec3(-.707,0.707,0.));//Vec3(1.,0.,0.), M_PI*0.3);
 	std::cout << q <<"\n";
-	std::cout << mat;
 
 	// Run as fast as I can
 	bool running = true;

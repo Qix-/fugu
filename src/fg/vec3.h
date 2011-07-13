@@ -59,6 +59,7 @@ namespace fg {
 			void setZ(double z){Z() = z;}
 
 			void normalise();
+			Vec3 normalised() const;
 			double length() const { return vcg::Norm(*this); }
 			double lengthSquared() const { return vcg::SquaredNorm(*this); }
 

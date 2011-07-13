@@ -7,6 +7,7 @@
 #include "fg/fg.h"
 
 #include "fg/carriercurvelinear.h"
+#include "fg/carriercurvepiecewisebezier.h"
 #include "fg/crosssectioncircular.h"
 #include "fg/generalisedcylinder.h"
 
