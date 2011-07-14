@@ -18,7 +18,6 @@ public:
     /**
 	 * \brief Constructs a peicewise Bezier interpolator.
 	 *
-	 * \param numControlPoints The number of control points.
 	 * \param controlPoints An array of length n. The curve will pass through these points.
 	 * \param gradients An array of length (n-1). The gradient at each end of each segment
 	 *
@@ -27,7 +26,6 @@ public:
 
     /**
      * \brief Constructs a piecewise Bezier interpolator with inferred gradient
-     * @param numControlPoints
      * @param controlPoints
      */
     PiecewiseBezierInterpolator(const std::vector<T> &controlPoints);

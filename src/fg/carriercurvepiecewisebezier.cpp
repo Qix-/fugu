@@ -13,7 +13,7 @@ CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier(const vector<Mat4> &ref
     setReferenceFrames(refFrames);
 }
 
-CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier(const vector<Mat4> &refFrames, const vector< pair<double, double> > &stiffness)
+CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier(const std::vector<Mat4> &refFrames, const std::vector< std::pair<double, double> > &stiffness)
     :mInterpolator(NULL)
 {
     setReferenceFrames(refFrames, stiffness);
@@ -44,7 +44,7 @@ CarrierCurvePiecewiseBezier& CarrierCurvePiecewiseBezier::operator=(const Carrie
     return *this;
 }
 
-void CarrierCurvePiecewiseBezier::setReferenceFrames(const vector<Mat4> &rFrames)
+void CarrierCurvePiecewiseBezier::setReferenceFrames(const std::vector<Mat4> &rFrames)
 {
     vector< pair<double,double> > stiffness( rFrames.size() - 1 );
 
@@ -57,7 +57,7 @@ void CarrierCurvePiecewiseBezier::setReferenceFrames(const vector<Mat4> &rFrames
     setReferenceFrames(rFrames, stiffness);
 }
 
-void CarrierCurvePiecewiseBezier::setReferenceFrames(const vector<Mat4> &refFrames, const vector< pair<double,double> > &stiffness)
+void CarrierCurvePiecewiseBezier::setReferenceFrames(const std::vector<Mat4> &refFrames, const std::vector< std::pair<double,double> > &stiffness)
 {
     deleteData();
 
