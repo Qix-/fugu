@@ -36,8 +36,14 @@
 
 namespace fg {
 
+	class MyGLRenderer: public vcg::GlTrimesh<fg::MeshImpl> {
+		public:
+		MyGLRenderer():vcg::GlTrimesh<fg::MeshImpl>(){}
+	};
+
 	void GLRenderer::renderMesh(Mesh* m, RenderMeshMode rmm){
-		vcg::GlTrimesh<fg::MeshImpl> tm;
+		// vcg::GlTrimesh<fg::MeshImpl> tm;
+		MyGLRenderer tm;
 		tm.m = m->_impl();
 		tm.Update();
 
@@ -45,13 +51,21 @@ namespace fg {
 			case RENDER_FLAT: tm.Draw<vcg::GLW::DMFlat, vcg::GLW::CMPerFace, vcg::GLW::TMNone> (); break;
 			case RENDER_SMOOTH: tm.Draw<vcg::GLW::DMSmooth, vcg::GLW::CMPerFace, vcg::GLW::TMNone> ();	break;
 			case RENDER_WIRE: tm.Draw<vcg::GLW::DMWire,     vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
-			case RENDER_VERTICES: tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
+			case RENDER_VERTICES: // tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break; 
+			{
+				tm.DrawPointsBase<vcg::GLW::NMPerVert,vcg::GLW::CMNone>();
+				break;
+			}
 			default: {}
 		}
 	}
 
 	void GLRenderer::renderMesh(boost::shared_ptr<Mesh> m, RenderMeshMode rmm){
-		vcg::GlTrimesh<fg::MeshImpl> tm;
+		renderMesh(&*m,rmm);
+		
+		/*
+		// vcg::GlTrimesh<fg::MeshImpl> tm;
+		MyGLRenderer tm;
 		tm.m = m->_impl();
 		tm.Update();
 
@@ -62,6 +76,7 @@ namespace fg {
 			case RENDER_VERTICES: tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
 			default: {}
 		}
+		*/
 	}
 
 	void GLRenderer::renderMeshNode(boost::shared_ptr<MeshNode> m, RenderMeshMode rmm){
