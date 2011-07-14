@@ -12,8 +12,8 @@
 #include "fg/functions.h"
 #include "fgv/trackball.h"
 
-#include "fg/carriercurvelinear.h"
-#include "fg/carriercurvepiecewisebezier.h"
+#include "fg/lincarrier.h"
+#include "fg/pbezcarrier.h"
 #include "fg/glrenderer.h"
 
 // opengl viz, hack
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 	arr.push_back( Mat4() );
 	arr[1].SetTranslate(0.5,0.,0.5);
 
-	const fg::gc::CarrierCurve& carrier = gc::CarrierCurvePiecewiseBezier(arr);
+	const fg::gc::CarrierCurve& carrier = gc::PBezCarrier(arr);
 
 	// Run as fast as I can
 	bool running = true;

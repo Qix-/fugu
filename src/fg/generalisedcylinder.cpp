@@ -1,176 +1,170 @@
-#include "generalisedcylinder.h"
+#include "fg/generalisedcylinder.h"
 
 #include <iostream>
 
 using namespace std;
 
 namespace fg {
-namespace gc {
-GeneralisedCylinder::GeneralisedCylinder(const CarrierCurve &carrier, const CrossSection &crossSection, const vector<Mat4> &orients)
-:mCarrier(carrier)
-,mCrossSection(crossSection)
-{
-	std::vector<Quat> newOrients;
+    namespace gc {
+        GeneralisedCylinder::GeneralisedCylinder( const CarrierCurve &carrier, const CrossSection &crossSection, const vector<Mat4> &orients )
+            : mCarrier( carrier )
+            , mCrossSection( crossSection )
+        {
+            std::vector<Quat> newOrients;
 
-	for (int i = 0; i < orients.size(); ++i)
-	{
-		newOrients.push_back( Quat( orients[i] ) );
-	}
-	updateOrients( newOrients );
-}
+            for( int i = 0; i < orients.size(); ++i )
+            {
+                newOrients.push_back( Quat( orients[i] ) );
+            }
 
-void GeneralisedCylinder::updateOrients( const vector<Quat> &orients )
-{
-	mOrients.clear();
-	// Store the difference between the specified orientations and the one supplied by the carrier curve
-	for(int i = 0; i < mCarrier.getInterpolator()->getNumSegments(); ++i)
-	{
-		pair<Quat,Quat> co = mCarrier.getSegOrients(i);
-		pair<Quat,Quat> no;
-		no.first = orients[i]*co.first.inverse();
-		no.second = orients[i+1]*co.second.inverse();
-		mOrients.push_back(no);
-	}
-}
+            updateOrients( newOrients );
+        }
 
-Vec3 GeneralisedCylinder::getPosition( double u, double v ) const
-{
-	// Position on cross section
-	Vec3 cs = mCrossSection.getPosition(u,v);
+        void GeneralisedCylinder::updateOrients( const vector<Quat> &orients )
+        {
+            mOrients.clear();
 
-	// Carriers frame rotation
-	Quat cr = mCarrier.orient(v);
+            // Store the difference between the specified orientations and the one supplied by the carrier curve
+            for( int i = 0; i < mCarrier.getInterpolator()->getNumSegments(); ++i )
+            {
+                pair<Quat, Quat> co = mCarrier.getSegOrients( i );
+                pair<Quat, Quat> no;
+                no.first = orients[i] * co.first.inverse();
+                no.second = orients[i + 1] * co.second.inverse();
+                mOrients.push_back( no );
+            }
+        }
 
-	// Additional rotation
-	int vint = (int) v;
-	vint = clamp<int>(vint, 0, mCarrier.getInterpolator()->getNumSegments() - 1 );
-	double vfrac = v - vint;
-	Quat ar = mOrients[vint].first.slerp( vfrac, mOrients[vint].second );
+        Vec3 GeneralisedCylinder::getPosition( double u, double v ) const
+        {
+            // Position on cross section
+            Vec3 cs = mCrossSection.getPosition( u, v );
+            // Carriers frame rotation
+            Quat cr = mCarrier.orient( v );
+            // Additional rotation
+            int vint = ( int ) v;
+            vint = clamp<int>( vint, 0, mCarrier.getInterpolator()->getNumSegments() - 1 );
+            double vfrac = v - vint;
+            Quat ar = mOrients[vint].first.slerp( vfrac, mOrients[vint].second );
+            // Put it all together
+            return mCarrier.getInterpolator()->getPosition( v ) + ar * cr * cs;
+        }
 
-	// Put it all together
-	return mCarrier.getInterpolator()->getPosition(v) + ar * cr * cs;
-}
+        Quat GeneralisedCylinder::orient( double v ) const
+        {
+            // Carriers frame rotation
+            Quat cr = mCarrier.orient( v );
+            // Additional rotation
+            int vint = ( int ) v;
+            vint = clamp<int>( vint, 0, mCarrier.getInterpolator()->getNumSegments() - 1 );
+            double vfrac = v - vint;
+            Quat ar = mOrients[vint].first.slerp( vfrac, mOrients[vint].second );
+            return Quat( ar * cr );
+        }
 
-Quat GeneralisedCylinder::orient( double v ) const
-{
-	// Carriers frame rotation
-	Quat cr = mCarrier.orient(v);
+        boost::shared_ptr<Mesh> GeneralisedCylinder::createMesh( int n, int m ) const
+        {
+            fg::Mesh::MeshBuilder mb;
+            double vmin, vmax;
+            mCarrier.getInterpolator()->getDomain( vmin, vmax );
+            double vinc = ( vmax - vmin ) / ( ( double ) m );
+            double v = 0.;
+            int pCsIndex, nCsIndex;
+            // Get the first cross section add add the verticies to the mesh
+            vector<Vec3> pCs = mCrossSection.getCrossSection( v );
+            vector<Vec3> nCs;
+            Quat ori;
+            ori = orient( v );
+            Vec3 cVert;
+            Vec3 cCpos = mCarrier.getInterpolator()->getPosition( v );
 
-	// Additional rotation
-	int vint = (int) v;
-	vint = clamp<int>(vint, 0, mCarrier.getInterpolator()->getNumSegments() - 1 );
-	double vfrac = v - vint;
-	Quat ar = mOrients[vint].first.slerp( vfrac, mOrients[vint].second );
+            for( int i = 0; i < pCs.size(); ++i )
+            {
+                cVert = cCpos + ori * pCs[i];
+                mb.addVertex( cVert.getX(), cVert.getY(), cVert.getZ() );
+            }
 
-    return Quat(ar * cr);
-}
+            pCsIndex = 0;
+            nCsIndex = pCs.size();
 
-boost::shared_ptr<Mesh> GeneralisedCylinder::createMesh(int n, int m) const
-{
-	fg::Mesh::MeshBuilder mb;
+            for( int k = 0; k < m; ++k ) {
+                //std::cout << v << std::endl;
+                //std::cout << v + vinc << std::endl;
+                // Get the next cross section and add it's verticies to the mesh
+                nCs = mCrossSection.getCrossSection( v + vinc );
+                ori = orient( v + vinc );
+                cCpos = mCarrier.getInterpolator()->getPosition( v + vinc );
 
-    double vmin, vmax;
-    mCarrier.getInterpolator()->getDomain(vmin, vmax);
-	double vinc = (vmax-vmin) / ((double) m);
-	double v = 0.;
+                for( int i = 0; i < nCs.size(); ++i )
+                {
+                    cVert = cCpos + ori * nCs[i];
+                    mb.addVertex( cVert.getX(), cVert.getY(), cVert.getZ() );
+                }
 
-	int pCsIndex, nCsIndex;
+                // While neither cross section is empty add the required triangles
+                int i = 0;
+                int j = 0;
+                int s1 = pCs.size();
+                int s2 = nCs.size();
 
-    // Get the first cross section add add the verticies to the mesh
-	vector<Vec3> pCs = mCrossSection.getCrossSection(v);
-	vector<Vec3> nCs;
+                while( i < s1 && j < s2 )
+                {
+                    if( ( pCs[i] - nCs[( j + 1 ) % s2] ).lengthSquared() < ( pCs[( i + 1 ) % s1] - nCs[j] ).lengthSquared() )
+                    {
+                        mb.addFace( pCsIndex + i, nCsIndex + ( ( j + 1 ) % s2 ), nCsIndex + j );
+                        //cout << pCsIndex + i << ", " << nCsIndex + ((j + 1) % s2) << ", " << nCsIndex + j << endl;
+                        ++j;
+                    }
+                    else
+                    {
+                        mb.addFace( pCsIndex + i, pCsIndex + ( ( i + 1 ) % s1 ), nCsIndex + j );
+                        //cout << pCsIndex + i << ", " << pCsIndex + ((i + 1) % s1) << ", " << nCsIndex + j << endl;
+                        ++i;
+                    }
+                }
 
-	Quat ori;
+                // Finish off any unjoined verticies
+                while( i < s1 )
+                {
+                    mb.addFace( pCsIndex + i, pCsIndex + ( ( i + 1 ) % s1 ), nCsIndex );
+                    ++i;
+                }
 
-    ori = orient(v);
-	Vec3 cVert;
-	Vec3 cCpos = mCarrier.getInterpolator()->getPosition(v);
+                while( j < s2 )
+                {
+                    mb.addFace( pCsIndex, nCsIndex + ( ( j + 1 ) % s2 ), nCsIndex + j );
+                    ++j;
+                }
 
-	for (int i = 0; i < pCs.size(); ++i)
-	{
-		cVert = cCpos + ori * pCs[i];
-		mb.addVertex(cVert.getX(),cVert.getY(),cVert.getZ());
-	}
+                // Update the previous cross section and indicies
+                pCsIndex = nCsIndex;
+                nCsIndex += nCs.size();
+                pCs = nCs;
+                // increment v
+                v += vinc;
+            }
 
-	pCsIndex = 0;
-	nCsIndex = pCs.size();
-
-    for (int k = 0; k < m; ++k) {
-		//std::cout << v << std::endl;
-		//std::cout << v + vinc << std::endl;
-
-		// Get the next cross section and add it's verticies to the mesh
-		nCs = mCrossSection.getCrossSection(v + vinc);
-		ori = orient(v + vinc);
-		cCpos = mCarrier.getInterpolator()->getPosition(v + vinc);
-	    for (int i = 0; i < nCs.size(); ++i)
-	    {
-			cVert = cCpos + ori * nCs[i];
-		    mb.addVertex(cVert.getX(),cVert.getY(),cVert.getZ());
-	    }
-
-        // While neither cross section is empty add the required triangles
-		int i = 0;
-		int j = 0;
-		int s1 = pCs.size();
-		int s2 = nCs.size();
-		while( i < s1 && j < s2 )
-		{
-			if ((pCs[i]-nCs[(j+1)%s2]).lengthSquared() < (pCs[(i+1)%s1]-nCs[j]).lengthSquared() )
-			{
-				mb.addFace( pCsIndex + i, nCsIndex + ((j + 1) % s2), nCsIndex + j);
-				//cout << pCsIndex + i << ", " << nCsIndex + ((j + 1) % s2) << ", " << nCsIndex + j << endl;
-				++j;
-			}
-			else
-			{
-				mb.addFace( pCsIndex + i, pCsIndex + ((i + 1) % s1), nCsIndex + j);
-				//cout << pCsIndex + i << ", " << pCsIndex + ((i + 1) % s1) << ", " << nCsIndex + j << endl;
-				++i;
-			}
-		}
-
-		// Finish off any unjoined verticies
-		while( i < s1 )
-		{
-			mb.addFace( pCsIndex + i, pCsIndex + ((i + 1) % s1), nCsIndex );
-			++i;
-		}
-		while( j < s2 )
-		{
-			mb.addFace( pCsIndex, nCsIndex + ((j + 1) % s2), nCsIndex + j );
-			++j;
-		}
-
-        // Update the previous cross section and indicies
-		pCsIndex = nCsIndex;
-		nCsIndex += nCs.size();
-		pCs = nCs;
-		// increment v
-	    v += vinc;
-    }
-
-	return mb.createMesh();
-}
+            return mb.createMesh();
+        }
 
 //boost::shared_ptr<Mesh> GeneralisedCylinder::createMesh(int n, int m) const
 //{
-//	fg::Mesh::MeshBuilder mb;
+//  fg::Mesh::MeshBuilder mb;
 //
 //    double vmin, vmax;
 //    mCarrier.getInterpolator()->getDomain(vmin, vmax);
-//	double vinc = (vmax-vmin) / ((double) m);
-//	double uinc = (2.*M_PI) / ((double) n);
-//	double v = 0.;
-//	double u = 0.;
+//  double vinc = (vmax-vmin) / ((double) m);
+//  double uinc = (2.*M_PI) / ((double) n);
+//  double v = 0.;
+//  double u = 0.;
 //    for (unsigned int j = 0; j <= m; ++j) {
 //        for (unsigned int i = 0; i < n; ++i) {
-//			Vec3 pos = getPosition(u,v);
-//		    mb.addVertex(pos.getX(),pos.getY(),pos.getZ());
-//			u += uinc;
+//          Vec3 pos = getPosition(u,v);
+//          mb.addVertex(pos.getX(),pos.getY(),pos.getZ());
+//          u += uinc;
 //        }
-//	    v += vinc;
-//		u = 0.f;
+//      v += vinc;
+//      u = 0.f;
 //    }
 //
 //
@@ -184,7 +178,7 @@ boost::shared_ptr<Mesh> GeneralisedCylinder::createMesh(int n, int m) const
 //        }
 //    }
 //
-//	return mb.createMesh();
+//  return mb.createMesh();
 //}
-}
+    }
 }

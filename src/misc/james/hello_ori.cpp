@@ -12,9 +12,6 @@
 #include "fg/functions.h"
 #include "fgv/trackball.h"
 
-#include "fg/interpolator.h"
-#include "fg/bezierinterpolator.h"
-#include "fg/piecewisebezierinterpolator.h"
 #include "fg/quat.h"
 
 #include "fg/glrenderer.h"
