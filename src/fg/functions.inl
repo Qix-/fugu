@@ -5,8 +5,8 @@ namespace fg {
 		return a<b?a:b; 
 	}
 	
-	template <typename T> 
-    T lerp(const T& a, const T& b, T t){
+	template <class T, typename Real > 
+    T lerp(const T& a, const T& b, Real t){
 		return (b-a)*t + a;
 	}
 
@@ -111,7 +111,7 @@ namespace fg {
     // 1D bias function
     //
     template< class Real >
-    inline Real Bias(Real b, Real x)
+    inline Real bias(Real b, Real x)
     {
         return std::pow( x, std::log(b)/static_cast<Real>(LOG05) );
     }
@@ -130,12 +130,12 @@ namespace fg {
     // Gain Control
     //
     template< class Real >
-    inline Real Gain(Real g, Real x)
+    inline Real gain(Real g, Real x)
     {
         if (x < 0.5)
-            return Bias(1-g, 2*x)/2;
+            return bias(1-g, 2*x)/2;
         else
-            return 1.0 - Bias(1-g, 2- 2*x)/2;
+            return 1.0 - bias(1-g, 2- 2*x)/2;
     }
     
     /// FastGain
