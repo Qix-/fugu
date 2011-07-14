@@ -12,8 +12,8 @@ set(SRC
 	vertex.cpp
 	glrenderer.cpp
 	carriercurve.cpp
-	carriercurvelinear.cpp
-	carriercurvepiecewisebezier.cpp
+	lincarrier.cpp
+	pbezcarrier.cpp
 	crosssectioncircular.cpp
 	generalisedcylinder.cpp
 	recsubdiv.cpp
@@ -25,11 +25,11 @@ set(SRC
 	nodegraph.cpp)
 
 set(HDRS
-	bezierinterpolator.h
+	bezinterp.h
 	bindings.h
 	carriercurve.h
-	carriercurvelinear.h
-	carriercurvepiecewisebezier.h
+	lincarrier.h
+	pbezcarrier.h
 	crosssection.h
 	crosssectioncircular.h
 	fg.h
@@ -37,7 +37,7 @@ set(HDRS
 	generalisedcylinder.h
 	glrenderer.h
 	interpolator.h
-	linearinterpolator.h
+	lininterp.h
 	mat4.h
 	mesh.h
 	meshimpl.h
@@ -47,7 +47,7 @@ set(HDRS
 	node.h
 	nodegraph.h
 	operator.h
-	piecewisebezierinterpolator.h
+	pbezinterp.h
 	proxy.h
 	quat.h
 	recsubdiv.h
@@ -57,11 +57,11 @@ set(HDRS
 	vertex.h)
 
 set(INLS
-	bezierinterpolator.inl
+	bezinterp.inl
 	functions.inl
 	interpolator.inl
-	linearinterpolator.inl
-	piecewisebezierinterpolator.inl
+	lininterp.inl
+	pbezinterp.inl
 )
 
 # FILE(GLOB HEADERS "*.h")

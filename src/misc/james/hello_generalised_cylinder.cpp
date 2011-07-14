@@ -12,8 +12,8 @@
 #include "fg/functions.h"
 #include "fgv/trackball.h"
 
-#include "fg/carriercurvelinear.h"
-#include "fg/carriercurvepiecewisebezier.h"
+#include "fg/lincarrier.h"
+#include "fg/pbezcarrier.h"
 #include "fg/crosssectioncircular.h"
 #include "fg/generalisedcylinder.h"
 #include "fg/glrenderer.h"
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 //	tmp.SetRotateDeg(-45, Vec3( 1., 0., 0.));
 //	arr[2] = arr[2] * tmp;
 
-	const fg::gc::CarrierCurve& carrier = gc::CarrierCurvePiecewiseBezier(arr);
+	const fg::gc::CarrierCurve& carrier = gc::PBezCarrier(arr);
 
 	const fg::gc::CrossSectionCircular& cs = gc::CrossSectionCircular(.1);
 	const fg::gc::GeneralisedCylinder& gc = gc::GeneralisedCylinder(carrier, cs, arr);

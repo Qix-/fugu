@@ -13,7 +13,7 @@
 #include "fgv/trackball.h"
 
 #include "fg/interpolator.h"
-#include "fg/bezierinterpolator.h"
+#include "fg/bezinterp.h"
 #include "fg/recsubdiv.h"
 
 #include "fg/glrenderer.h"
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 
 	// ** Create new spline here
 	const int numPoints = 2;
-    //fg::spline::PiecewiseBezierInterpolator<Vec3> spline = spline::PiecewiseBezierInterpolator<Vec3>();
+    //fg::spline::PBezInterp<Vec3> spline = spline::PBezInterp<Vec3>();
 	std::vector<Vec3> arr;
 	/*
     arr.push_back(Vec3(-4.6,0.,0.));
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 	std::vector<Vec3> subdivdata = subdiv.get_data();
 	std::cout << subdivdata.size() << std::endl;
 
-	fg::spline::BezierInterpolator<Vec3> spline(arr);
+	fg::spline::BezInterp<Vec3> spline(arr);
 	int size = subdivdata.size() - 1;
 	std::vector<Vec3> incdata = spline.getApproxVector(size);
 	std::cout << incdata.size() << std::endl;
