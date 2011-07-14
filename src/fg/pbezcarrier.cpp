@@ -100,8 +100,8 @@ namespace fg {
                 p3 = p3 * mag * ( stiffness[i].second );
                 tmpCp[i] = p1;
                 tmpCp[i + 1] = p4;
-                tmpGrad[i].first = p2;
-                tmpGrad[i].second = p3;
+                tmpGrad[i].second = p2;
+                tmpGrad[i + 1].first = p3;
                 //cout << p1 << endl;
                 //cout << p2 << endl;
                 //cout << p3 << endl;

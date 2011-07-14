@@ -112,6 +112,9 @@ namespace fg {
             t = min;
             double inc = ( max - min ) / ( double )( n );
 
+			if ( !mOpen )
+				--n;
+
             for( int i = 0; i <= n; ++i ) {
                 data[i] = getPosition( t );
                 t += inc;

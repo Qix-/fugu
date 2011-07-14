@@ -112,8 +112,11 @@ namespace fg {
             protected:
                 virtual void deleteData();
                 virtual void smoothGradients();
+				virtual const BezInterp<T> getSegmentInterpolator( int seg ) const;
 
                 std::vector< BezInterp<T> > mSegInterpolators;
+				BezInterp<T> mClosingInterp;
+				std::vector< std::pair< Vec3, Vec3 > > mGradients;
                 int mNumControlPoints;
                 T mFirstControlPoint;
         };

@@ -13,6 +13,7 @@
 #include "fgv/trackball.h"
 
 #include "fg/interpolator.h"
+#include "fg/lininterp.h"
 #include "fg/pbezinterp.h"
 
 #include "fg/glrenderer.h"
@@ -57,14 +58,19 @@ int main(int argc, char *argv[])
 	setupWindowAndGL();
 
 	// ** Create new spline here
-	const int numPoints = 2;
+	const int numPoints = 3;
     //fg::spline::PBezInterp<Vec3> spline = spline::PBezInterp<Vec3>();
 	std::vector<Vec3> arr;
 	std::vector< std::pair<Vec3,Vec3> > grad;
     arr.push_back(Vec3(0.,0.,0.));
     arr.push_back(Vec3(1.,0.,0.));
-	grad.push_back( std::pair<Vec3,Vec3> (Vec3(.3,.4,0.), Vec3(.3, -.4, 0.)));
+    arr.push_back(Vec3(1.,-1.,0.));
+	grad.push_back( std::pair<Vec3,Vec3> (Vec3(.3,.4,0.), Vec3(.3, .4, 0.) ) );
+	grad.push_back( std::pair<Vec3,Vec3> (Vec3(.3,-.4,0.), Vec3(.3, -.4, 0.) ) );
+	grad.push_back( std::pair<Vec3,Vec3> (Vec3(-.3,-.4,0.), Vec3(-.3, -.4, 0.) ) );
     fg::spline::PBezInterp<Vec3> spline = spline::PBezInterp<Vec3>(arr, grad);
+    //fg::spline::LinInterp<Vec3> spline = spline::LinInterp<Vec3>(arr);
+	spline.setOpen( false );
 
 	// Run as fast as I can
 	bool running = true;

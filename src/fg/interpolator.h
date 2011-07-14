@@ -134,6 +134,9 @@ namespace fg {
                  * \param max Gets set to the maximum value of the parameter.
                  */
                 virtual void getDomain( double &min, double &max ) const = 0;
+
+				virtual bool isOpen() const { return mOpen; }
+				virtual void setOpen( bool open ) { mOpen = open; }
             protected:
                 /**
                  * \brief Cleans up.
@@ -141,6 +144,7 @@ namespace fg {
                 virtual void deleteData();
                 Interpolator();
                 std::vector<T> mControlPoints;
+				bool mOpen;
 
             public:
                 static bool AlmostEqual2sComplement( double A, double B, int maxUlps = 5 );
