@@ -1,3 +1,30 @@
+/**
+ * \file
+ * \brief Defines the lua bindings for fg
+ * \author ben jonmc wetterj
+ * 
+ * All lua bindings for fg are in this file. 
+ * 
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #include "fg/bindings.h"
 
 #include <luabind/luabind.hpp>
@@ -19,6 +46,8 @@
 #include "fg/mesh.h"
 #include "fg/meshnode.h"
 #include "fg/meshoperators.h"
+
+#include "fg/turtle.h"
 
 int debugFileAndLine(lua_State* L);
 
@@ -61,7 +90,7 @@ namespace fg {
            def("sqr", &sqr<double>),
            def("sign", &sign<double>),
 
-		   def("noise", (double(*)(double)) &noise),
+           def("noise", (double(*)(double)) &noise),
 		   def("noise", (double(*)(double,double)) &noise),
 		   def("noise", (double(*)(double,double,double)) &noise),
 
@@ -161,6 +190,20 @@ namespace fg {
 		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double,double))&fg::extrude),
 
 		   def("getVerticesAtDistance", getVerticesAtDistance)
+		];
+
+		// fg/turtle.h
+		module(L,"fg")[
+		   class_<fg::gc::Turtle>("turtle")
+		   .def(constructor<>())
+		   .def("move",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::move)
+		   .def("yaw",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::yaw)
+		   .def("roll",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::roll)
+		   .def("pitch",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::pitch)
+		   .def("beginCylinder",&fg::gc::Turtle::beginCylinder)
+		   .def("endCylinder",&fg::gc::Turtle::endCylinder)
+		   .def("addPoint",&fg::gc::Turtle::addPoint)
+		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(int,int,int))&fg::gc::Turtle::getMesh)
 		];
 
 		return 0;

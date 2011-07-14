@@ -1,13 +1,12 @@
-#ifndef FG_SPLINE_CROSS_SECTION_CIRCULAR_H
-#define FG_SPLINE_CROSS_SECTION_CIRCULAR_H
+#ifndef FG_GC_CROSS_SECTION_CIRCULAR_H
+#define FG_GC_CROSS_SECTION_CIRCULAR_H
 
 #include "fg/fg.h"
-#include "fg/interpolator.h"
 
 #include "fg/crosssection.h"
 
 namespace fg{
-	namespace spline {
+	namespace gc {
 /**
  * \brief Provides a variyng cross section function.
  */
@@ -17,8 +16,11 @@ public:
   virtual Vec3 getPosition(double u, double v) const; 
   virtual Vec3 getDerivativeU(double u, double v) const;
   virtual Vec3 getDerivativeV(double u, double v) const;
+
+  virtual std::vector<Vec3> getCrossSection(double v) const;
 protected:
   double mRadius;
+  static const int SEGS = 8;
 };
 
 	}

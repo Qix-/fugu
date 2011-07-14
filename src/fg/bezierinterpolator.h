@@ -1,7 +1,9 @@
 #ifndef FG_SPLINE_BEZIER_INTERPOLATOR_H
 #define FG_SPLINE_BEZIER_INTERPOLATOR_H
 
-#include "interpolator.h"
+#include <vector>
+
+#include "fg/interpolator.h"
 
 namespace fg {
 namespace spline {
@@ -12,13 +14,19 @@ namespace spline {
 template<class T>
 class BezierInterpolator : public Interpolator<T> {
 public:
-    BezierInterpolator (int degree, T* controlPoints);
+    BezierInterpolator (const std::vector<T> &controlPoints);
+    BezierInterpolator ();
+	BezierInterpolator(const BezierInterpolator &other);
+
+    BezierInterpolator<T>& operator=(const BezierInterpolator &other);
     virtual ~BezierInterpolator ();
 
     virtual int getDegree () const;
 	virtual int getNumSegments () const;
 
-    virtual void setControlPoints (int degree, T* controlPoints);
+    virtual void setControlPoints (const std::vector<T> &controlPoints);
+
+	virtual void appendControlPoint (const T &cp);
 
     virtual T getPosition (double t) const;
     virtual T getDerivative (double t) const;
@@ -31,13 +39,13 @@ public:
     }
 
 protected:
-    int mDegree;
-    int mNumControlPoints;
-    T* mDer1ControlPoint;
-    T* mDer2ControlPoint;
+    std::vector<T> mDer1ControlPoint;
+    std::vector<T> mDer2ControlPoint;
     double** mChoose;
 
     virtual void deleteData ();
+	virtual void allocateChoose();
+	virtual void deleteChoose();
 };
 
 }

@@ -1,3 +1,27 @@
+/**
+ * \file
+ * \author ben
+ * 
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #ifndef FG_NODEGRAPH_H
 #define FG_NODEGRAPH_H
 
@@ -21,6 +45,11 @@ namespace fg {
 std::ostream& operator<<(std::ostream& o, const fg::NodeGraph& n);
 
 namespace fg {
+	/** \brief A directed graph data structure that contains fg::Nodes.
+	 *
+	 * NodeGraph is used internally within fg::Universe in order to calculate
+	 * the correct order in which to update the properties of nodes.
+	 */	 
 	class NodeGraph {
 	public:
 		struct node_t {
@@ -39,8 +68,8 @@ namespace fg {
 		void addEdge(boost::shared_ptr<Node> from, boost::shared_ptr<Node> to);
 		void addEdge(int f, int t);
 
-		///< update the node data based on the dependency graph
-		void update();
+		/// \brief update the node data based on the dependency graph
+		void update(); 
 
 		friend std::ostream& (::operator <<)(std::ostream& o, const fg::NodeGraph& n);
 
@@ -50,7 +79,7 @@ namespace fg {
 		Graph mG;
 		boost::shared_ptr<Node> mRootNode;
 
-		/**
+		/*
 		 * Updates the nodes breadth-first
 		 */
 		class NodeUpdater: public boost::default_bfs_visitor {

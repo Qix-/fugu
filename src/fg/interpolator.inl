@@ -3,8 +3,21 @@ namespace spline {
 
 template<class T>
 Interpolator<T>::Interpolator( )
-:mControlPoints(NULL)
  {}
+
+template<class T>
+Interpolator<T>::Interpolator(const Interpolator<T> &other)
+{
+	*this = other;
+}
+
+template<class T>
+Interpolator<T>& Interpolator<T>::operator=(const Interpolator<T> &other)
+{
+	deleteData();
+	setControlPoints( other.getControlPoints() );
+	return *this;
+}
 
 template<class T>
 Interpolator<T>::~Interpolator( )
@@ -13,36 +26,36 @@ Interpolator<T>::~Interpolator( )
 }
 
 template<class T>
-const T *Interpolator<T>::getControlPoints() const
+std::vector<T> Interpolator<T>::getControlPoints() const
 {
-	return mControlPoints;
+	return std::vector<T>(mControlPoints);
+}
+
+template<class T>
+void Interpolator<T>::appendControlPoint(const T &cp)
+{
+	mControlPoints.push_back(cp);
 }
 
 template < class T > int Interpolator < T >::getNumControlPoints() const
-		{
-	return mNumControlPoints;
-		}
-
-template < class T >
-void Interpolator < T >::setControlPoints(int numControlPoints, const T *newControlPoints)
 {
-	if (numControlPoints < 1)
-		return;
-
-	deleteData();
-	mControlPoints = new T[numControlPoints];
-
-	for (int i = 0; i < numControlPoints; ++i)
-	{
-		mControlPoints[i] = newControlPoints[i];
-	}
-	mNumControlPoints = numControlPoints;
+	return mControlPoints.size();
 }
 
 template < class T >
-const T & Interpolator<T>::getControlPoint( int i ) const
+void Interpolator < T >::setControlPoints(const std::vector<T> &newControlPoints)
 {
-	clamp( i, 0, getNumControlPoints() );
+	if (newControlPoints.size() < 1)
+		return;
+
+	deleteData();
+	mControlPoints = newControlPoints;
+}
+
+template < class T >
+T Interpolator<T>::getControlPoint( int i ) const
+{
+	clamp( i, 0, getNumControlPoints() - 1 );
 
 	return mControlPoints[i];
 }
@@ -59,11 +72,7 @@ void Interpolator<T>::setControlPoint(int index, const T &cp)
 template< class T >
 void Interpolator<T>::deleteData( )
 {
-	if(mControlPoints)
-		delete[] mControlPoints;
-
-	mNumControlPoints = 0;
-	mControlPoints = NULL;
+	mControlPoints.clear();
 }
 
 template< class T >
@@ -85,6 +94,27 @@ T* Interpolator<T>::getApprox( int &n ) const
 	}
 
 	return data;
+}
+
+template< class T >
+std::vector<T> Interpolator<T>::getApproxVector( int &n ) const
+{
+	if (n < 1)
+		n = getNumControlPoints() * 5;
+
+	std::vector<T> data;
+	double t;
+	double min, max;
+	getDomain(min, max);
+	t = min;
+	double inc = (max - min) / (double) (n);
+
+	for (int i = 0; i <= n; ++i) {
+		data.push_back(getPosition( t ));
+		t += inc;
+	}
+
+	return std::vector<T> (data);
 }
 
 template< class T >

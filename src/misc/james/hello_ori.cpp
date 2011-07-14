@@ -1,5 +1,5 @@
 /**
- * Hello carrier!!
+ * Hello spline!
  */
 
 
@@ -12,8 +12,11 @@
 #include "fg/functions.h"
 #include "fgv/trackball.h"
 
-#include "fg/carriercurvelinear.h"
-#include "fg/carriercurvepiecewisebezier.h"
+#include "fg/interpolator.h"
+#include "fg/bezierinterpolator.h"
+#include "fg/piecewisebezierinterpolator.h"
+#include "fg/quat.h"
+
 #include "fg/glrenderer.h"
 
 // opengl viz, hack
@@ -55,16 +58,8 @@ int main(int argc, char *argv[])
 {
 	setupWindowAndGL();
 
-	// ** Create new carrier here
-	const int numPoints = 2;
-	std::vector<Mat4> arr;
-	Mat4 tmp;
-	arr.push_back( Mat4() );
-	arr[0].SetIdentity();
-	arr.push_back( Mat4() );
-	arr[1].SetTranslate(0.5,0.,0.5);
-
-	const fg::gc::CarrierCurve& carrier = gc::CarrierCurvePiecewiseBezier(arr);
+	Quat q(Vec3(0.707,0.707,0.), Vec3(0.,0.,-1.), Vec3(-.707,0.707,0.));//Vec3(1.,0.,0.), M_PI*0.3);
+	std::cout << q <<"\n";
 
 	// Run as fast as I can
 	bool running = true;
@@ -95,9 +90,72 @@ int main(int argc, char *argv[])
 		float z = std::exp(-gZoom);
 		glScalef(z,z,z);
 
-		// Draw stuff here
-		fg::GLRenderer::renderCarrier(carrier,91,time);
+		Vec3 zero = Vec3(0.,0.,0.);
+		Vec3 xaxis = Vec3(1.,0.,0.);
+		Vec3 yaxis = Vec3(0.,1.,0.);
+		Vec3 zaxis = Vec3(0.,0.,1.);
 
+        // Draw axis
+		glColor3f(0.,1.,0.);
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(xaxis.getX(),xaxis.getY(),xaxis.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(yaxis.getX(),yaxis.getY(),yaxis.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(zaxis.getX(),zaxis.getY(),zaxis.getZ());
+		glEnd();
+		
+		/*
+		zero = mat * zero;
+		xaxis = mat * xaxis;
+		yaxis = mat * yaxis;
+		zaxis = mat * zaxis;
+
+		glColor3f(0.,0.,1.);
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(xaxis.getX(),xaxis.getY(),xaxis.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(yaxis.getX(),yaxis.getY(),yaxis.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(zaxis.getX(),zaxis.getY(),zaxis.getZ());
+		glEnd();
+		*/
+
+		// Draw axis transformed by qaut
+		zero = Vec3(0.,0.,0.);
+		xaxis = Vec3(1.,0.,0.);
+		yaxis = Vec3(0.,1.,0.);
+		zaxis = Vec3(0.,0.,1.);
+
+		zero = q * zero;
+		xaxis = q * xaxis;
+		yaxis = q * yaxis;
+		zaxis = q * zaxis;
+
+		glColor3f(1.,1.,1.);
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(xaxis.getX(),xaxis.getY(),xaxis.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(yaxis.getX(),yaxis.getY(),yaxis.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(zero.getX(),zero.getY(),zero.getZ());
+		glVertex3d(zaxis.getX(),zaxis.getY(),zaxis.getZ());
+		glEnd();
+        
 		glPopMatrix();
 
 		glfwSwapBuffers();
@@ -126,7 +184,7 @@ void setupWindowAndGL(){
 		exit(EXIT_FAILURE);
 	}
 
-	glfwSetWindowTitle("hello carrier!");
+	glfwSetWindowTitle("hello spline!");
 	//glfwSetKeyCallback(keyCallback);
 	glfwSetWindowSizeCallback(resizeWindow);
 	glfwSetMousePosCallback(mouseMoved);

@@ -2,96 +2,229 @@
 #include "fg/mat4.h"
 #include "fg/carriercurvepiecewisebezier.h"
 
-#include <iostream>
+using namespace std;
 
 namespace fg {
-namespace spline {
+namespace gc {
 
-CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier(const PiecewiseBezierInterpolator<Vec3> &it)
-    :mInterpolator(it)
+CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier(const vector<Mat4> &refFrames)
+    :mInterpolator(NULL)
 {
-    double currentTheta = 0.;
-    double ifpts[2];
-    int nIps;
-    for (int i = 0; i < mInterpolator.getNumSegments(); ++i) {
-		if (collinear(mInterpolator.getSegmentControlPoints(i)))
-		{
-			Vec3 U = Vec3(1., 0., 0.);
-			mLinearSegs.push_back(std::pair<int, Vec3>(i,U));
-		} else {
-        nIps = findInflectionPointsVec(mInterpolator.getSegmentControlPoints(i),&ifpts[0],&ifpts[1]);
-        for (int j = 0; j < nIps; ++j)
-        {
-            ifpts[j] += i;
-            mNormalTheta.push_back(std::pair<double, double>(ifpts[j], currentTheta));
-            currentTheta = currentTheta < 1. ? M_PI : 0.;
-        }
-		}
+    setReferenceFrames(refFrames);
+}
+
+CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier(const vector<Mat4> &refFrames, const vector< pair<double, double> > &stiffness)
+    :mInterpolator(NULL)
+{
+    setReferenceFrames(refFrames, stiffness);
+}
+
+CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier(const CarrierCurvePiecewiseBezier &other)
+    :mInterpolator(NULL)
+{
+    *this = other;
+}
+
+CarrierCurvePiecewiseBezier::CarrierCurvePiecewiseBezier()
+    :mInterpolator(NULL)
+{
+}
+
+CarrierCurvePiecewiseBezier& CarrierCurvePiecewiseBezier::operator=(const CarrierCurvePiecewiseBezier &other)
+{
+    if (other.mInterpolator == NULL)
+        this->mInterpolator = NULL;
+    else
+        this->mInterpolator = new spline::PiecewiseBezierInterpolator<Vec3>( *(other.mInterpolator) );
+
+    this->mInflectionPoints = other.mInflectionPoints;
+    this->mSegType = other.mSegType;
+    this->mRFrames = other.mRFrames;
+
+    return *this;
+}
+
+void CarrierCurvePiecewiseBezier::setReferenceFrames(const vector<Mat4> &rFrames)
+{
+    vector< pair<double,double> > stiffness( rFrames.size() - 1 );
+
+    for (int i = 0; i < rFrames.size() - 1; ++i)
+    {
+        stiffness[i].first = 0.6;
+        stiffness[i].second = 0.6;
+    }
+
+    setReferenceFrames(rFrames, stiffness);
+}
+
+void CarrierCurvePiecewiseBezier::setReferenceFrames(const vector<Mat4> &refFrames, const vector< pair<double,double> > &stiffness)
+{
+    deleteData();
+
+    vector<Vec3> tmpCp( refFrames.size() );
+    vector< pair<Vec3, Vec3> > tmpGrad( refFrames.size() );
+
+    for (int i = 0; i < refFrames.size() - 1; ++i)
+    {
+        // Get the control points and headings PUT THIS INTO MAT4!!
+        Vec3 p1 = refFrames[i]   * Vec3(0.,0.,0.); // The pos
+        Vec3 p2 = refFrames[i]   * Vec3(0.,0.,1.) - p1; // The head
+        Vec3 p4 = refFrames[i+1] * Vec3(0.,0.,0.);
+        Vec3 p3 = refFrames[i+1] * Vec3(0.,0.,1.) - p4;
+
+        // Calculate the tangents using coefficients
+        float mag = (p1 - p4).Norm();
+        p2 = p2 * mag * (stiffness[i].first);
+        p3 = p3 * mag * (stiffness[i].second);
+
+        tmpCp[i] = p1;
+        tmpCp[i+1] = p4;
+        tmpGrad[i].first = p2;
+        tmpGrad[i].second = p3;
+        //cout << p1 << endl;
+        //cout << p2 << endl;
+        //cout << p3 << endl;
+        //cout << p4 << endl;
+    }
+    mInterpolator = new spline::PiecewiseBezierInterpolator<Vec3>(tmpCp, tmpGrad);
+
+    // Store our data
+    mRFrames = refFrames;
+
+    // Find inflection points
+    for (int i = 0; i < refFrames.size() - 1; ++i)
+    {
+        mSegType.push_back(0);
+        mInflectionPoints.push_back(pair<double,double>(0.,0.));
+        updateInflectionPoints(i);
     }
 }
 
-const PiecewiseBezierInterpolator<Vec3> & CarrierCurvePiecewiseBezier::getInterpolator() const
+vector<Mat4> CarrierCurvePiecewiseBezier::getReferenceFrames() const
+{
+    return mRFrames;
+}
+
+CarrierCurvePiecewiseBezier::~CarrierCurvePiecewiseBezier()
+{
+    deleteData();
+}
+
+void CarrierCurvePiecewiseBezier::deleteData()
+{
+    if (mInterpolator)
+        delete mInterpolator;
+
+    mInflectionPoints.clear();
+    mSegType.clear();
+    mRFrames.clear();
+}
+
+void CarrierCurvePiecewiseBezier::updateInflectionPoints( int seg )
+{
+    // No such segment
+    if (seg > (signed int) (mInterpolator->getNumSegments()) || seg < 0) {
+        return;
+    }
+
+    // Check if the line is straight
+    vector<Vec3> cp = mInterpolator->getSegmentControlPoints(seg);
+    if (collinear( cp )) {
+        mSegType[seg] = 3;
+    } else {
+        double ip1, ip2;
+        mSegType[seg] = findInflectionPointsVec( cp, &ip1, &ip2 );
+        mInflectionPoints[seg] = std::pair<float, float>( ip1, ip2 );
+    }
+}
+
+const spline::PiecewiseBezierInterpolator<Vec3> * CarrierCurvePiecewiseBezier::getInterpolator() const
 {
     return mInterpolator;
 }
 
-void CarrierCurvePiecewiseBezier::getOrientation(double t, Vec3 *H, Vec3 *U, Vec3 *L) const
+Quat CarrierCurvePiecewiseBezier::getFrenetFrame(double v) const
 {
-    Vec3 vel = mInterpolator.getDerivative( t );
+    Vec3 vel = mInterpolator->getDerivative( v );
     Vec3 tangent = vel;
     tangent.normalise();
 
-    if (H) {
-        *H = tangent;
-        if(!(U && L))
-            return;
-    }
-
-    Vec3 acc = mInterpolator.getSecondDerivative( t );
+    Vec3 acc = mInterpolator->getSecondDerivative( v );
 
     double vDotV = vel.dot( vel );
     double vDotA = vel.dot( acc );
     Vec3 norm = acc * vDotV - vel * vDotA;
     norm.normalise();
 
-    Mat4 rot;
-    rot.SetRotateRad(getQuasiNormalTheta(t),tangent);
-    norm = rot * norm;
+    Quat qt = Quat(Vec3(1.,0.,0.), tangent);
 
-    if (U)
+    //Quat qn = Quat(qt * Vec3(0.,1.,0.), norm);
+
+    return qt;//*qn;
+}
+
+Quat CarrierCurvePiecewiseBezier::orient(double v) const
+{
+    int vint = (int) v;
+    vint = clamp<int>(vint, 0, mInterpolator->getNumSegments() - 1);
+	double localV = v - (double) vint;
+
+	Quat ff = getFrenetFrame(v);
+/*
+    switch (segmentType[vint]) {
+    case 0: // No inflection
+        break;
+    case 1: // One inflection
+        if (spline::Interpoloator<double>::AlmostEqual2sComplement( localV, inflectionPoints[seg].first, 10000 )) {
+            ff = getFrenetFrame( v - 0.05 );
+        } else if (localU > inflectionPoints[seg].first) {
+            mat.rotate( Vec3f(0.f, 0.f, 1.f), M_PI );
+        }
+        break;
+    case 2:
+        if (miscUtils::AlmostEqual2sComplement( localU, inflectionPoints[seg].first, 10000 )) {
+            mat = getFrenetFrame( seg, localU - 0.05 );
+        } else if (localU > inflectionPoints[seg].first) {
+            mat.rotate( Vec3f(0.f, 0.f, 1.f), M_PI );
+        }
+        break;
+        if (miscUtils::AlmostEqual2sComplement( localU, inflectionPoints[seg].second, 10000 )) {
+            mat = getFrenetFrame( seg, localU - 0.05 );
+        } else if (localU > inflectionPoints[seg].second) {
+            mat.rotate( Vec3f(0.f, 0.f, 1.f), M_PI );
+        }
+        break;
+    case 3: // Straight
     {
-        *U = norm;
+        mat = Matrix44<float>( norm, binorm, tan ).inverted();
+        break;
+    }
+    default:
+        break;
     }
 
-    if (L)
-    {
-        *L = norm^tangent;
-    }
+	*/
+	return ff;
 }
 
-Vec3 CarrierCurvePiecewiseBezier::orient(double v, double x, double y) const
+Quat CarrierCurvePiecewiseBezier::orientDer(double v) const
 {
-    Vec3 U, B;
-    getOrientation(v, 0, &U, &B);
-    return U*x + B*y;
+    return Quat();
 }
 
-Vec3 CarrierCurvePiecewiseBezier::dOrientDv(double v, double x, double y) const
+pair<Quat,Quat> CarrierCurvePiecewiseBezier::getSegOrients(int seg) const
 {
-    return Vec3(0.,0.,0.);
+    double min, max;
+    min = (double) seg;
+    max = min + 0.99999;
+    min = clamp<double>(min, min + 0.000001, min + 1.);
+
+    Quat q1 = orient(min);
+    Quat q2 = orient(max);
+    return pair<Quat, Quat>(q1,q2);
 }
 
-Vec3 CarrierCurvePiecewiseBezier::dOrientDx(double v, double x, double y) const
-{
-    return Vec3(0.,0.,0.);
-}
-
-Vec3 CarrierCurvePiecewiseBezier::dOrientDy(double v, double x, double y) const
-{
-    return Vec3(0.,0.,0.);
-}
-
-int CarrierCurvePiecewiseBezier::findInflectionPointsVec( const Vec3 *cp, double *i1, double *i2 )
+int CarrierCurvePiecewiseBezier::findInflectionPointsVec( const vector<Vec3> &cp, double *i1, double *i2 )
 {
     Vec3 a = cp[1] - cp[0];
     Vec3 b = cp[2] - cp[1] - a;
@@ -159,7 +292,7 @@ int CarrierCurvePiecewiseBezier::roots( Vec3 a, Vec3 b, Vec3 c, double *r1, doub
     } else { // do the intersection
         for (int i = 0; i < irootsx; ++i) {
             for (int j = 0; j < irootsy; ++j) {
-                if (Interpolator<float>::AlmostEqual2sComplement(rootsx[i], rootsy[j], 100000)) {
+                if (spline::Interpolator<float>::AlmostEqual2sComplement(rootsx[i], rootsy[j], 100000)) {
                     xinty[ixinty] = rootsx[i];
                     ++ixinty;
                 }
@@ -185,7 +318,7 @@ int CarrierCurvePiecewiseBezier::roots( Vec3 a, Vec3 b, Vec3 c, double *r1, doub
     } else { // do the intersection
         for (int i = 0; i < ixinty; ++i) {
             for (int j = 0; j < irootsz; ++j) {
-                if (Interpolator<float>::AlmostEqual2sComplement(xinty[i], rootsz[j], 100000)) {
+                if (spline::Interpolator<float>::AlmostEqual2sComplement(xinty[i], rootsz[j], 100000)) {
                     xintyintz[ixintyintz] = xinty[i];
                     ++ixintyintz;
                 }
@@ -209,7 +342,7 @@ double CarrierCurvePiecewiseBezier::determinant(double a, double b, double c)
  */
 int CarrierCurvePiecewiseBezier::rootsQuad(double a, double b, double det, double *r1, double *r2)
 {
-    if (Interpolator<double>::AlmostEqual2sComplement(det, 0.f, 10000000)) {
+    if (spline::Interpolator<double>::AlmostEqual2sComplement(det, 0.f, 10000000)) {
         *r1 = (-b / (2.f * a));
         *r2 = *r1;
         return 1;
@@ -241,11 +374,11 @@ double CarrierCurvePiecewiseBezier::rootLinear(double m, double c)
 int CarrierCurvePiecewiseBezier::roots(double a, double b, double c, double *r1, double *r2)
 {
     // Not a quadratic
-    if (Interpolator<double>::AlmostEqual2sComplement(a, 0.f, 10000000)) {
+    if (spline::Interpolator<double>::AlmostEqual2sComplement(a, 0.f, 10000000)) {
         // if it not linear
-        if (Interpolator<double>::AlmostEqual2sComplement(b, 0.f, 10000000)) {
+        if (spline::Interpolator<double>::AlmostEqual2sComplement(b, 0.f, 10000000)) {
             // zero every where
-            if (Interpolator<double>::AlmostEqual2sComplement(c, 0.f, 10000000)) {
+            if (spline::Interpolator<double>::AlmostEqual2sComplement(c, 0.f, 10000000)) {
                 return -1;
             } else {		// Zero nowhere
                 return 0;
@@ -261,19 +394,7 @@ int CarrierCurvePiecewiseBezier::roots(double a, double b, double c, double *r1,
     }
 }
 
-double CarrierCurvePiecewiseBezier::getQuasiNormalTheta(double t) const
-{
-    for (int i = 0; i < mNormalTheta.size(); ++i) {
-        if (t < mNormalTheta[i].first)
-        {
-            return mNormalTheta[i].second;
-        }
-    }
-
-    return 0.;
-}
-
-bool CarrierCurvePiecewiseBezier::collinear( const Vec3 *p )
+bool CarrierCurvePiecewiseBezier::collinear( const vector<Vec3> &p )
 {
     Vec3 v1 = p[3] - p[1];
     Vec3 v2 = p[2] - p[1];
@@ -288,12 +409,12 @@ bool CarrierCurvePiecewiseBezier::parallel( const Vec3 &v1, const Vec3 &v2 )
     float l22 = v2.SquaredNorm( );
 
 
-    if (Interpolator<double>::AlmostEqual2sComplement( l12, 0.f, 1000 ) || Interpolator<double>::AlmostEqual2sComplement( l22, 0.f, 1000 )) {
+    if (spline::Interpolator<double>::AlmostEqual2sComplement( l12, 0.f, 1000 ) || spline::Interpolator<double>::AlmostEqual2sComplement( l22, 0.f, 1000 )) {
         return true;
     }
 
     float ctheta = v1.dot( v2 )/(sqrt( l12 )*sqrt( l22 ));
-    return Interpolator<double>::AlmostEqual2sComplement( ctheta, 1.f, 1000 );
+    return spline::Interpolator<double>::AlmostEqual2sComplement( ctheta, 1.f, 1000 );
 }
 
 }
