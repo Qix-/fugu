@@ -1,5 +1,5 @@
 /**
- * Hello spline!
+ * Hello gc!
  */
 
 
@@ -12,6 +12,7 @@
 #include "fg/functions.h"
 #include "fgv/trackball.h"
 
+#include "fg/carriercurvelinear.h"
 #include "fg/carriercurvepiecewisebezier.h"
 #include "fg/crosssectioncircular.h"
 #include "fg/generalisedcylinder.h"
@@ -56,21 +57,28 @@ int main(int argc, char *argv[])
 {
 	setupWindowAndGL();
 
-	// ** Create new spline here
-	const int numPoints = 4;
-	Vec3* arr = new Vec3[numPoints];
-	for(int i=0;i<numPoints;i++){
-		arr[i] = Vec3(fg::random(-2,2),fg::random(-2,2),fg::random(-2,2));
-	}
-	// fg::spline::BezierInterpolator<Vec3> spline = spline::BezierInterpolator<Vec3>(numPoints-1 /* degree, not num control points */,arr);
+	// ** Create new carrier here
+	const int numPoints = 2;
+	std::vector<Mat4> arr;
+	Mat4 tmp;
 
-	fg::spline::PiecewiseBezierInterpolator<Vec3> spline = spline::PiecewiseBezierInterpolator<Vec3>(numPoints /* num control points, not degree! */,arr);
-	const fg::spline::CarrierCurve& carrier = spline::CarrierCurvePiecewiseBezier(spline);
-	const fg::spline::CrossSectionCircular& cs = spline::CrossSectionCircular(.1);
-	const fg::spline::GeneralisedCylinder& gc = spline::GeneralisedCylinder(carrier, cs);
-	boost::shared_ptr<Mesh> mMesh = gc.createMesh(40, 40);
-	mMesh->smoothSubdivide(2);
-	delete[]arr;
+	arr.push_back( Mat4() );
+	arr[0].SetIdentity();
+
+	arr.push_back( Mat4() );
+	arr[1].SetTranslate(0.5,0.,.5);
+
+//	arr.push_back( Mat4() );
+//	arr[2].SetTranslate(0.,1.,2.);
+//	tmp.SetRotateDeg(-45, Vec3( 1., 0., 0.));
+//	arr[2] = arr[2] * tmp;
+
+	const fg::gc::CarrierCurve& carrier = gc::CarrierCurvePiecewiseBezier(arr);
+
+	const fg::gc::CrossSectionCircular& cs = gc::CrossSectionCircular(.1);
+	const fg::gc::GeneralisedCylinder& gc = gc::GeneralisedCylinder(carrier, cs, arr);
+	boost::shared_ptr<Mesh> mMesh = gc.createMesh(10, 20);
+	//mMesh->smoothSubdivide(3);
 
 	// Run as fast as I can
 	bool running = true;
@@ -103,7 +111,7 @@ int main(int argc, char *argv[])
 
 		// Draw stuff here
 		fg::GLRenderer::renderMesh(&*mMesh);
-		//fg::GLRenderer::renderCarrier(carrier,20,time);
+		fg::GLRenderer::renderCarrier(carrier,20,time);
 
 		glPopMatrix();
 
@@ -133,7 +141,7 @@ void setupWindowAndGL(){
 		exit(EXIT_FAILURE);
 	}
 
-	glfwSetWindowTitle("hello spline!");
+	glfwSetWindowTitle("hello cylinder!");
 	//glfwSetKeyCallback(keyCallback);
 	glfwSetWindowSizeCallback(resizeWindow);
 	glfwSetMousePosCallback(mouseMoved);

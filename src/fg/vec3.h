@@ -1,3 +1,27 @@
+/**
+ * \file
+ * \author ben
+ * 
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #ifndef FG_VEC3_H
 #define FG_VEC3_H
 
@@ -6,8 +30,13 @@
 #include <vcg/space/point3.h>
 
 namespace fg {
-	// typedef vcg::Point3d Vec3;
-
+	
+	/**
+	 * \brief A 3D vector class
+	 *
+	 * Currently it subclasses vcg::Point3d, and provides an adjusted interface, 
+	 * both for the fg C++ api and for the lua bindings.
+	 */
 	class Vec3: public vcg::Point3d {
 		public:
 			Vec3(const vcg::Point3d& p){
@@ -30,18 +59,19 @@ namespace fg {
 			void setZ(double z){Z() = z;}
 
 			void normalise();
+			Vec3 normalised() const;
+			double length() const { return vcg::Norm(*this); }
+			double lengthSquared() const { return vcg::SquaredNorm(*this); }
+
+			Vec3 cross(const Vec3 &other) const { return vcg::Point3d::operator^(other); }
+			double dot(const Vec3 &other) const { return vcg::Point3d::operator*(other); }
 
 			Vec3 operator+(const Vec3& b) const;
 			Vec3 operator-(const Vec3& b) const;
 			Vec3 operator*(double d) const;
-
-//			double dot(const Vec3 &otherV) const;
+			Vec3 & operator=(const Vec3& other);
 	};
 }
-
-// conversion
-//vcg::Point3d& operator=(vcg::Point3d& p, const fg::Vec3& v);
-
 
 // For basic printing
 std::ostream& operator<<(std::ostream&, const fg::Vec3&);

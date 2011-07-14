@@ -1,3 +1,27 @@
+/**
+ * \file
+ * \author ben
+ * 
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #include "fg/vec3.h"
 
 /*
@@ -20,6 +44,11 @@ namespace fg{
 		*this /= n;
 	}
 
+	Vec3 Vec3::normalised() const{
+		Vec3 tmp( *this );
+		tmp.normalise();
+		return Vec3( tmp );
+	}
 //	double Vec3::dot(const Vec3 &otherV) const{
 //		return
 //	}
@@ -34,6 +63,11 @@ namespace fg{
 
 	Vec3 Vec3::operator*(double d) const{
 		return Vec3((vcg::Point3d)(*this) * d);
+	}
+
+	Vec3 & Vec3::operator=(const Vec3& other){
+		vcg::Point3d::operator=(other);
+		return *this;
 	}
 
 }

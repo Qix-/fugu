@@ -13,7 +13,6 @@
 #include "fgv/trackball.h"
 
 #include "fg/interpolator.h"
-#include "fg/bezierinterpolator.h"
 #include "fg/piecewisebezierinterpolator.h"
 
 #include "fg/glrenderer.h"
@@ -58,15 +57,14 @@ int main(int argc, char *argv[])
 	setupWindowAndGL();
 
 	// ** Create new spline here
-	const int numPoints = 4;
-	Vec3* arr = new Vec3[numPoints];
-	for(int i=0;i<numPoints;i++){
-		arr[i] = Vec3(fg::random(-2,2),fg::random(-2,2),fg::random(-2,2));
-	}
-	// fg::spline::BezierInterpolator<Vec3> spline = spline::BezierInterpolator<Vec3>(numPoints-1 /* degree, not num control points */,arr);
-
-	const fg::spline::Interpolator<Vec3>& spline = spline::PiecewiseBezierInterpolator<Vec3>(numPoints /* num control points, not degree! */,arr);
-	delete[]arr;
+	const int numPoints = 2;
+    //fg::spline::PiecewiseBezierInterpolator<Vec3> spline = spline::PiecewiseBezierInterpolator<Vec3>();
+	std::vector<Vec3> arr;
+	std::vector< std::pair<Vec3,Vec3> > grad;
+    arr.push_back(Vec3(0.,0.,0.));
+    arr.push_back(Vec3(1.,0.,0.));
+	grad.push_back( std::pair<Vec3,Vec3> (Vec3(.3,.4,0.), Vec3(.3, -.4, 0.)));
+    fg::spline::PiecewiseBezierInterpolator<Vec3> spline = spline::PiecewiseBezierInterpolator<Vec3>(arr, grad);
 
 	// Run as fast as I can
 	bool running = true;
@@ -99,6 +97,7 @@ int main(int argc, char *argv[])
 
 		// Draw stuff here
 		fg::GLRenderer::renderInterpolator(spline,91);
+
 
 		glPopMatrix();
 

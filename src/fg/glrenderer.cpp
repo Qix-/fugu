@@ -1,3 +1,27 @@
+/**
+ * \file
+ * \author ben
+ * 
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___     
+ *   |  _|___ 
+ *   |  _| . | fg: real-time procedural 
+ *   |_| |_  | animation and generation 
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in 
+ *   the LICENSE file.
+ * 
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #include "fg/glrenderer.h"
 
 #include <cassert>
@@ -48,28 +72,40 @@ namespace fg {
 		glPopMatrix();
 	}
 
-    void GLRenderer::renderCarrier(const spline::CarrierCurve &c, int n, double time){
-		renderInterpolator(c.getInterpolator(), n);
+    void GLRenderer::renderCarrier(const gc::CarrierCurve &c, int n, double time){
+		if (c.getInterpolator())
+		  renderInterpolator(*c.getInterpolator(), n);
 
         // Draw a tangent
 		time = time * 0.2;
-		if (time > 3.f) time = 3.f;
-		Vec3 pos = c.getInterpolator().getPosition(time);
-		Vec3 U;
+		Vec3 pos = c.getInterpolator()->getPosition(time);
+		Vec3 X = c.orient(time)*Vec3(1.,0.,0.);
+		Vec3 Y = c.orient(time)*Vec3(0.,1.,0.);
+		Vec3 Z = c.orient(time)*Vec3(0.,0.,1.);
 
-		U = pos + c.orient(time,1.,0.);
+		X = pos + X;
+		Y = pos + Y;
+		Z = pos + Z;
 
 		glBegin(GL_LINES);
 		glVertex3d(pos.getX(),pos.getY(),pos.getZ());
-		glVertex3d(U.getX(),U.getY(),U.getZ());
+		glVertex3d(X.getX(),X.getY(),X.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(pos.getX(),pos.getY(),pos.getZ());
+		glVertex3d(Y.getX(),Y.getY(),Y.getZ());
+		glEnd();
+		glBegin(GL_LINES);
+		glVertex3d(pos.getX(),pos.getY(),pos.getZ());
+		glVertex3d(Z.getX(),Z.getY(),Z.getZ());
 		glEnd();
 	}
 
 	void GLRenderer::renderInterpolator(const spline::Interpolator<Vec3>& s, int n){
 		assert (n>0);
 
-		Vec3* arr = s.getApprox(n); // returns new array of length (n+1)
-		const Vec3* cp = s.getControlPoints();
+		std::vector<Vec3> arr = s.getApproxVector(n);
+		std::vector<Vec3> cp = s.getControlPoints();
 
 		glPushAttrib(GL_CURRENT_BIT);
 		glPushAttrib(GL_LIGHTING_BIT);
@@ -112,10 +148,16 @@ namespace fg {
 		}
 		glEnd();
 
-		glPopAttrib();
-		glPopAttrib();
-		glPopAttrib();
+        glPointSize(6);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,1);
+		for(int i=0;i<s.getNumControlPoints();i++){
+			glVertex3d(s.getPosition(0.).getX(),s.getPosition(0.).getY(),s.getPosition(0.).getZ());
+		}
+		glEnd();
 
-		delete[]arr;
+		glPopAttrib();
+		glPopAttrib();
+		glPopAttrib();
 	}
 }
