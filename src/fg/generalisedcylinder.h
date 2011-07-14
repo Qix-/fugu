@@ -14,7 +14,7 @@
 namespace fg {
     namespace gc {
         /**
-         * \brief Provides a variyng cross section function.
+         * \brief Uses a CarrierCurve and a CrossSection to define a surface.
          */
         class GeneralisedCylinder {
             public:

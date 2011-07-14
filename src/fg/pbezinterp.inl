@@ -58,16 +58,16 @@ namespace fg {
         PBezInterp<T>& PBezInterp<T>::operator=( const PBezInterp<T> &other )
         {
             Interpolator<T>::operator=( other );
-            mNumControlPoints = other.mNumControlPoints;
-            mFirstControlPoint = other.mFirstControlPoint;
-            mSegInterpolators = other.mSegInterpolators;
+
+			setControlPoints( other.getControlPoints(), other.mGradients );
+			Interpolator<T>::setOpen( other.isOpen() );
             return *this;
         }
 
         template<class T>
         void PBezInterp<T>::setControlPoints( const std::vector<T> &controlPoints )
         {
-            std::vector< std::pair<T, T> > gradients( controlPoints.size() - 1, std::pair<T, T>( Vec3( 0., 0., 0. ), Vec3( 0., 0., 0. ) ) );
+            std::vector< std::pair<T, T> > gradients( controlPoints.size(), std::pair<T, T>( Vec3( 0., 0., 0. ), Vec3( 0., 0., 0. ) ) );
             setControlPoints( controlPoints, gradients );
         }
 
@@ -83,15 +83,23 @@ namespace fg {
             mNumControlPoints = controlPoints.size();
             std::vector<T> cp;
 
+			mGradients.push_back( gradients[0] );
             for( int i = 0; i < controlPoints.size() - 1; ++i )
             {
+				mGradients.push_back( gradients[i+1] );
+
                 cp.push_back( controlPoints[i] );
-                cp.push_back( controlPoints[i] + gradients[i].first );
-                cp.push_back( controlPoints[i + 1] - gradients[i].second );
+                cp.push_back( controlPoints[i] + gradients[i].second );
+                cp.push_back( controlPoints[i + 1] - gradients[i+1].first );
                 cp.push_back( controlPoints[i + 1] );
                 mSegInterpolators.push_back( BezInterp<T>( cp ) );
                 cp.clear();
             }
+            cp.push_back( controlPoints.back() );
+            cp.push_back( controlPoints.back() + gradients.back().second );
+            cp.push_back( controlPoints.front() - gradients.front().first );
+            cp.push_back( controlPoints.front() );
+			mClosingInterp = BezInterp<T>( cp );
         }
 
         template <class T>
@@ -104,22 +112,42 @@ namespace fg {
         template <class T>
         void PBezInterp<T>::appendControlPoint( const T &controlPoint, const std::pair<T, T> &g )
         {
-            if( getNumSegments() > 0 ) {
+			// Normal case
+            if( getNumControlPoints() > 1 ) {
                 std::vector<T> cp( 4 );
-                cp[0] = getControlPoint( getNumSegments() );
-                cp[1] = cp[0] + g.first;
-                cp[2] = controlPoint - g.second;
+                cp[0] = getControlPoint( getNumControlPoints() - 1 );
+                cp[1] = cp[0] + mGradients.back().second;
+                cp[2] = controlPoint - g.first;
                 cp[3] = controlPoint;
                 mSegInterpolators.push_back( BezInterp<T>( cp ) );
-            } else if( getNumControlPoints() == 0 ) {
+
+				cp.clear();
+				cp.push_back( controlPoint );
+				cp.push_back( controlPoint + g.second );
+                cp.push_back( getControlPoint( 0 ) - mGradients.front().first );
+                cp.push_back( getControlPoint( 0 ) );
+				mClosingInterp = BezInterp<T>( cp );
+				
+				mGradients.push_back( g );
+            } else if( getNumControlPoints() == 0 ) { // First point
                 mFirstControlPoint = controlPoint;
-            } else {
+				mGradients.push_back( g );
+            } else { // Second point
                 std::vector<T> cp( 4 );
                 cp[0] = mFirstControlPoint;
-                cp[1] = cp[0] + g.first;
-                cp[2] = controlPoint - g.second;
+                cp[1] = cp[0] + mGradients.back().second;
+                cp[2] = controlPoint - g.first;
                 cp[3] = controlPoint;
                 mSegInterpolators.push_back( BezInterp<T>( cp ) );
+
+				cp.clear();
+				cp.push_back( controlPoint );
+				cp.push_back( controlPoint + g.second );
+                cp.push_back( getControlPoint( 0 ) - mGradients.front().first );
+                cp.push_back( getControlPoint( 0 ) );
+				mClosingInterp = BezInterp<T>( cp );
+
+				mGradients.push_back( g );
             }
 
             ++mNumControlPoints;
@@ -165,43 +193,60 @@ namespace fg {
         template< class T >
         int PBezInterp<T>::getNumSegments() const
         {
-            return getNumControlPoints() - 1;
+			if (Interpolator<T>::mOpen)
+            	return getNumControlPoints() - 1;
+			else
+            	return getNumControlPoints();
         }
 
         template<class T>
         T PBezInterp<T>::getPosition( double t ) const
         {
-            int seg = getSegment( t );
-            return mSegInterpolators[seg].getPosition( t - ( double ) seg );
+			int seg = getSegment(t);
+            return getSegmentInterpolator(seg).getPosition( t - ( double ) seg );
         }
 
         template<class T>
         T PBezInterp<T>::getDerivative( double t ) const
         {
-            int seg = getSegment( t );
-            return mSegInterpolators[seg].getDerivative( t - ( double ) seg );
+			int seg = getSegment(t);
+            return getSegmentInterpolator(seg).getDerivative( t - ( double ) seg );
         }
 
         template<class T>
         T PBezInterp<T>::getSecondDerivative( double t ) const
         {
-            int seg = getSegment( t );
-            return mSegInterpolators[seg].getSecondDerivative( t - ( double ) seg );
+			int seg = getSegment(t);
+            return getSegmentInterpolator(seg).getSecondDerivative( t - ( double ) seg );
         }
 
-        template < class T >
-        int PBezInterp < T >::getSegment( double t ) const
+        template<class T>
+        int PBezInterp<T>::getSegment( double t ) const
         {
             int ti = ( int ) t;
-            ti = clamp<int>( ti, 0, getNumSegments() - 1 );
+			if( Interpolator<T>::mOpen )
+            	ti = clamp<int>( ti, 0, getNumSegments() - 1 );
+			else
+            	ti = clamp<int>( ti, 0, getNumSegments() );
+
             return ti;
         }
 
         template <class T>
         std::vector< T > PBezInterp<T>::getSegmentControlPoints( int seg ) const
         {
-            seg = clamp<int>( seg, 0, getNumSegments() - 1 );
-            return mSegInterpolators[seg].getControlPoints();
+			if( Interpolator<T>::mOpen ) {
+            	seg = clamp<int>( seg, 0, getNumSegments() - 1 );
+			} else {
+            	seg = clamp<int>( seg, 0, getNumSegments() );
+			}
+
+			if( seg < getNumControlPoints() - 1 )
+            	return mSegInterpolators[seg].getControlPoints();
+			else
+			{
+				return mClosingInterp.getControlPoints();
+			}
         }
 
         template <class T>
@@ -209,7 +254,7 @@ namespace fg {
         {
             i = clamp( i, 0, getNumControlPoints() - 1 );
 
-            if( i = getNumSegments() )
+            if( i = getNumControlPoints() - 1 )
                 return getSegmentControlPoints( i - 1 )[4];
 
             return getSegmentControlPoints( i )[0];
@@ -220,14 +265,27 @@ namespace fg {
         {
             std::vector<T> cp;
 
-            for( int i = 0; i < getNumSegments(); ++i ) {
-                cp.push_back( getSegmentControlPoints( i )[0] );
-            }
+			if( getNumControlPoints() == 0 )
+				cp.push_back( mFirstControlPoint );
+			else
+			{
+            	for( int i = 0; i < getNumControlPoints() - 1; ++i ) {
+                	cp.push_back( getSegmentControlPoints( i )[0] );
+            	}
+				cp.push_back( getSegmentControlPoints( getNumControlPoints() - 2 )[3] );
+			}
 
-            cp.push_back( getSegmentControlPoints( getNumSegments() - 1 )[3] );
             return cp;
         }
 
+		template<class T>
+		const BezInterp<T> PBezInterp<T>::getSegmentInterpolator( int seg ) const
+		{
+			if (seg == getNumControlPoints() - 1 )
+				return mClosingInterp;
+			else
+				return mSegInterpolators[seg];
+		}
 
     }
 }

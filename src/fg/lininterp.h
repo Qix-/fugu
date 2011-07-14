@@ -72,13 +72,6 @@ namespace fg {
                 virtual int getNumSegments() const;
 
             private:
-                /**
-                 * Gets the internal domain of the parameter.
-                 *
-                 * \param min Gets set to the minimum value of the parameter.
-                 * \param max Gets set to the maximum value of the parameter.
-                 */
-                void getInternalDomain( double &min, double &max ) const;
                 int getControlPointIndex( double t ) const;
                 double getInternalT( double externalT ) const;
         };

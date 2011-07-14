@@ -56,14 +56,14 @@ namespace fg {
             double internalT = getInternalT( t );
             int cp = getControlPointIndex( internalT );
             internalT -= ( double )cp;
-            return Interpolator<T>::mControlPoints[cp] * ( 1.f - internalT ) + Interpolator<T>::mControlPoints[cp + 1] * internalT;
+            return Interpolator<T>::mControlPoints[cp] * ( 1.f - internalT ) + Interpolator<T>::mControlPoints[(cp + 1) % Interpolator<T>::getNumControlPoints()] * internalT;
         }
 
         template < class T >
         T LinInterp < T >::getDerivative( double t ) const
         {
             int cp = getControlPointIndex( t );
-            return ( Interpolator<T>::mControlPoints[cp + 1] - Interpolator<T>::mControlPoints[cp] );
+            return ( Interpolator<T>::mControlPoints[(cp + 1) % Interpolator<T>::getNumControlPoints()] - Interpolator<T>::mControlPoints[cp] );
         }
 
         template < class T >
@@ -76,7 +76,9 @@ namespace fg {
         T *LinInterp < T >::getApprox( int &n ) const
         {
             if( n < 1 || n > Interpolator<T>::getNumControlPoints() - 1 )
-                n = Interpolator<T>::getNumControlPoints() - 1;
+			{
+               	n = Interpolator<T>::getNumControlPoints() - 1;
+			}
 
             T *data = new T[n + 1];
 
@@ -91,16 +93,11 @@ namespace fg {
         std::vector<T> LinInterp < T >::getApproxVector( int &n ) const
         {
             if( n < 1 || n > Interpolator<T>::getNumControlPoints() - 1 )
+			{
                 n = Interpolator<T>::getNumControlPoints() - 1;
+			}
 
-            return Interpolator<T>::getControlPoints();
-        }
-
-        template < class T >
-        void LinInterp <T>::getInternalDomain( double &min, double &max ) const
-        {
-            min = 0.f;
-            max = ( double )( Interpolator < T >::getNumControlPoints() - 1 );
+			return Interpolator<T>::getControlPoints();
         }
 
         template < class T >
@@ -115,7 +112,7 @@ namespace fg {
         double LinInterp<T>::getInternalT( double externalT ) const
         {
             double min, max;
-            getInternalDomain( min, max );
+            getDomain( min, max );
             return clamp<double>( externalT, min, max );
         }
 
@@ -123,7 +120,10 @@ namespace fg {
         void LinInterp < T >::getDomain( double &min, double &max ) const
         {
             min = 0.f;
-            max = ( double ) Interpolator<T>::getNumControlPoints() - 1;
+			if (Interpolator<T>::mOpen)
+            	max = ( double )( Interpolator < T >::getNumControlPoints() - 1 );
+			else
+            	max = ( double )( Interpolator < T >::getNumControlPoints() );
         }
 
         template < class T >

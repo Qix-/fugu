@@ -137,6 +137,11 @@ namespace fg {
 			glVertex3d(arr[i].getX(),arr[i].getY(),arr[i].getZ());
 			glVertex3d(arr[i+1].getX(),arr[i+1].getY(),arr[i+1].getZ());
 		}
+		if (!s.isOpen())
+		{
+			glVertex3d(arr[n].getX(),arr[n].getY(),arr[n].getZ());
+			glVertex3d(arr[0].getX(),arr[0].getY(),arr[0].getZ());
+		}
 		glEnd();
 
 		glBegin(GL_POINTS);

@@ -15,6 +15,7 @@ set(SRC
 	lincarrier.cpp
 	pbezcarrier.cpp
 	crosssectioncircular.cpp
+	interpcrosssec.cpp
 	generalisedcylinder.cpp
 	recsubdiv.cpp
 	turtle.cpp
@@ -36,6 +37,7 @@ set(HDRS
 	functions.h
 	generalisedcylinder.h
 	glrenderer.h
+	interpcrosssec.h
 	interpolator.h
 	lininterp.h
 	mat4.h
