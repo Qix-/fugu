@@ -12,6 +12,7 @@
 #include "fg/pbezcarrier.h"
 #include "fg/crosssectioncircular.h"
 #include "fg/scaleinterpcrosssec.h"
+#include "fg/interpcrosssec.h"
 #include "fg/generalisedcylinder.h"
 
 namespace fg {
@@ -34,6 +35,8 @@ namespace fg {
 				void setScale(double scale);
 				void pushState();
 				void popState();
+				void setCarrierMode( int carrierMode );
+				void setCrossSectionMode( int crossSectionMode );
                 boost::shared_ptr<Mesh> getMesh( int n = 10, int m = 10 );
 
             protected:

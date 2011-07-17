@@ -81,7 +81,6 @@ namespace fg {
 
         void GeneralisedCylinder::createMesh( Mesh::MeshBuilder &mb, int n, int m ) const
         {
-			cout << m << endl;
 			int oldVerticies = mb.getNumVerticies();
             double vmin, vmax;
 			double csv;
