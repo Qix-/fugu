@@ -152,6 +152,10 @@ namespace fg {
 					mCrossSections.push_back( new ScaleInterpCrossSec( *( mCrossSecLibrary[mState.currentCS] ), *( mScalers.back() ) ) );
 					break;
 				}
+				case INTERPOLATOR_CROSS_SECTION:
+				{
+					mCrossSections.push_back( new InterpCrossSec( *( mCrossSecLibrary[mState.currentCS] ) ) );
+				}
 				default:
 				{
             		mCrossSections.push_back( new CrossSectionCircular( 0.1 ) );
@@ -166,6 +170,7 @@ namespace fg {
             		mCarriers.push_back( new PBezCarrier( mPrevFrames ) );
 					break;
 				case LINEAR_CARRIER:
+				default:
             		mCarriers.push_back( new LinCarrier( mPrevFrames ) );
 					break;
 			}
@@ -187,6 +192,16 @@ namespace fg {
 		{
 			mState = mStateStack.top();
 			mStateStack.pop();
+		}
+
+		void Turtle::setCarrierMode( int carrierMode )
+		{
+			mState.carrierMode = carrierMode;
+		}
+
+		void Turtle::setCrossSectionMode( int crossSectionMode )
+		{
+			mState.crossSectionMode = crossSectionMode;
 		}
 
         boost::shared_ptr< Mesh > Turtle::getMesh( int n, int m )

@@ -11,7 +11,7 @@ function setup()
 	bert:yaw(math.pi / 6)
 	bert:move(1.)
     bert:endCylinder()
-	m = bert:getMesh(0,10,10)
+	m = bert:getMesh(10,10)
 	fgu:addMesh(m)
 end
 

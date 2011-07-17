@@ -11,7 +11,7 @@ function setup()
 	bert:move(1.)
 	bert:roll(-math.pi)
     bert:endCylinder()
-	m = bert:getMesh(0,4,50)
+	m = bert:getMesh(4,50)
 	fgu:addMesh(m)
 end
 
