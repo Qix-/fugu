@@ -68,16 +68,20 @@ int main(int argc, char *argv[])
     arr.push_back(Vec3(-4.6,-.6,0.));
 	*/
     arr.push_back(Vec3(0.,0.,0.));
-    arr.push_back(Vec3(1.,0.1,0.));
-    arr.push_back(Vec3(2.,0.,0.));
-    arr.push_back(Vec3(4.,0.,0.));
+    arr.push_back(Vec3(.02,.5,0.));
+    arr.push_back(Vec3(.08,-.5,0.));
+    arr.push_back(Vec3(.1,0.,0.));
     fg::spline::RecSubDiv subdiv;
-	subdiv.approximation_scale(100.);
-	subdiv.angle_tolerance(0.1);
+	subdiv.approximation_scale(150.);
+	subdiv.angle_tolerance(0.05);
 	subdiv.init( arr );
 	std::vector<Vec3> subdivdata = subdiv.get_data();
 	std::cout << subdivdata.size() << std::endl;
 
+    arr[0] = arr[0] + Vec3( 0.2, 0., 0. );
+    arr[1] = arr[1] + Vec3( 0.2, 0., 0. );
+    arr[2] = arr[2] + Vec3( 0.2, 0., 0. );
+    arr[3] = arr[3] + Vec3( 0.2, 0., 0. );
 	fg::spline::BezInterp<Vec3> spline(arr);
 	int size = subdivdata.size() - 1;
 	std::vector<Vec3> incdata = spline.getApproxVector(size);
@@ -115,6 +119,7 @@ int main(int argc, char *argv[])
 		glScalef(z,z,z);
 
 		// Draw stuff here
+		glLineWidth( 2. );
 		glColor3f(1,1,1);
 		glBegin(GL_LINES);
 		for(int i=0;i<subdivdata.size() - 1;i++){

@@ -14,7 +14,8 @@
 
 #include "fg/lincarrier.h"
 #include "fg/pbezcarrier.h"
-#include "fg/crosssectioncircular.h"
+#include "fg/interpcrosssec.h"
+#include "fg/scaleinterpcrosssec.h"
 #include "fg/generalisedcylinder.h"
 #include "fg/glrenderer.h"
 
@@ -60,6 +61,9 @@ int main(int argc, char *argv[])
 	// ** Create new carrier here
 	const int numPoints = 2;
 	std::vector<Mat4> arr;
+	std::vector<Vec3> arr2;
+	std::vector<double> s;
+	std::vector< std::pair<Vec3,Vec3> > grad;
 	Mat4 tmp;
 
 	arr.push_back( Mat4() );
@@ -68,16 +72,44 @@ int main(int argc, char *argv[])
 	arr.push_back( Mat4() );
 	arr[1].SetTranslate(0.5,0.,.5);
 
+	arr.push_back( Mat4() );
+	arr[2].SetTranslate(2.,0.,0.);
+
+    arr2.push_back( Vec3(.1, 0., 0.) );
+    arr2.push_back( Vec3(.15, 0.08, 0.) );
+    arr2.push_back( Vec3(0., .1, 0.) );
+    arr2.push_back( Vec3(-.1, 0., 0.) );
+    arr2.push_back( Vec3(0., -.1, 0.) );
+
+	grad.push_back( std::pair<Vec3,Vec3> ( Vec3(0.01,0.05,0.),Vec3(0.01,0.05,0.)));
+	grad.push_back( std::pair<Vec3,Vec3> ( Vec3(0.1,0.05,0.),Vec3(0.1,0.05,0.)));
+	grad.push_back( std::pair<Vec3,Vec3> ( Vec3(-0.05,0.,0.),Vec3(-0.05,0.,0.)));
+	grad.push_back( std::pair<Vec3,Vec3> ( Vec3(0.,-0.05,0.),Vec3(0.,-0.05,0.)));
+	grad.push_back( std::pair<Vec3,Vec3> ( Vec3(0.05,0.,0.),Vec3(0.05,0.,0.)));
+
+	s.push_back( 1. );
+	s.push_back( 0.01 );
+	s.push_back( 1. );
 //	arr.push_back( Mat4() );
 //	arr[2].SetTranslate(0.,1.,2.);
 //	tmp.SetRotateDeg(-45, Vec3( 1., 0., 0.));
 //	arr[2] = arr[2] * tmp;
 
+	std::vector< std::pair<double,double> > domains;
+	domains.push_back( std::pair<double,double>( 0., 0. ) );
+	domains.push_back( std::pair<double,double>( 1., 1. ) );
+	domains.push_back( std::pair<double,double>( 3., 2. ) );
+
 	const fg::gc::CarrierCurve& carrier = gc::PBezCarrier(arr);
 
-	const fg::gc::CrossSectionCircular& cs = gc::CrossSectionCircular(.1);
-	const fg::gc::GeneralisedCylinder& gc = gc::GeneralisedCylinder(carrier, cs, arr);
-	boost::shared_ptr<Mesh> mMesh = gc.createMesh(10, 20);
+    fg::spline::PBezInterpDiv interp (arr2, grad);
+	fg::spline::LinInterp<double> scale ( s );
+	interp.setOpen(false);
+	const fg::gc::ScaleInterpCrossSec cs( interp, scale );
+	const fg::gc::GeneralisedCylinder& gc = gc::GeneralisedCylinder(carrier, cs, arr, domains);
+	Mesh::MeshBuilder mb;
+	gc.createMesh(mb, 10, 60);
+	boost::shared_ptr<Mesh> mMesh = mb.createMesh();
 	//mMesh->smoothSubdivide(3);
 
 	// Run as fast as I can
@@ -111,7 +143,8 @@ int main(int argc, char *argv[])
 
 		// Draw stuff here
 		fg::GLRenderer::renderMesh(&*mMesh);
-		fg::GLRenderer::renderCarrier(carrier,20,time);
+		//fg::GLRenderer::renderInterpolator(interp, 20);
+		//fg::GLRenderer::renderCarrier(carrier,20,time);
 
 		glPopMatrix();
 

@@ -137,6 +137,12 @@ namespace fg {
 
 				virtual bool isOpen() const { return mOpen; }
 				virtual void setOpen( bool open ) { mOpen = open; }
+
+				/**
+				 * \brief Returns a copy of the interpolator with the positions of
+				 *        its control points scaled.
+				 */
+				virtual Interpolator<T> * scale( double s ) const  = 0;
             protected:
                 /**
                  * \brief Cleans up.

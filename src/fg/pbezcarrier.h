@@ -32,7 +32,7 @@
 
 #include "fg/fg.h"
 #include "fg/carriercurve.h"
-#include "fg/pbezinterp.h"
+#include "fg/pbezinterpdiv.h"
 
 namespace fg {
     namespace gc {
@@ -51,7 +51,7 @@ namespace fg {
 
                 virtual std::pair<Quat, Quat> getSegOrients( int seg ) const;
 
-                virtual const spline::PBezInterp<Vec3> * getInterpolator() const;
+                virtual const spline::PBezInterpDiv * getInterpolator() const;
 
                 virtual void setReferenceFrames( const std::vector<Mat4> &refFrames, const std::vector< std::pair<double, double> > &stiffness );
                 virtual void setReferenceFrames( const std::vector<Mat4> &refFrames );
@@ -65,7 +65,7 @@ namespace fg {
                 std::vector< std::pair <double, double> > mInflectionPoints;
                 std::vector<Mat4> mRFrames;
 
-                spline::PBezInterp<Vec3> * mInterpolator;
+                spline::PBezInterpDiv * mInterpolator;
 
 // These should go somewhere else!
             public:

@@ -132,21 +132,20 @@ namespace fg {
 		// Draw Approx Curve
 		glColor3f(1,1,1);
 		glBegin(GL_LINES);
-		for(int i=0;i<n;i++){
+		for(int i=0;i<arr.size();i++){
 			// draw a line from arr[i] to arr[i+1]
 			glVertex3d(arr[i].getX(),arr[i].getY(),arr[i].getZ());
 			glVertex3d(arr[i+1].getX(),arr[i+1].getY(),arr[i+1].getZ());
 		}
 		if (!s.isOpen())
 		{
-			glVertex3d(arr[n].getX(),arr[n].getY(),arr[n].getZ());
+			glVertex3d(arr.back().getX(),arr.back().getY(),arr.back().getZ());
 			glVertex3d(arr[0].getX(),arr[0].getY(),arr[0].getZ());
 		}
 		glEnd();
 
 		glBegin(GL_POINTS);
-		for(int i=0;i<n+1;i++){
-			// draw a line from arr[i] to arr[i+1]
+		for(int i=0;i<arr.size();i++){
 			glVertex3d(arr[i].getX(),arr[i].getY(),arr[i].getZ());
 		}
 		glEnd();

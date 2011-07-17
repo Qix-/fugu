@@ -14,7 +14,9 @@ set(SRC
 	carriercurve.cpp
 	lincarrier.cpp
 	pbezcarrier.cpp
+	pbezinterpdiv.cpp
 	crosssectioncircular.cpp
+	scaleinterpcrosssec.cpp
 	interpcrosssec.cpp
 	generalisedcylinder.cpp
 	recsubdiv.cpp
@@ -50,9 +52,11 @@ set(HDRS
 	nodegraph.h
 	operator.h
 	pbezinterp.h
+	pbezinterpdiv.h
 	proxy.h
 	quat.h
 	recsubdiv.h
+	scaleinterpcrosssec.h
 	turtle.h
 	universe.h
 	vec3.h

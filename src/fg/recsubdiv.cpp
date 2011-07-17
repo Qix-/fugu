@@ -60,20 +60,21 @@ namespace fg {
             double d2 = ( ( p2 - p1 ).cross( p2 - p4 ).length() ); ///((p4-p1).length());//fabs(((x2 - x4) * dy - (y2 - y4) * dx));
             double d3 = ( ( p3 - p1 ).cross( p3 - p4 ).length() ); ///((p4-p1).length());//fabs(((x3 - x4) * dy - (y3 - y4) * dx));
 
+            // If the curvature doesn't exceed the distance_tolerance value
+            // we tend to finish subdivisions.
+            //---------------------
             if( ( d2 + d3 ) * ( d2 + d3 ) < m_distance_tolerance_square * dp.dot( dp ) )
             {
                 m_points.push_back( p1234 );
                 return;
             }
 
-            // If the curvature doesn't exceed the distance_tolerance value
-            // we tend to finish subdivisions.
-            //----------------------
-            if( m_angle_tolerance < curve_angle_tolerance_epsilon )
-            {
-                m_points.push_back( p1234 );
-                return;
-            }
+            //if( m_angle_tolerance < curve_angle_tolerance_epsilon )
+            //{
+			//	std::cout << "Broke angle tol\n";
+            //    m_points.push_back( p1234 );
+            //    return;
+            //}
 
             // Angle & Cusp Condition
             //----------------------
