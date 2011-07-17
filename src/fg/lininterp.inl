@@ -131,5 +131,16 @@ namespace fg {
         {
             return Interpolator<T>::getNumControlPoints() - 1;
         }
+
+		template<class T>
+		Interpolator<T> * LinInterp<T>::scale( double scale ) const
+		{
+			std::vector<T> cp = Interpolator<T>::getControlPoints();
+
+			for( int i = 0; i < cp.size(); ++i)
+				cp[i] = cp[i] * scale;
+
+			return new LinInterp<T>( cp );
+		}
     }
 }

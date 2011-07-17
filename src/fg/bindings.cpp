@@ -202,8 +202,11 @@ namespace fg {
 		   .def("pitch",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::pitch)
 		   .def("beginCylinder",&fg::gc::Turtle::beginCylinder)
 		   .def("endCylinder",&fg::gc::Turtle::endCylinder)
-		   .def("addPoint",&fg::gc::Turtle::addPoint)
-		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(int,int,int))&fg::gc::Turtle::getMesh)
+		   .def("addPoint",(void(fg::gc::Turtle::*)(void))&fg::gc::Turtle::addPoint)
+		   .def("setScale",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::setScale)
+		   .def("pushState",&fg::gc::Turtle::pushState)
+		   .def("popState",&fg::gc::Turtle::popState)
+		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(int,int))&fg::gc::Turtle::getMesh)
 		];
 
 		return 0;

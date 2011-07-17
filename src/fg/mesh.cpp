@@ -225,6 +225,10 @@ namespace fg {
 
 	}
 
+	int Mesh::MeshBuilder::getNumVerticies(){
+		return mVertices.size();
+	}
+
 	void Mesh::MeshBuilder::addVertex(double x, double y, double z){
 		mVertices.push_back(Vec3(x,y,z));
 	}

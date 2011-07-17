@@ -97,6 +97,7 @@ namespace fg {
                 virtual void appendControlPoint( const T &cp, const std::pair<T, T> &g );
 
                 virtual std::vector<T> getControlPoints() const;
+				virtual std::vector< std::pair<T,T> > getGradients() const;
                 virtual T getControlPoint( int i ) const;
                 /**
                  * Get the number of cubic Bezier segments.
@@ -109,6 +110,8 @@ namespace fg {
                 virtual std::vector<T> getSegmentControlPoints( int seg ) const;
 
                 virtual int getSegment( double t ) const;
+
+				virtual Interpolator<T> * scale( double s ) const;
             protected:
                 virtual void deleteData();
                 virtual void smoothGradients();
@@ -116,7 +119,7 @@ namespace fg {
 
                 std::vector< BezInterp<T> > mSegInterpolators;
 				BezInterp<T> mClosingInterp;
-				std::vector< std::pair< Vec3, Vec3 > > mGradients;
+				std::vector< std::pair< T, T > > mGradients;
                 int mNumControlPoints;
                 T mFirstControlPoint;
         };

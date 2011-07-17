@@ -23,15 +23,19 @@
  * \endcond
  */
 
+#include <iostream>
+
 namespace fg {
     namespace spline {
 
         template<class T>
         Interpolator<T>::Interpolator( )
+		:mOpen(true)
         {}
 
         template<class T>
         Interpolator<T>::Interpolator( const Interpolator<T> &other )
+		:mOpen(true)
         {
             *this = other;
         }
@@ -41,6 +45,7 @@ namespace fg {
         {
             deleteData();
             setControlPoints( other.getControlPoints() );
+			mOpen = other.mOpen;
             return *this;
         }
 
@@ -126,6 +131,7 @@ namespace fg {
         template< class T >
         std::vector<T> Interpolator<T>::getApproxVector( int &n ) const
         {
+			//std::cout << "Here in interpolator.\n";
             if( n < 1 )
                 n = getNumControlPoints() * 5;
 

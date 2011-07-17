@@ -97,6 +97,7 @@ namespace fg {
 			void addVertex(double x, double y, double z);
 			void addFace(int v1, int v2, int v3);
 			boost::shared_ptr<Mesh> createMesh();
+			int getNumVerticies();
 
 			static boost::shared_ptr<Mesh> createMesh(const std::vector<Vec3>& verts, const std::vector<boost::tuple<int,int,int> >& faces);
 		protected:

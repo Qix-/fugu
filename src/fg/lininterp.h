@@ -71,6 +71,8 @@ namespace fg {
 
                 virtual int getNumSegments() const;
 
+				virtual Interpolator<T> * scale( double s ) const;
+
             private:
                 int getControlPointIndex( double t ) const;
                 double getInternalT( double externalT ) const;

@@ -6,6 +6,22 @@ using namespace std;
 
 namespace fg {
     namespace gc {
+        GeneralisedCylinder::GeneralisedCylinder( const CarrierCurve &carrier, const CrossSection &crossSection, const vector<Mat4> &orients, 
+												  const std::vector< std::pair<double,double> > &domains)
+            : mCarrier( carrier )
+            , mCrossSection( crossSection )
+        {
+            std::vector<Quat> newOrients;
+
+            for( int i = 0; i < orients.size(); ++i )
+            {
+                newOrients.push_back( Quat( orients[i] ) );
+            }
+
+            updateOrients( newOrients );
+			mDomain = domains;
+        }
+
         GeneralisedCylinder::GeneralisedCylinder( const CarrierCurve &carrier, const CrossSection &crossSection, const vector<Mat4> &orients )
             : mCarrier( carrier )
             , mCrossSection( crossSection )
@@ -37,8 +53,9 @@ namespace fg {
 
         Vec3 GeneralisedCylinder::getPosition( double u, double v ) const
         {
+			double csv = getCrossSectionV( v );
             // Position on cross section
-            Vec3 cs = mCrossSection.getPosition( u, v );
+            Vec3 cs = mCrossSection.getPosition( u, csv );
             // Carriers frame rotation
             Quat cr = mCarrier.orient( v );
             // Additional rotation
@@ -62,16 +79,19 @@ namespace fg {
             return Quat( ar * cr );
         }
 
-        boost::shared_ptr<Mesh> GeneralisedCylinder::createMesh( int n, int m ) const
+        void GeneralisedCylinder::createMesh( Mesh::MeshBuilder &mb, int n, int m ) const
         {
-            fg::Mesh::MeshBuilder mb;
+			cout << m << endl;
+			int oldVerticies = mb.getNumVerticies();
             double vmin, vmax;
+			double csv;
             mCarrier.getInterpolator()->getDomain( vmin, vmax );
             double vinc = ( vmax - vmin ) / ( ( double ) m );
             double v = 0.;
             int pCsIndex, nCsIndex;
             // Get the first cross section add add the verticies to the mesh
-            vector<Vec3> pCs = mCrossSection.getCrossSection( v );
+			csv = getCrossSectionV( v );
+            vector<Vec3> pCs = mCrossSection.getCrossSection( csv );
             vector<Vec3> nCs;
             Quat ori;
             ori = orient( v );
@@ -84,14 +104,13 @@ namespace fg {
                 mb.addVertex( cVert.getX(), cVert.getY(), cVert.getZ() );
             }
 
-            pCsIndex = 0;
-            nCsIndex = pCs.size();
+            pCsIndex = oldVerticies;
+            nCsIndex = pCs.size() + oldVerticies;
 
             for( int k = 0; k < m; ++k ) {
-                //std::cout << v << std::endl;
-                //std::cout << v + vinc << std::endl;
                 // Get the next cross section and add it's verticies to the mesh
-                nCs = mCrossSection.getCrossSection( v + vinc );
+				csv = getCrossSectionV( v + vinc );
+                nCs = mCrossSection.getCrossSection( csv );
                 ori = orient( v + vinc );
                 cCpos = mCarrier.getInterpolator()->getPosition( v + vinc );
 
@@ -112,13 +131,11 @@ namespace fg {
                     if( ( pCs[i] - nCs[( j + 1 ) % s2] ).lengthSquared() < ( pCs[( i + 1 ) % s1] - nCs[j] ).lengthSquared() )
                     {
                         mb.addFace( pCsIndex + i, nCsIndex + ( ( j + 1 ) % s2 ), nCsIndex + j );
-                        //cout << pCsIndex + i << ", " << nCsIndex + ((j + 1) % s2) << ", " << nCsIndex + j << endl;
                         ++j;
                     }
                     else
                     {
                         mb.addFace( pCsIndex + i, pCsIndex + ( ( i + 1 ) % s1 ), nCsIndex + j );
-                        //cout << pCsIndex + i << ", " << pCsIndex + ((i + 1) % s1) << ", " << nCsIndex + j << endl;
                         ++i;
                     }
                 }
@@ -143,9 +160,34 @@ namespace fg {
                 // increment v
                 v += vinc;
             }
-
-            return mb.createMesh();
         }
+
+		double GeneralisedCylinder::getCrossSectionV( double v ) const
+		{
+			if (mDomain.size() == 0)
+				return v;
+
+			int i;
+
+			for( i = 0; i < mDomain.size(); ++i)
+			{
+				if( v < mDomain[i].first )
+					break;
+			}
+
+			if( i < 1 )
+			{
+				return mDomain[0].second;
+			}
+			else if( i >= mDomain.size() )
+			{
+				return mDomain.back().second;
+			}
+			else
+			{
+				return lerp<double,double>( mDomain[i-1].second, mDomain[i].second, (v - mDomain[i-1].first)/(mDomain[i].first - mDomain[i-1].first) );
+			}
+		}
 
 //boost::shared_ptr<Mesh> GeneralisedCylinder::createMesh(int n, int m) const
 //{

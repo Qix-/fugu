@@ -60,7 +60,7 @@ namespace fg {
             if( other.mInterpolator == NULL )
                 this->mInterpolator = NULL;
             else
-                this->mInterpolator = new spline::PBezInterp<Vec3>( *( other.mInterpolator ) );
+                this->mInterpolator = new spline::PBezInterpDiv( *( other.mInterpolator ) );
 
             this->mInflectionPoints = other.mInflectionPoints;
             this->mSegType = other.mSegType;
@@ -108,7 +108,7 @@ namespace fg {
                 //cout << p4 << endl;
             }
 
-            mInterpolator = new spline::PBezInterp<Vec3>( tmpCp, tmpGrad );
+            mInterpolator = new spline::PBezInterpDiv( tmpCp, tmpGrad );
             // Store our data
             mRFrames = refFrames;
 
@@ -160,7 +160,7 @@ namespace fg {
             }
         }
 
-        const spline::PBezInterp<Vec3> * PBezCarrier::getInterpolator() const
+        const spline::PBezInterpDiv * PBezCarrier::getInterpolator() const
         {
             return mInterpolator;
         }

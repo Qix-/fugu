@@ -63,6 +63,8 @@ namespace fg {
                     max = 1.f;
                 }
 
+				virtual Interpolator<T> * scale( double s ) const;
+
             protected:
                 std::vector<T> mDer1ControlPoint;
                 std::vector<T> mDer2ControlPoint;
