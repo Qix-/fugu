@@ -67,7 +67,7 @@ namespace fg {
         void Turtle::yaw( double theta )
         {
             Mat4 rot;
-            rot.SetRotateRad( theta, Vec3( 0., 1., 0. ) );
+            rot.SetRotateRad( -theta, Vec3( 0., 1., 0. ) );
             mState.frame = mState.frame * rot;
         }
 
@@ -182,6 +182,11 @@ namespace fg {
 
             mCylinders.push_back( new GeneralisedCylinder( *( mCarriers.back() ), *( mCrossSections.back() ), mPrevFrames, mDomains ) );
         }
+
+		void Turtle::setStiffness(double s1, double s2)
+		{
+			mState.stiffness = std::pair<double,double> (s1,s2);
+		}
 
 		void Turtle::setScale(double scale)
 		{

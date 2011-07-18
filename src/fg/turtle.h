@@ -34,6 +34,7 @@ namespace fg {
                 void endCylinder();
 				void setCrossSection(int index);
 				void setScale(double scale);
+				void setStiffness( double s1, double s2 );
 				void pushState();
 				void popState();
 				void setCarrierMode( int carrierMode );
