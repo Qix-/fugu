@@ -201,6 +201,7 @@ namespace fg {
 		   .def("roll",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::roll)
 		   .def("pitch",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::pitch)
 
+		   .def("setStiffness",(void(fg::gc::Turtle::*)(double,double))&fg::gc::Turtle::setStiffness)
 		   .def("setScale",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::setScale)
 		   .def("setCrossSection",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCrossSection)
 		   .def("pushState",&fg::gc::Turtle::pushState)
