@@ -32,11 +32,15 @@ namespace fg {
                 void beginCylinder();
                 void addPoint();
                 void endCylinder();
+				void setCrossSection(int index);
 				void setScale(double scale);
+				void setStiffness( double s1, double s2 );
 				void pushState();
 				void popState();
 				void setCarrierMode( int carrierMode );
 				void setCrossSectionMode( int crossSectionMode );
+				void beginCrossSection();
+				int endCrossSection();
                 boost::shared_ptr<Mesh> getMesh( int n = 10, int m = 10 );
 
             protected:
@@ -47,16 +51,19 @@ namespace fg {
 					int crossSectionMode;
 					int currentCS;
 					double scale;
+					std::pair<double,double> stiffness;
                 	Mat4 frame;
 				};
 				TurtleState mState;
 
 				// Stack of states
 				std::stack<TurtleState> mStateStack;
-                // Data to be used for the next cylinder
+
+                // Data to be used for the next cylinder/cross section
 				std::vector<double> mScaleArr;
 				std::vector< std::pair<double, double> > mDomains;
                 std::vector<Mat4> mPrevFrames;
+				std::vector< std::pair<double, double> > mStiffnessArr;
 
 				// Storage of previous cylinders
 				std::vector<spline::Interpolator<Vec3> *> mCrossSecLibrary;
