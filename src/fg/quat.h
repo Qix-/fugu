@@ -55,6 +55,12 @@ namespace fg {
             void invert();
             Quat inverse() const;
 
+            /**
+             * /brief Convert a unit quaternion to a Mat4
+             * @author ben
+             */
+            Mat4 toMat4() const;
+
         private:
             static const double EPSILON = 4.37114e-05;
     };

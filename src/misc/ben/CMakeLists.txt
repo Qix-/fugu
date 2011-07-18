@@ -3,6 +3,9 @@ set(ALL_LIBS fg
 	${GL_LIBS} 
 	${BOOST_LIBS})
 
+add_executable(bones bones.cpp trackball.cpp)
+target_link_libraries(bones ${ALL_LIBS})
+
 #add_executable(graph_test graph_test.cpp)
 #target_link_libraries(graph_test ${ALL_LIBS})
 

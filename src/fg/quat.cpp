@@ -182,7 +182,8 @@ namespace fg {
 
     void Quat::normalise()
     {
-        if( double len = length() ) {
+    	double len = length();
+    	if (len!=0) { // not the best way but .. meh
             w /= len;
             v = v / len;
         }
@@ -296,7 +297,7 @@ namespace fg {
     {
         double cos_angle = w;
 
-        if( fabs( w ) - 1. < EPSILON )
+        if( fabs( w - 1.) < EPSILON )
             return Vec3( 1., 0., 0. );
 
         double invLen = 1. / sqrt( 1.0 - cos_angle * cos_angle );
@@ -359,6 +360,27 @@ namespace fg {
         double norm = w * w + v.getX() * v.getX() + v.getY() * v.getY() + v.getZ() * v.getZ();
         double normRecip = 1. / norm;
         return Quat( normRecip * w, -normRecip * v.getX(), -normRecip * v.getY(), -normRecip * v.getZ() );
+    }
+
+    Mat4 Quat::toMat4() const
+    {
+    	// from: http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation#Conversion_to_and_from_the_matrix_representation
+    	double a = w, b = v[0], c = v[1], d = v[2];
+    	Mat4 m = Mat4::Identity();
+
+    	m.get(0,0) = a*a + b*b - c*c  - d*d;
+    	m.get(0,1) = 2*b*c - 2*a*d;
+    	m.get(0,2) = 2*b*d + 2*a*c;
+
+    	m.get(1,0) = 2*b*c - 2*a*d;
+    	m.get(1,1) = a*a - b*b + c*c - d*d;
+    	m.get(1,2) = 2*c*d - 2*a*b;
+
+    	m.get(2,0) = 2*b*d - 2*a*c;
+    	m.get(2,1) = 2*c*d + 2*a*b;
+    	m.get(2,2) = a*a - b*b - c*c + d*d;
+
+    	return m;
     }
 }
 

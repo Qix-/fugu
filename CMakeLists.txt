@@ -71,7 +71,7 @@ add_subdirectory(src/fgv)
 #add_subdirectory(src/misc/james)
 #add_subdirectory(src/tests)
 if(WIN32) # ben's test code
-# add_subdirectory(src/misc/ben)
+ add_subdirectory(src/misc/ben)
 # add_subdirectory(src/misc/vcgtests)
 endif(WIN32)
 
