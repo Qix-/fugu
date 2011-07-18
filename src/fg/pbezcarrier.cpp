@@ -84,29 +84,10 @@ namespace fg {
         void PBezCarrier::setReferenceFrames( const std::vector<Mat4> &refFrames, const std::vector< std::pair<double, double> > &stiffness )
         {
             deleteData();
-            vector<Vec3> tmpCp( refFrames.size() );
-            vector< pair<Vec3, Vec3> > tmpGrad( refFrames.size() );
+            vector<Vec3> tmpCp;
+            vector< pair<Vec3, Vec3> > tmpGrad;
 
-            for( int i = 0; i < refFrames.size() - 1; ++i )
-            {
-                // Get the control points and headings PUT THIS INTO MAT4!!
-                Vec3 p1 = refFrames[i]   * Vec3( 0., 0., 0. ); // The pos
-                Vec3 p2 = refFrames[i]   * Vec3( 0., 0., 1. ) - p1; // The head
-                Vec3 p4 = refFrames[i + 1] * Vec3( 0., 0., 0. );
-                Vec3 p3 = refFrames[i + 1] * Vec3( 0., 0., 1. ) - p4;
-                // Calculate the tangents using coefficients
-                float mag = ( p1 - p4 ).Norm();
-                p2 = p2 * mag * ( stiffness[i].first );
-                p3 = p3 * mag * ( stiffness[i].second );
-                tmpCp[i] = p1;
-                tmpCp[i + 1] = p4;
-                tmpGrad[i].second = p2;
-                tmpGrad[i + 1].first = p3;
-                //cout << p1 << endl;
-                //cout << p2 << endl;
-                //cout << p3 << endl;
-                //cout << p4 << endl;
-            }
+ 			PBezCarrier::stiffnessToGrad( refFrames, stiffness, tmpCp, tmpGrad );
 
             mInterpolator = new spline::PBezInterpDiv( tmpCp, tmpGrad );
             // Store our data
@@ -238,6 +219,48 @@ namespace fg {
             Quat q2 = orient( max );
             return pair<Quat, Quat>( q1, q2 );
         }
+		
+		void PBezCarrier::stiffnessToGrad( const std::vector<Mat4> &refFrames, const std::vector< std::pair<double,double> > &stiffness,
+								 		   std::vector<Vec3> &pos, std::vector< std::pair<Vec3,Vec3> > &grad )
+		{
+			pos.clear();
+			pos.resize( refFrames.size() );
+
+			grad.clear();
+			grad.resize( refFrames.size() );
+
+			// first and last gradient for closed curves
+			if( refFrames.size() > 1) {
+                // Get the control points and headings 
+                Vec3 p1 = refFrames.back()  * Vec3( 0., 0., 0. ); // The pos
+                Vec3 p2 = refFrames.back()  * Vec3( 0., 0., 1. ) - p1; // The head
+                Vec3 p4 = refFrames.front() * Vec3( 0., 0., 0. );
+                Vec3 p3 = refFrames.front() * Vec3( 0., 0., 1. ) - p4;
+                // Calculate the tangents using coefficients
+                float mag = ( p1 - p4 ).Norm();
+                p2 = p2 * mag * ( stiffness.back().first );
+                p3 = p3 * mag * ( stiffness.front().second );
+
+                grad.back().second = p2;
+                grad.front().first = p3;
+			}
+            for( int i = 0; i < refFrames.size() - 1; ++i )
+            {
+                // Get the control points and headings PUT THIS INTO MAT4!!
+                Vec3 p1 = refFrames[i]   * Vec3( 0., 0., 0. ); // The pos
+                Vec3 p2 = refFrames[i]   * Vec3( 0., 0., 1. ) - p1; // The head
+                Vec3 p4 = refFrames[i + 1] * Vec3( 0., 0., 0. );
+                Vec3 p3 = refFrames[i + 1] * Vec3( 0., 0., 1. ) - p4;
+                // Calculate the tangents using coefficients
+                float mag = ( p1 - p4 ).Norm();
+                p2 = p2 * mag * ( stiffness[i].second );
+                p3 = p3 * mag * ( stiffness[i+1].first );
+                pos[i] = p1;
+                pos[i + 1] = p4;
+                grad[i].second = p2;
+                grad[i + 1].first = p3;
+            }
+		}
 
         int PBezCarrier::findInflectionPointsVec( const vector<Vec3> &cp, double *i1, double *i2 )
         {

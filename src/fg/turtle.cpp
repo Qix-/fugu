@@ -11,6 +11,7 @@ namespace fg {
 			mState.crossSectionMode = SCALED_INTERPOLATOR_CROSS_SECTION;
 			mState.currentCS = 0;
 			mState.scale = 1.;
+			mState.stiffness = std::pair< double, double >(0.6, 0.6);
 
 			std::vector<Vec3> arr;
 			std::vector< std::pair<Vec3, Vec3> > grad;
@@ -66,7 +67,7 @@ namespace fg {
         void Turtle::yaw( double theta )
         {
             Mat4 rot;
-            rot.SetRotateRad( theta, Vec3( 0., 1., 0. ) );
+            rot.SetRotateRad( -theta, Vec3( 0., 1., 0. ) );
             mState.frame = mState.frame * rot;
         }
 
@@ -89,6 +90,7 @@ namespace fg {
 			mScaleArr.clear();
             mPrevFrames.clear();
 			mDomains.clear();
+			mStiffnessArr.clear();
 
 			switch(mState.crossSectionMode)
 			{
@@ -106,6 +108,7 @@ namespace fg {
 			}
 
             mPrevFrames.push_back( mState.frame );
+			mStiffnessArr.push_back( mState.stiffness );
         }
 
         void Turtle::addPoint( )
@@ -128,6 +131,7 @@ namespace fg {
 				}
 			}
             mPrevFrames.push_back( mState.frame );
+			mStiffnessArr.push_back( mState.stiffness );
         }
 
         void Turtle::endCylinder()
@@ -164,10 +168,11 @@ namespace fg {
 			}
 
             mPrevFrames.push_back( mState.frame );
+			mStiffnessArr.push_back( mState.stiffness );
 			switch(mState.carrierMode)
 			{
 				case BEZIER_CARRIER:
-            		mCarriers.push_back( new PBezCarrier( mPrevFrames ) );
+            		mCarriers.push_back( new PBezCarrier( mPrevFrames, mStiffnessArr ) );
 					break;
 				case LINEAR_CARRIER:
 				default:
@@ -178,9 +183,19 @@ namespace fg {
             mCylinders.push_back( new GeneralisedCylinder( *( mCarriers.back() ), *( mCrossSections.back() ), mPrevFrames, mDomains ) );
         }
 
+		void Turtle::setStiffness(double s1, double s2)
+		{
+			mState.stiffness = std::pair<double,double> (s1,s2);
+		}
+
 		void Turtle::setScale(double scale)
 		{
 			mState.scale = scale;
+		}
+
+		void Turtle::setCrossSection(int index)
+		{
+			mState.currentCS = clamp<int>( index, 0, mCrossSecLibrary.size() - 1 );
 		}
 
 		void Turtle::pushState()
@@ -202,6 +217,33 @@ namespace fg {
 		void Turtle::setCrossSectionMode( int crossSectionMode )
 		{
 			mState.crossSectionMode = crossSectionMode;
+		}
+
+		void Turtle::beginCrossSection()
+		{
+			mPrevFrames.clear();
+			mStiffnessArr.clear();
+
+			mPrevFrames.push_back( mState.frame );
+			mStiffnessArr.push_back( mState.stiffness );
+		}
+
+		int Turtle::endCrossSection()
+		{
+			mPrevFrames.push_back( mState.frame );
+			mStiffnessArr.push_back( mState.stiffness );
+
+			std::vector<Vec3> pos;
+			std::vector<std::pair<Vec3,Vec3> > grad;
+
+			PBezCarrier::stiffnessToGrad( mPrevFrames, mStiffnessArr, pos, grad );
+
+			mCrossSecLibrary.push_back( new spline::PBezInterpDiv(pos, grad) );
+			mCrossSecLibrary.back()->setOpen( false );
+
+			//std::cout << mCrossSecLibrary.back()->isOpen( ) << std::endl;
+
+			return mCrossSecLibrary.size() - 1;
 		}
 
         boost::shared_ptr< Mesh > Turtle::getMesh( int n, int m )
