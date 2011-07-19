@@ -11,6 +11,7 @@ set(SRC
 	proxy.cpp
 	vertex.cpp
 	glrenderer.cpp
+	glrenderer_glutprimitives.cpp
 	carriercurve.cpp
 	lincarrier.cpp
 	pbezcarrier.cpp

@@ -179,4 +179,40 @@ namespace fg {
 		glPopAttrib();
 		glPopAttrib();
 	}
+
+	void GLRenderer::renderAxes(double L){
+		glPushAttrib(GL_CURRENT_BIT);
+		glPushAttrib(GL_LIGHTING_BIT);
+		glDisable(GL_LIGHTING);
+
+#define V glVertex3f
+#define C glColor3f
+		glBegin(GL_LINES);
+		C(1,0,0); V(0,0,0); V(L,0,0);
+		C(0,1,0); V(0,0,0); V(0,L,0);
+		C(0,0,1); V(0,0,0); V(0,0,L);
+		glEnd(); //GL_LINES
+#undef C
+#undef V
+		glPopAttrib();
+		glPopAttrib();
+	}
+
+	void GLRenderer::renderBone(Vec3 from, Vec3 to, double r){
+		glPushAttrib(GL_CURRENT_BIT);
+		glPushAttrib(GL_LINE_BIT);
+		glPushAttrib(GL_LIGHTING_BIT);
+
+		glDisable(GL_LIGHTING);
+		glLineWidth(5);
+
+		glBegin(GL_LINES);
+		glVertex3d(from[0],from[1],from[2]);
+		glVertex3d(to[0],to[1],to[2]);
+		glEnd();
+
+		glPopAttrib();
+		glPopAttrib();
+		glPopAttrib();
+	}
 }

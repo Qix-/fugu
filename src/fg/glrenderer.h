@@ -28,7 +28,7 @@
 #include "fg/vec3.h"
 #include "fg/mesh.h"
 #include "fg/carriercurve.h"
-
+#include <GL/glew.h>
 #include <boost/shared_ptr.hpp>
 
 namespace fg {
@@ -56,6 +56,18 @@ namespace fg {
 		 */
 		static void renderInterpolator(const spline::Interpolator<Vec3>& s, int n);
         static void renderCarrier(const gc::CarrierCurve &c, int n, double time);
+
+        // Helpful primitives
+        static void renderAxes(double lengthOfAxes = 1);
+        static void renderBone(Vec3 from, Vec3 to, double r = 0);
+
+        // GLUT primitives (implementation in glut_primitives.cpp)
+        static void glutWireCube( GLdouble dSize );
+        static void glutSolidCube( GLdouble dSize );
+        static void glutSolidSphere(GLdouble radius, GLint slices, GLint stacks);
+        static void glutWireSphere(GLdouble radius, GLint slices, GLint stacks);
+        static void glutSolidCylinder(GLdouble radius, GLdouble height, GLint slices, GLint stacks);
+        static void glutWireCylinder(GLdouble radius, GLdouble height, GLint slices, GLint stacks);
 	};
 }
 

@@ -372,7 +372,7 @@ namespace fg {
     	m.get(0,1) = 2*b*c - 2*a*d;
     	m.get(0,2) = 2*b*d + 2*a*c;
 
-    	m.get(1,0) = 2*b*c - 2*a*d;
+    	m.get(1,0) = 2*b*c + 2*a*d;
     	m.get(1,1) = a*a - b*b + c*c - d*d;
     	m.get(1,2) = 2*c*d - 2*a*b;
 

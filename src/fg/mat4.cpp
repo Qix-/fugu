@@ -50,6 +50,10 @@ namespace fg {
 		vcg::Matrix44<double>::SetTranslate(x,y,z);
 	}
 
+	void Mat4::setTranslate(Vec3 t){
+		vcg::Matrix44<double>::SetTranslate(t[0],t[1],t[2]);
+	}
+
 	void Mat4::setRotateRad(double radians, double x, double y, double z){
 		vcg::Matrix44<double>::SetRotateRad(radians,vcg::Point3<double>(x,y,z));
 	}

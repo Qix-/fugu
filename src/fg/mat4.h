@@ -42,17 +42,19 @@ namespace fg {
 		Mat4(const vcg::Matrix44<double>& m);
 		Mat4(const double v[]);
 
-		/// Access a matrix element (row,col)
+		/// \brief Access a matrix element (row,col)
 		double& get(int r, int c);
 
-		/// Access a const matrix element (row,col)
+		/// \brief Access a const matrix element (row,col)
 		double get(int r, int c) const;
 
 		//Vec3 operator*(const Vec3& v) const;
 
-		/// Set this matrix to be a translation matrix
+		/// \brief Set this matrix to be a translation matrix
 		void setTranslate(double x, double y, double z);
-		/// Set this matrix to be a rotation matrix (radians, axis)
+		/// \brief Set this matrix to be a translation matrix
+		void setTranslate(Vec3 t);
+		/// \brief Set this matrix to be a rotation matrix (radians, axis)
 		void setRotateRad(double radians, double x, double y, double z);
 
 	public:
