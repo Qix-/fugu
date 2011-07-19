@@ -292,13 +292,21 @@ namespace fg {
         return Quat( lhs.w + rhs.w, lhs.v.getX() + rhs.v.getX(), lhs.v.getY() + rhs.v.getY(), lhs.v.getZ() + rhs.v.getZ() );
     }
 
-// get axis-angle representation's axis
+    // get axis-angle representation's axis
     Vec3 Quat::getAxis() const
     {
+    	// w = cos( radians * .5 );
+        // v = axis / axis.length() * sin( radians * .5 );
+    	// => v = (axis/axis.length()) * sqrt(1 - w*w)
+    	// => axis = v / sqrt(1-w*w)
+    	// but note that axis is undefined if sqrt(1-w*w) is 0
+
         double cos_angle = w;
 
-        if( fabs( w - 1.) < EPSILON )
+        if( fabs(1 - w) < EPSILON ){
+        	// GAH! Probably should signal an error
             return Vec3( 1., 0., 0. );
+        }
 
         double invLen = 1. / sqrt( 1.0 - cos_angle * cos_angle );
         return v * invLen;
