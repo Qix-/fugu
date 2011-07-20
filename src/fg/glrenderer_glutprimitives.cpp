@@ -338,7 +338,7 @@ void FGAPIENTRY GLRenderer::glutWireSphere(GLdouble radius, GLint slices, GLint 
 /*
  * Draws a solid cone
  */
-void FGAPIENTRY glutSolidCone( GLdouble base, GLdouble height, GLint slices, GLint stacks )
+void FGAPIENTRY GLRenderer::glutSolidCone( GLdouble base, GLdouble height, GLint slices, GLint stacks )
 {
     int i,j;
 
@@ -425,7 +425,7 @@ void FGAPIENTRY glutSolidCone( GLdouble base, GLdouble height, GLint slices, GLi
 /*
  * Draws a wire cone
  */
-void FGAPIENTRY glutWireCone( GLdouble base, GLdouble height, GLint slices, GLint stacks)
+void FGAPIENTRY GLRenderer::glutWireCone( GLdouble base, GLdouble height, GLint slices, GLint stacks)
 {
     int i,j;
 

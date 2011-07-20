@@ -60,6 +60,7 @@ set(HDRS
 	scaleinterpcrosssec.h
 	turtle.h
 	universe.h
+	util.h
 	vec3.h
 	vertex.h)
 

@@ -40,9 +40,9 @@
 namespace fg {
 
 	// common constants
-    const double EPSILON = DBL_EPSILON; // A small double..
-	const double LOG05 = -0.693147180559945;
-	const double PI = M_PI;
+    static const double EPSILON = DBL_EPSILON; // A small double..
+    static const double LOG05 = -0.693147180559945;
+    static const double PI = M_PI;
 
 	/** 
 	 * \brief calculate the minimum of two values

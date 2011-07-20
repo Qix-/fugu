@@ -34,7 +34,8 @@ namespace fg {
             Vec3 getAxis() const;
             double getAngle() const;
 
-            void normalise();
+            Quat& normalise();
+            Quat normalised() const;
 
             double length() const;
             double lengthSquared() const;

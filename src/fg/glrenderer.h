@@ -68,6 +68,8 @@ namespace fg {
         static void glutWireSphere(GLdouble radius, GLint slices, GLint stacks);
         static void glutSolidCylinder(GLdouble radius, GLdouble height, GLint slices, GLint stacks);
         static void glutWireCylinder(GLdouble radius, GLdouble height, GLint slices, GLint stacks);
+        static void glutSolidCone( GLdouble base, GLdouble height, GLint slices, GLint stacks );
+        static void glutWireCone( GLdouble base, GLdouble height, GLint slices, GLint stacks);
 	};
 }
 
