@@ -70,6 +70,8 @@ namespace fg {
 			Vec3 operator-(const Vec3& b) const;
 			Vec3 operator*(double d) const;
 			Vec3 & operator=(const Vec3& other);
+
+			static Vec3 Zero(){return Vec3(0,0,0);}
 	};
 }
 

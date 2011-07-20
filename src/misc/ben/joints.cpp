@@ -1,5 +1,5 @@
 /**
- * Bones prototype
+ * Joints prototype
  */
 
 #include <iostream>
@@ -40,32 +40,28 @@ void mouseButtoned(int button, int state);
 
 using namespace fg;
 
-/*************** Bones *********************/
+/*************** JointS *********************/
 
-/**
- * \brief A Bone is a primitive of an armature
- *
- * By default a bone points in the (1,0,0) direction
- */
-class Bone {
+class Joint {
 	public:
 
-	Bone(Bone* parent = NULL);
+	Joint(Joint* parent = NULL);
 
 	/** \brief recursively calculate world-space transform for self and descendants
+	 *
+	 * The update order for Joints is top-down (parent first, then children)
 	 */
-	void update(Mat4 parentSpace = Mat4::Identity());
+	void update();
 
 	void drawSelfAndChildrenGL();
 
 	// protected:
-	Bone* mParent;
-	std::list<Bone*> mChildren;
+	Joint* mParent;
+	std::list<Joint*> mChildren;
 
 	// relative to parent
 	Vec3 mRelPosition;
 	Quat mRelOrientation;
-	double mLength; // Length of this bone
 
 	// derived
 	Mat4 mRelTransform;
@@ -74,74 +70,64 @@ class Bone {
 	Mat4 mWorldSpaceTransform;
 };
 
-Bone::Bone(Bone* parent)
+Joint::Joint(Joint* parent)
 :mParent(parent)
 ,mRelPosition(0,0,0)
-,mRelOrientation(Vec3(1,0,0),0)
-,mLength(1)
+,mRelOrientation(Vec3(0,1,0),0)
 ,mWorldSpaceTransform()
 {
 
 }
 
-void Bone::update(Mat4 parentSpace){
+void Joint::update(){
 	mRelTransform.setTranslate(mRelPosition);
 	mRelTransform = mRelTransform * mRelOrientation.toMat4();
-	mWorldSpaceTransform = parentSpace*mRelTransform;
 
-	BOOST_FOREACH(Bone* b, mChildren){
-		Mat4 lengthTranslation;
-		lengthTranslation.setTranslate(Vec3(mLength,0,0));
-		b->update(mWorldSpaceTransform*lengthTranslation);
+	if (mParent==NULL){
+		mWorldSpaceTransform = mRelTransform;
+	}
+	else {
+		mWorldSpaceTransform = mParent->mWorldSpaceTransform * mRelTransform;
+	}
+
+	BOOST_FOREACH(Joint* b, mChildren){
+		b->update();
 	}
 }
 
-void Bone::drawSelfAndChildrenGL(){
+void Joint::drawSelfAndChildrenGL(){
 	const float JOINT_RADIUS = .1;
 
 	glColor3f(1,1,1);
 
 	glPushMatrix();
-	// Mat4 tr = mWorldSpaceTransform.transpose();
-	glMultTransposeMatrixd(mWorldSpaceTransform.V());
-	// GLRenderer::renderAxes(3*JOINT_RADIUS);
-	// GLRenderer::glutSolidSphere(JOINT_RADIUS,8,8);
-
-	// render bone
-	// have to rotate the z-axis to point in the x-axis
-	glRotatef(90,0,1,0);
-	GLRenderer::glutSolidCone( JOINT_RADIUS, mLength, 8, 4);
+	Mat4 tr = mWorldSpaceTransform.transpose();
+	glMultMatrixd(tr.V());
+	GLRenderer::glutSolidSphere(JOINT_RADIUS,8,8);
 	glPopMatrix();
 
-	/*
-	Vec3 start = mWorldSpaceTransform*Vec3(0,0,0);
-	Vec3 end = mWorldSpaceTransform*Vec3(mLength,0,0);
-	GLRenderer::renderBone(start,end);
-	*/
-
-	BOOST_FOREACH(Bone* b, mChildren){
+	BOOST_FOREACH(Joint* b, mChildren){
+		// Draw a "Joint" between the joints
+		Vec3 start = mWorldSpaceTransform*Vec3(0,0,0);
+		Vec3 end = b->mWorldSpaceTransform*Vec3(0,0,0);
+		GLRenderer::renderBone(start,end);
 		b->drawSelfAndChildrenGL();
 	}
 }
 
 class Demo1 {
 public:
-	static const int NUM_BoneS = 6;
+	static const int NUM_JointS = 10;
 
 	void setup(){
-		double length = 1;
-
-		root = new Bone();
-		root->mLength = length;
-		root->mRelOrientation.set(Vec3(0,0,1),0);
-
+		root = new Joint();
 		joints[0] = root;
-		Bone* parent = root;
-		for(int i=0;i<NUM_BoneS-1;i++){
-			Bone* child = new Bone(parent);
-			child->mRelPosition = Vec3(0,0,0);
+		Joint* parent = root;
+		double length = 1;
+		for(int i=0;i<NUM_JointS-1;i++){
+			Joint* child = new Joint(parent);
+			child->mRelPosition = Vec3(length,0,0);
 			child->mRelOrientation.set(Vec3(0,0,1),0);
-			child->mLength = length;
 			parent->mChildren.push_back(child);
 
 			joints[i+1] = child;
@@ -151,12 +137,11 @@ public:
 	}
 
 	void animate(double time, double dt){
-		for (int i=0;i<NUM_BoneS;i++){
-			double di = (double)i/(NUM_BoneS-1);
+		for (int i=0;i<NUM_JointS;i++){
+			double di = (double)i/(NUM_JointS-1);
 			double da = (PI/4) * (1.4 - di);
-			double ds = sin(time); // (2*(1+di))*time;
-			ds *= fabs(ds);
-			joints[i]->mRelOrientation.set(Vec3(0,0,1), da*ds);
+			double ds = time; // (2*(1+di))*time;
+			joints[i]->mRelOrientation.set(Vec3(0,0,1), da*sin(ds));
 			joints[i]->mRelOrientation.normalise();
 		}
 		root->update();
@@ -170,43 +155,40 @@ public:
 		//glPopAttrib();
 	}
 
-	Bone* root;
-	Bone* joints[NUM_BoneS];
+	Joint* root;
+	Joint* joints[NUM_JointS];
 };
 
 class Demo2 {
 public:
 	static const int DEPTH = 3;
-	static const int NUM_CHILDREN = 5;
-	static const int NUM_BONES = 1+5+25+125; // computed from the above
+	static const int NUM_CHILDREN = 3;
+	static const int NUM_JOINTS = 1+3+9+27; // computed from the above
 
 	static int _index;
 	void setup(){
 		_index = 0;
 
-		for(int i=0;i<NUM_BONES;i++) origAngleF[i] = false;
+		for(int i=0;i<NUM_JOINTS;i++) origAngleF[i] = false;
 
-		root = new Bone();
-		root->mLength = 0; // NOTE: No length
-		root->mRelOrientation.set(Vec3(1,0,0),Vec3(0,1,0)); // Point upwards
+		root = new Joint();
 		joints[_index++] = root;
 		setupChildren(root, 0, 1);
 	}
 
-	void setupChildren(Bone* parent, int depth, double length){
+	void setupChildren(Joint* parent, int depth, double length){
 		if (depth >= DEPTH) return;
 
 		double da = 2*PI/NUM_CHILDREN;
 
 		for(int i=0;i<NUM_CHILDREN;i++){
-			Bone* child = new Bone(parent);
+			Joint* child = new Joint(parent);
 
-			// (1,0,0) is the outward direction
-			Vec3 dir = Vec3(1,cos(da*i),sin(da*i)).normalised();
-			child->mRelPosition = Vec3(0,0,0);
-			child->mRelOrientation.set(Vec3(1,0,0),dir); // rotate to point in dir
+			Vec3 pos = Vec3(cos(da*i),1,sin(da*i)).normalised();
+			child->mRelPosition = pos*length;
+
+			child->mRelOrientation.set(Vec3(0,1,0),child->mRelPosition);
 			child->mRelOrientation.normalise();
-			child->mLength = length;
 
 			/*
 			std::cout << "[" << i << "]\n" << child->mRelOrientation << ", ";
@@ -217,12 +199,12 @@ public:
 			parent->mChildren.push_back(child);
 
 			joints[_index++] = child;
-			setupChildren(child, depth+1, length*.666);
+			setupChildren(child, depth+1, length*0.7);
 		}
 	}
 
 	void animate(double time, double dt){
-		for (int i=1 /* ignore root */;i<NUM_BONES;i++){
+		for (int i=0;i<NUM_JOINTS;i++){
 			if (not origAngleF[i]){
 				origAngleF[i] = true;
 				axes[i] = joints[i]->mRelOrientation.getAxis();
@@ -230,11 +212,17 @@ public:
 				//std::cout << "origAngle[" << i << "] = " << origAngle[i] << "\n";
 			}
 
-			double di = (double)i/(NUM_BONES-1);
+			double di = (double)i/(NUM_JOINTS-1);
 			double da = (PI/16); // * (1.4 - di);
 			double ds = time; // (2*(1+di))*time;
 
+			// Vec3 ax = joints[i]->mRelOrientation.getAxis();
 			joints[i]->mRelOrientation.set(axes[i], origAngle[i] + da*sin(ds));
+			//joints[i]->mRelOrientation.normalise();
+
+			if (i>=0 && i<3){
+				//std::cout << "[" << i << "] " << ax << " ## " << origAngle[i] + da*sin(ds) << "\n";
+			}
 		}
 		root->update();
 	}
@@ -247,11 +235,11 @@ public:
 		//glPopAttrib();
 	}
 
-	Bone* root;
-	Bone* joints[NUM_BONES];
-	Vec3 axes[NUM_BONES];
-	double origAngle[NUM_BONES];
-	bool origAngleF[NUM_BONES];
+	Joint* root;
+	Joint* joints[NUM_JOINTS];
+	Vec3 axes[NUM_JOINTS];
+	double origAngle[NUM_JOINTS];
+	bool origAngleF[NUM_JOINTS];
 };
 
 int Demo2::_index = 0;

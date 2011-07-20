@@ -180,7 +180,7 @@ namespace fg {
         }
     }
 
-    void Quat::normalise()
+    Quat& Quat::normalise()
     {
     	double len = length();
     	if (len!=0) { // not the best way but .. meh
@@ -191,6 +191,13 @@ namespace fg {
             w = 1.0;
             v = Vec3( 0., 0., 0. );
         }
+    	return *this;
+    }
+
+    Quat Quat::normalised() const{
+    	Quat q(*this);
+    	q.normalise();
+    	return q;
     }
 
     double Quat::length() const
