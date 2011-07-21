@@ -27,6 +27,32 @@
 #ifndef __VCGLIB_EXPORT_OBJ_POINT3D
 #define __VCGLIB_EXPORT_OBJ_POINT3D
 
+/** BP Added these */
+#include <vcg/space/point3.h>
+#include <vcg/space/box3.h>
+#include <vcg/simplex/vertex/base.h>
+#include <vcg/simplex/vertex/component_ocf.h>
+#include <vcg/simplex/face/base.h>
+#include <vcg/simplex/face/component_ocf.h>
+#include <vcg/simplex/face/pos.h>
+
+#include <vcg/complex/complex.h>
+#include <vcg/complex/allocate.h>
+
+#include <vcg/complex/algorithms/smooth.h>
+
+#include <vcg/complex/algorithms/create/marching_cubes.h>
+#include <vcg/complex/algorithms/create/extended_marching_cubes.h>
+#include <vcg/complex/algorithms/create/mc_trivial_walker.h>
+#include <vcg/complex/algorithms/create/platonic.h>
+
+#include <vcg/complex/algorithms/update/bounding.h>
+#include <vcg/complex/algorithms/update/normal.h>
+#include <vcg/complex/algorithms/update/topology.h>
+#include <vcg/complex/algorithms/update/flag.h>
+#include <vcg/complex/algorithms/update/color.h>
+/**************/
+
 #include <wrap/callback.h>
 #include <wrap/io_trimesh/io_mask.h>
 #include <wrap/io_trimesh/io_material.h>
