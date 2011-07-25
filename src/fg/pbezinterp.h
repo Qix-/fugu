@@ -38,7 +38,6 @@ namespace fg {
          */
         template < class T > class PBezInterp : public Interpolator<T> {
             public:
-
                 /**
                  * \brief Constructs a peicewise Bezier interpolator.
                  *
@@ -98,6 +97,7 @@ namespace fg {
 
                 virtual std::vector<T> getControlPoints() const;
 				virtual std::vector< std::pair<T,T> > getGradients() const;
+				virtual std::pair<T,T> getGradient( int i ) const;
                 virtual T getControlPoint( int i ) const;
                 /**
                  * Get the number of cubic Bezier segments.
@@ -112,10 +112,10 @@ namespace fg {
                 virtual int getSegment( double t ) const;
 
 				virtual Interpolator<T> * scale( double s ) const;
+				virtual const BezInterp<T> getSegmentInterpolator( int seg ) const;
             protected:
                 virtual void deleteData();
                 virtual void smoothGradients();
-				virtual const BezInterp<T> getSegmentInterpolator( int seg ) const;
 
                 std::vector< BezInterp<T> > mSegInterpolators;
 				BezInterp<T> mClosingInterp;

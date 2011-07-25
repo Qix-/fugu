@@ -27,8 +27,6 @@
 #include "fg/mat4.h"
 #include "fg/lincarrier.h"
 
-//#include <iostream>
-
 namespace fg {
     namespace gc {
 
@@ -64,12 +62,10 @@ namespace fg {
             {
                 // Get the control points location PUT THIS INTO MAT4 OR RFRAME OR SOMETHING!!
                 Vec3 p1 = refFrames[i]   * Vec3( 0., 0., 0. ); // The pos
-                //std::cout << refFrames[i] << std::endl;
                 tmpCp.push_back( p1 );
                 // Get the rotation
                 mRFrames.push_back( refFrames[i] );
                 //mOrients.push_back( Quat( refFrames[i] ) );
-                //std::cout << mOrients[i] << std::endl;
             }
 
             mInterpolator = new spline::LinInterp<Vec3>( tmpCp );
@@ -133,9 +129,7 @@ namespace fg {
 //  double tfrac = t - tint;
 //  Quat rot;
 //
-//  //std::cout << "t = " << t << ", tint = " << tint << ", tfrac = " << tfrac <<std::endl;
 //
-//    //std::cout << mOrients[2] << std::endl;
 //  rot = mOrients[tint].slerp(tfrac, mOrients[tint+1]);
 //  if (H)
 //      *H = rot * Vec3(0.,0.,1.);
