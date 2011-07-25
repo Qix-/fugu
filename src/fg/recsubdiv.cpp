@@ -57,6 +57,11 @@ namespace fg {
             // Try to approximate the full cubic curve by a single straight line
             //------------------
             Vec3 dp = p4 - p1;
+
+			// Fix this!
+			if( dp.lengthSquared() < 1e-30 )
+				return;
+
             double d2 = ( ( p2 - p1 ).cross( p2 - p4 ).length() ); ///((p4-p1).length());//fabs(((x2 - x4) * dy - (y2 - y4) * dx));
             double d3 = ( ( p3 - p1 ).cross( p3 - p4 ).length() ); ///((p4-p1).length());//fabs(((x3 - x4) * dy - (y3 - y4) * dx));
 

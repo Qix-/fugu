@@ -200,12 +200,20 @@ namespace fg {
 		   .def("yaw",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::yaw)
 		   .def("roll",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::roll)
 		   .def("pitch",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::pitch)
+
+		   .def("setStiffness",(void(fg::gc::Turtle::*)(double,double))&fg::gc::Turtle::setStiffness)
+		   .def("setScale",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::setScale)
+		   .def("setCrossSection",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCrossSection)
+		   .def("pushState",&fg::gc::Turtle::pushState)
+		   .def("popState",&fg::gc::Turtle::popState)
+
+		   .def("beginCrossSection",&fg::gc::Turtle::beginCrossSection)
+		   .def("endCrossSection",(int(fg::gc::Turtle::*)(void))&fg::gc::Turtle::endCrossSection)
+
 		   .def("beginCylinder",&fg::gc::Turtle::beginCylinder)
 		   .def("endCylinder",&fg::gc::Turtle::endCylinder)
 		   .def("addPoint",(void(fg::gc::Turtle::*)(void))&fg::gc::Turtle::addPoint)
-		   .def("setScale",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::setScale)
-		   .def("pushState",&fg::gc::Turtle::pushState)
-		   .def("popState",&fg::gc::Turtle::popState)
+
 		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(int,int))&fg::gc::Turtle::getMesh)
 		];
 

@@ -162,6 +162,7 @@ namespace fg {
 
 		glBegin(GL_POINTS);
 		glColor3f(1,0,1);
+		glPointSize(10);
 		for(int i=0;i<s.getNumControlPoints();i++){
 			glVertex3d(cp[i].getX(),cp[i].getY(),cp[i].getZ());
 		}
