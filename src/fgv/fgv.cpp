@@ -119,6 +119,14 @@ int main(int argc, char *argv[])
 			fg::GLRenderer::renderMeshNode(m,fg::GLRenderer::RenderMeshMode(DRAW_MODE));
 		}
 
+		BOOST_FOREACH(boost::shared_ptr<fg::Node> n, u.nodes()){
+			glPushMatrix();
+			fg::Mat4 t = n->getCompoundTransform().transpose();
+			glMultMatrixd(t.V());
+			fg::GLRenderer::renderAxes();
+			glPopMatrix();
+		}
+
 		glPopMatrix();
 
 		glfwSwapBuffers();

@@ -46,7 +46,26 @@ namespace fg {
 		return pImpl()->N();
 	}
 
+	Vec3 VertexProxy::getColour() const {
+		vcg::Color4b c = constImpl().C();
+		Vec3 v(c.X()/255.,c.Y()/255.,c.Z()/255.);
+		return v;
+	}
 
+	void VertexProxy::setColour(Vec3 k){
+		vcg::Color4b c(k.getX()*255,k.getY()*255,k.getZ()*255,255);
+		pImpl()->C() = c;
+	}
+
+	void VertexProxy::setColour(double r, double g, double b){
+		pImpl()->C().X() = r*255.;
+		pImpl()->C().Y() = g*255;
+		pImpl()->C().Z() = b*255;
+	}
+
+	int VertexProxy::getNumBones() const {
+		return constImpl().getNumBones();
+	}
 
 
 	// VertexProxyList

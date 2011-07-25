@@ -40,7 +40,7 @@ namespace fg {
 			for(int c=0;c<3;c++){
 				m.vert[i].P()[c] = fm.vert[i].P()[c];
 				m.vert[i].N()[c] = fm.vert[i].N()[c];
-				//m.vert[i].C()[c] = fm.vert[i].C()[c];
+				m.vert[i].C()[c] = fm.vert[i].C()[c];
 			}
 		}
 

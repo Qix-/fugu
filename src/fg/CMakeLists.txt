@@ -1,34 +1,37 @@
 set(SRC 
-	fg.cpp
-	universe.cpp
+	armature.cpp
 	bindings.cpp
-	mesh.cpp
-	vec3.cpp
+	carriercurve.cpp
+	crosssectioncircular.cpp	
+	fg.cpp
 	functions.cpp
+	generalisedcylinder.cpp	
+	glrenderer.cpp
+	glrenderer_glutprimitives.cpp	
+	interpcrosssec.cpp	
+	lincarrier.cpp
+	mat4.cpp	
+	mesh.cpp	
 	meshimpl.cpp
 	meshoperators.cpp
 	meshoperators_vcg.cpp
-	proxy.cpp
-	vertex.cpp
-	glrenderer.cpp
-	glrenderer_glutprimitives.cpp
-	carriercurve.cpp
-	lincarrier.cpp
+	node.cpp
+	nodegraph.cpp	
 	pbezcarrier.cpp
 	pbezinterpdiv.cpp
-	crosssectioncircular.cpp
+	plylib.cpp	
+	proxy.cpp
+	quat.cpp	
+	recsubdiv.cpp	
 	scaleinterpcrosssec.cpp
-	interpcrosssec.cpp
-	generalisedcylinder.cpp
-	recsubdiv.cpp
-	turtle.cpp
-	quat.cpp
-	node.cpp
-	mat4.cpp
-	plylib.cpp
-	nodegraph.cpp)
+	turtle.cpp	
+	universe.cpp	
+	vec3.cpp
+	vertex.cpp	
+	)
 
 set(HDRS
+	armature.h
 	bezinterp.h
 	bindings.h
 	carriercurve.h

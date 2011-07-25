@@ -86,8 +86,12 @@ namespace fg {
 		/// Add a mesh node to this universe
 		void add(boost::shared_ptr<MeshNode> n);
 
-		// retrieve all the mesh nodes
+		/// Retrieve all the nodes
+		std::list<boost::shared_ptr<Node> >& nodes();
+
+		/// Retrieve all the mesh nodes
 		std::list<boost::shared_ptr<MeshNode> >& meshNodes();
+
 
 		/// Bind a child node to the coordinate system of a parent node
 		void makeChildOf(boost::shared_ptr<Node> parent, boost::shared_ptr<Node> child);
@@ -109,6 +113,7 @@ namespace fg {
 		double mTime; ///< universe time
 		NodeGraph mNodeGraph;
 
+		std::list<boost::shared_ptr<Node> > mNodes;
 		std::list<boost::shared_ptr<MeshNode> > mMeshNodes;
 
 	private: // helpers

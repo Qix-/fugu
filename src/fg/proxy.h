@@ -53,7 +53,7 @@ namespace fg {
 	/**
 	 * \brief Proxy provides a simple wrapper around a pointer to an object of type T.
 	 * 
-	 * Proxy is used to provide safe access to a potentially volatile object across the C++/Lua boundary. See e.g., fg::VertexProxy .
+	 * Proxy is used to provide safe access to a potentially volatile object (esp. across the C++/Lua boundary.) See e.g., fg::VertexProxy .
 	 */
 	template <class T>
 	class Proxy {

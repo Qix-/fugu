@@ -33,6 +33,7 @@
 #include "fg/mesh.h"
 
 #include <vcg/simplex/vertex/base.h>
+#include <vcg/simplex/vertex/component.h>
 #include <vcg/simplex/vertex/component_ocf.h>
 #include <vcg/simplex/face/base.h>
 #include <vcg/simplex/face/pos.h>
@@ -43,6 +44,7 @@
 namespace fg {
 	/** Mesh Implementation is via VCG **/
 	class VertexImpl;
+
 	class FaceImpl;
 	struct MyUsedTypes : public vcg::UsedTypes<
 		vcg::Use<VertexImpl>::AsVertexType,
@@ -50,11 +52,25 @@ namespace fg {
 	class VertexImpl: public vcg::Vertex<
 		MyUsedTypes,
 		vcg::vertex::Coord3d,
+		vcg::vertex::Color4b,
 		vcg::vertex::Normal3d,
 		vcg::vertex::BitFlags,
 		vcg::vertex::VFAdj,
 		vcg::vertex::InfoOcf,
-		vcg::vertex::Mark> {};
+		vcg::vertex::Mark> {
+
+		public:
+		VertexImpl():mNumBones(0){}
+
+		// BONES!
+		int getNumBones() const {return mNumBones;}
+		// int addBones() const {return mNumBones;}
+
+
+	protected:
+		int mNumBones;
+	};
+
 	class FaceImpl: public vcg::Face<
 		MyUsedTypes,
 		vcg::face::FFAdj,
@@ -62,13 +78,13 @@ namespace fg {
 		vcg::face::Mark,
 		vcg::face::VertexRef,
 		vcg::face::Normal3d,
-		vcg::face::Color4b,
+		// vcg::face::Color4b,
 		vcg::face::BitFlags,
 		//vcg::face::Normal3d,
 		vcg::face::InfoOcf> {};
 	class MeshImpl: public vcg::tri::TriMesh< std::vector< VertexImpl>, std::vector< FaceImpl > > {};
 
-	// Implementations of meh that use float (used for importing/exporting/...)
+	// Implementations of mesh that use float (used for importing/exporting/...)
 	class _FloatVertexImpl;
 	class _FloatFaceImpl;
 	struct _FloatMyUsedTypes : public vcg::UsedTypes<
@@ -77,6 +93,7 @@ namespace fg {
 	class _FloatVertexImpl: public vcg::Vertex<
 			_FloatMyUsedTypes,
 			vcg::vertex::Coord3f,
+			vcg::vertex::Color4b,
 			vcg::vertex::Normal3f,
 			vcg::vertex::BitFlags,
 			vcg::vertex::VFAdj,
@@ -88,7 +105,7 @@ namespace fg {
 		vcg::face::VFAdj,
 		vcg::face::Mark,
 		vcg::face::VertexRef,
-		vcg::face::Color4b,
+		//vcg::face::Color4b,
 		vcg::face::BitFlags,
 		vcg::face::Normal3d,
 		vcg::face::InfoOcf> {};

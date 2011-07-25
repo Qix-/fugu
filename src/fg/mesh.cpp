@@ -175,6 +175,7 @@ namespace fg {
 		*/
 	}
 
+
 	void Mesh::sync(){
 		vcg::tri::UpdateNormals<MeshImpl>::PerFace(*mpMesh);
 		vcg::tri::UpdateNormals<MeshImpl>::PerVertexFromCurrentFaceNormal(*mpMesh);

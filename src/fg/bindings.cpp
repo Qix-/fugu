@@ -105,6 +105,12 @@ namespace fg {
 		   .property("x", &fg::Vec3::getX, &fg::Vec3::setX)
 		   .property("y", &fg::Vec3::getY, &fg::Vec3::setY)
 		   .property("z", &fg::Vec3::getZ, &fg::Vec3::setZ)
+
+		   // can also access like a colour
+		   .property("r", &fg::Vec3::getX, &fg::Vec3::setX)
+		   .property("g", &fg::Vec3::getY, &fg::Vec3::setY)
+		   .property("b", &fg::Vec3::getZ, &fg::Vec3::setZ)
+
 		   .def(tostring(const_self))
 
 		   .def("normalise",&fg::Vec3::normalise)
@@ -153,6 +159,10 @@ namespace fg {
 
 		   .def("getN", &fg::VertexProxy::getN)
 		   // class_<fg::Mesh::VertexContainer>("vertexcontainer"),
+
+		   .def("getColour", &fg::VertexProxy::getColour)
+		   .def("setColour", (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setColour))
+		   .def("setColour", (void(fg::VertexProxy::*)(double,double,double)) (&fg::VertexProxy::setColour))
 
 		   .property("valid", &fg::VertexProxy::isValid),
 

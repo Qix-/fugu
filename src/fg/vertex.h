@@ -60,7 +60,12 @@ namespace fg {
 
 		Vec3 getN(); // hmm, can't be const (because of vcg...)
 
+		Vec3 getColour() const;
+		void setColour(Vec3 c);
+		void setColour(double r, double g, double b);
+
 		// Special functions
+		int getNumBones() const;
 
 	};
 

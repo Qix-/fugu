@@ -48,9 +48,9 @@ namespace fg {
 		tm.Update();
 
 		switch (rmm){
-			case RENDER_FLAT: tm.Draw<vcg::GLW::DMFlat, vcg::GLW::CMPerFace, vcg::GLW::TMNone> (); break;
-			case RENDER_SMOOTH: tm.Draw<vcg::GLW::DMSmooth, vcg::GLW::CMPerFace, vcg::GLW::TMNone> ();	break;
-			case RENDER_WIRE: tm.Draw<vcg::GLW::DMWire,     vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
+			case RENDER_FLAT: tm.Draw<vcg::GLW::DMFlat, vcg::GLW::CMPerVert, vcg::GLW::TMNone> (); break;
+			case RENDER_SMOOTH: tm.Draw<vcg::GLW::DMSmooth, vcg::GLW::CMPerVert, vcg::GLW::TMNone> ();	break;
+			case RENDER_WIRE: tm.Draw<vcg::GLW::DMWire,     vcg::GLW::CMPerVert,vcg::GLW::TMNone> (); break;
 			case RENDER_VERTICES: // tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break; 
 			{
 				tm.DrawPointsBase<vcg::GLW::NMPerVert,vcg::GLW::CMNone>();
@@ -214,5 +214,23 @@ namespace fg {
 		glPopAttrib();
 		glPopAttrib();
 		glPopAttrib();
+	}
+
+	void GLRenderer::renderArmature(const Armature& arm){
+		const float JOINT_RADIUS = .1;
+		glColor3f(1,1,1);
+
+		foreach(BoneRef pb, arm.bones()){
+			glPushMatrix();
+			glMultTransposeMatrixd(pb->getWorldSpaceTransform().V());
+			// GLRenderer::renderAxes(3*JOINT_RADIUS);
+			GLRenderer::glutSolidSphere(JOINT_RADIUS,8,8);
+
+			// render bone
+			// have to rotate the z-axis to point in the x-axis
+			glRotatef(90,0,1,0);
+			GLRenderer::glutSolidCone( JOINT_RADIUS*.5, pb->mLength, 8, 4);
+			glPopMatrix();
+		}
 	}
 }

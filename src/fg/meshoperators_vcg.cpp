@@ -258,7 +258,7 @@ namespace fg {
 			internalVerts.insert(f->V(0));
 			internalVerts.insert(f->V(1));
 			internalVerts.insert(f->V(2));
-			f->C() = vcg::Color4b::Red;
+			// f->C() = vcg::Color4b::Red;
 		}
 
 		// Shift each vertex

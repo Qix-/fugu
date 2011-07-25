@@ -26,6 +26,8 @@
 #define FG_UTIL_H
 
 #include <boost/foreach.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 /* Define foreach. (With workaround for eclipse cdt parser.) */
 #ifdef __CDT_PARSER__
@@ -33,5 +35,8 @@
 #else
     #define foreach(a, b) BOOST_FOREACH(a, b)
 #endif
+
+using boost::shared_ptr;
+using boost::weak_ptr;
 
 #endif

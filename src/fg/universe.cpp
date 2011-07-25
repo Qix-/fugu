@@ -189,15 +189,21 @@ namespace fg {
 
 	void Universe::add(boost::shared_ptr<Node> n){
 		mNodeGraph.addNode(n);
+		mNodes.push_back(n);
 	}
 
 	void Universe::add(boost::shared_ptr<MeshNode> n){
 		mNodeGraph.addNode(n);
+		mNodes.push_back(n);
 		mMeshNodes.push_back(n);
 	}
 
 	std::list<boost::shared_ptr<MeshNode> >& Universe::meshNodes(){
 		return mMeshNodes;
+	}
+
+	std::list<boost::shared_ptr<Node> >& Universe::nodes(){
+		return mNodes;
 	}
 
 	void Universe::makeChildOf(boost::shared_ptr<Node> parent, boost::shared_ptr<Node> child){

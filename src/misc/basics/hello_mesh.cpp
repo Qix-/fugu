@@ -1,8 +1,13 @@
 #include "fg/mesh.h"
+#include "fg/util.h"
 
-#include <boost/shared_ptr.hpp>
+using namespace fg;
 
 int main(){
-	boost::shared_ptr<fg::Mesh> m = fg::Mesh::Primitives::Icosahedron();
+	shared_ptr<Mesh> m = Mesh::Primitives::Icosahedron();
+	shared_ptr<Mesh::VertexSet> all = m->selectAllVertices();
+	foreach(shared_ptr<VertexProxy> v, *all){
+		std::cout << v->getNumBones() << " ";
+	}
 	return 0;
 }

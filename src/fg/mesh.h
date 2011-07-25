@@ -132,7 +132,7 @@ namespace fg {
 		/// \brief Sync will make sure all the topology, normals, etc are fixed..
 		void sync();
 
-		/// \deprecated see GLRenderer
+		/// \deprecated see fg::GLRenderer
 		void drawGL();
 
 		/*

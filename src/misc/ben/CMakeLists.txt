@@ -1,16 +1,19 @@
 set(ALL_LIBS fg 
 	${LUA_LIBS}
-	${GL_LIBS} 
+	${GL_LIBS}
 	${BOOST_LIBS})
 
-add_executable(armature armature.cpp trackball.cpp)
-target_link_libraries(armature ${ALL_LIBS})
+add_executable(hello_armature hello_armature.cpp trackball.cpp)
+target_link_libraries(hello_armature ${ALL_LIBS})
 
-add_executable(bones bones.cpp trackball.cpp)
-target_link_libraries(bones ${ALL_LIBS})
+#add_executable(armature armature.cpp trackball.cpp)
+#target_link_libraries(armature ${ALL_LIBS})
 
-add_executable(joints joints.cpp trackball.cpp)
-target_link_libraries(joints ${ALL_LIBS})
+#add_executable(bones bones.cpp trackball.cpp)
+#target_link_libraries(bones ${ALL_LIBS})
+
+#add_executable(joints joints.cpp trackball.cpp)
+#target_link_libraries(joints ${ALL_LIBS})
 
 #add_executable(graph_test graph_test.cpp)
 #target_link_libraries(graph_test ${ALL_LIBS})
