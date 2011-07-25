@@ -6,3 +6,4 @@ build
 .project
 bin
 doc/html
+*.orig

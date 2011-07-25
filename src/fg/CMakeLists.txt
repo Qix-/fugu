@@ -15,6 +15,7 @@ set(SRC
 	meshimpl.cpp
 	meshoperators.cpp
 	meshoperators_vcg.cpp
+	morphcrosssec.cpp
 	node.cpp
 	nodegraph.cpp	
 	pbezcarrier.cpp
@@ -52,6 +53,7 @@ set(HDRS
 	meshnode.h
 	meshoperators.h
 	meshoperators_vcg.h
+	morphcrosssec.h
 	node.h
 	nodegraph.h
 	operator.h

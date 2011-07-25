@@ -60,7 +60,7 @@ namespace fg {
         {
             Interpolator<T>::operator=( other );
 
-			setControlPoints( other.getControlPoints(), other.mGradients );
+			setControlPoints( other.getControlPoints(), other.getGradients() );
             return *this;
         }
 
@@ -91,11 +91,10 @@ namespace fg {
             mNumControlPoints = controlPoints.size();
             std::vector<T> cp;
 
-			mGradients.push_back( gradients[0] );
+			mGradients = gradients;
+
             for( int i = 0; i < controlPoints.size() - 1; ++i )
             {
-				mGradients.push_back( gradients[i+1] );
-
                 cp.push_back( controlPoints[i] );
                 cp.push_back( controlPoints[i] + gradients[i].second );
                 cp.push_back( controlPoints[i + 1] - gradients[i+1].first );
@@ -107,6 +106,13 @@ namespace fg {
             cp.push_back( controlPoints.back() + gradients.back().second );
             cp.push_back( controlPoints.front() - gradients.front().first );
             cp.push_back( controlPoints.front() );
+
+//			std::cout << cp[0] << std::endl;
+//			std::cout << cp[1] << std::endl;
+//			std::cout << cp[2] << std::endl;
+//			std::cout << cp[3] << std::endl;
+//			std::cout << "\n\n";
+
 			mClosingInterp = BezInterp<T>( cp );
         }
 
@@ -262,10 +268,19 @@ namespace fg {
             i = clamp( i, 0, getNumControlPoints() - 1 );
 
             if( i == getNumControlPoints() - 1 )
-                return getSegmentControlPoints( i - 1 )[4];
+                return getSegmentControlPoints( i - 1 )[3];
 
             return getSegmentControlPoints( i )[0];
         }
+
+        template <class T>
+        std::pair<T, T> PBezInterp<T>::getGradient( int i ) const
+        {
+            i = clamp( i, 0, getNumControlPoints() - 1 );
+
+            return mGradients[i];
+        }
+
 
         template <class T>
         std::vector<T> PBezInterp<T>::getControlPoints() const

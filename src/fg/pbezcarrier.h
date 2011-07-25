@@ -56,6 +56,9 @@ namespace fg {
                 virtual void setReferenceFrames( const std::vector<Mat4> &refFrames, const std::vector< std::pair<double, double> > &stiffness );
                 virtual void setReferenceFrames( const std::vector<Mat4> &refFrames );
                 virtual std::vector<Mat4> getReferenceFrames() const;
+
+				static void stiffnessToGrad( const std::vector<Mat4> &refFrames, const std::vector< std::pair<double,double> > &stiffness,
+											 std::vector<Vec3> &pos, std::vector< std::pair<Vec3, Vec3> > &grad );
             private:
                 virtual Quat getFrenetFrame( double v ) const;
                 void updateInflectionPoints( int seg );

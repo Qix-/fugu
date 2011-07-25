@@ -35,6 +35,11 @@ namespace fg {
          */
         class PBezInterpDiv : public PBezInterp<Vec3> {
 			public:
+              PBezInterpDiv( const std::vector<Vec3> &controlPoints)
+			  :PBezInterp<Vec3>( controlPoints )
+			  {
+			  }
+
               PBezInterpDiv( const std::vector<Vec3> &controlPoints, const std::vector< std::pair<Vec3, Vec3> > &gradients )
 			  :PBezInterp<Vec3>( controlPoints, gradients )
 			  {
