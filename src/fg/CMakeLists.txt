@@ -16,6 +16,7 @@ set(SRC
 	pbezcarrier.cpp
 	pbezinterpdiv.cpp
 	crosssectioncircular.cpp
+	morphcrosssec.cpp
 	scaleinterpcrosssec.cpp
 	interpcrosssec.cpp
 	generalisedcylinder.cpp
@@ -30,6 +31,7 @@ set(SRC
 set(HDRS
 	bezinterp.h
 	bindings.h
+	morphcrosssec.h
 	carriercurve.h
 	lincarrier.h
 	pbezcarrier.h
