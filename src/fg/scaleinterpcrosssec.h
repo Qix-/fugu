@@ -34,7 +34,7 @@
 namespace fg {
     namespace gc {
         /**
-         * \brief Provides a constant cross section defined by an interpolator.
+         * \brief Provides a cross section defined by an interpolator which is scaled by another interpolator.
          */
         class ScaleInterpCrossSec : public CrossSection {
             public:

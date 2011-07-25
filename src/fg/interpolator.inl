@@ -131,7 +131,6 @@ namespace fg {
         template< class T >
         std::vector<T> Interpolator<T>::getApproxVector( int &n ) const
         {
-			//std::cout << "Here in interpolator.\n";
             if( n < 1 )
                 n = getNumControlPoints() * 5;
 

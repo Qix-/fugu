@@ -1,5 +1,5 @@
 /**
- * Hello spline!
+ * Hello gc!
  */
 
 
@@ -12,10 +12,12 @@
 #include "fg/functions.h"
 #include "fgv/trackball.h"
 
-#include "fg/interpolator.h"
-#include "fg/lininterp.h"
-#include "fg/pbezinterpdiv.h"
-
+#include "fg/lincarrier.h"
+#include "fg/pbezcarrier.h"
+#include "fg/interpcrosssec.h"
+#include "fg/morphcrosssec.h"
+#include "fg/scaleinterpcrosssec.h"
+#include "fg/generalisedcylinder.h"
 #include "fg/glrenderer.h"
 
 // opengl viz, hack
@@ -57,25 +59,99 @@ int main(int argc, char *argv[])
 {
 	setupWindowAndGL();
 
-	// ** Create new spline here
-	const int numPoints = 3;
-    //fg::spline::PBezInterp<Vec3> spline = spline::PBezInterp<Vec3>();
-	std::vector<Vec3> arr;
+	// ** Create new carrier here
+	const int numPoints = 2;
+	std::vector<Mat4> arr;
+	std::vector<Vec3> arr2;
+	std::vector<Vec3> arr3;
+	std::vector<Vec3> arr4;
 	std::vector< std::pair<Vec3,Vec3> > grad;
-    arr.push_back(Vec3(.1,0.,0.));
-    arr.push_back(Vec3(.05,.05,0.));
-    arr.push_back(Vec3(0.,-.1,0.));
+	std::vector< std::pair<Vec3,Vec3> > grad2;
+	std::vector< std::pair<Vec3,Vec3> > grad3;
+	Mat4 tmp;
+
+	arr.push_back( Mat4() );
+	arr[0].SetIdentity();
+
+	arr.push_back( Mat4() );
+	arr[1].SetTranslate(0.,0.,1.);
+
+    arr2.push_back( Vec3(.1, 0., 0.) );
+    arr2.push_back( Vec3(.0, .1, 0.) );
+    arr2.push_back( Vec3(-.1, 0., 0.) );
+    arr2.push_back( Vec3(.0, -.1, 0.) );
+
+	grad.push_back( std::pair<Vec3,Vec3> ( Vec3(.0,.055,0.),Vec3(.0,.055,0.)));
+	grad.push_back( std::pair<Vec3,Vec3> ( Vec3(-.055,.0,0.),Vec3(-.055,.0,0.)));
+	grad.push_back( std::pair<Vec3,Vec3> ( Vec3(.0,-.055,0.),Vec3(.0,-.055,0.)));
+	grad.push_back( std::pair<Vec3,Vec3> ( Vec3(.055,.0,0.),Vec3(.055,.0,0.)));
+
+    arr3.push_back( Vec3(.13, .0, 0.) );
+    arr3.push_back( Vec3(.0, .13, 0.) );
+    arr3.push_back( Vec3(-.13, .0, 0.) );
+
+	grad2.push_back( std::pair<Vec3,Vec3> ( Vec3(0.,0.,0.),Vec3(0.,0.,0.)));
+	grad2.push_back( std::pair<Vec3,Vec3> ( Vec3(0.,0.,0.),Vec3(0.,0.,0.)));
+	grad2.push_back( std::pair<Vec3,Vec3> ( Vec3(0.,0.,0.),Vec3(0.,.0,0.)));
 	/*
-	grad.push_back( std::pair<Vec3,Vec3> (Vec3(.3,.4,0.), Vec3(.3, .4, 0.) ) );
-	grad.push_back( std::pair<Vec3,Vec3> (Vec3(.3,-.4,0.), Vec3(.3, -.4, 0.) ) );
-	grad.push_back( std::pair<Vec3,Vec3> (Vec3(-.3,-.4,0.), Vec3(-.3, -.4, 0.) ) );
+    arr3.push_back( Vec3(.1, -0.1, 0.) );
+    arr3.push_back( Vec3(.1, 0.1, 0.) );
+    arr3.push_back( Vec3(-.1, .1, 0.) );
+    arr3.push_back( Vec3(-.1, -.1, 0.) );
+
+	grad2.push_back( std::pair<Vec3,Vec3> ( Vec3(0.0,0.0,0.),Vec3(0.0,0.0,0.)));
+	grad2.push_back( std::pair<Vec3,Vec3> ( Vec3(0.,0.0,0.),Vec3(0.,0.0,0.)));
+	grad2.push_back( std::pair<Vec3,Vec3> ( Vec3(-0.0,0.,0.),Vec3(-0.0,0.,0.)));
+	grad2.push_back( std::pair<Vec3,Vec3> ( Vec3(0.,-0.0,0.),Vec3(0.,-0.0,0.)));
 	*/
-	grad.push_back( std::pair<Vec3,Vec3> (Vec3(0.,0.,0.), Vec3(0., 0., 0.) ) );
-	grad.push_back( std::pair<Vec3,Vec3> (Vec3(0.,-0.,0.), Vec3(0., -0., 0.) ) );
-	grad.push_back( std::pair<Vec3,Vec3> (Vec3(-0.,-0.,0.), Vec3(-0., -0., 0.) ) );
-    fg::spline::PBezInterpDiv spline = spline::PBezInterpDiv(arr, grad);
-    //fg::spline::LinInterp<Vec3> spline = spline::LinInterp<Vec3>(arr);
-	spline.setOpen( false );
+
+    arr4.push_back( Vec3(.4, 0., 0.) );
+    arr4.push_back( Vec3(.02, 0.02, 0.) );
+    arr4.push_back( Vec3(.0, 0.4, 0.) );
+    arr4.push_back( Vec3(-.02, 0.02, 0.) );
+    arr4.push_back( Vec3(-.4, .0, 0.) );
+    arr4.push_back( Vec3(-.02, -0.02, 0.) );
+    arr4.push_back( Vec3(.0, -0.4, 0.) );
+    arr4.push_back( Vec3(.02, -0.02, 0.) );
+
+	grad3.push_back( std::pair<Vec3,Vec3> ( Vec3(.0,.0,0.),Vec3(.0,.0,0.)));
+	grad3.push_back( std::pair<Vec3,Vec3> ( Vec3(-.0,.0,0.),Vec3(-.0,.0,0.)));
+	grad3.push_back( std::pair<Vec3,Vec3> ( Vec3(-.0,0.,0.),Vec3(-0.0,0.,0.)));
+	grad3.push_back( std::pair<Vec3,Vec3> ( Vec3(.0,0.,0.),Vec3(.0,0.,0.)));
+	grad3.push_back( std::pair<Vec3,Vec3> ( Vec3(.0,0.,0.),Vec3(.0,0.,0.)));
+	grad3.push_back( std::pair<Vec3,Vec3> ( Vec3(.0,0.,0.),Vec3(.0,0.,0.)));
+	grad3.push_back( std::pair<Vec3,Vec3> ( Vec3(.0,0.,0.),Vec3(.0,0.,0.)));
+	grad3.push_back( std::pair<Vec3,Vec3> ( Vec3(.0,0.,0.),Vec3(.0,0.,0.)));
+
+//	arr.push_back( Mat4() );
+//	arr[2].SetTranslate(0.,1.,2.);
+//	tmp.SetRotateDeg(-45, Vec3( 1., 0., 0.));
+//	arr[2] = arr[2] * tmp;
+
+	std::vector< std::pair<double,double> > domains;
+	domains.push_back( std::pair<double,double>( 0., 0. ) );
+	domains.push_back( std::pair<double,double>( 1., 1. ) );
+
+	const fg::gc::CarrierCurve& carrier = gc::PBezCarrier(arr);
+
+    std::vector< fg::spline::PBezInterpDiv > interps;
+	fg::spline::PBezInterpDiv interp;
+    interp = fg::spline::PBezInterpDiv (arr2, grad);
+
+	interps.push_back( interp );
+	interps.push_back( fg::spline::PBezInterpDiv (arr3, grad2) );
+	interps.push_back( fg::spline::PBezInterpDiv (arr4, grad3) );
+
+	interps[0].setOpen( false );
+	interps[1].setOpen( false );
+	interps[2].setOpen( false );
+
+	const fg::gc::MorphCrossSec cs( interps );
+	//const fg::gc::GeneralisedCylinder& gc = gc::GeneralisedCylinder(carrier, cs, arr, domains);
+	//Mesh::MeshBuilder mb;
+	//gc.createMesh(mb, 10, 5);
+	//boost::shared_ptr<Mesh> mMesh = mb.createMesh();
+	//mMesh->smoothSubdivide(2);
 
 	// Run as fast as I can
 	bool running = true;
@@ -83,6 +159,7 @@ int main(int argc, char *argv[])
 	double time = glfwGetTime();
 	double dt = 0.01;
 
+    float v = 0.;
 	while(running){
 		// Recompute delta t
 		double now = glfwGetTime();
@@ -107,8 +184,9 @@ int main(int argc, char *argv[])
 		glScalef(z,z,z);
 
 		// Draw stuff here
-		fg::GLRenderer::renderInterpolator(spline,91);
-
+		fg::GLRenderer::renderInterpolator(cs.getCrossSectionInterp( v ), 20);
+		if( time > 1. && v < interps.size() - 1 )
+			v += 0.0007;
 
 		glPopMatrix();
 
@@ -138,7 +216,7 @@ void setupWindowAndGL(){
 		exit(EXIT_FAILURE);
 	}
 
-	glfwSetWindowTitle("hello spline!");
+	glfwSetWindowTitle("hello morph!");
 	//glfwSetKeyCallback(keyCallback);
 	glfwSetWindowSizeCallback(resizeWindow);
 	glfwSetMousePosCallback(mouseMoved);
@@ -166,7 +244,6 @@ void GLFWCALL resizeWindow(int _width, int _height){
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(60, 1.0*gWidth/gHeight, 0.1, 100);
-	glViewport(0,0,gWidth,gHeight);
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -210,7 +287,7 @@ void GLFWCALL mouseButtoned(int button, int state){
 			gMouseState.leftButtonDown = false;
 		}
 	}
-	else if (button==GLFW_MOUSE_BUTTON_MIDDLE){
+	else if (button==GLFW_MOUSE_BUTTON_RIGHT){
 		if (state==GLFW_PRESS){
 			gMouseState.middleButtonDown = true;
 			glfwGetMousePos(&gMouseState.lastX,&gMouseState.lastY);
