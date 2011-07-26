@@ -3,24 +3,23 @@ module(...,package.seeall)
 
 local m = {}
 local node = {}
+local first = true
 function setup()
 	-- Params for cross section
-	numBumps = 5
+	numBumps = 7
 	innerRat = .7
 	outerS = .5
 	innerS = .7
 
 	-- Scale params
 
-	-- Node for the mesh
-	node = fg.node() -- blank transform node
 end
 
 local t = 0
 function update(dt)
 	t = t + dt
 
-	innerRat = math.sin( t )
+	innerRat = .5 * math.sin( t ) * math.sin( t ) + .8
 
     -- Our friend bert
 	bert = fg.turtle()
@@ -81,8 +80,15 @@ function update(dt)
 	bert:move(1.)
 	bert:setScale(0.4)
 	bert:endCylinder()
+
 	m = bert:getMesh(10,40)
-	fgu:addMesh(m)
+	if (first) then
+		-- Node for the mesh
+		node = fg.meshnode(m) -- blank transform node
+		fgu:add(node)
+		first = false
+	end
+	node:setMesh(m)
 end
 
 
