@@ -32,6 +32,28 @@ namespace fg {
 
 	Mat4::Mat4(const double v[]):vcg::Matrix44<double>(v){}
 
+	void Mat4::set(const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis){
+        double kRot[16];
+        kRot[0] = xaxis.getX();
+        kRot[4] = xaxis.getY();
+        kRot[8] = xaxis.getZ();
+        kRot[12] = 0;
+        kRot[1] = yaxis.getX();
+        kRot[5] = yaxis.getY();
+        kRot[9] = yaxis.getZ();
+        kRot[13] = 0;
+        kRot[2] = zaxis.getX();
+        kRot[6] = zaxis.getY();
+        kRot[10] = zaxis.getZ();
+        kRot[14] = 0;
+        kRot[3] = 0;
+        kRot[7] = 0;
+        kRot[11] = 0;
+        kRot[15] = 1;
+
+		(*this) = Mat4(kRot);
+	}
+
 	double& Mat4::get(int r, int c){
 		return ElementAt(r,c);
 	}
