@@ -18,7 +18,7 @@
 #include "fg/vec3.h"
 #include "fg/util.h"
 #include "fg/armature.h"
-
+#include "fg/turtle.h"
 #include "fgv/trackball.h"
 
 int gWidth = 800;
@@ -50,29 +50,101 @@ public:
 	virtual void draw(){}
 };
 
+const double height = 3;
+const int numBones = 10;
+const int numMeshSegments = 7;
+
+enum DrawMode {MESH_ONLY=0, ARMATURE_ONLY, BOTH, NUM_DRAW_MODES};
+int drawMode = MESH_ONLY;
+
 class Demo1:public Demo {
 public:
+
 	void setup(){
-		mesh = Mesh::Primitives::Cylinder(32,32);
 
-		double length = 1;
+		gc::Turtle bert;
+		bert.setFrame(Vec3(0,0,0),Vec3(0,1,0),Vec3(0,0,1));
+		double sc = 2;
+		bert.setScale(sc);
+		bert.beginCylinder();
+		for(int i=0;i<numMeshSegments;i++){
+			double di = (double)i/numMeshSegments;
+			bert.move(height/numMeshSegments);
+			bert.setScale(lerp(sc,random(.1,.2),di));
+			bert.addPoint();
+		}
+		bert.endCylinder();
+		mesh = bert.getMesh(8,100);
+
+		BoneWeakRef bones[numBones];
+
+		double length = height/numBones;
 		arm.root()->setLength(length);
-		arm.root()->setInitialPosition(Vec3(0,-1,0));
+		arm.root()->setInitialPosition(Vec3(0,0,0));
 		arm.root()->setInitialOrientation(Quat(Vec3(1,0,0),Vec3(0,1,0)));
+		bones[0] = arm.root();
 
-		BoneRef child = BoneRef(new Bone(arm.root()));
-		child->setInitialPosition(Vec3(0,0,0));
-		child->setInitialOrientation(Quat(Vec3(1,0,0),0));
-		child->setLength(length);
-		arm.root()->addChild(child);
-		arm.addBone(child);
+		BoneRef parent = arm.root();
+		for(int i=1;i<numBones;i++){
+			BoneRef child = BoneRef(new Bone(parent));
+			bones[i] = child;
 
-		/* do a custom binding vertices to this 2 bone armature */
-		double jointRadius = .5;
+			child->setInitialPosition(Vec3(0,0,0));
+			child->setInitialOrientation(Quat(Vec3(1,0,0),0));
+			child->setLength(length);
+			parent->addChild(child);
+			arm.addBone(child);
+
+			parent = child;
+		}
+
+		/* do a custom binding vertices to this N-bone armature */
+
+		double jointRadius = length/4;
 
 		arm.root()->computeInitialWorldSpaceTransforms();
 		foreach(VertexImpl& vi, mesh->_impl()->vert){
 			double y = vi.P().Y();
+
+			// map y onto the bone index it corresponds to
+			int bi = std::floor(y/length);
+			bi = fg::clamp(bi,0,numBones-1);
+			// vi.C().Y() = (255.*bi/(numBones-1)); // map g channel to bone
+
+			double dy = y - bi*length; // dy is between 0 and length
+			// vi.C().Y() = 255*(dy/length);
+
+			if (dy < jointRadius){
+				if (bi==0){
+					vi.bindBone(bones[bi],1);
+				}
+				else {
+					// bound to last bone and this bone
+					double dr = (dy+jointRadius)/(2*jointRadius);
+					vi.bindBone(bones[bi-1],1-dr);
+					vi.bindBone(bones[bi],dr);
+					// vi.C().Y() = dr*255;
+				}
+			}
+			else if (dy > (length-jointRadius)){
+				if (bi==(numBones-1)){
+					vi.bindBone(bones[bi],1);
+				}
+				else {
+					// bound to next bone and this bone
+					dy -= length;
+					double dr = (dy+jointRadius)/(2*jointRadius);
+					vi.bindBone(bones[bi],1-dr);
+					vi.bindBone(bones[bi+1],dr);
+					//vi.C().Y() = (1-dr)*255;
+				}
+			}
+			else {
+				vi.bindBone(bones[bi],1);
+			}
+
+
+			/*
 			if (y<=-jointRadius){
 				vi.bindBone(arm.root(),1);
 				vi.C().Y() = 0;
@@ -87,17 +159,22 @@ public:
 				vi.bindBone(child,1);
 				vi.C().Y() = 255;
 			}
+			*/
 		}
 	}
 
 	void animate(double time, double dt){
 		int i = 0;
+		time = .5*time; // slow down time
 		foreach(BoneRef pb, arm.bones()){
 			double di = (double)i/(arm.bones().size());
-			double da = (PI/6) * (1.4 - di);
-			double ds = sin(2*time); // (2*(1+di))*time;
+			double da = (PI/4) * (1.4 - di*di);
+			double ds = sin(time+.1*di); // (2*(1+di))*time;
 			ds *= fabs(ds);
-			pb->setCurrentOrientation(pb->getInitialOrientation()*Quat(Vec3(0,0,1), da*ds).normalised());
+			pb->setCurrentOrientation(
+					pb->getInitialOrientation()*
+					Quat(Vec3(0,0,1), da*ds).normalised()*
+					Quat(Vec3(0,1,0), da*da*sin(7*time)).normalised());
 			i++;
 		}
 		arm.update();
@@ -120,32 +197,43 @@ public:
 	}
 
 	void draw(){
-		glDisable(GL_LIGHTING);
-		GLRenderer::renderMesh(mesh,GLRenderer::RENDER_WIRE);
-		glEnable(GL_LIGHTING);
+		switch(drawMode){
+			case MESH_ONLY:
+				GLRenderer::renderMesh(mesh,GLRenderer::RENDER_SMOOTH);
+				break;
 
-		GLRenderer::renderArmature(arm, true);
+			case ARMATURE_ONLY:
+				GLRenderer::renderArmature(arm, true);
+				break;
+
+			case BOTH:
+				GLRenderer::renderArmature(arm, false);
+				glDisable(GL_LIGHTING);
+				GLRenderer::renderMesh(mesh,GLRenderer::RENDER_WIRE);
+				glEnable(GL_LIGHTING);
+				break;
+		}
+
 	}
 
 	shared_ptr<Mesh> mesh;
 	Armature arm;
-	//Bone* root;
-	//Bone* joints[NUM_BoneS];
 };
 
 int DEMO = 0;
-const int NUM_DEMOS = 4;
+const int NUM_DEMOS = 1;
 
 /************************************************/
 
 void GLFWCALL keyCallback(int key, int action)
 {
 	if (key==GLFW_KEY_TAB and action==GLFW_PRESS){
-		DEMO = (DEMO+1)%NUM_DEMOS;
+		drawMode = (drawMode+1)%NUM_DRAW_MODES;
 	}
 }
 int main(int argc, char *argv[])
 {
+	std::cout << "Tab cycles draw mode\n";
 	setupWindowAndGL();
 
 	//
@@ -176,7 +264,7 @@ int main(int argc, char *argv[])
 		glLoadIdentity();
 		gluLookAt(2,2,2,   0,0,0,   0,1,0);
 
-		GLfloat lp[] = {.1, 1, .1, 0};
+		GLfloat lp[] = {.5, 1, .5, 0};
 		glLightfv(GL_LIGHT0,GL_POSITION,lp);
 
 		glPushMatrix();

@@ -32,7 +32,7 @@
 #include <vcg/complex/algorithms/update/flag.h>
 
 namespace fg {
-	int VertexImpl::bindBone(BoneRef b, double weight){
+	int VertexImpl::bindBone(BoneWeakRef b, double weight){
 		if (mNumBones >= MAX_BONES_PER_VERTEX) throw("VertexImpl: Attempting to bind too many bones!");
 		// else
 		mBones[mNumBones] = b;
