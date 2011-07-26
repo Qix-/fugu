@@ -38,6 +38,8 @@ namespace fg {
 	public:
 		MeshNode(boost::shared_ptr<Mesh> m):mMesh(m){}
 		boost::shared_ptr<Mesh> mesh(){return mMesh;}
+
+		void setMesh(boost::shared_ptr<Mesh> m){mMesh = m;}
 	protected:
 		boost::shared_ptr<Mesh> mMesh;
 	};

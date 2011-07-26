@@ -144,6 +144,7 @@ namespace fg {
 		module(L, "fg")[
 		   class_<fg::MeshNode, fg::Node, boost::shared_ptr<fg::MeshNode> >("meshnode")
 		   .def(constructor<boost::shared_ptr<fg::Mesh> >())
+		   .def("setMesh", &fg::MeshNode::setMesh)
 		];
 
 		// fg/mesh.h

@@ -70,8 +70,10 @@ namespace fg {
 		 *
 		 * @deprecated Use add(node) instead. (This function now adds a mesh node internally)
 		 */
-
 		void addMesh(boost::shared_ptr<Mesh> m);
+
+		/// @deprecated Don't use this!
+		// void deleteMesh(boost::shared_ptr<Mesh> m);
 
 		/**
 		 * /brief Retrieve all the meshes in this universe
