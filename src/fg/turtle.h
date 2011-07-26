@@ -25,6 +25,7 @@ namespace fg {
 				static const int SCALED_INTERPOLATOR_CROSS_SECTION = 1;
                 Turtle();
                 ~Turtle();
+				void setFrame( Vec3 pos, Vec3 heading, Vec3 up);
                 void move( double distance );
                 void yaw( double theta );
                 void pitch( double theta );
