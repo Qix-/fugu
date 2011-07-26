@@ -1,36 +1,49 @@
 --[[
-	Basic extrusions
+	Mesh changing
 --]]
 
 module(...,package.seeall)
 
 require "table"
 
-local m = {}
+local m1 = nil
+local m2 = nil
+local n = nil
+local m = nil
 local time = 0
+local foo = false
 
 function setup()
-	m = fg.mesh.primitives.sphere()	
-	fgu:addMesh(m)
+	m1 = fg.mesh.primitives.sphere()
+	m2 = fg.mesh.primitives.icosahedron()
+	m = m1
 	
-	math.randomseed(1234)
+	n = fg.meshnode(m)
+	fgu:add(n)	
 end
 
 function update(dt)
 	time = time + dt
-	if (time > .01) then		
-		vs = m:selectAllVertices()
-		-- convert to table (TODO: implement Collections)
-		local vs_t = {}
-		for v in vs.all do table.insert(vs_t,v) end
-		-- table.foreach(vs_t,print)		
-		local numVerts = table.getn(vs_t)
-		--print("numVerts:", numVerts)
-		local index = math.random(numVerts)		
-		--print("Index:", index)
-		local v = vs_t[index]		
-		fg.extrude(m,v,.8)
+	if (time > .5) then
+		if (foo) then
+			n:setMesh(m1)
+		else
+			n:setMesh(m2)
+		end
+		
+		foo = not foo
 		time = 0
+				
+		--[[ Hmmm....? This should work...
+		print("GO")	
+		print(m==m1)
+		print("==")
+		if (m==m1) then m = m2 else m = m1 end
+		print("SMO")
+		n:setMesh(m)		
+		time = 0
+		print("END")
+		--]]
 	end
 end
 
