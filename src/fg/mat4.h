@@ -56,6 +56,7 @@ namespace fg {
 		void setTranslate(Vec3 t);
 		/// \brief Set this matrix to be a rotation matrix (radians, axis)
 		void setRotateRad(double radians, double x, double y, double z);
+		void set(const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis);
 
 	public:
 		static Mat4 Identity();
