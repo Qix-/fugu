@@ -68,6 +68,10 @@ namespace fg {
 		int getNumBones() const {return mNumBones;}
 		int bindBone(BoneRef b, double weight); ///< @return number of bones
 
+		Vec3 getOriginalPosition(){return mOriginalPosition;}
+		BoneWeakRef getBone(int i){return mBones[i];}
+		double getBoneWeight(int i){return mBoneWeights[i];}
+
 	protected:
 
 		int mNumBones;

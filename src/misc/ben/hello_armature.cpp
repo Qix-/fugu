@@ -56,19 +56,32 @@ public:
 		double length = 1;
 
 		arm.root()->setLength(length);
-		arm.root()->setOrientation(Quat(Vec3(0,0,1),0));
+		arm.root()->setInitialOrientation(Quat(Vec3(0,0,1),Vec3(0,1,0)));
 
 		BoneRef parent = arm.root();
 		for(int i=0;i<NUM_BoneS-1;i++){
 			BoneRef child = BoneRef(new Bone(parent));
-			child->setPosition(Vec3(0,0,0));
-			child->setOrientation(Quat(Vec3(0,0,1),0));
+			child->setInitialPosition(Vec3(0,0,0));
+			child->setInitialOrientation(Quat(Vec3(0,0,1),0));
 			child->setLength(length);
 			parent->addChild(child);
 
 			arm.addBone(child);
 			parent = child;
 			length *= 0.8;
+		}
+
+		arm.root()->computeInitialWorldSpaceTransforms();
+
+		// Check that the inverse world transforms are correct
+		foreach(BoneRef pb, arm.bones()){
+		std::cout << "IWS Transform\n"
+				<< pb->getIWSTransform()
+				<< "\n Inv\n"
+				<< pb->getInvIWSTransform()
+				<< "\nMultiplied (should be Identity)\n"
+				<< pb->getIWSTransform()*pb->getInvIWSTransform()
+				<< "\n";
 		}
 	}
 
@@ -79,14 +92,14 @@ public:
 			double da = (PI/4) * (1.4 - di);
 			double ds = sin(time); // (2*(1+di))*time;
 			ds *= fabs(ds);
-			pb->setOrientation(Quat(Vec3(0,0,1), da*ds).normalised());
+			pb->setCurrentOrientation(Quat(Vec3(0,0,1), da*ds).normalised());
 			i++;
 		}
 		arm.update();
 	}
 
 	void draw(){
-		GLRenderer::renderArmature(arm);
+		GLRenderer::renderArmature(arm,true);
 	}
 
 	Armature arm;
@@ -105,8 +118,9 @@ public:
 		for(int i=0;i<NUM_BONES;i++) origAngleF[i] = false;
 
 		// arm.root()->mLength = 0; // NOTE: Length is by default 0 for the root bone
-		arm.root()->setOrientation(Quat(Vec3(1,0,0),Vec3(0,1,0)).normalised()); // Point upwards
+		arm.root()->setInitialOrientation(Quat(Vec3(1,0,0),Vec3(0,1,0)).normalised()); // Point upwards
 		setupChildren(arm.root(), 0, 1);
+		arm.root()->computeInitialWorldSpaceTransforms();
 	}
 
 	void setupChildren(BoneRef parent, int depth, double length){
@@ -121,8 +135,8 @@ public:
 
 			// (1,0,0) is the outward direction
 			Vec3 dir = Vec3(1,cos(D_ANGLE*i),sin(D_ANGLE*i)).normalised();
-			child->setPosition(Vec3(0,0,0));
-			child->setOrientation(Quat(Vec3(1,0,0),dir).normalised()); // rotate to point in dir
+			child->setInitialPosition(Vec3(0,0,0));
+			child->setInitialOrientation(Quat(Vec3(1,0,0),dir).normalised()); // rotate to point in dir
 			child->setLength(length);
 
 			// recurse the downward spiral..
@@ -137,15 +151,15 @@ public:
 
 				if (not origAngleF[i]){
 					origAngleF[i] = true;
-					axes[i] = pb->getOrientation().getAxis();
-					origAngle[i] = pb->getOrientation().getAngle();
+					axes[i] = pb->getInitialOrientation().getAxis();
+					origAngle[i] = pb->getInitialOrientation().getAngle();
 				}
 
 				double di = (double)i/(NUM_BONES-1);
 				double da = (PI/16); // * (1.4 - di);
 				double ds = time; // (2*(1+di))*time;
 
-				pb->setOrientation(Quat(axes[i], origAngle[i] + da*sin(ds)));
+				pb->setCurrentOrientation(Quat(axes[i], origAngle[i] + da*sin(ds)));
 			}
 			i++;
 		}
@@ -153,7 +167,7 @@ public:
 	}
 
 	void draw(){
-		GLRenderer::renderArmature(arm);
+		GLRenderer::renderArmature(arm,true);
 	}
 
 	Armature arm;
@@ -174,13 +188,13 @@ public:
 		double length = 1;
 
 		arm.root()->setLength(length);
-		arm.root()->setOrientation(Quat(Vec3(0,0,1),0));
+		arm.root()->setInitialOrientation(Quat(Vec3(0,0,1),0));
 
 		BoneRef parent = arm.root();
 		for(int i=0;i<NUM_BoneS-1;i++){
 			BoneRef child = BoneRef(new Bone(parent));
-			child->setPosition(Vec3(0,0,0));
-			child->setOrientation(Quat(Vec3(0,0,1),0));
+			child->setInitialPosition(Vec3(0,0,0));
+			child->setInitialOrientation(Quat(Vec3(0,0,1),0));
 			child->setLength(length);
 			parent->addChild(child);
 
@@ -188,6 +202,8 @@ public:
 			parent = child;
 			length *= 0.8;
 		}
+
+		arm.root()->computeInitialWorldSpaceTransforms();
 	}
 
 	void animate(double time, double dt){
@@ -198,19 +214,19 @@ public:
 			std::list<BoneRef>::const_iterator it = arm.bones().begin();
 			for(int i=0;i<randomIndex;i++) it++;
 			mCurrentBone = *it;
-			mInitialRotation = mCurrentBone->getOrientation();
+			mInitialRotation = mCurrentBone->getInitialOrientation();
 			mTargetRotation = Quat(Vec3(0,1,0),Vec3(random(-1,1),random(-1,1),random(-1,1)));
 			mTargetRotation.normalise();
 		}
 		else {
 			mTime+=dt;
-			mCurrentBone->setOrientation(mInitialRotation.slerp(smoothstep<double>(0,1,mTime/TPM),mTargetRotation));
+			mCurrentBone->setCurrentOrientation(mInitialRotation.slerp(smoothstep<double>(0,1,mTime/TPM),mTargetRotation));
 		}
 		arm.update();
 	}
 
 	void draw(){
-		GLRenderer::renderArmature(arm);
+		GLRenderer::renderArmature(arm,true);
 	}
 
 	Armature arm;
@@ -232,8 +248,10 @@ public:
 		for(int i=0;i<NUM_BONES;i++) origAngleF[i] = false;
 
 		// arm.root()->mLength = 0; // NOTE: Length is by default 0 for the root bone
-		arm.root()->setOrientation(Quat(Vec3(1,0,0),Vec3(0,1,0)).normalised()); // Point upwards
+		arm.root()->setInitialOrientation(Quat(Vec3(1,0,0),Vec3(0,1,0)).normalised()); // Point upwards
 		setupChildren(arm.root(), 0, 1.5);
+
+		arm.root()->computeInitialWorldSpaceTransforms();
 	}
 
 	void setupChildren(BoneRef parent, int depth, double length){
@@ -268,8 +286,8 @@ public:
 
 			// (1,0,0) is the outward direction
 			// Vec3 dir = Vec3(1,cos(D_ANGLE*i),sin(D_ANGLE*i)).normalised();
-			child->setPosition(Vec3(0,0,0));
-			child->setOrientation(Quat(Vec3(1,0,0),dir).normalised()); // rotate to point in dir
+			child->setInitialPosition(Vec3(0,0,0));
+			child->setInitialOrientation(Quat(Vec3(1,0,0),dir).normalised()); // rotate to point in dir
 			child->setLength(length);
 
 			// recurse the downward spiral..
@@ -285,8 +303,8 @@ public:
 
 				if (not origAngleF[i]){
 					origAngleF[i] = true;
-					axes[i] = pb->getOrientation().getAxis();
-					origAngle[i] = pb->getOrientation().getAngle();
+					axes[i] = pb->getInitialOrientation().getAxis();
+					origAngle[i] = pb->getInitialOrientation().getAngle();
 					origLength[i] = pb->getLength();
 				}
 
@@ -294,9 +312,8 @@ public:
 				double da = (PI/16); // * (1.4 - di);
 				double ds = time; // (2*(1+di))*time;
 
-				// pb->getOrientation()*Quat(Vec3(0,1,0),Vec3(random(0,.1),1,random(0,.1)))
 				double craziness = 0.01;
-				pb->setOrientation(pb->getOrientation()*Quat(Vec3(0,1,0),(Vec3(random(-1,1),1/craziness,random(-1,1))*craziness).normalized()));
+				pb->setCurrentOrientation(pb->getCurrentOrientation()*Quat(Vec3(0,1,0),(Vec3(random(-1,1),1/craziness,random(-1,1))*craziness).normalized()));
 				pb->setLength(origLength[i] + .1*sin(3*ds));
 			}
 			i++;
@@ -306,7 +323,7 @@ public:
 	}
 
 	void draw(){
-		GLRenderer::renderArmature(arm);
+		GLRenderer::renderArmature(arm,true);
 	}
 
 	Armature arm;

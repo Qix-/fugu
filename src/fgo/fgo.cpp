@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
 	double time = 0;
 	for(int i=0;i<numFrames;i++){
-		std::cout << ".";
+		std::cout << "frame " << i << std::endl;
 
 		// Update the universe
 		u.update(dt);
