@@ -32,6 +32,16 @@
 #include <vcg/complex/algorithms/update/flag.h>
 
 namespace fg {
+	int VertexImpl::bindBone(BoneRef b, double weight){
+		if (mNumBones >= MAX_BONES_PER_VERTEX) throw("VertexImpl: Attempting to bind too many bones!");
+		// else
+		mBones[mNumBones] = b;
+		mBoneWeights[mNumBones] = weight;
+		mNumBones++;
+		mOriginalPosition = Vec3(P());
+		return mNumBones;
+	}
+
 	void _copyFloatMeshIntoMesh(_FloatMeshImpl& fm, MeshImpl& m){
 		vcg::tri::Allocator<MeshImpl>::AddVertices(m,fm.vert.size());
 		std::map<_FloatVertexImpl*,int> ptrMap;

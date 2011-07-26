@@ -1,49 +1,43 @@
 --[[
-	Mesh changing
+	Mesh primitives, and changing mesh of a node
 --]]
 
 module(...,package.seeall)
 
 require "table"
 
-local m1 = nil
-local m2 = nil
+local meshes = {}
 local n = nil
-local m = nil
 local time = 0
-local foo = false
+
+local index = 1
 
 function setup()
-	m1 = fg.mesh.primitives.sphere()
-	m2 = fg.mesh.primitives.icosahedron()
-	m = m1
+	local p = fg.mesh.primitives
 	
-	n = fg.meshnode(m)
+	meshes = {
+		p.sphere(),
+		p.icosahedron(),
+		p.tetrahedron(),
+		p.dodecahedron(),
+		p.octahedron(), 
+		p.hexahedron(), 
+		p.cone(1,0.1,3,32),
+		p.cylinder(32,32)
+	}
+		
+	n = fg.meshnode(meshes[1])
 	fgu:add(n)	
 end
 
 function update(dt)
 	time = time + dt
-	if (time > .5) then
-		if (foo) then
-			n:setMesh(m1)
-		else
-			n:setMesh(m2)
-		end
-		
-		foo = not foo
-		time = 0
-				
-		--[[ Hmmm....? This should work...
-		print("GO")	
-		print(m==m1)
-		print("==")
-		if (m==m1) then m = m2 else m = m1 end
-		print("SMO")
-		n:setMesh(m)		
-		time = 0
-		print("END")
-		--]]
+	if (time > .5) then		
+		-- cycle through the meshes
+		index = index + 1
+		if (index > #meshes) then index = 1 end		
+		n:setMesh(meshes[index])		
+		time = 0		
 	end
 end
 
