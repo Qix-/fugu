@@ -67,6 +67,7 @@ namespace fg {
 		// Special functions
 		int getNumBones() const;
 
+
 	};
 
 	/**

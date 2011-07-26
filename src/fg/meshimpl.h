@@ -31,6 +31,8 @@
 #include <vector>
 #include "fg/vec3.h"
 #include "fg/mesh.h"
+#include "fg/fg.h"
+#include "fg/armature.h"
 
 #include <vcg/simplex/vertex/base.h>
 #include <vcg/simplex/vertex/component.h>
@@ -64,11 +66,12 @@ namespace fg {
 
 		// BONES!
 		int getNumBones() const {return mNumBones;}
-		// int addBones() const {return mNumBones;}
-
+		int bindBone(BoneRef b, double weight){} ///< @return number of bones
 
 	protected:
 		int mNumBones;
+		BoneWeakRef mBones[MAX_BONES_PER_VERTEX];
+		double mBoneWeights[MAX_BONES_PER_VERTEX];
 	};
 
 	class FaceImpl: public vcg::Face<
