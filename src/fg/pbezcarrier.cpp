@@ -229,6 +229,7 @@ namespace fg {
 			grad.clear();
 			grad.resize( refFrames.size() );
 
+			Mat4 tmp;
 			// first and last gradient for closed curves
 			if( refFrames.size() > 1) {
                 // Get the control points and headings 
@@ -251,6 +252,7 @@ namespace fg {
                 Vec3 p2 = refFrames[i]   * Vec3( 0., 0., 1. ) - p1; // The head
                 Vec3 p4 = refFrames[i + 1] * Vec3( 0., 0., 0. );
                 Vec3 p3 = refFrames[i + 1] * Vec3( 0., 0., 1. ) - p4;
+
                 // Calculate the tangents using coefficients
                 float mag = ( p1 - p4 ).Norm();
                 p2 = p2 * mag * ( stiffness[i].second );
