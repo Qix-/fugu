@@ -62,7 +62,7 @@ namespace fg {
         // Helpful primitives
         static void renderAxes(double lengthOfAxes = 1);
         static void renderBone(Vec3 from, Vec3 to, double r = 0);
-        static void renderArmature(const Armature& arm);
+        static void renderArmature(const Armature& arm, bool alsoRenderInitialPose = false);
 
         // GLUT primitives (implementation in glut_primitives.cpp)
         static void glutWireCube( GLdouble dSize );

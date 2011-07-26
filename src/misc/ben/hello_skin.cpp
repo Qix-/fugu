@@ -53,23 +53,27 @@ public:
 class Demo1:public Demo {
 public:
 	void setup(){
-		mesh = Mesh::Primitives::Sphere();
+		mesh = Mesh::Primitives::Cylinder(32,16);
 
 		double length = 1;
 		arm.root()->setLength(length);
-		arm.root()->setOrientation(Quat(Vec3(0,0,1),0));
-		/*
+		arm.root()->setInitialPosition(Vec3(0,-1,0));
+		arm.root()->setInitialOrientation(Quat(Vec3(1,0,0),Vec3(0,1,0)));
+
 		BoneRef child = BoneRef(new Bone(arm.root()));
-		child->setPosition(Vec3(0,0,0));
-		child->setOrientation(Quat(Vec3(0,0,1),0));
+		child->setInitialPosition(Vec3(0,0,0));
+		child->setInitialOrientation(Quat(Vec3(1,0,0),0));
 		child->setLength(length);
 		arm.root()->addChild(child);
 		arm.addBone(child);
-		*/
 
 		// bind vertices to this bone
+		arm.root()->computeInitialWorldSpaceTransforms();
 		foreach(VertexImpl& vi, mesh->_impl()->vert){
-			vi.bindBone(arm.root(),1);
+			if (vi.P().Y()<=0)
+				vi.bindBone(arm.root(),1);
+			else
+				vi.bindBone(child,1);
 		}
 	}
 
@@ -77,10 +81,10 @@ public:
 		int i = 0;
 		foreach(BoneRef pb, arm.bones()){
 			double di = (double)i/(arm.bones().size());
-			double da = (PI/4) * (1.4 - di);
+			double da = (PI/8) * (1.4 - di);
 			double ds = sin(time); // (2*(1+di))*time;
 			ds *= fabs(ds);
-			pb->setOrientation(Quat(Vec3(0,0,1), da*ds).normalised());
+			pb->setCurrentOrientation(pb->getInitialOrientation()*Quat(Vec3(0,0,1), da*ds).normalised());
 			i++;
 		}
 		arm.update();
@@ -89,12 +93,15 @@ public:
 		// using basic vertex blending
 		foreach(VertexImpl& vi, mesh->_impl()->vert){
 			// vi.P()bindBone(arm.root(),1);
+			BoneWeakRef bwr = vi.getBone(0);
+			BoneRef br = bwr.lock();
+			vi.P() = br->getCWSTransform() * br->getInvIWSTransform() * vi.getOriginalPosition() * vi.getBoneWeight(0);
 		}
 	}
 
 	void draw(){
 		GLRenderer::renderMesh(mesh,GLRenderer::RENDER_WIRE);
-		GLRenderer::renderArmature(arm);
+		GLRenderer::renderArmature(arm, true);
 	}
 
 	shared_ptr<Mesh> mesh;
