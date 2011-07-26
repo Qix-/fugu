@@ -195,24 +195,52 @@ namespace fg {
 	boost::shared_ptr<Mesh> Mesh::Primitives::Icosahedron(){
 		Mesh* m = new Mesh();
 		vcg::tri::Icosahedron<MeshImpl>(*(m->mpMesh));
-
-		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*(m->mpMesh));
-		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*(m->mpMesh));
-
-		m->sync();
-
-		return boost::shared_ptr<Mesh>(m);
+		return sync(m);
 	}
 
 	boost::shared_ptr<Mesh> Mesh::Primitives::Sphere(){
 		Mesh* m = new Mesh();
 		vcg::tri::Sphere<MeshImpl>(*(m->mpMesh));
+		return sync(m);
+	}
 
+	boost::shared_ptr<Mesh> Mesh::Primitives::Tetrahedron(){
+		Mesh* m = new Mesh();
+		vcg::tri::Tetrahedron<MeshImpl>(*(m->mpMesh));
+		return sync(m);
+	}
+
+	boost::shared_ptr<Mesh> Mesh::Primitives::Dodecahedron(){
+		Mesh* m = new Mesh();
+		vcg::tri::Dodecahedron<MeshImpl>(*(m->mpMesh));
+		return sync(m);
+	}
+	boost::shared_ptr<Mesh> Mesh::Primitives::Octahedron(){
+		Mesh* m = new Mesh();
+		vcg::tri::Octahedron<MeshImpl>(*(m->mpMesh));
+		return sync(m);
+	}
+	boost::shared_ptr<Mesh> Mesh::Primitives::Hexahedron(){
+		Mesh* m = new Mesh();
+		vcg::tri::Hexahedron<MeshImpl>(*(m->mpMesh));
+		return sync(m);
+	}
+	boost::shared_ptr<Mesh> Mesh::Primitives::Cone(double r1, double r2, double h, const int SubDiv){
+		Mesh* m = new Mesh();
+		vcg::tri::Cone<MeshImpl>(*(m->mpMesh), r1, r2, h, SubDiv);
+		return sync(m);
+	}
+
+	boost::shared_ptr<Mesh> Mesh::Primitives::Cylinder(int slices, int stacks){
+		Mesh* m = new Mesh();
+		vcg::tri::Cylinder<MeshImpl>(slices,stacks,*(m->mpMesh));
+		return sync(m);
+	}
+
+	boost::shared_ptr<Mesh> Mesh::Primitives::sync(Mesh* m){
 		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(*(m->mpMesh));
 		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(*(m->mpMesh));
-
 		m->sync();
-
 		return boost::shared_ptr<Mesh>(m);
 	}
 

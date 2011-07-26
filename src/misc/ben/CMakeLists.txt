@@ -3,6 +3,9 @@ set(ALL_LIBS fg
 	${GL_LIBS}
 	${BOOST_LIBS})
 
+add_executable(hello_skin hello_skin.cpp trackball.cpp)
+target_link_libraries(hello_skin ${ALL_LIBS})
+
 add_executable(hello_armature hello_armature.cpp trackball.cpp)
 target_link_libraries(hello_armature ${ALL_LIBS})
 
