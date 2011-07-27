@@ -70,6 +70,10 @@ namespace fg{
 		return *this;
 	}
 
+	Vec3  Vec3::operator- () const {
+		return vcg::Point3d::operator-();
+	}
+
 }
 
 std::ostream& operator<<(std::ostream& o, const fg::Vec3& v){
