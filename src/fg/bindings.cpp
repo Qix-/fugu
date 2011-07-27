@@ -224,6 +224,7 @@ namespace fg {
 		   .def("setCrossSection",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCrossSection)
 		   .def("pushState",&fg::gc::Turtle::pushState)
 		   .def("popState",&fg::gc::Turtle::popState)
+		   .def("setCarrierMode",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCarrierMode)
 
 		   .def("beginCrossSection",&fg::gc::Turtle::beginCrossSection)
 		   .def("endCrossSection",(int(fg::gc::Turtle::*)(void))&fg::gc::Turtle::endCrossSection)
