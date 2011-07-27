@@ -70,7 +70,7 @@ function update(dt)
 	-- create a cylinder
 	bert:setFrame(fg.vec3(0.,0.,0.),fg.vec3(0.,0.,1.),fg.vec3(0.,1.,0.))
 
-    bert:setCrossSection(1)
+    bert:setCrossSection(cs)
 
 	bert:setScale(0.1)
 	bert:beginCylinder()

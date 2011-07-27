@@ -48,12 +48,14 @@ namespace fg {
 			return mInterpolator.getPosition(u) * mScale.getDerivative( v );
         }
 
-        vector<Vec3> ScaleInterpCrossSec::getCrossSection( double v ) const
+        vector<Vec3> ScaleInterpCrossSec::getCrossSection( double v, double scale ) const
         {
 			int n = -1;
 			spline::Interpolator<Vec3> * it = mInterpolator.scale( mScale.getPosition( v ) );
-			vector<Vec3> data = it->getApproxVector( n );
+			spline::Interpolator<Vec3> * it2 = it->scale( scale );
+			vector<Vec3> data = it2->getApproxVector( n );
 			delete it;
+			delete it2;
 			return data;
         }
 

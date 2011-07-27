@@ -18,20 +18,24 @@ namespace fg {
          */
         class GeneralisedCylinder {
             public:
-                GeneralisedCylinder( const CarrierCurve &carrier, const CrossSection &crossSection, const std::vector<Mat4> &orients,
-									 const std::vector< std::pair<double,double> > &domains);
-                GeneralisedCylinder( const CarrierCurve &carrier, const CrossSection &crossSection, const std::vector<Mat4> &orients );
+        		GeneralisedCylinder( const CarrierCurve &carrier, const std::vector<Mat4> &orients, const CrossSection &crossSection,
+								     const std::vector< std::pair<double,double> > &csDomains,
+									 const spline::Interpolator<double> &scale,
+									 const std::vector< std::pair<double,double> > &scaleDomains );
                 Vec3 getPosition( double u, double v ) const;
                 void createMesh( Mesh::MeshBuilder &mb, int n = 10, int m = 10 ) const;
 
             protected:
                 const CarrierCurve &mCarrier;
                 const CrossSection &mCrossSection;
+				const spline::Interpolator<double> &mScale;
                 std::vector< std::pair<Quat, Quat> > mOrients;
-				std::vector< std::pair<double, double> > mDomain;
+				std::vector< std::pair<double, double> > mCSDomain;
+				std::vector< std::pair<double, double> > mScaleDomain;
 
                 void updateOrients( const std::vector<Quat> &orients );
 				double getCrossSectionV( double v ) const;
+				double getScaleV( double v ) const;
                 Quat orient( double v ) const;
         };
 

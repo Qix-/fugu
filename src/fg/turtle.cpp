@@ -8,7 +8,7 @@ namespace fg {
         {
             mState.frame.SetIdentity();
 			mState.carrierMode = BEZIER_CARRIER;
-			mState.crossSectionMode = SCALED_INTERPOLATOR_CROSS_SECTION;
+			mState.crossSectionMode = MORPH_CROSS_SECTION;
 			mState.currentCS = 0;
 			mState.scale = 1.;
 			mState.stiffness = std::pair< double, double >(0.6, 0.6);
@@ -97,16 +97,22 @@ namespace fg {
         {
 			mScaleArr.clear();
             mPrevFrames.clear();
-			mDomains.clear();
+			mScaleDomains.clear();
 			mStiffnessArr.clear();
+			mCrossSecDomains.clear();
+			mCrossSecArr.clear();
+
+			mScaleDomains.push_back( std::pair<double, double>( 0., 0. ) );
+			mScaleArr.push_back( mState.scale > 0. ? mState.scale : 1. );
+			mState.scale = -1.;
 
 			switch(mState.crossSectionMode)
 			{
-				case SCALED_INTERPOLATOR_CROSS_SECTION:
+				case MORPH_CROSS_SECTION:
 				{
-					mDomains.push_back( std::pair<double, double>( 0., 0. ) );
-					mScaleArr.push_back( mState.scale > 0. ? mState.scale : 1. );
-					mState.scale = -1.;
+					mCrossSecDomains.push_back( std::pair<double, double>( 0., 0. ) );
+					mCrossSecArr.push_back( mState.currentCS );
+					mState.currentCS = -1;
 					break;
 				}
 				default:
@@ -121,15 +127,22 @@ namespace fg {
 
         void Turtle::addPoint( )
         {
+			if (mState.scale > 0.)
+			{
+				mScaleDomains.push_back( std::pair<double,double>( mPrevFrames.size(), mScaleArr.size() ) );
+				mScaleArr.push_back( mState.scale );
+				mState.scale = -1.;
+			}
+
 			switch(mState.crossSectionMode)
 			{
-				case SCALED_INTERPOLATOR_CROSS_SECTION:
+				case MORPH_CROSS_SECTION:
 				{
-					if (mState.scale > 0.)
+					if (mState.currentCS > -1 )
 					{
-						mDomains.push_back( std::pair<double,double>( mPrevFrames.size(), mScaleArr.size() ) );
-						mScaleArr.push_back( mState.scale );
-						mState.scale = -1.;
+						mCrossSecDomains.push_back( std::pair<double, double>( mPrevFrames.size(), mCrossSecArr.size() ) );
+						mCrossSecArr.push_back( mState.currentCS );
+						mState.currentCS = -1;
 					}
 					break;
 				}
@@ -144,24 +157,42 @@ namespace fg {
 
         void Turtle::endCylinder()
         {
+			if (mState.scale > 0.)
+			{
+				mScaleDomains.push_back( std::pair<double,double>( mPrevFrames.size(), mScaleArr.size() ) );
+				mScaleArr.push_back( mState.scale );
+				mState.scale = 1.;
+			}
+			if (mScaleArr.size() == 1)
+			{
+				mScaleDomains.push_back( std::pair<double, double>( (double) mPrevFrames.size(), (double) mScaleArr.size() ) );
+				mScaleArr.push_back( mScaleArr.back() );
+			}
+
+			mScalers.push_back( new spline::PBezInterp<double>( mScaleArr ) );
+
 			switch(mState.crossSectionMode)
 			{
-				case SCALED_INTERPOLATOR_CROSS_SECTION:
+				case MORPH_CROSS_SECTION:
 				{
-					if (mState.scale > 0.)
+					if (mState.currentCS > -1 )
 					{
-						mDomains.push_back( std::pair<double,double>( mPrevFrames.size(), mScaleArr.size() ) );
-						mScaleArr.push_back( mState.scale );
-						mState.scale = -1.;
+						mCrossSecDomains.push_back( std::pair<double, double>( mPrevFrames.size(), mCrossSecArr.size() ) );
+						mCrossSecArr.push_back( mState.currentCS );
+						mState.currentCS = 1;
 					}
-					if (mScaleArr.size() == 1)
+					else
 					{
-						mDomains.push_back( std::pair<double, double>( (double) mPrevFrames.size(), (double) mScaleArr.size() ) );
-						mScaleArr.push_back( mScaleArr.back() );
+						mCrossSecDomains.push_back( std::pair<double, double>( (double) mPrevFrames.size(), (double) mCrossSecArr.size() ) );
+						mCrossSecArr.push_back( mCrossSecArr.back() );
 					}
 
-					mScalers.push_back( new spline::PBezInterp<double>( mScaleArr ) );
-					mCrossSections.push_back( new ScaleInterpCrossSec( *( mCrossSecLibrary[mState.currentCS] ), *( mScalers.back() ) ) );
+					std::vector< spline::PBezInterpDiv > tmp;
+					for( int i = 0; i < mCrossSecArr.size(); ++i )
+					{
+						tmp.push_back( *mCrossSecLibrary[mCrossSecArr[i]] );
+					}
+					mCrossSections.push_back( new MorphCrossSec( tmp ) );
 					break;
 				}
 				case INTERPOLATOR_CROSS_SECTION:
@@ -174,6 +205,17 @@ namespace fg {
 					break;
 				}
 			}
+
+//			std::cout << "\n\nCS Domain\n";
+//			for( int i = 0; i < mCrossSecDomains.size(); ++i )
+//			{
+//				std::cout << mCrossSecDomains[i].first << ", " << mCrossSecDomains[i].second << std::endl;
+//			}
+//			std::cout << "Scale Domain\n";
+//			for( int i = 0; i < mScaleDomains.size(); ++i )
+//			{
+//				std::cout << mScaleDomains[i].first << ", " << mScaleDomains[i].second << std::endl;
+//			}
 
             mPrevFrames.push_back( mState.frame );
 			mStiffnessArr.push_back( mState.stiffness );
@@ -188,7 +230,8 @@ namespace fg {
 					break;
 			}
 
-            mCylinders.push_back( new GeneralisedCylinder( *( mCarriers.back() ), *( mCrossSections.back() ), mPrevFrames, mDomains ) );
+            mCylinders.push_back( new GeneralisedCylinder( *( mCarriers.back() ), mPrevFrames, *( mCrossSections.back() ), mCrossSecDomains, 
+			                      *( mScalers.back() ), mScaleDomains ) );
         }
 
 		void Turtle::setStiffness(double s1, double s2)
@@ -248,8 +291,6 @@ namespace fg {
 
 			mCrossSecLibrary.push_back( new spline::PBezInterpDiv(pos, grad) );
 			mCrossSecLibrary.back()->setOpen( false );
-
-			//std::cout << mCrossSecLibrary.back()->isOpen( ) << std::endl;
 
 			return mCrossSecLibrary.size() - 1;
 		}

@@ -44,7 +44,7 @@ namespace fg {
                 virtual Vec3 getDerivativeU( double u, double v ) const;
                 virtual Vec3 getDerivativeV( double u, double v ) const;
 
-                virtual std::vector<Vec3> getCrossSection( double v ) const;
+                virtual std::vector<Vec3> getCrossSection( double v, double scale = 1. ) const;
                 virtual spline::PBezInterpDiv getCrossSectionInterp( double v ) const;
             protected:
 				virtual void addSegment( const spline::PBezInterpDiv &first, const spline::PBezInterpDiv &second );

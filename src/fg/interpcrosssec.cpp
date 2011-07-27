@@ -47,10 +47,13 @@ namespace fg {
             return Vec3( 0., 0., 0. );
         }
 
-        vector<Vec3> InterpCrossSec::getCrossSection( double v ) const
+        vector<Vec3> InterpCrossSec::getCrossSection( double v, double scale ) const
         {
 			int n = -1;
-			return mInterpolator.getApproxVector(n);
+			spline::Interpolator<Vec3> * it = mInterpolator.scale( scale );
+			vector<Vec3> data = it->getApproxVector( n );
+			delete it;
+			return data;
         }
 
     }

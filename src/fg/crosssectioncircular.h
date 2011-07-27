@@ -17,7 +17,7 @@ namespace fg {
                 virtual Vec3 getDerivativeU( double u, double v ) const;
                 virtual Vec3 getDerivativeV( double u, double v ) const;
 
-                virtual std::vector<Vec3> getCrossSection( double v ) const;
+                virtual std::vector<Vec3> getCrossSection( double v, double scale = 1. ) const;
             protected:
                 double mRadius;
                 static const int SEGS = 8;

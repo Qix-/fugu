@@ -22,7 +22,7 @@ namespace fg {
             return Vec3( 0., 0., 0. );
         }
 
-        vector<Vec3> CrossSectionCircular::getCrossSection( double v ) const
+        vector<Vec3> CrossSectionCircular::getCrossSection( double v, double scale ) const
         {
             vector<Vec3> ret;
             double u = 0.;
@@ -30,7 +30,7 @@ namespace fg {
 
             for( int i = 0; i < SEGS; ++i )
             {
-                ret.push_back( getPosition( u, v ) );
+                ret.push_back( getPosition( u, v )*scale );
                 u += inc;
             }
 

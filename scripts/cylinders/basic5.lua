@@ -29,16 +29,16 @@ function setup()
 	bert:popState()
 
     -- Create the cylinder
-	bert:setCrossSection(1)
+	bert:setCrossSection(0)
 	bert:beginCylinder()
 	bert:move(1.)
 	bert:addPoint()
 	bert:pitch(0.3)
 	bert:move(1.)
-	bert:setScale(0.4)
+	bert:setCrossSection(1)
     bert:endCylinder()
 
-	m = bert:getMesh(10,10)
+	m = bert:getMesh(10,100)
 	fgu:addMesh(m)
 end
 

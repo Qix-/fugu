@@ -95,18 +95,22 @@ int main(int argc, char *argv[])
 //	tmp.SetRotateDeg(-45, Vec3( 1., 0., 0.));
 //	arr[2] = arr[2] * tmp;
 
-	std::vector< std::pair<double,double> > domains;
-	domains.push_back( std::pair<double,double>( 0., 0. ) );
-	domains.push_back( std::pair<double,double>( 1., 1. ) );
-	domains.push_back( std::pair<double,double>( 3., 2. ) );
+    std::vector< std::pair<double,double> > csDomains;
+	csDomains.push_back( std::pair<double,double>( 0., 0. ) );
+	csDomains.push_back( std::pair<double,double>( 3., 1. ) );
+
+	std::vector< std::pair<double,double> > scaleDomains;
+	scaleDomains.push_back( std::pair<double,double>( 0., 0. ) );
+	scaleDomains.push_back( std::pair<double,double>( 1., 1. ) );
+	scaleDomains.push_back( std::pair<double,double>( 3., 2. ) );
 
 	const fg::gc::CarrierCurve& carrier = gc::PBezCarrier(arr);
 
     fg::spline::PBezInterpDiv interp (arr2, grad);
 	fg::spline::LinInterp<double> scale ( s );
 	interp.setOpen(false);
-	const fg::gc::ScaleInterpCrossSec cs( interp, scale );
-	const fg::gc::GeneralisedCylinder& gc = gc::GeneralisedCylinder(carrier, cs, arr, domains);
+	const fg::gc::InterpCrossSec cs( interp );
+	const fg::gc::GeneralisedCylinder& gc = gc::GeneralisedCylinder(carrier, arr, cs, csDomains, scale, scaleDomains);
 	Mesh::MeshBuilder mb;
 	gc.createMesh(mb, 10, 60);
 	boost::shared_ptr<Mesh> mMesh = mb.createMesh();

@@ -14,6 +14,7 @@
 #include "fg/scaleinterpcrosssec.h"
 #include "fg/interpcrosssec.h"
 #include "fg/generalisedcylinder.h"
+#include "fg/morphcrosssec.h"
 
 namespace fg {
     namespace gc {
@@ -22,7 +23,7 @@ namespace fg {
 				static const int LINEAR_CARRIER = 0;
 				static const int BEZIER_CARRIER = 1;
 				static const int INTERPOLATOR_CROSS_SECTION = 0;
-				static const int SCALED_INTERPOLATOR_CROSS_SECTION = 1;
+				static const int MORPH_CROSS_SECTION = 1;
                 Turtle();
                 ~Turtle();
 				void setFrame( Vec3 pos, Vec3 heading, Vec3 up);
@@ -62,12 +63,14 @@ namespace fg {
 
                 // Data to be used for the next cylinder/cross section
 				std::vector<double> mScaleArr;
-				std::vector< std::pair<double, double> > mDomains;
+				std::vector< std::pair<double, double> > mScaleDomains;
+				std::vector<int> mCrossSecArr;
+				std::vector< std::pair<double, double> > mCrossSecDomains;
                 std::vector<Mat4> mPrevFrames;
 				std::vector< std::pair<double, double> > mStiffnessArr;
 
 				// Storage of previous cylinders
-				std::vector<spline::Interpolator<Vec3> *> mCrossSecLibrary;
+				std::vector<spline::PBezInterpDiv *> mCrossSecLibrary;
                 std::vector<const CarrierCurve *> mCarriers;
                 std::vector<const CrossSection *> mCrossSections;
                 std::vector<const GeneralisedCylinder *> mCylinders;

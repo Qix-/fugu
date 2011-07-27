@@ -54,11 +54,13 @@ Vec3 MorphCrossSec::getDerivativeV( double u, double v ) const
     return Vec3(0.,0.,0.);
 }
 
-vector<Vec3> MorphCrossSec::getCrossSection( double v ) const
+vector<Vec3> MorphCrossSec::getCrossSection( double v, double scale ) const
 {
 	int n = -1;
-
-    return getCrossSectionInterp( v ).getApproxVector( n );
+	spline::Interpolator<Vec3> * it = getCrossSectionInterp(v).scale( scale );
+	vector<Vec3> data = it->getApproxVector( n );
+	delete it;
+	return data;
 }
 
 spline::PBezInterpDiv MorphCrossSec::getCrossSectionInterp( double v ) const
@@ -71,10 +73,20 @@ spline::PBezInterpDiv MorphCrossSec::getCrossSectionInterp( double v ) const
 	vector<Vec3> cp( mSourceCP[seg].size() );
 	vector< pair<Vec3,Vec3> > grad( mSourceCP[seg].size() );
 
-	for( int i = 0; i < mSourceCP[seg].size(); ++i ) {
-		cp[i] = (mSourceCP[seg])[i] * (1. - t) + (mAttractorCP[seg])[i] * t;
-		grad[i].first = (mSourceGrad1[seg])[i].first * (1. - t) + (mAttractorGrad1[seg])[i].first * t;
-		grad[i].second = (mSourceGrad1[seg])[i].second * (1. - t) + (mAttractorGrad1[seg])[i].second * t;
+	if( fabs( t ) < 1E-03 ) {
+		cp = mSourceCP[seg];
+		grad = mSourceGrad1[seg];
+	}
+	else if( fabs( t - 1. ) < 1E-03 ) {
+		cp = mAttractorCP[seg];
+		grad = mAttractorGrad1[seg];
+	}
+	else {
+		for( int i = 0; i < mSourceCP[seg].size(); ++i ) {
+			cp[i] = (mSourceCP[seg])[i] * (1. - t) + (mAttractorCP[seg])[i] * t;
+			grad[i].first = (mSourceGrad1[seg])[i].first * (1. - t) + (mAttractorGrad1[seg])[i].first * t;
+			grad[i].second = (mSourceGrad1[seg])[i].second * (1. - t) + (mAttractorGrad1[seg])[i].second * t;
+		}
 	}
 
 	spline::PBezInterpDiv cs( cp, grad );
