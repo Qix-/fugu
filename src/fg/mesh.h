@@ -70,12 +70,22 @@ namespace fg {
 		typedef std::list<boost::shared_ptr<VertexProxy> > VertexSet;
 
 		/**
-		 * Pre-defined mesh primitives
+		 * \brief Common mesh primitives. (Adapters to vcg primitives)
 		 */
 		class Primitives {
 			public:
 			static boost::shared_ptr<Mesh> Icosahedron();
 			static boost::shared_ptr<Mesh> Sphere();
+			static boost::shared_ptr<Mesh> Tetrahedron();
+			static boost::shared_ptr<Mesh> Dodecahedron();
+			static boost::shared_ptr<Mesh> Octahedron();
+			static boost::shared_ptr<Mesh> Hexahedron();
+			static boost::shared_ptr<Mesh> Cone(double r1, double r2, double h, const int SubDiv = 36);
+			static boost::shared_ptr<Mesh> Cylinder(int slices, int stacks);
+
+			private:
+			static boost::shared_ptr<Mesh> sync(Mesh* m);
+
 		};
 
 		/**

@@ -17,10 +17,14 @@ namespace fg {
 	/**
 	 * \brief A Bone is a primitive of an armature
 	 *
+	 * A bone has an initial pose, and a current pose. The initial pose
+	 * is typically set once and is used to calculate the rest state of
+	 * bound vertices. The current pose represents the current state of
+	 * the bone.
+	 *
 	 * By default a bone points in the (1,0,0) direction
 	 *
 	 * TODO: Add user-specified data
-	 *
 	 */
 	class Bone {
 		public:
@@ -28,37 +32,62 @@ namespace fg {
 		Bone();
 		Bone(BoneWeakRef parent);
 
-		/** \brief recursively calculate world-space transform for self and descendants
-		 */
-		void update(Mat4 parentSpace = Mat4::Identity());
+		/// \brief recursively calculate the current world-space transform for self and descendants
+		void computeCurrentWorldSpaceTransforms(Mat4 parentSpace = Mat4::Identity());
+		Mat4 getCWSTransform() const {return mCWSTransform;}
+
+		/// \brief recursively calculate the initial world-space transform for self and descendants
+		void computeInitialWorldSpaceTransforms(Mat4 parentIWS = Mat4::Identity(), Mat4 invParentIWS = Mat4::Identity());
+		Mat4 getIWSTransform() const {return mIWSTransform;}
+		Mat4 getInvIWSTransform() const {return mInverseIWS;}
 
 		void addChild(BoneWeakRef child){mChildren.push_back(child);}
 
+		// These functions affect the base transform of the bone
+		// which is used to compute the rest positions of the bound verts
 		double getLength(){return mLength;}
 		void setLength(double l){mLength = l;}
 
-		Vec3 getPosition(){return mRelPosition;}
-		void setPosition(Vec3 v){mRelPosition = v;}
+		Vec3 getInitialPosition(){return mInitialPosition;}
+		void setInitialPosition(Vec3 v){mInitialPosition = v;}
 
-		Quat getOrientation(){return mRelOrientation;}
-		void setOrientation(Quat q){mRelOrientation = q;}
+		Quat getInitialOrientation(){return mInitialOrientation;}
 
-		Mat4 getPoseSpaceTransform(){return mRelTransform;}
-		Mat4 getWorldSpaceTransform(){return mWorldSpaceTransform;}
+		/// \brief set the starting orientation for this bone (also sets the current orientation to be the same)
+		void setInitialOrientation(Quat q){mInitialOrientation = q; mCurrentOrientation = q;}
+
+		Quat getCurrentOrientation(){return mCurrentOrientation;}
+		void setCurrentOrientation(Quat q){mCurrentOrientation = q;}
+
+		// Mat4 getPoseSpaceTransform(){return mRelTransform;}
+		// Mat4 getWorldSpaceTransform(){return mWorldSpaceTransform;}
 
 		// protected:
 		BoneWeakRef mParent;
 		std::list<BoneWeakRef> mChildren;
 
 		// relative to parent
-		Vec3 mRelPosition;
-		Quat mRelOrientation;
+		Vec3 mInitialPosition;
+		Quat mInitialOrientation;
 		double mLength; // Length of this bone
 
+		// pose transforms, applied to the initial coordinate system
+		Quat mCurrentOrientation;
+
 		// derived
-		Mat4 mRelTransform;
+		// Mat4 mRelTransform;
+
+		Mat4 mIOTransform; // initial object transform
+		Mat4 mIWSTransform; // object->world space transform for initial pose
+
+		Mat4 mInverseIO; // inverse
+		Mat4 mInverseIWS; // inverse
+
+		Mat4 mCOTransform; // current object transform
+		Mat4 mCWSTransform; // current world-space transform
+
 		// computed worldspace transform
-		Mat4 mWorldSpaceTransform;
+		// Mat4 mWorldSpaceTransform;
 	};
 
 	/**

@@ -217,13 +217,13 @@ namespace fg {
 		glPopAttrib();
 	}
 
-	void GLRenderer::renderArmature(const Armature& arm){
+	void GLRenderer::renderArmature(const Armature& arm, bool alsoRenderInitialPose){
 		const float JOINT_RADIUS = .1;
 		glColor3f(1,1,1);
 
 		foreach(BoneRef pb, arm.bones()){
 			glPushMatrix();
-			glMultTransposeMatrixd(pb->getWorldSpaceTransform().V());
+			glMultTransposeMatrixd(pb->getCWSTransform().V());
 			// GLRenderer::renderAxes(3*JOINT_RADIUS);
 			GLRenderer::glutSolidSphere(JOINT_RADIUS,8,8);
 
@@ -232,6 +232,24 @@ namespace fg {
 			glRotatef(90,0,1,0);
 			GLRenderer::glutSolidCone( JOINT_RADIUS*.5, pb->mLength, 8, 4);
 			glPopMatrix();
+		}
+
+		if (alsoRenderInitialPose){
+			glColor3f(1,0,0);
+			foreach(BoneRef pb, arm.bones()){
+				glPushMatrix();
+				glMultTransposeMatrixd(pb->getIWSTransform().V());
+				// GLRenderer::renderAxes(3*JOINT_RADIUS);
+				GLRenderer::glutWireSphere(JOINT_RADIUS,8,8);
+
+				// render bone
+				// have to rotate the z-axis to point in the x-axis
+				glRotatef(90,0,1,0);
+				GLRenderer::glutWireCone( JOINT_RADIUS*.5, pb->mLength, 8, 4);
+				glPopMatrix();
+			}
+
+
 		}
 	}
 }

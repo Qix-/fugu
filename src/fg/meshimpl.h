@@ -66,12 +66,18 @@ namespace fg {
 
 		// BONES!
 		int getNumBones() const {return mNumBones;}
-		int bindBone(BoneRef b, double weight){} ///< @return number of bones
+		int bindBone(BoneWeakRef b, double weight); ///< @return number of bones
+
+		Vec3 getOriginalPosition(){return mOriginalPosition;}
+		BoneWeakRef getBone(int i){return mBones[i];}
+		double getBoneWeight(int i){return mBoneWeights[i];}
 
 	protected:
+
 		int mNumBones;
 		BoneWeakRef mBones[MAX_BONES_PER_VERTEX];
 		double mBoneWeights[MAX_BONES_PER_VERTEX];
+		Vec3 mOriginalPosition; // position at time of latest bind
 	};
 
 	class FaceImpl: public vcg::Face<

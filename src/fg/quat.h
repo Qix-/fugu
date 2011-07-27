@@ -52,7 +52,7 @@ namespace fg {
             const Quat operator+( const Quat &rhs ) const;
             Quat &operator+=( const Quat &rhs );
 
-            Quat inverted() const;
+            Quat inverted() const; // whats this? as opposed to inverse? (BP)
             void invert();
             Quat inverse() const;
 
