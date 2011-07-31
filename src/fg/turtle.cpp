@@ -161,15 +161,16 @@ namespace fg {
 			{
 				mScaleDomains.push_back( std::pair<double,double>( mPrevFrames.size(), mScaleArr.size() ) );
 				mScaleArr.push_back( mState.scale );
-				mState.scale = 1.;
 			}
 			if (mScaleArr.size() == 1)
 			{
 				mScaleDomains.push_back( std::pair<double, double>( (double) mPrevFrames.size(), (double) mScaleArr.size() ) );
 				mScaleArr.push_back( mScaleArr.back() );
+				mState.scale = mScaleArr.back();
 			}
 
 			mScalers.push_back( new spline::PBezInterp<double>( mScaleArr ) );
+
 
 			switch(mState.crossSectionMode)
 			{
@@ -179,12 +180,12 @@ namespace fg {
 					{
 						mCrossSecDomains.push_back( std::pair<double, double>( mPrevFrames.size(), mCrossSecArr.size() ) );
 						mCrossSecArr.push_back( mState.currentCS );
-						mState.currentCS = 1;
 					}
 					else
 					{
 						mCrossSecDomains.push_back( std::pair<double, double>( (double) mPrevFrames.size(), (double) mCrossSecArr.size() ) );
 						mCrossSecArr.push_back( mCrossSecArr.back() );
+						mState.currentCS = mCrossSecArr.back();
 					}
 
 					std::vector< spline::PBezInterpDiv > tmp;
