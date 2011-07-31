@@ -187,18 +187,25 @@ namespace fg {
 
 	template <typename Real>  Real fastInvSqrt (Real fValue);
 
-    /*
+    /**
      * noise functions currently use vcg's Perlin noise function
      */
 	double noise(double x);
 	double noise(double x, double y);
 	double noise(double x, double y, double z);
+    
+    /* *
+     * fracSum and turbulence functions
+     */
+    double fracSum(double x, double y, double z, int nOctaves, double falloff = 1.0);
+    double turbulence(double x, double y, double z, int nOctaves, double falloff = 1.0);
 
     /**
      * random currently uses the OS rand function (beware!)
      */
 	double random(); ///< Returns a random number between 0 and 1 inclusive
 	double random(double low, double high); ///< Returns a random number between low and high inclusive
+    double randomN(double mean, double var); ///< Returns a random number with Normal(Gaussian) distribution
 
 	bool approx(double a, double b, double epsilon = EPSILON); ///< Checks if a~b (i.e., |a-b| < epsilon)
 	bool approx(const Vec3& a, const Vec3& b, double epsilon = EPSILON);

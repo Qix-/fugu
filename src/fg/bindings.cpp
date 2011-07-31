@@ -93,9 +93,13 @@ namespace fg {
            def("noise", (double(*)(double)) &noise),
 		   def("noise", (double(*)(double,double)) &noise),
 		   def("noise", (double(*)(double,double,double)) &noise),
+                       
+           def("fracSum", (double(*)(double,double,double,int,double))&fracSum),
+           def("turbulence", (double(*)(double,double,double,int,double))&turbulence),
 
 		   def("random", (double(*)()) &fg::random),
-		   def("random", (double(*)(double,double)) &fg::random)
+		   def("random", (double(*)(double,double)) &fg::random),
+           def("randomN", (double(*)(double,double))&randomN)
 		   ];
 
 		// fg/vec3.h
