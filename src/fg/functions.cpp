@@ -43,7 +43,41 @@ namespace fg {
 	double noise(double x){return noise(x,0,0);}
 	double noise(double x, double y){return noise(x,y,0);}
 	double noise(double x, double y, double z){return vcg::math::Perlin::Noise(x,y,z);}
-
+    
+    /**
+     * fractal sum - returns summed noise function of specified octaves
+     */
+    double fracSum(double x, double y, double z, int nOctaves, double falloff)
+    {
+        double sum = noise(x, y, z); // first octave
+        double oct = 2.0;
+        for (int i = 2; i < nOctaves; ++i)
+        {
+            sum += (noise(x * oct, y * oct, z * oct) * falloff);
+            falloff /= 2.0;
+            oct *= 2.0;
+        }
+        return sum;
+    }
+    
+    /**
+     * turbulence -- summed octaves of abs(noise)
+     * "turbulence forms the primordial pattern, the chaos that was 'in the beginning'" -- Peter S. Stevens
+     */
+    double turbulence(double x, double y, double z, int nOctaves, double falloff)
+    {
+        double sum = abs(noise(x, y, z)); // first octave
+        double oct = 2.0;
+        for (int i = 2; i < nOctaves; ++i)
+        {
+            sum += (abs(noise(x * oct, y * oct, z * oct)) * falloff);
+            falloff /= 2.0;
+            oct *= 2.0;
+        }
+        return sum;
+    }
+    
+    
     /*
      * random convience function uses std::rand() which is not the best RNG
      */
@@ -57,6 +91,37 @@ namespace fg {
 	double random(double low, double high){
 		return fg::random()*(high-low) + low;
 	}
+    
+    /* return a random number with a normally distributed distribution
+     * uses the Box-Muller method
+     */
+    double randomN(double mean, double sd)
+    {
+        double x1, x2, w, y1;
+        static double y2;
+        static int use_last = 0;
+        
+        if (use_last)		        /* use value from previous call */
+        {
+            y1 = y2;
+            use_last = 0;
+        }
+        else
+        {
+            do {
+                x1 = 2.0 * random() - 1.0;
+                x2 = 2.0 * random() - 1.0;
+                w = x1 * x1 + x2 * x2;
+            } while ( w >= 1.0 );
+            
+            w = sqrt( (-2.0 * log( w ) ) / w );
+            y1 = x1 * w;
+            y2 = x2 * w;
+            use_last = 1;
+        }
+        
+        return( mean + y1 * sd );
+    }
 
 	bool approx(double a, double b, double epsilon){
 		return (std::abs(a-b) < epsilon);
