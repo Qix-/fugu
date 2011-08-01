@@ -13,6 +13,7 @@
 #include "fgv/trackball.h"
 
 #include "fg/interpolator.h"
+#include "fg/crinterp.h"
 #include "fg/lininterp.h"
 #include "fg/pbezinterpdiv.h"
 
@@ -62,9 +63,10 @@ int main(int argc, char *argv[])
     //fg::spline::PBezInterp<Vec3> spline = spline::PBezInterp<Vec3>();
 	std::vector<Vec3> arr;
 	std::vector< std::pair<Vec3,Vec3> > grad;
-    arr.push_back(Vec3(.1,0.,0.));
-    arr.push_back(Vec3(.05,.05,0.));
-    arr.push_back(Vec3(0.,-.1,0.));
+    arr.push_back(Vec3(1.,0.,0.));
+    arr.push_back(Vec3(1.,1.,0.));
+    arr.push_back(Vec3(-1.,0.,0.));
+    arr.push_back(Vec3(-1.,1.,0.));
 	/*
 	grad.push_back( std::pair<Vec3,Vec3> (Vec3(.3,.4,0.), Vec3(.3, .4, 0.) ) );
 	grad.push_back( std::pair<Vec3,Vec3> (Vec3(.3,-.4,0.), Vec3(.3, -.4, 0.) ) );
@@ -73,9 +75,10 @@ int main(int argc, char *argv[])
 	grad.push_back( std::pair<Vec3,Vec3> (Vec3(0.,0.,0.), Vec3(0., 0., 0.) ) );
 	grad.push_back( std::pair<Vec3,Vec3> (Vec3(0.,-0.,0.), Vec3(0., -0., 0.) ) );
 	grad.push_back( std::pair<Vec3,Vec3> (Vec3(-0.,-0.,0.), Vec3(-0., -0., 0.) ) );
-    fg::spline::PBezInterpDiv spline = spline::PBezInterpDiv(arr, grad);
+    //fg::spline::PBezInterpDiv spline = spline::PBezInterpDiv(arr, grad);
+    fg::spline::CRInterp<Vec3> spline = spline::CRInterp<Vec3>(arr);
     //fg::spline::LinInterp<Vec3> spline = spline::LinInterp<Vec3>(arr);
-	spline.setOpen( false );
+	spline.setOpen( true );
 
 	// Run as fast as I can
 	bool running = true;

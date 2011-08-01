@@ -10,6 +10,7 @@
 #include "fg/lincarrier.h"
 #include "fg/pbezinterpdiv.h"
 #include "fg/pbezcarrier.h"
+#include "fg/crinterp.h"
 #include "fg/crosssectioncircular.h"
 #include "fg/scaleinterpcrosssec.h"
 #include "fg/interpcrosssec.h"

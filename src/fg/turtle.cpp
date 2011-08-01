@@ -184,7 +184,7 @@ namespace fg {
 				mState.scale = mScaleArr.back();
 			}
 
-			mScalers.push_back( new spline::PBezInterp<double>( mScaleArr ) );
+			mScalers.push_back( new spline::CRInterp<double>( mScaleArr ) );
 
 
 			switch(mState.crossSectionMode)

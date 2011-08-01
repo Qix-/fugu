@@ -36,6 +36,7 @@ set(HDRS
 	bezinterp.h
 	bindings.h
 	carriercurve.h
+	crinterp.h
 	lincarrier.h
 	pbezcarrier.h
 	crosssection.h
@@ -71,6 +72,7 @@ set(HDRS
 
 set(INLS
 	bezinterp.inl
+	crinterp.inl
 	functions.inl
 	interpolator.inl
 	lininterp.inl

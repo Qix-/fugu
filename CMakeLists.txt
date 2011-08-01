@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+
 project(FG)
 
 set(BASE_DIR ${FG_SOURCE_DIR}) 
