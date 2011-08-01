@@ -28,11 +28,11 @@ function update(dt)
 
 	-- create cross section
 
-	bert:setFrame(fg.vec3(.1,0.,0.),fg.vec3(0.,1.,0.),fg.vec3(0.,0.,1.))
+	bert:setFrame(fg.vec3(1,0.,0.),fg.vec3(0.,1.,0.),fg.vec3(0.,0.,1.))
 	bert:setStiffness(outerS,outerS)
 	bert:beginCrossSection()
-	y = .1*innerRat * math.sin((.5) * 2 * math.pi / numBumps)
-	x = .1*innerRat * math.cos((.5) * 2 * math.pi / numBumps)
+	y = 1*innerRat * math.sin((.5) * 2 * math.pi / numBumps)
+	x = 1*innerRat * math.cos((.5) * 2 * math.pi / numBumps)
 
 	dy = math.cos((.5) * 2 * math.pi / numBumps)
 	dx = -math.sin((.5) * 2 * math.pi / numBumps)
@@ -43,8 +43,8 @@ function update(dt)
 
     i = 1
 	while (i < numBumps) do
-		y = .1*math.sin(i * 2 * math.pi / numBumps)
-		x = .1*math.cos(i * 2 * math.pi / numBumps)
+		y = 1*math.sin(i * 2 * math.pi / numBumps)
+		x = 1*math.cos(i * 2 * math.pi / numBumps)
 
 		dy = math.cos(i * 2 * math.pi / numBumps)
 		dx = -math.sin(i * 2 * math.pi / numBumps)
@@ -53,8 +53,8 @@ function update(dt)
 		bert:setStiffness(outerS,outerS)
 		bert:addPoint()
 
-		y = .1*innerRat * math.sin((i+.5) * 2 * math.pi / numBumps)
-		x = .1*innerRat * math.cos((i+.5) * 2 * math.pi / numBumps)
+		y = 1*innerRat * math.sin((i+.5) * 2 * math.pi / numBumps)
+		x = 1*innerRat * math.cos((i+.5) * 2 * math.pi / numBumps)
 
 		dy = math.cos((i+.5) * 2 * math.pi / numBumps)
 		dx = -math.sin((i+.5) * 2 * math.pi / numBumps)
@@ -75,22 +75,22 @@ function update(dt)
 
 	bert:setScale(0.4)
 	bert:beginCylinder()
-	bert:move(.1)
+	bert:move(1)
     bert:setCrossSection(cs)
 	bert:setScale(1.5)
 	bert:addPoint()
-	bert:move(.1)
+	bert:move(1)
 	bert:setScale(0.9)
     bert:setCrossSection(0)
 	bert:addPoint()
-	bert:move(0.06)
+	bert:move(0.6)
 	bert:setScale(0.6)
 	bert:addPoint()
-	bert:move(0.04)
+	bert:move(0.4)
 	bert:setScale(0.1)
 	bert:endCylinder()
 
-	m = bert:getMesh(10,40)
+	m = bert:getMesh()
 	if (first) then
 		-- Node for the mesh
 		node = fg.meshnode(m) -- blank transform node

@@ -64,7 +64,7 @@ function new_holdfast(width,length,n,meander)
 			donatello:popState()
 		end
 
-		return donatello:getMesh(1,50)
+		return donatello:getMesh()
 	end
 
 	return obj
@@ -143,7 +143,7 @@ function new_stalk(n,width,length,meander)
 		bert:setScale(width)
 	  end
 	  bert:endCylinder()
-	  return bert:getMesh(1,self.numBeads*12)
+	  return bert:getMesh()
 	end
 
 	obj.update = function(self,dt)

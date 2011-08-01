@@ -6,22 +6,22 @@ function setup()
 	bert = fg.turtle()
 	bert:beginCylinder()
 	bert:yaw(math.pi/4);
-	bert:move(1.);
+	bert:move(10.);
 	bert:yaw(math.pi/4);
 	bert:addPoint();
 	bert:yaw(math.pi/4);
-	bert:move(1.);
+	bert:move(10.);
 	bert:yaw(math.pi/4);
 	bert:addPoint();
 	bert:yaw(math.pi/4);
-	bert:move(1.);
+	bert:move(10.);
 	bert:yaw(math.pi/4);
 	bert:addPoint();
     bert:yaw(math.pi/4);
-    bert:move(1.);
+    bert:move(10.);
     bert:yaw(math.pi/4);
     bert:endCylinder()
-	m = bert:getMesh(10,12)
+	m = bert:getMesh()
 	fgu:addMesh(m)
 end
 

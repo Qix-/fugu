@@ -9,6 +9,27 @@ namespace fg {
         GeneralisedCylinder::GeneralisedCylinder( const CarrierCurve &carrier, const vector<Mat4> &orients, const CrossSection &crossSection,
 												  const std::vector< std::pair<double,double> > &csDomains,
 												  const spline::Interpolator<double> &scale,
+												  const std::vector< std::pair<double,double> > &scaleDomains, const std::vector< int > &strips )
+            : mCarrier( carrier )
+            , mCrossSection( crossSection )
+			, mScale(scale)
+			, mStrips(strips)
+        {
+            std::vector<Quat> newOrients;
+
+            for( int i = 0; i < orients.size(); ++i )
+            {
+                newOrients.push_back( Quat( orients[i] ) );
+            }
+
+            updateOrients( newOrients );
+			mCSDomain = csDomains;
+			mScaleDomain = scaleDomains;
+        }
+
+        GeneralisedCylinder::GeneralisedCylinder( const CarrierCurve &carrier, const vector<Mat4> &orients, const CrossSection &crossSection,
+												  const std::vector< std::pair<double,double> > &csDomains,
+												  const spline::Interpolator<double> &scale,
 												  const std::vector< std::pair<double,double> > &scaleDomains )
             : mCarrier( carrier )
             , mCrossSection( crossSection )
@@ -24,6 +45,10 @@ namespace fg {
             updateOrients( newOrients );
 			mCSDomain = csDomains;
 			mScaleDomain = scaleDomains;
+
+			for( int i = 0; i < carrier.getInterpolator()->getNumControlPoints() - 1; ++i ) {
+				mStrips.push_back( 5 );
+			}
         }
 
         void GeneralisedCylinder::updateOrients( const vector<Quat> &orients )
@@ -69,13 +94,14 @@ namespace fg {
             return Quat( ar * cr );
         }
 
-        void GeneralisedCylinder::createMesh( Mesh::MeshBuilder &mb, int n, int m ) const
+        void GeneralisedCylinder::createMesh( Mesh::MeshBuilder &mb ) const
         {
+			int m = mStrips[0];
 			int oldVerticies = mb.getNumVerticies();
             double vmin, vmax;
 			double csv, sv, scale;
             mCarrier.getInterpolator()->getDomain( vmin, vmax );
-            double vinc = ( vmax - vmin ) / ( ( double ) m );
+            double vinc;
             double v = 0.;
             int pCsIndex, nCsIndex;
             // Get the first cross section add add the verticies to the mesh
@@ -98,61 +124,67 @@ namespace fg {
             pCsIndex = oldVerticies;
             nCsIndex = pCs.size() + oldVerticies;
 
-            for( int k = 0; k < m; ++k ) {
-                // Get the next cross section and add it's verticies to the mesh
-				csv = getCrossSectionV( v + vinc );
-            	sv = getScaleV( v );
-				scale = mScale.getPosition( sv );
-                nCs = mCrossSection.getCrossSection( csv, scale );
-                ori = orient( v + vinc );
-                cCpos = mCarrier.getInterpolator()->getPosition( v + vinc );
+            // Add on control point at a time
+			for( int l = 0; l < mCarrier.getInterpolator()->getNumControlPoints() - 1; ++l )
+			{
+				vinc = 1. / ( ( double ) mStrips[l] );
 
-                for( int i = 0; i < nCs.size(); ++i )
-                {
-                    cVert = cCpos + ori * nCs[i];
-                    mb.addVertex( cVert.getX(), cVert.getY(), cVert.getZ() );
-                }
+            	for( int k = 0; k < m; ++k ) {
+            	    // Get the next cross section and add it's verticies to the mesh
+					csv = getCrossSectionV( v + vinc );
+            		sv = getScaleV( v );
+					scale = mScale.getPosition( sv );
+            	    nCs = mCrossSection.getCrossSection( csv, scale );
+            	    ori = orient( v + vinc );
+            	    cCpos = mCarrier.getInterpolator()->getPosition( v + vinc );
 
-                // While neither cross section is empty add the required triangles
-                int i = 0;
-                int j = 0;
-                int s1 = pCs.size();
-                int s2 = nCs.size();
+            	    for( int i = 0; i < nCs.size(); ++i )
+            	    {
+            	        cVert = cCpos + ori * nCs[i];
+            	        mb.addVertex( cVert.getX(), cVert.getY(), cVert.getZ() );
+            	    }
 
-                while( i < s1 && j < s2 )
-                {
-                    if( ( pCs[i] - nCs[( j + 1 ) % s2] ).lengthSquared() < ( pCs[( i + 1 ) % s1] - nCs[j] ).lengthSquared() )
-                    {
-                        mb.addFace( pCsIndex + i, nCsIndex + ( ( j + 1 ) % s2 ), nCsIndex + j );
-                        ++j;
-                    }
-                    else
-                    {
-                        mb.addFace( pCsIndex + i, pCsIndex + ( ( i + 1 ) % s1 ), nCsIndex + j );
-                        ++i;
-                    }
-                }
+            	    // While neither cross section is empty add the required triangles
+            	    int i = 0;
+            	    int j = 0;
+            	    int s1 = pCs.size();
+            	    int s2 = nCs.size();
 
-                // Finish off any unjoined verticies
-                while( i < s1 )
-                {
-                    mb.addFace( pCsIndex + i, pCsIndex + ( ( i + 1 ) % s1 ), nCsIndex );
-                    ++i;
-                }
+            	    while( i < s1 && j < s2 )
+            	    {
+            	        if( ( pCs[i] - nCs[( j + 1 ) % s2] ).lengthSquared() < ( pCs[( i + 1 ) % s1] - nCs[j] ).lengthSquared() )
+            	        {
+            	            mb.addFace( pCsIndex + i, nCsIndex + ( ( j + 1 ) % s2 ), nCsIndex + j );
+            	            ++j;
+            	        }
+            	        else
+            	        {
+            	            mb.addFace( pCsIndex + i, pCsIndex + ( ( i + 1 ) % s1 ), nCsIndex + j );
+            	            ++i;
+            	        }
+            	    }
 
-                while( j < s2 )
-                {
-                    mb.addFace( pCsIndex, nCsIndex + ( ( j + 1 ) % s2 ), nCsIndex + j );
-                    ++j;
-                }
+            	    // Finish off any unjoined verticies
+            	    while( i < s1 )
+            	    {
+            	        mb.addFace( pCsIndex + i, pCsIndex + ( ( i + 1 ) % s1 ), nCsIndex );
+            	        ++i;
+            	    }
 
-                // Update the previous cross section and indicies
-                pCsIndex = nCsIndex;
-                nCsIndex += nCs.size();
-                pCs = nCs;
-                // increment v
-                v += vinc;
-            }
+            	    while( j < s2 )
+            	    {
+            	        mb.addFace( pCsIndex, nCsIndex + ( ( j + 1 ) % s2 ), nCsIndex + j );
+            	        ++j;
+            	    }
+
+            	    // Update the previous cross section and indicies
+            	    pCsIndex = nCsIndex;
+            	    nCsIndex += nCs.size();
+            	    pCs = nCs;
+            	    // increment v
+            	    v += vinc;
+            	}
+			}
         }
 
 		double GeneralisedCylinder::getCrossSectionV( double v ) const

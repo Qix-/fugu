@@ -15,15 +15,15 @@ namespace fg {
 
 			std::vector<Vec3> arr;
 			std::vector< std::pair<Vec3, Vec3> > grad;
-    		arr.push_back( Vec3(.1, 0., 0.) );
-		    arr.push_back( Vec3(0., .1, 0.) );
-		    arr.push_back( Vec3(-.1, 0., 0.) );
-		    arr.push_back( Vec3(0., -.1, 0.) );
+    		arr.push_back( Vec3(1., 0., 0.) );
+		    arr.push_back( Vec3(0., 1., 0.) );
+		    arr.push_back( Vec3(-1., 0., 0.) );
+		    arr.push_back( Vec3(0., -1., 0.) );
 		
-			grad.push_back( std::pair<Vec3,Vec3> ( Vec3(0.,0.05,0.),Vec3(0.,0.05,0.)));
-			grad.push_back( std::pair<Vec3,Vec3> ( Vec3(-0.05,0.,0.),Vec3(-0.05,0.,0.)));
-			grad.push_back( std::pair<Vec3,Vec3> ( Vec3(0.,-0.05,0.),Vec3(0.,-0.05,0.)));
-			grad.push_back( std::pair<Vec3,Vec3> ( Vec3(0.05,0.,0.),Vec3(0.05,0.,0.)));
+			grad.push_back( std::pair<Vec3,Vec3> ( Vec3(0.,0.5,0.),Vec3(0.,0.5,0.)));
+			grad.push_back( std::pair<Vec3,Vec3> ( Vec3(-0.5,0.,0.),Vec3(-0.5,0.,0.)));
+			grad.push_back( std::pair<Vec3,Vec3> ( Vec3(0.,-0.5,0.),Vec3(0.,-0.5,0.)));
+			grad.push_back( std::pair<Vec3,Vec3> ( Vec3(0.5,0.,0.),Vec3(0.5,0.,0.)));
 
 			mCrossSecLibrary.push_back( new spline::PBezInterpDiv( arr, grad ) );
 			mCrossSecLibrary.back()->setOpen(false);
@@ -101,6 +101,7 @@ namespace fg {
 			mStiffnessArr.clear();
 			mCrossSecDomains.clear();
 			mCrossSecArr.clear();
+			mStrips.clear();
 
 			mScaleDomains.push_back( std::pair<double, double>( 0., 0. ) );
 			mScaleArr.push_back( mState.scale > 0. ? mState.scale : 1. );
@@ -126,7 +127,14 @@ namespace fg {
         }
 
         void Turtle::addPoint( )
+		{
+			addPoint( 5 );
+		}
+
+        void Turtle::addPoint( int n )
         {
+			mStrips.push_back( n );
+
 			if (mState.scale > 0.)
 			{
 				mScaleDomains.push_back( std::pair<double,double>( mPrevFrames.size(), mScaleArr.size() ) );
@@ -155,8 +163,15 @@ namespace fg {
 			mStiffnessArr.push_back( mState.stiffness );
         }
 
-        void Turtle::endCylinder()
+        void Turtle::endCylinder( )
+		{
+			endCylinder( 5 );
+		}
+
+        void Turtle::endCylinder( int n )
         {
+			mStrips.push_back( n );
+
 			if (mState.scale > 0.)
 			{
 				mScaleDomains.push_back( std::pair<double,double>( mPrevFrames.size(), mScaleArr.size() ) );
@@ -232,7 +247,7 @@ namespace fg {
 			}
 
             mCylinders.push_back( new GeneralisedCylinder( *( mCarriers.back() ), mPrevFrames, *( mCrossSections.back() ), mCrossSecDomains, 
-			                      *( mScalers.back() ), mScaleDomains ) );
+			                      *( mScalers.back() ), mScaleDomains, mStrips ) );
         }
 
 		void Turtle::setStiffness(double s1, double s2)
@@ -296,12 +311,17 @@ namespace fg {
 			return mCrossSecLibrary.size() - 1;
 		}
 
-        boost::shared_ptr< Mesh > Turtle::getMesh( int n, int m )
+        Vec3 Turtle::getPosition()
+		{
+			return mState.frame * Vec3(0.,0.,0.);
+		}
+
+        boost::shared_ptr< Mesh > Turtle::getMesh( )
         {
 			Mesh::MeshBuilder mb;
 			for( int i = 0; i < mCylinders.size(); ++i)
 			{
-            	mCylinders[i]->createMesh( mb, n, m );
+            	mCylinders[i]->createMesh( mb );
 			}
 			return mb.createMesh();
         }
