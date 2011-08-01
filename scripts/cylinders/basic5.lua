@@ -31,14 +31,14 @@ function setup()
     -- Create the cylinder
 	bert:setCrossSection(0)
 	bert:beginCylinder()
-	bert:move(1.)
+	bert:move(10.)
 	bert:addPoint()
 	bert:pitch(0.3)
-	bert:move(1.)
+	bert:move(10.)
 	bert:setCrossSection(1)
     bert:endCylinder()
 
-	m = bert:getMesh(10,100)
+	m = bert:getMesh()
 	fgu:addMesh(m)
 end
 

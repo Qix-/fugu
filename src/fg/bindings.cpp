@@ -234,10 +234,13 @@ namespace fg {
 		   .def("endCrossSection",(int(fg::gc::Turtle::*)(void))&fg::gc::Turtle::endCrossSection)
 
 		   .def("beginCylinder",&fg::gc::Turtle::beginCylinder)
-		   .def("endCylinder",&fg::gc::Turtle::endCylinder)
+		   .def("endCylinder",(void(fg::gc::Turtle::*)(void))&fg::gc::Turtle::endCylinder)
+		   .def("endCylinder",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::endCylinder)
 		   .def("addPoint",(void(fg::gc::Turtle::*)(void))&fg::gc::Turtle::addPoint)
+		   .def("addPoint",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::addPoint)
 
-		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(int,int))&fg::gc::Turtle::getMesh)
+		   .def("getPosition",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getPosition)
+		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getMesh)
 		];
 
 		return 0;

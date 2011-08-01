@@ -5,13 +5,13 @@ local m = {}
 function setup()
 	bert = fg.turtle()
 	bert:beginCylinder()
-	bert:move(1.)
+	bert:move(10.)
 	bert:yaw(math.pi / 6)
 	bert:addPoint()
 	bert:yaw(math.pi / 6)
-	bert:move(1.)
+	bert:move(10.)
     bert:endCylinder()
-	m = bert:getMesh(10,10)
+	m = bert:getMesh()
 	fgu:addMesh(m)
 end
 

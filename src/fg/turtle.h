@@ -33,7 +33,9 @@ namespace fg {
                 void roll( double theta );
                 void beginCylinder();
                 void addPoint();
+                void addPoint(int n);
                 void endCylinder();
+                void endCylinder(int n);
 				void setCrossSection(int index);
 				void setScale(double scale);
 				void setStiffness( double s1, double s2 );
@@ -43,7 +45,8 @@ namespace fg {
 				void setCrossSectionMode( int crossSectionMode );
 				void beginCrossSection();
 				int endCrossSection();
-                boost::shared_ptr<Mesh> getMesh( int n = 10, int m = 10 );
+				Vec3 getPosition();
+                boost::shared_ptr<Mesh> getMesh( );
 
             protected:
 				// The state
@@ -68,6 +71,7 @@ namespace fg {
 				std::vector< std::pair<double, double> > mCrossSecDomains;
                 std::vector<Mat4> mPrevFrames;
 				std::vector< std::pair<double, double> > mStiffnessArr;
+				std::vector<int> mStrips;
 
 				// Storage of previous cylinders
 				std::vector<spline::PBezInterpDiv *> mCrossSecLibrary;

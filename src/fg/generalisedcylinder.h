@@ -22,8 +22,12 @@ namespace fg {
 								     const std::vector< std::pair<double,double> > &csDomains,
 									 const spline::Interpolator<double> &scale,
 									 const std::vector< std::pair<double,double> > &scaleDomains );
+        		GeneralisedCylinder( const CarrierCurve &carrier, const std::vector<Mat4> &orients, const CrossSection &crossSection,
+								     const std::vector< std::pair<double,double> > &csDomains,
+									 const spline::Interpolator<double> &scale,
+									 const std::vector< std::pair<double,double> > &scaleDomains, const std::vector< int > &strips );
                 Vec3 getPosition( double u, double v ) const;
-                void createMesh( Mesh::MeshBuilder &mb, int n = 10, int m = 10 ) const;
+                void createMesh( Mesh::MeshBuilder &mb ) const;
 
             protected:
                 const CarrierCurve &mCarrier;
@@ -32,6 +36,7 @@ namespace fg {
                 std::vector< std::pair<Quat, Quat> > mOrients;
 				std::vector< std::pair<double, double> > mCSDomain;
 				std::vector< std::pair<double, double> > mScaleDomain;
+				std::vector< int > mStrips;
 
                 void updateOrients( const std::vector<Quat> &orients );
 				double getCrossSectionV( double v ) const;
