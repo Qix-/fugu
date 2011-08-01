@@ -75,8 +75,8 @@ int main(int argc, char *argv[])
 	bert.move(1.);
 	bert.yaw(M_PI*.25);
 	*/
-	bert.endCylinder();
-	boost::shared_ptr<Mesh> m = bert.getMesh(4,20);
+	bert.endCylinder(10);
+	boost::shared_ptr<Mesh> m = bert.getMesh();
 	//m->smoothSubdivide(4);
 
 	// Run as fast as I can

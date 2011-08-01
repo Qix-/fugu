@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 	const fg::gc::InterpCrossSec cs( interp );
 	const fg::gc::GeneralisedCylinder& gc = gc::GeneralisedCylinder(carrier, arr, cs, csDomains, scale, scaleDomains);
 	Mesh::MeshBuilder mb;
-	gc.createMesh(mb, 10, 60);
+	gc.createMesh(mb);
 	boost::shared_ptr<Mesh> mMesh = mb.createMesh();
 	//mMesh->smoothSubdivide(3);
 
