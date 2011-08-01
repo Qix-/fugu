@@ -14,23 +14,34 @@ function setup()
 --	node[1] = fg.meshnode(m[1])
 
     -- stalk
-	stalk = new_stalk(.6,.5,15)
-	m[1] = stalk:getMesh()
-	node[1] = fg.meshnode(m[1])
-	fgu:add(node[1])
+	stalk = new_stalk(.3,.5,30)
 
     -- holdfast
 	hold_fast = new_holdfast(5,.5,5,.1)
-	m[2] = hold_fast:getMesh()
-	node[2] = fg.meshnode(m[2])
-	node[2].transform:setRotateRad(math.pi,1,0,0)
-	fgu:add(node[2])
+
+	-- calyx
+	calyx = new_cylax(5,.5,5)
+
+    donatello = fg.turtle()
+
+    donatello:pushState()
+
+	donatello:pitch(math.pi)
+	hold_fast:build(donatello)
+
+	donatello:popState()
+	stalk:build(donatello)
+
+	calyx:build(donatello)
+
+	node = fg.meshnode(donatello:getMesh())
+	fgu:add(node)
 
 end
 
 local t = 0
 function update(dt)
-	t = t + dt
+
 end
 
 function new_root(length,width,meander)
@@ -95,9 +106,7 @@ function new_holdfast(length,width,n,meander)
 		roots = {}
 	}
 
-    obj.getMesh = function(self)
-		donatello = fg.turtle()
-
+    obj.build = function(self,donatello)
 		for i = 1, self.numRoots, 1 do
 			-- create a root
 			length = fg.randomN(self.meanLength,.2)
@@ -110,8 +119,6 @@ function new_holdfast(length,width,n,meander)
 
 			donatello:popState()
 		end
-
-		return donatello:getMesh()
 	end
 
 	return obj
@@ -126,11 +133,10 @@ function new_stalk(length,width,n)
 		dl = length * .1,
 		dw = width * .5,
 
-		bendy = 0.07
+		bendy = 0.05
 	}
 
-	obj.getMesh = function(self)
-	  bert = fg.turtle()
+	obj.build = function(self, bert)
 	  bert:setCarrierMode(0)
 
 	  -- Create the cylinder
@@ -151,18 +157,97 @@ function new_stalk(length,width,n)
 		bert:addPoint(7)
 		bert:move(self.dl * .5)
 
-	  	width = fg.randomN(self.beadWidth, 0.02)
-	  	length = fg.randomN(self.beadLength,.09)
+	  	width = fg.randomN(self.beadWidth, self.beadWidth * .03)
+	  	length = fg.randomN(self.beadLength, self.beadLength * .2)
 		bert:setScale(width)
 		bert:addPoint(7)
 		bert:move(length)
 		bert:setScale(width)
 	  end
 	  bert:endCylinder()
-	  return bert:getMesh()
 	end
 
 	obj.update = function(self,dt)
+	end
+
+	return obj
+end
+
+function new_cylax(width,length,n)
+	local obj = {
+		baseWidth = width,
+		length = length,
+		numBumps = n,
+
+		outerS = 1.7,
+		innerS = 0.6,
+		innerRat = 0.6
+	}
+
+	obj.build = function(self, bert)
+	    bert:pushState()
+		
+		-- create cross section
+		bert:setFrame(fg.vec3(1,0.,0.),fg.vec3(0.,1.,0.),fg.vec3(0.,0.,1.))
+		bert:setStiffness(self.outerS,self.outerS)
+		bert:beginCrossSection()
+		y = self.innerRat * math.sin((.5) * 2 * math.pi / self.numBumps)
+		x = self.innerRat * math.cos((.5) * 2 * math.pi / self.numBumps)
+
+		dy = math.cos((.5) * 2 * math.pi / self.numBumps)
+		dx = -math.sin((.5) * 2 * math.pi / self.numBumps)
+
+		bert:setFrame(fg.vec3(x,y,0),fg.vec3(dx,dy,0),fg.vec3(0,0,1))
+		bert:setStiffness(self.innerS,self.innerS)
+		bert:addPoint()
+
+    	i = 1
+		while (i < self.numBumps) do
+			y = math.sin(i * 2 * math.pi / self.numBumps)
+			x = math.cos(i * 2 * math.pi / self.numBumps)
+
+			dy = math.cos(i * 2 * math.pi / self.numBumps)
+			dx = -math.sin(i * 2 * math.pi / self.numBumps)
+
+			bert:setFrame(fg.vec3(x,y,0),fg.vec3(dx,dy,0),fg.vec3(0,0,1))
+			bert:setStiffness(self.outerS,self.outerS)
+			bert:addPoint()
+
+			y = self.innerRat * math.sin((i+.5) * 2 * math.pi / self.numBumps)
+			x = self.innerRat * math.cos((i+.5) * 2 * math.pi / self.numBumps)
+
+			dy = math.cos((i+.5) * 2 * math.pi / self.numBumps)
+			dx = -math.sin((i+.5) * 2 * math.pi / self.numBumps)
+
+			bert:setFrame(fg.vec3(x,y,0),fg.vec3(dx,dy,0),fg.vec3(0,0,1))
+			bert:setStiffness(self.innerS,self.innerS)
+			bert:addPoint()
+
+			 i = i + 1
+		end
+
+		cs = bert:endCrossSection()
+
+		-- create a cylinder
+		bert:popState()
+
+    	bert:setCrossSection(0)
+
+		bert:beginCylinder()
+		bert:move(1)
+    	bert:setCrossSection(cs)
+		bert:setScale(1.8)
+		bert:addPoint(7)
+		bert:move(1)
+		bert:setScale(0.9)
+		bert:addPoint(7)
+		bert:move(0.6)
+		bert:setScale(0.6)
+		bert:addPoint(7)
+		bert:move(0.4)
+		bert:setScale(0.1)
+		bert:setCrossSection(0)
+		bert:endCylinder(7)
 	end
 
 	return obj
