@@ -31,6 +31,7 @@
 // fg dependencies
 #include "fg/vec3.h"
 #include "fg/vertex.h"
+#include "fg/mat4.h"
 
 // Stdlibs
 #include <ostream>
@@ -70,18 +71,23 @@ namespace fg {
 		typedef std::list<boost::shared_ptr<VertexProxy> > VertexSet;
 
 		/**
-		 * \brief Common mesh primitives. (Adapters to vcg primitives)
+		 * \brief Common mesh primitives.
+		 *
+		 * (Adapters to vcg primitives)
+		 * TODO: Iso-surface?
 		 */
 		class Primitives {
 			public:
+
+			static boost::shared_ptr<Mesh> Cube();
 			static boost::shared_ptr<Mesh> Icosahedron();
 			static boost::shared_ptr<Mesh> Sphere();
 			static boost::shared_ptr<Mesh> Tetrahedron();
 			static boost::shared_ptr<Mesh> Dodecahedron();
 			static boost::shared_ptr<Mesh> Octahedron();
-			static boost::shared_ptr<Mesh> Hexahedron();
-			static boost::shared_ptr<Mesh> Cone(double r1, double r2, double h, const int SubDiv = 36);
-			static boost::shared_ptr<Mesh> Cylinder(int slices, int stacks);
+			// static boost::shared_ptr<Mesh> Hexahedron();
+			static boost::shared_ptr<Mesh> Cone(double r1, double r2, const int SubDiv = 36);
+			static boost::shared_ptr<Mesh> Cylinder(int slices); // , int stacks);
 
 			private:
 			static boost::shared_ptr<Mesh> sync(Mesh* m);
@@ -141,6 +147,8 @@ namespace fg {
 
 		/// \brief Sync will make sure all the topology, normals, etc are fixed..
 		void sync();
+
+		void applyTransform(Mat4 T); ///< \brief Applies T to the positions of the vertices. (For each vertex v in mesh, v.pos = T*v.pos) Also syncs at the end so the normals are appropriate.
 
 		/// \deprecated see fg::GLRenderer
 		void drawGL();

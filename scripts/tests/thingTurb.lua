@@ -33,7 +33,7 @@ function setup()
 
 	for i=1,20 do
 		local el = sphereVerts[i] -- randomElement(sphereVerts)
-		table.insert(suckers,new_thing(el,fg.random(0,10),fg.randomN(0,3)))
+		table.insert(suckers,new_thing(el,fg.random(0,10),fg.randomN(1,.2)))
 	end
 end
 
