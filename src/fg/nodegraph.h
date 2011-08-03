@@ -26,11 +26,11 @@
 #define FG_NODEGRAPH_H
 
 #include "fg/node.h"
+#include "fg/util.h"
 
 // boost graph stuff
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
-// #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/topological_sort.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/foreach.hpp>
@@ -66,7 +66,7 @@ namespace fg {
 		NodeGraph();
 		boost::shared_ptr<Node> addNode(boost::shared_ptr<Node> n);
 		void addEdge(boost::shared_ptr<Node> from, boost::shared_ptr<Node> to);
-		void addEdge(int f, int t);
+		//void addEdge(int f, int t);
 
 		/// \brief update the node data based on the dependency graph
 		void update(); 
@@ -77,20 +77,25 @@ namespace fg {
 		IndexMap mIndexMap;
 		NodeMap mNodeMap;
 		Graph mG;
-		boost::shared_ptr<Node> mRootNode;
+		shared_ptr<Node> mRootNode;
+		std::list<shared_ptr<Node> > mNodesSortedTopologically;
+
+		bool mHaveNodesBeenSorted;
+		void _sortNodes(); // sort the nodes
 
 		/*
 		 * Updates the nodes breadth-first
 		 */
 		class NodeUpdater: public boost::default_bfs_visitor {
 		public:
-			NodeUpdater(IndexMap im, NodeMap nm);
+			NodeUpdater(IndexMap im, NodeMap nm, std::list<shared_ptr<Node> >* nodesSortedTopologically);
 			void initialize_vertex(Vertex v, Graph g);
 			void discover_vertex(Vertex v, Graph g);
 			void examine_edge(Edge e, Graph g);
 		protected:
 			IndexMap index;
 			NodeMap nodemap;
+			std::list<shared_ptr<Node> >* nst;
 		};
 	};
 }

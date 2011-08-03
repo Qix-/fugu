@@ -28,6 +28,7 @@
 #include <ostream>
 
 #include "fg/mat4.h"
+#include "fg/util.h"
 
 // need to forward decl operator<<
 namespace fg {class Node;}
@@ -44,13 +45,17 @@ namespace fg {
 		Node();
 		virtual ~Node();
 
-		Mat4& getRelativeTransform();
+		const Mat4& getRelativeTransform() const ;
+		void setRelativeTransform(const Mat4&);
+
 		Mat4& getCompoundTransform();
 
 		void resetCompoundTransform();
 		void applyCompoundTransform();
 		void applyCompoundTransform(const Mat4& mParentTransform);
 		bool hasCompoundTransformBeenApplied() const;
+
+		bool isDirty(){return mDirty;}
 
 		void _setGraphIndex(int gi); ///< used internally by the dependency graph in fg universe
 		int _getGraphIndex() const; ///< used internally by the dependency graph in fg universe
@@ -60,8 +65,13 @@ namespace fg {
 		Mat4 mRelativeTransform;
 		Mat4 mCompoundTransform; // Computed by running through the dependency graph and premultiplying for all childof relationships
 
+		bool mDirty; ///< signifies if any dependent node transforms need to be recomputed. changin the relative transform will dirty a node.
+
 		bool mHasCompoundTransformBeenApplied;
 		int mGraphIndex; // index into the dependency graph
+
+		Node* _parent; // only used by NodeGraph, be careful
+		friend class NodeGraph;
 	};
 }
 

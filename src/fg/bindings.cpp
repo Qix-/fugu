@@ -131,9 +131,17 @@ namespace fg {
 
 		   .def("setTranslate", (void(fg::Mat4::*)(double,double,double)) &fg::Mat4::setTranslate)
 		   .def("setRotateRad", (void(fg::Mat4::*)(double,double,double,double)) &fg::Mat4::setRotateRad)
+		   .def("setScale", (void(fg::Mat4::*)(double,double,double)) &fg::Mat4::setScale)
 
 		   .def(const_self + other<fg::Mat4>())
 		   .def(const_self - other<fg::Mat4>())
+		   .def(const_self * other<fg::Mat4>())
+
+		   .def(const_self * other<fg::Vec3>()) // free function
+
+		   .def(const_self == other<fg::Mat4>())
+
+		   .def(-(const_self))
 		   .def(const_self * double())
 		];
 
@@ -141,7 +149,7 @@ namespace fg {
 		module(L, "fg")[
 		  class_<fg::Node, boost::shared_ptr<fg::Node> >("node")
 		  .def(constructor<>())
-		  .property("transform", &fg::Node::getRelativeTransform)
+		  .property("transform", &fg::Node::getRelativeTransform, &fg::Node::setRelativeTransform)
 		];
 
 		// fg/meshnode.h
@@ -184,6 +192,7 @@ namespace fg {
 		   .def("subdivide", &Mesh::subdivide)
 		   .def("smoothSubdivide", &Mesh::smoothSubdivide)
 		   .def("sync", &Mesh::sync)
+		   .def("applyTransform", &Mesh::applyTransform)
 
 		   .scope [
 			   class_<fg::Mesh::Primitives>("primitives")

@@ -84,6 +84,28 @@ namespace fg {
 		vcg::Matrix44<double>::SetScale(sx,sy,sz);
 	}
 
+	// operators
+	Mat4 Mat4::operator+(const Mat4 &m) const {return vcg::Matrix44<double>::operator+(m);}
+	Mat4 Mat4::operator-(const Mat4 &m) const {return vcg::Matrix44<double>::operator-(m);}
+	Mat4 Mat4::operator*(const Mat4 &m) const {return vcg::Matrix44<double>::operator*(m);}
+
+	/*
+	Vec3 Mat4::operator*(const Vec3 &v) const {
+		vcg::Point4<double> p = vcg::Matrix44<double>::operator*(vcg::Point4<double>(v.X(),v.Y(),v.Z(),1)).HomoNormalize();
+		return Vec3(p.X(),p.Y(),p.Z());
+	}
+	*/
+
+	bool Mat4::operator==(const  Mat4 &m) const {return vcg::Matrix44<double>::operator==(m);}
+	bool Mat4::operator!= (const  Mat4 &m) const {return vcg::Matrix44<double>::operator!=(m);}
+
+	Mat4 Mat4::operator-() const {return vcg::Matrix44<double>::operator-();}
+	Mat4 Mat4::operator*(const double k) const {return vcg::Matrix44<double>::operator*(k);}
+	void Mat4::operator+=(const Mat4 &m) {return vcg::Matrix44<double>::operator+=(m);}
+	void Mat4::operator-=(const Mat4 &m) {return vcg::Matrix44<double>::operator-=(m);}
+	void Mat4::operator*=( const Mat4 & m ) {return vcg::Matrix44<double>::operator*=(m);}
+	void Mat4::operator*=( const double k ) {return vcg::Matrix44<double>::operator*=(k);}
+
 	// Static
 	Mat4 Mat4::Identity(){return vcg::Matrix44<double>::Identity();}
 	Mat4 Mat4::Zero(){Mat4 m; m.SetZero(); return m;}

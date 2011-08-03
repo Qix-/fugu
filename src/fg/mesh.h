@@ -148,7 +148,7 @@ namespace fg {
 		/// \brief Sync will make sure all the topology, normals, etc are fixed..
 		void sync();
 
-		void applyTransform(Mat4 T); ///< \brief Applies T to the positions of the vertices. (For each vertex v in mesh, v.pos = T*v.pos) Also syncs at the end so the normals are appropriate.
+		void applyTransform(const Mat4& T); ///< \brief Applies T to the positions of the vertices. (For each vertex v in mesh, v.pos = T*v.pos) Also syncs at the end so the normals are appropriate.
 
 		/// \deprecated see fg::GLRenderer
 		void drawGL();
