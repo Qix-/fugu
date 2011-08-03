@@ -60,6 +60,24 @@ namespace fg {
 		void setScale(double sx, double sy, double sz);
 
 		void set(const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis);
+
+		// operators
+		Mat4 operator+(const Mat4 &m) const;
+		Mat4 operator-(const Mat4 &m) const;
+		Mat4 operator*(const Mat4 &m) const;
+
+		// Vec3 operator*(const Vec3 &v) const; // this is defined at global scope
+
+		bool operator==(const  Mat4 &m) const;
+		bool operator!= (const  Mat4 &m) const;
+
+		Mat4 operator-() const;
+		Mat4 operator*(const double k) const;
+		void operator+=(const Mat4 &m);
+		void operator-=(const Mat4 &m);
+		void operator*=( const Mat4 & m );
+		void operator*=( const double k );
+
 	public:
 		static Mat4 Identity();
 		static Mat4 Zero();

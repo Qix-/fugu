@@ -182,7 +182,7 @@ namespace fg {
 		vcg::tri::UpdateNormals<MeshImpl>::PerVertexFromCurrentFaceNormal(*mpMesh);
 	}
 
-	void Mesh::applyTransform(Mat4 T){
+	void Mesh::applyTransform(const Mat4& T){
 		foreach(VertexImpl& v, mpMesh->vert){
 			// only return non-dead vertices
 			if (!v.IsD()){
