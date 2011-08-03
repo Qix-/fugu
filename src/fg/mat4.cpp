@@ -80,6 +80,10 @@ namespace fg {
 		vcg::Matrix44<double>::SetRotateRad(radians,vcg::Point3<double>(x,y,z));
 	}
 
+	void Mat4::setScale(double sx, double sy, double sz){
+		vcg::Matrix44<double>::SetScale(sx,sy,sz);
+	}
+
 	// Static
 	Mat4 Mat4::Identity(){return vcg::Matrix44<double>::Identity();}
 	Mat4 Mat4::Zero(){Mat4 m; m.SetZero(); return m;}

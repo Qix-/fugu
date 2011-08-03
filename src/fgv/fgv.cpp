@@ -22,6 +22,8 @@
 #include "GL/glew.h"
 #include "GL/glfw.h"
 
+const double FPS = 60;
+const double SPF = 1/FPS;
 int gWidth = 800;
 int gHeight = 600;
 
@@ -45,10 +47,11 @@ void GLFWCALL keyCallback(int key, int action)
 	}
 }
 
-
 void GLFWCALL resizeWindow(int width, int height);
 void setupWindowAndGL();
 
+void drawOrigin();
+void drawGroundPlane();
 void mouseMoved(int x, int y);
 void mouseButtoned(int button, int state);
 
@@ -73,18 +76,17 @@ int main(int argc, char *argv[])
 
 	bool running = true;
 
-	double time = glfwGetTime();
-	double dt = 0.01;
+	double before = glfwGetTime();
+	// double dt = SPF;
+	double now = glfwGetTime();
 
 	// Run as fast as I can
 	while(running){
-		// Update the universe
-		u.update(dt);
+		// compute how long this frame takes to update and draw
+		before = glfwGetTime();
 
-		// Recompute delta t
-		double now = glfwGetTime();
-		dt = now - time;
-		time = now;
+		// Update the universe
+		u.update(SPF);
 
 		// Draw all the meshes in the universe
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -97,22 +99,13 @@ int main(int argc, char *argv[])
 		GLfloat lp[] = {.1, 1, .1, 0};
 		glLightfv(GL_LIGHT0,GL_POSITION,lp);
 
-		// TODO: Need some basic view manipulation
-		/*
-		// Center and squish into a 1x1 cube
-		glScalef(1./meshScale,1./meshScale,1./meshScale);
-		glTranslatef(-meshCenter[0],-meshCenter[1],-meshCenter[2]);
-
-		// Rotate slowly around the y-axis
-		glRotatef(time*20,0,1,0);
-		m->drawGL();
-		*/
-
 		glPushMatrix();
 		glMultMatrixf((GLfloat*) gRotationMatrix);
-
 		float z = std::exp(-gZoom);
 		glScalef(z,z,z);
+
+		drawOrigin();
+		drawGroundPlane();
 
 		BOOST_FOREACH(boost::shared_ptr<fg::MeshNode> m, u.meshNodes()){
 			m->mesh()->sync(); // make sure normals are okay
@@ -132,6 +125,10 @@ int main(int argc, char *argv[])
 		glfwSwapBuffers();
 		running = !glfwGetKey(GLFW_KEY_ESC) && glfwGetWindowParam(GLFW_OPENED);
 
+		// Sleep so we don't exceed FPS
+		now = glfwGetTime();
+		double spareTime = SPF - (now - before);
+		if (spareTime > 0) glfwSleep(spareTime);
 	}
 
 	glfwTerminate();
@@ -242,3 +239,56 @@ void GLFWCALL mouseButtoned(int button, int state){
 		gMouseState.middleButtonDown = false;
 	}
 }
+
+void drawOrigin(){
+	glPushAttrib(GL_LIGHTING_BIT);
+	glPushAttrib(GL_LINE_BIT);
+	glDisable(GL_LIGHTING);
+	glLineWidth(2);
+	fg::GLRenderer::renderAxes();
+	glPopAttrib();
+	glPopAttrib();
+}
+
+void drawGroundPlane(){
+	glPushAttrib(GL_LIGHTING_BIT);
+	glPushAttrib(GL_LINE_BIT);
+	glPushAttrib(GL_CURRENT_BIT);
+	glDisable(GL_LIGHTING);
+	glLineWidth(1);
+	glColor3f(.5,.5,.5);
+	const int WIDTH = 5;
+#define F(fx,fz,tx,tz) {glVertex3f(fx,0,fz); glVertex3f(tx,0,tz);}
+	glBegin(GL_LINES);
+		for(int x=-WIDTH;x<=WIDTH;x++)
+			F(x,-WIDTH,x,WIDTH);
+		for(int z=-WIDTH;z<=WIDTH;z++)
+			F(-WIDTH,z,WIDTH,z);
+	glEnd();
+#undef F
+	glPopAttrib();
+	glPopAttrib();
+	glPopAttrib();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

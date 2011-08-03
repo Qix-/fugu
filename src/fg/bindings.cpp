@@ -188,14 +188,14 @@ namespace fg {
 		   .scope [
 			   class_<fg::Mesh::Primitives>("primitives")
 			   .scope [
+			           def("cube",&fg::Mesh::Primitives::Cube),
 					   def("icosahedron",&fg::Mesh::Primitives::Icosahedron),
 					   def("sphere",&fg::Mesh::Primitives::Sphere),
 					   def("tetrahedron", &fg::Mesh::Primitives::Tetrahedron),
 					   def("dodecahedron", &fg::Mesh::Primitives::Dodecahedron),
 					   def("octahedron", &fg::Mesh::Primitives::Octahedron),
-					   def("hexahedron", &fg::Mesh::Primitives::Hexahedron),
-					   def("cone", &fg::Mesh::Primitives::Cone), // (r1,r2,h,subdiv=36)
-					   def("cylinder", &fg::Mesh::Primitives::Cylinder) // (slices,stacks)
+					   def("cone", &fg::Mesh::Primitives::Cone), // (r1,r2,subdiv=36)
+					   def("cylinder", &fg::Mesh::Primitives::Cylinder) // (slices) // ,stacks)
 			   ]
 		   ]
 

@@ -50,12 +50,15 @@ namespace fg {
 
 		//Vec3 operator*(const Vec3& v) const;
 
-		/// \brief Set this matrix to be a translation matrix
+		/// \brief Set this matrix to be a translation transform
 		void setTranslate(double x, double y, double z);
-		/// \brief Set this matrix to be a translation matrix
+		/// \brief Set this matrix to be a translation transform
 		void setTranslate(Vec3 t);
-		/// \brief Set this matrix to be a rotation matrix (radians, axis)
+		/// \brief Set this matrix to be a rotation transform (radians, axis)
 		void setRotateRad(double radians, double x, double y, double z);
+		/// \brief Set this matrix to be a scaling transform
+		void setScale(double sx, double sy, double sz);
+
 		void set(const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis);
 	public:
 		static Mat4 Identity();
