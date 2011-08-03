@@ -49,6 +49,7 @@
 #include <vcg/complex/algorithms/update/normal.h>
 #include <vcg/complex/algorithms/update/topology.h>
 #include <vcg/complex/algorithms/update/flag.h>
+#include <vcg/complex/algorithms/update/position.h>
 
 #include <vcg/simplex/vertex/component_ocf.h>
 #include <vcg/simplex/face/component_ocf.h>
@@ -183,6 +184,8 @@ namespace fg {
 	}
 
 	void Mesh::applyTransform(const Mat4& T){
+		vcg::tri::UpdatePosition<MeshImpl>::Matrix(*mpMesh,T,true);
+		/*
 		foreach(VertexImpl& v, mpMesh->vert){
 			// only return non-dead vertices
 			if (!v.IsD()){
@@ -190,6 +193,7 @@ namespace fg {
 			}
 		}
 		sync();
+		*/
 	}
 
 	MeshImpl* Mesh::_impl(){
