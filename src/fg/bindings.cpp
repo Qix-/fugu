@@ -35,6 +35,7 @@
 #include <luabind/iterator_policy.hpp>
 
 #include <sstream>
+#include <cmath>
 
 #include "fg/vec3.h"
 #include "fg/mat4.h"
@@ -51,6 +52,11 @@
 
 int debugFileAndLine(lua_State* L);
 
+// hack
+fg::Vec3 matmul(const fg::Mat4& m, const fg::Vec3& v){
+	return m*((vcg::Point3<double>)(v));
+}
+
 namespace fg {
 	int loadLuaBindings(lua_State* L){
 		using namespace luabind;
@@ -58,23 +64,11 @@ namespace fg {
 		//set_pcall_callback(debugFileAndLine);
 		open(L);
 
-		// fg/universe.h
-		module(L,"fg")[
-		   class_<fg::Universe>("universe")
-		   .def(tostring(const_self))
-		   .def("addMesh", &fg::Universe::addMesh) // deprecated..
-		   .def("add", (void(fg::Universe::*) (boost::shared_ptr<MeshNode>)) &fg::Universe::add)
-		   .def("add", (void(fg::Universe::*) (boost::shared_ptr<Node>)) &fg::Universe::add)
-		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
-		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
-		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
-		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
-		   .property("t", &fg::Universe::time)
-		   .def("time", &fg::Universe::time)
-		];
+		// All functions and math types populate the global namespace
+		// NB: If this causes problems, well ... we'll change it I guess
 
 		// fg/functions.h
-		module(L,"fg")[
+		module(L)[
 		   def("min", &min<double>),
 		   def("lerp", &lerp<double, double>),
            def("mix", &mix<double, double>),
@@ -82,11 +76,12 @@ namespace fg {
            def("step", &step<double, double>),
            def("pulse", &pulse<double, double>),
            def("smoothstep", &smoothstep<double>),
-           def("catmullSpline", &catmullSpline<double>),
+           // def("catmullSpline", &catmullSpline<double>), can't use this without adapting the array (BP)
            def("bias", &fg::bias<double>),
            def("gain", &fg::gain<double>),
            def("gamma", &gammaCorrect<double>),
            def("invSqrt", &invSqrt<double>),
+           def("sqrt", (double(*)(double)) &std::sqrt),
            def("sqr", &sqr<double>),
            def("sign", &sign<double>),
 
@@ -102,10 +97,18 @@ namespace fg {
            def("randomN", (double(*)(double,double))&randomN)
 		   ];
 
+
+		/*
+		module(L)[
+		          class_<vcg::Point3<double> >("point3d")
+		];*/
+
 		// fg/vec3.h
-		module(L, "fg")[
+		module(L)[
 		   class_<fg::Vec3>("vec3")
+		   .def(constructor<>())
 		   .def(constructor<double,double,double>())
+		   .def(constructor<const vcg::Point3d&>())
 		   .property("x", &fg::Vec3::getX, &fg::Vec3::setX)
 		   .property("y", &fg::Vec3::getY, &fg::Vec3::setY)
 		   .property("z", &fg::Vec3::getZ, &fg::Vec3::setZ)
@@ -117,32 +120,76 @@ namespace fg {
 
 		   .def(tostring(const_self))
 
-		   .def("normalise",&fg::Vec3::normalise)
+		   // operators
 		   .def(const_self + other<fg::Vec3>())
 		   .def(const_self - other<fg::Vec3>())
 		   .def(const_self * double())
+		   .def(const_self / double())
+		   .def(-(const_self))
+
+		   .def(const_self == other<fg::Vec3>())
+
+		   // methods
+		   .def("normalise",&fg::Vec3::normalise),
+
+		   // vec3 free functions (after GLSL Geometric Functions)
+		   def("length",(void(*)(const Vec3&)) &fg::length),
+		   def("distance",(void(*)(const Vec3&,const Vec3&)) &fg::distance),
+		   def("dot",(void(*)(const Vec3&,const Vec3&)) &fg::dot),
+		   def("cross",(Vec3(*)(const Vec3&,const Vec3&)) &fg::cross),
+		   def("normalise",(Vec3(*)(const Vec3&)) &fg::normalise)
 		];
 
+
 		// fg/mat4.h
-		module(L, "fg")[
+		module(L)[
 		   class_<fg::Mat4>("mat4")
 		   .def(constructor<>())
+		   /* // Would like to do this but luabind can only take up to 10 params
+		   .def(constructor<double,double,double,double,
+				   double,double,double,double,
+				   double,double,double,double,
+				   double,double,double,double>())
+			*/
 		   .def(tostring(const_self))
 
-		   .def("setTranslate", (void(fg::Mat4::*)(double,double,double)) &fg::Mat4::setTranslate)
-		   .def("setRotateRad", (void(fg::Mat4::*)(double,double,double,double)) &fg::Mat4::setRotateRad)
-		   .def("setScale", (void(fg::Mat4::*)(double,double,double)) &fg::Mat4::setScale)
-
+		   // operators
 		   .def(const_self + other<fg::Mat4>())
 		   .def(const_self - other<fg::Mat4>())
-		   .def(const_self * other<fg::Mat4>())
-
-		   .def(const_self * other<fg::Vec3>()) // free function
-
-		   .def(const_self == other<fg::Mat4>())
-
 		   .def(-(const_self))
 		   .def(const_self * double())
+		   .def(const_self * other<fg::Mat4>())
+		   .def("__mul", (fg::Vec3(*)(const fg::Mat4&, const fg::Vec3&))&matmul)
+		   // .def(const_self * other<fg::Vec3>()) // free function
+		   .def(const_self == other<fg::Mat4>())
+
+		   // methods
+		   .def("get", (double(fg::Mat4::*)(int,int)const) &fg::Mat4::get)
+
+		   // transform methods
+		   .def("set", (void(fg::Mat4::*)(const Vec3&, const Vec3&, const Vec3&)) &fg::Mat4::set)
+		   .def("setBasis", (void(fg::Mat4::*)(const Vec3&, const Vec3&, const Vec3&)) &fg::Mat4::set)
+		   .def("setTranslate", (void(fg::Mat4::*)(double,double,double)) &fg::Mat4::setTranslate)
+		   .def("setTranslate", (void(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setTranslate)
+		   .def("setRotateRad", (void(fg::Mat4::*)(double,double,double,double)) &fg::Mat4::setRotateRad)
+		   .def("setRotateRad", (void(fg::Mat4::*)(double,const Vec3&)) &fg::Mat4::setRotateRad)
+		   .def("setScale", (void(fg::Mat4::*)(double,double,double)) &fg::Mat4::setScale)
+		   .def("setScale", (void(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setScale)
+		];
+
+		// fg/universe.h
+		module(L,"fg")[
+		   class_<fg::Universe>("universe")
+		   .def(tostring(const_self))
+		   .def("addMesh", &fg::Universe::addMesh) // deprecated..
+		   .def("add", (void(fg::Universe::*) (boost::shared_ptr<MeshNode>)) &fg::Universe::add)
+		   .def("add", (void(fg::Universe::*) (boost::shared_ptr<Node>)) &fg::Universe::add)
+		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
+		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
+		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
+		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
+		   .property("t", &fg::Universe::time)
+		   .def("time", &fg::Universe::time)
 		];
 
 		// fg/node.h

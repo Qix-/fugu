@@ -56,6 +56,7 @@ namespace fg {
 		bool hasCompoundTransformBeenApplied() const;
 
 		bool isDirty(){return mDirty;}
+		void setDirty(bool d){mDirty = d;}
 
 		void _setGraphIndex(int gi); ///< used internally by the dependency graph in fg universe
 		int _getGraphIndex() const; ///< used internally by the dependency graph in fg universe

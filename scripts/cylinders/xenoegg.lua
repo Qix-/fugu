@@ -28,7 +28,7 @@ function update(dt)
 
 	-- create cross section
 
-	bert:setFrame(fg.vec3(1,0.,0.),fg.vec3(0.,1.,0.),fg.vec3(0.,0.,1.))
+	bert:setFrame(vec3(1,0.,0.),vec3(0.,1.,0.),vec3(0.,0.,1.))
 	bert:setStiffness(outerS,outerS)
 	bert:beginCrossSection()
 	y = 1*innerRat * math.sin((.5) * 2 * math.pi / numBumps)
@@ -37,7 +37,7 @@ function update(dt)
 	dy = math.cos((.5) * 2 * math.pi / numBumps)
 	dx = -math.sin((.5) * 2 * math.pi / numBumps)
 
-	bert:setFrame(fg.vec3(x,y,0),fg.vec3(dx,dy,0),fg.vec3(0,0,1))
+	bert:setFrame(vec3(x,y,0),vec3(dx,dy,0),vec3(0,0,1))
 	bert:setStiffness(innerS,innerS)
 	bert:addPoint()
 
@@ -49,7 +49,7 @@ function update(dt)
 		dy = math.cos(i * 2 * math.pi / numBumps)
 		dx = -math.sin(i * 2 * math.pi / numBumps)
 
-		bert:setFrame(fg.vec3(x,y,0),fg.vec3(dx,dy,0),fg.vec3(0,0,1))
+		bert:setFrame(vec3(x,y,0),vec3(dx,dy,0),vec3(0,0,1))
 		bert:setStiffness(outerS,outerS)
 		bert:addPoint()
 
@@ -59,7 +59,7 @@ function update(dt)
 		dy = math.cos((i+.5) * 2 * math.pi / numBumps)
 		dx = -math.sin((i+.5) * 2 * math.pi / numBumps)
 
-		bert:setFrame(fg.vec3(x,y,0),fg.vec3(dx,dy,0),fg.vec3(0,0,1))
+		bert:setFrame(vec3(x,y,0),vec3(dx,dy,0),vec3(0,0,1))
 		bert:setStiffness(innerS,innerS)
 		bert:addPoint()
 
@@ -69,7 +69,7 @@ function update(dt)
 	cs = bert:endCrossSection()
 
 	-- create a cylinder
-	bert:setFrame(fg.vec3(0.,0.,0.),fg.vec3(0.,0.,1.),fg.vec3(0.,1.,0.))
+	bert:setFrame(vec3(0.,0.,0.),vec3(0.,0.,1.),vec3(0.,1.,0.))
 
     bert:setCrossSection(0)
 

@@ -69,13 +69,27 @@ namespace fg {
 			Vec3 operator+(const Vec3& b) const;
 			Vec3 operator-(const Vec3& b) const;
 			Vec3 operator*(double d) const;
+			Vec3 operator/(double d) const;
 			Vec3 & operator=(const Vec3& other);
+
+			bool operator==(const Vec3& other) const;
 
 			Vec3 operator- () const;
 
 			static Vec3 Zero(){return Vec3(0,0,0);}
 	};
+
+	// free functions that operate on Vec3
+	// These more or less conform to the GLSL
+	// Geometric Functions (S8.4 in the spec)
+	double length(const Vec3& v); ///< Returns the length of the vector
+	double distance(const Vec3& a, const Vec3& b); ///< Returns the distance between two points a and b
+	double dot(const Vec3& a, const Vec3& b); ///< Returns the dot product of a and b
+	Vec3 cross(const Vec3& a, const Vec3& b); ///< Returns the cross product of a and b
+	Vec3 normalise(const Vec3& v); ///< Returns a vector in the same dir as v but with length 1
 }
+
+
 
 // For basic printing
 std::ostream& operator<<(std::ostream&, const fg::Vec3&);

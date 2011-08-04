@@ -14,7 +14,7 @@ local sphereVerts = nil -- all verts on the initial sphere
 local suckers = {}
 
 function randomElement(t)
-	return t[math.floor(fg.random(1,#t+1))]	
+	return t[math.floor(random(1,#t+1))]	
 end
 
 function convertToTable(vtxSet)
@@ -33,7 +33,7 @@ function setup()
 
 	for i=1,20 do
 		local el = sphereVerts[i] -- randomElement(sphereVerts)
-		table.insert(suckers,new_thing(el,fg.random(0,10),fg.randomN(1,.2)))
+		table.insert(suckers,new_thing(el,random(0,10),randomN(1,.2)))
 	end
 end
 
@@ -79,8 +79,8 @@ function new_thing(v,p,s) -- use the global mesh m
 		local n = self.vertex:getN()
 		n:normalise()
 		function f(u)
-			local len = stepFunction({{0.5,fg.random(.6,.8)},{.6,.01},{.7,-.2},{1.1,-.1}})(u)
-			local exp = stepFunction({{.1,fg.random(.1,.4)},{.3,-.01},{.6,-.6},{1.1,-.1}})(u)
+			local len = stepFunction({{0.5,random(.6,.8)},{.6,.01},{.7,-.2},{1.1,-.1}})(u)
+			local exp = stepFunction({{.1,random(.1,.4)},{.3,-.01},{.6,-.6},{1.1,-.1}})(u)
 			local d = nil
 			if (len > 0) then d = n else d = n*-1 end
 			return math.abs(len)*self.totalLength/self.numSegments, exp, d
@@ -112,7 +112,7 @@ function new_thing(v,p,s) -- use the global mesh m
 		table.foreachi(self.edgeRings, function(i, er)
 			for i=1,#er.ring do
 				if (er.ring[i].valid) then
-					local s = fg.fracSum(self.speed*2*time, self.phase, 0, 3, 1)
+					local s = fracSum(self.speed*2*time, self.phase, 0, 3, 1)
 					-- s = math.pow(s,4)
 					er.ring[i]:setPos(er.center + er.ringDP[i]*(1+0.5*s))
 				end

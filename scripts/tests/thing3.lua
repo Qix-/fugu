@@ -14,7 +14,7 @@ local sphereVerts = nil -- all verts on the initial sphere
 local suckers = {}
 
 function randomElement(t)
-	return t[math.floor(fg.random(1,#t+1))]	
+	return t[math.floor(random(1,#t+1))]	
 end
 
 function convertToTable(vtxSet)
@@ -34,7 +34,7 @@ function setup()
 
 	for i=1,30 do
 		local el = sphereVerts[i] -- randomElement(sphereVerts)
-		table.insert(suckers,new_thing(el,fg.random(0,10),fg.random(1,3)))
+		table.insert(suckers,new_thing(el,random(0,10),random(1,3)))
 	end
 end
 
@@ -81,7 +81,7 @@ function new_thing(v,p,s) -- use the global mesh m
 		n:normalise()
 		expandFactor = 1
 		function f(u)
-			--local len = stepFunction({{0.5,fg.random(.6,.8)},{.6,.01},{.7,-.2},{1.1,-.1}})(u)
+			--local len = stepFunction({{0.5,random(.6,.8)},{.6,.01},{.7,-.2},{1.1,-.1}})(u)
 			local len = 1
 			if (u<.8) then 
 				len = 1
@@ -91,17 +91,17 @@ function new_thing(v,p,s) -- use the global mesh m
 
 			local exp = nil 
 			if (u<.6) then 
-				exp = fg.lerp(-.2,0,u/.6) 
+				exp = lerp(-.2,0,u/.6) 
 			elseif (u<.8) then
-				exp=fg.lerp(2,0,(u-.6)/.2) 
+				exp=lerp(2,0,(u-.6)/.2) 
 			else
-				exp=fg.lerp(0,-.3,(u-.8)/.2)
+				exp=lerp(0,-.3,(u-.8)/.2)
 			end
 
-			-- stepFunction({{.1,fg.random(0,.1)},{.3,fg.random(.1,.5)},{.6,0},{1.1,-.3}})(u)
+			-- stepFunction({{.1,random(0,.1)},{.3,random(.1,.5)},{.6,0},{1.1,-.3}})(u)
 			local d = nil
 			local R = .2 -- .2
-			local r = fg.vec3(fg.random(-R,R),fg.random(-R,R),fg.random(-R,R))
+			local r = vec3(random(-R,R),random(-R,R),random(-R,R))
 			if (len > 0) then d = n else d = n*-1 end
 			d = (d+r)
 			d:normalise()

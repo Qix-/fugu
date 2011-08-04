@@ -83,7 +83,7 @@ function new_root(length,width,meander)
 			end
 			bert:addPoint()
 			pos = bert:getPosition()
-			rateCur = rateCur + fg.fracSum(pos.x, pos.y, pos.z, 1, 1)
+			rateCur = rateCur + fracSum(pos.x, pos.y, pos.z, 1, 1)
 			bert:yaw(rateCur)
 			bert:move(stepLength)
 			distance = distance + self.stepLength
@@ -109,7 +109,7 @@ function new_holdfast(length,width,n,meander)
     obj.build = function(self,donatello)
 		for i = 1, self.numRoots, 1 do
 			-- create a root
-			length = fg.randomN(self.meanLength,.2)
+			length = randomN(self.meanLength,.2)
 			self.roots[i] = new_root(length,self.rootWidth,meander)
 
             donatello:pushState()
@@ -151,14 +151,14 @@ function new_stalk(length,width,n)
 	  	bert:addPoint(7)
 
         bert:yaw(self.bendy)
---		bert:pitch(fg.random(-.07,.07))
+--		bert:pitch(random(-.07,.07))
 		bert:move(self.dl * .5)
 		bert:setScale(self.dw)
 		bert:addPoint(7)
 		bert:move(self.dl * .5)
 
-	  	width = fg.randomN(self.beadWidth, self.beadWidth * .03)
-	  	length = fg.randomN(self.beadLength, self.beadLength * .2)
+	  	width = randomN(self.beadWidth, self.beadWidth * .03)
+	  	length = randomN(self.beadLength, self.beadLength * .2)
 		bert:setScale(width)
 		bert:addPoint(7)
 		bert:move(length)
@@ -188,7 +188,7 @@ function new_cylax(width,length,n)
 	    bert:pushState()
 		
 		-- create cross section
-		bert:setFrame(fg.vec3(1,0.,0.),fg.vec3(0.,1.,0.),fg.vec3(0.,0.,1.))
+		bert:setFrame(vec3(1,0.,0.),vec3(0.,1.,0.),vec3(0.,0.,1.))
 		bert:setStiffness(self.outerS,self.outerS)
 		bert:beginCrossSection()
 		y = self.innerRat * math.sin((.5) * 2 * math.pi / self.numBumps)
@@ -197,7 +197,7 @@ function new_cylax(width,length,n)
 		dy = math.cos((.5) * 2 * math.pi / self.numBumps)
 		dx = -math.sin((.5) * 2 * math.pi / self.numBumps)
 
-		bert:setFrame(fg.vec3(x,y,0),fg.vec3(dx,dy,0),fg.vec3(0,0,1))
+		bert:setFrame(vec3(x,y,0),vec3(dx,dy,0),vec3(0,0,1))
 		bert:setStiffness(self.innerS,self.innerS)
 		bert:addPoint()
 
@@ -209,7 +209,7 @@ function new_cylax(width,length,n)
 			dy = math.cos(i * 2 * math.pi / self.numBumps)
 			dx = -math.sin(i * 2 * math.pi / self.numBumps)
 
-			bert:setFrame(fg.vec3(x,y,0),fg.vec3(dx,dy,0),fg.vec3(0,0,1))
+			bert:setFrame(vec3(x,y,0),vec3(dx,dy,0),vec3(0,0,1))
 			bert:setStiffness(self.outerS,self.outerS)
 			bert:addPoint()
 
@@ -219,7 +219,7 @@ function new_cylax(width,length,n)
 			dy = math.cos((i+.5) * 2 * math.pi / self.numBumps)
 			dx = -math.sin((i+.5) * 2 * math.pi / self.numBumps)
 
-			bert:setFrame(fg.vec3(x,y,0),fg.vec3(dx,dy,0),fg.vec3(0,0,1))
+			bert:setFrame(vec3(x,y,0),vec3(dx,dy,0),vec3(0,0,1))
 			bert:setStiffness(self.innerS,self.innerS)
 			bert:addPoint()
 

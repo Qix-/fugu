@@ -69,9 +69,17 @@ namespace fg {
 				if (n->isDirty()) n->applyCompoundTransform();
 			}
 			else { // if (n->_parent!=NULL){
-				if (n->_parent->isDirty() or n->isDirty())
-									n->applyCompoundTransform(n->_parent->getCompoundTransform());
+				if (n->_parent->isDirty() or n->isDirty()){
+					n->applyCompoundTransform(n->_parent->getCompoundTransform());
+					// make sure our children know that they need to update too
+					n->setDirty(true);
+				}
 			}
+		}
+
+		// clean everything
+		foreach(shared_ptr<Node> n, mNodesSortedTopologically){
+			n->setDirty(false);
 		}
 	}
 
