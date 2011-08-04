@@ -8,8 +8,7 @@
 #include "fg/glrenderer.h"
 #include "fg/mesh.h"
 #include "fg/meshimpl.h"
-
-#include "vcgext/export_obj_point3d.h"
+#include "fg/exportmeshnode.h"
 
 #include <iostream>
 #include <iomanip>
@@ -50,24 +49,31 @@ int main(int argc, char *argv[])
 	std::istringstream ssNF(argv[4]);
 	ssNF >> numFrames;
 
+	std::string numFramesStr(argv[4]);
+	int maxFrameDigits = numFramesStr.length();
+
 	double time = 0;
 	for(int i=0;i<numFrames;i++){
-		std::cout << "frame " << i << std::endl;
+		std::cout << "." << std::flush;
 
 		// Update the universe
 		u.update(dt);
-
+		int nodeCount = 0;
 		BOOST_FOREACH(boost::shared_ptr<fg::MeshNode> m, u.meshNodes()){
-			m->mesh()->sync(); // make sure normals are okay
-			// fg::GLRenderer::renderMeshNode(m,fg::GLRenderer::RenderMeshMode(DRAW_MODE));
+			// m->mesh()->sync(); // make sure normals are okay
+
+			// Need to output the transformation data too...
+
 			std::ostringstream oss;
-			oss << prefix << "fgv" << std::setfill('0') << std::setw(4) << i << ".obj";
+			oss << prefix << "_" << nodeCount << "_" << std::setfill('0') << std::setw(maxFrameDigits) << i << ".obj";
 			// std::cout << "Saving as: \"" << oss.str().c_str() << "\"\n";
 			vcg::tri::io::ExporterOBJ_Point3d<fg::MeshImpl>::Save(
 				*m->mesh()->_impl(),
 				oss.str().c_str(),
-				vcg::tri::io::Mask::IOM_VERTNORMAL
+				vcg::tri::io::Mask::IOM_VERTNORMAL,
+				m->getCompoundTransform()
 			);
+			nodeCount++;
 		}
 	}
 

@@ -284,6 +284,10 @@ namespace fg {
 
 	}
 
+	int Mesh::MeshBuilder::getNumVertices(){
+		return mVertices.size();
+	}
+
 	int Mesh::MeshBuilder::getNumVerticies(){
 		return mVertices.size();
 	}
