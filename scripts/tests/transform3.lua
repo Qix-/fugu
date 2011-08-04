@@ -6,7 +6,7 @@ module(...,package.seeall)
 
 -- constants
 local branches = 3
-local depth = 4
+local depth = 2
 
 -- Shorthand for transforms
 function R(rad,x,y,z)
@@ -44,7 +44,7 @@ function branch(parent,tr,d)
 	if (d<=0) then return end
 	
 	local db = 2*math.pi/branches
-	for i = 0,branches do
+	for i = 0,(branches-1) do
 		n = fg.meshnode(cyl)
 		fgu:add(n)
 		fgu:makeChildOf(parent,n)
