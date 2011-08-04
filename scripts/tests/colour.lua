@@ -14,7 +14,7 @@ end
 function update(dt)		
 	local rnd = function(max) return max*math.random() end	
 	local sc = 4
-	local perturb = function(x,y,z) return fg.vec3(fg.noise(sc*x+sc*fgu.t,sc*y,sc*z),fg.noise(sc*x,sc*y+sc*fgu.t,sc*z),fg.noise(sc*x,sc*y,sc*z+sc*fgu.t)) end
+	local perturb = function(x,y,z) return vec3(noise(sc*x+sc*fgu.t,sc*y,sc*z),noise(sc*x,sc*y+sc*fgu.t,sc*z),noise(sc*x,sc*y,sc*z+sc*fgu.t)) end
 	
 	vs = m:selectAllVertices()	
 	for v in vs.all do

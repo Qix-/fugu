@@ -3,10 +3,11 @@
 --]]
 
 module(...,package.seeall)
+require "table"
 
 -- constants
-local branches = 3
-local depth = 2
+local branches = 5
+local depth = 4
 
 -- Shorthand for transforms
 function R(rad,x,y,z)
@@ -28,6 +29,7 @@ function S(x,y,z)
 end
 
 local cyl = nil
+local nodes = {}
 
 function setup()	
 	-- cyl is a cylinder of height 1, with base at (0,0,0)
@@ -37,23 +39,39 @@ function setup()
 	
 	local root = fg.meshnode(cyl)
 	fgu:add(root)
+	table.insert(nodes,root)
 	branch(root,T(0,1,0),depth)
 end
 
 function branch(parent,tr,d)
 	if (d<=0) then return end
 	
+	-- add an empty node to the end of the branch
+	local empty = fg.node()
+	empty.transform = tr*S(.6,.6,.6)
+	fgu:add(empty)
+	fgu:makeChildOf(parent,empty)
+		
 	local db = 2*math.pi/branches
 	for i = 0,(branches-1) do
-		n = fg.meshnode(cyl)
+		local n = fg.meshnode(cyl)
 		fgu:add(n)
-		fgu:makeChildOf(parent,n)
-		n.transform = tr*S(.6,.6,.6)*R(db*i,0,1,0)*R(math.pi/3,1,0,0)	
+		fgu:makeChildOf(empty,n)
+		table.insert(nodes,n)
+		n.transform = R(db*i,0,1,0)*R(math.pi/3,1,0,0)	
 		branch(n,T(0,1,0),d-1)
 	end
 end
 
 function update(dt) 
+	time = fgu:time()
+	-- rotate all nodes	
+	table.foreach(nodes, 
+		function(i,n) 
+			local s = 1+0.003*math.sin(time+.7*i)
+			n.transform = n.transform*R(dt,0,1,0)*S(s,s,s)
+		end
+	)
 	--[[
 	y = math.sin(.5*fgu.t * math.pi)
 	y = y*y*math.abs(y)

@@ -56,13 +56,13 @@ namespace fg {
 	void Node::applyCompoundTransform(){
 		mCompoundTransform = Mat4(mRelativeTransform);
 		mHasCompoundTransformBeenApplied = true;
-		mDirty = false;
+		//mDirty = false; (dirtyness should propagate, so don't set this yet)
 	}
 
 	void Node::applyCompoundTransform(const Mat4& mParentTransform){
 		mCompoundTransform = mParentTransform * mRelativeTransform;
 		mHasCompoundTransformBeenApplied = true;
-		mDirty = false;
+		//mDirty = false;
 	}
 
 	bool Node::hasCompoundTransformBeenApplied() const {

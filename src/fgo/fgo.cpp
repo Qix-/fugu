@@ -22,6 +22,8 @@
 
 int main(int argc, char *argv[])
 {
+	std::cout << "TODO: Make sure normals are scaled by the compound transforms too..\n";
+
 	if (argc!=5){
 		std::cout << "Usage: " << argv[0] << " <script> <prefix> <dt> <numframes>\n"
 				<< "An example <script> is \"tests/basic5\" (note no .lua suffix needed\n"
@@ -61,9 +63,6 @@ int main(int argc, char *argv[])
 		int nodeCount = 0;
 		BOOST_FOREACH(boost::shared_ptr<fg::MeshNode> m, u.meshNodes()){
 			// m->mesh()->sync(); // make sure normals are okay
-
-			// Need to output the transformation data too...
-
 			std::ostringstream oss;
 			oss << prefix << "_" << nodeCount << "_" << std::setfill('0') << std::setw(maxFrameDigits) << i << ".obj";
 			// std::cout << "Saving as: \"" << oss.str().c_str() << "\"\n";

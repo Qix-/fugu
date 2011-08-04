@@ -47,7 +47,7 @@ local sphereVerts = nil -- all verts on the initial sphere
 local suckers = {}
 
 function randomElement(t)
-	return t[math.floor(fg.random(1,#t+1))]	
+	return t[math.floor(random(1,#t+1))]	
 end
 
 function convertToTable(vtxSet)
@@ -63,7 +63,7 @@ function setupThing()
 
 	for i=1,20 do
 		local el = sphereVerts[i] -- randomElement(sphereVerts)
-		table.insert(suckers,new_thing(el,fg.random(0,10),fg.random(1,3)))
+		table.insert(suckers,new_thing(el,random(0,10),random(1,3)))
 	end
 end
 
@@ -107,8 +107,8 @@ function new_thing(v,p,s) -- use the global mesh m
 		local n = self.vertex:getN()
 		n:normalise()
 		function f(u)
-			local len = stepFunction({{0.5,fg.random(.6,.8)},{.6,.01},{.7,-.2},{1.1,-.1}})(u)
-			local exp = stepFunction({{.1,fg.random(.1,.4)},{.3,-.01},{.6,-.6},{1.1,-.1}})(u)
+			local len = stepFunction({{0.5,random(.6,.8)},{.6,.01},{.7,-.2},{1.1,-.1}})(u)
+			local exp = stepFunction({{.1,random(.1,.4)},{.3,-.01},{.6,-.6},{1.1,-.1}})(u)
 			local d = nil
 			if (len > 0) then d = n else d = n*-1 end
 			return math.abs(len)*self.totalLength/self.numSegments, exp, d
