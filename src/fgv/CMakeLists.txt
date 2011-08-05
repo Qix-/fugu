@@ -20,7 +20,7 @@ endif(WIN32)
 
 if(APPLE)
 # still can't get rpath to work properly with cmake
-	file(COPY "${BASE_DIR}/lib/osx/libAntTweakBar.dylib" DESTINATION ${CMAKE_INSTALL_PREFIX})
+# so use DYLD_LIBRARY_PATH
 endif(APPLE)
 
 # don't install scripts, just use the fg/scripts directory as is 
