@@ -14,7 +14,7 @@ local ex = 0 -- num extrusions
 local maxEx = 5 
 
 function randomElement(t)
-	return t[math.floor(fg.random(1,#t+1))]	
+	return t[math.floor(random(1,#t+1))]	
 end
 
 function convertToTable(vtxSet)

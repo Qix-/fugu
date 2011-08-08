@@ -53,7 +53,7 @@ namespace fg {
 			case RENDER_WIRE: tm.Draw<vcg::GLW::DMWire,     vcg::GLW::CMPerVert,vcg::GLW::TMNone> (); break;
 			case RENDER_VERTICES: // tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break; 
 			{
-				tm.DrawPointsBase<vcg::GLW::NMPerVert,vcg::GLW::CMNone>();
+				tm.DrawPointsBase<vcg::GLW::NMPerVert,vcg::GLW::CMPerVert>();
 				break;
 			}
 			default: {}

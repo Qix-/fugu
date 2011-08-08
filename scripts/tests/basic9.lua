@@ -13,7 +13,7 @@ local sphereVerts = nil -- all verts on the initial sphere
 local thing = nil
 
 function randomElement(t)
-	return t[math.floor(fg.random(1,#t+1))]	
+	return t[math.floor(random(1,#t+1))]	
 end
 
 function convertToTable(vtxSet)
@@ -76,8 +76,8 @@ function new_thing(v) -- use the global mesh m
 		local n = self.vertex:getN()
 		n:normalise()
 		function f(u)
-			local len = stepFunction({{0.2,fg.random(.2,.3)},{.3,.01},{.6,-.2},{1.1,-.3}})(u)
-			local exp = stepFunction({{.1,fg.random(.1,.4)},{.3,-.1},{.6,-.1},{1.1,-.2}})(u)
+			local len = stepFunction({{0.2,random(.2,.3)},{.3,.01},{.6,-.2},{1.1,-.3}})(u)
+			local exp = stepFunction({{.1,random(.1,.4)},{.3,-.1},{.6,-.1},{1.1,-.2}})(u)
 			local d = nil
 			if (len > 0) then d = n else d = n*-1 end
 			return math.abs(len)*self.totalLength/self.numSegments, exp, d
@@ -130,7 +130,7 @@ function new_tentacle(m,v)
 		n:normalise()
 		
 		for k=1,self.numSegments do
-			local r = fg.vec3(fg.random(-.3,.3),1,fg.random(-.3,.3))
+			local r = vec3(random(-.3,.3),1,random(-.3,.3))
 			r:normalise()					
 			
 			n = n*(1-self.attractor) + r*(self.attractor)

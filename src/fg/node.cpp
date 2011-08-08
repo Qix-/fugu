@@ -31,12 +31,18 @@ namespace fg {
 	,mCompoundTransform(Mat4::Identity())
 	,mHasCompoundTransformBeenApplied(false)
 	,mGraphIndex(-1)
+	,mDirty(true)
 	{}
 
 	Node::~Node(){}
 
-	Mat4& Node::getRelativeTransform(){
+	const Mat4& Node::getRelativeTransform() const {
 		return mRelativeTransform;
+	}
+
+	void Node::setRelativeTransform(const Mat4& m){
+		mRelativeTransform = m;
+		mDirty = true;
 	}
 
 	Mat4& Node::getCompoundTransform(){
@@ -50,11 +56,13 @@ namespace fg {
 	void Node::applyCompoundTransform(){
 		mCompoundTransform = Mat4(mRelativeTransform);
 		mHasCompoundTransformBeenApplied = true;
+		//mDirty = false; (dirtyness should propagate, so don't set this yet)
 	}
 
 	void Node::applyCompoundTransform(const Mat4& mParentTransform){
 		mCompoundTransform = mParentTransform * mRelativeTransform;
 		mHasCompoundTransformBeenApplied = true;
+		//mDirty = false;
 	}
 
 	bool Node::hasCompoundTransformBeenApplied() const {

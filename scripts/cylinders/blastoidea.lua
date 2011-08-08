@@ -41,7 +41,7 @@ function new_holdfast(width,length,n,meander)
         donatello:pitch(math.pi)
 		for i = 1, self.numRoots, 1 do
 			-- create a root
-			length = self.meanLength * fg.random(.8,1.2)
+			length = self.meanLength * random(.8,1.2)
 			self.roots[i] = new_root(length,self.rootWidth*.5,meander)
 
             donatello:pushState()
@@ -88,7 +88,7 @@ function new_root(length,width,meander)
 
 		while (distance < self.rootLength) do
 			bert:addPoint()
-			theta = fg.random(-meander,meander)
+			theta = random(-meander,meander)
 			bert:yaw(theta)
 			bert:move(self.stepLength)
 			distance = distance + self.stepLength
@@ -129,14 +129,14 @@ function new_stalk(n,width,length,meander)
 	  	bert:addPoint()
 
         bert:yaw(self.bendy)
-		bert:pitch(fg.random(-.07,.07))
+		bert:pitch(random(-.07,.07))
 		bert:move(self.dl * .5)
 		bert:setScale(self.dw)
 		bert:addPoint()
 		bert:move(self.dl * .5)
 
-	  	width = self.beadWidth * fg.random(0.91,1.09)
-	  	length = self.beadLength * fg.random(0.91,1.09)
+	  	width = self.beadWidth * random(0.91,1.09)
+	  	length = self.beadLength * random(0.91,1.09)
 		bert:setScale(width)
 		bert:addPoint()
 		bert:move(length)

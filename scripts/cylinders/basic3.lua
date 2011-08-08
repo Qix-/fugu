@@ -5,7 +5,7 @@ local m = {}
 function setup()
 	bert = fg.turtle()
 
-    bert:setFrame(fg.vec3(.5,-.5,0.),fg.vec3(0.,1.,0.),fg.vec3(0.,0.,1.))
+    bert:setFrame(vec3(.5,-.5,0.),vec3(0.,1.,0.),vec3(0.,0.,1.))
 	bert:setStiffness(0.,0.)
 
 	bert:beginCrossSection()

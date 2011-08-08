@@ -27,21 +27,22 @@
 using namespace boost;
 
 namespace fg {
-	NodeGraph::NodeGraph():mG(){
+	NodeGraph::NodeGraph():mG(),mHaveNodesBeenSorted(false){
 		// get the property map for vertex indices
 		mIndexMap = get(vertex_index, mG);
 		mNodeMap = get(node_t(), mG);
 
 		mRootNode = boost::shared_ptr<Node>(new Node());
 		addNode(mRootNode);
+		mRootNode->_parent = NULL;
 	}
 
 	boost::shared_ptr<Node> NodeGraph::addNode(boost::shared_ptr<Node> n){
 		add_vertex(mG);
 		n->_setGraphIndex(num_vertices(mG)-1);
 		boost::put(mNodeMap, n->_getGraphIndex(), n);
-
-		addEdge(mRootNode,n);
+		if (n!=mRootNode)
+			addEdge(mRootNode,n);
 		return n;
 	}
 
@@ -49,36 +50,72 @@ namespace fg {
 		add_edge(from->_getGraphIndex(),to->_getGraphIndex(),mG);
 	}
 
+	/*
 	void NodeGraph::addEdge(int f, int t){
 		add_edge(f,t,mG);
+		_sortNodes();
 	}
+	*/
 
 	///< update the node data based on the dependency graph
 	void NodeGraph::update()
 	{
-		NodeUpdater vis(mIndexMap,mNodeMap);
-		breadth_first_search(mG, vertex(0, mG), visitor(vis));
+		if (!mHaveNodesBeenSorted){
+			_sortNodes();
+		}
+
+		foreach(shared_ptr<Node> n, mNodesSortedTopologically){
+			if (n->_parent==NULL){
+				if (n->isDirty()) n->applyCompoundTransform();
+			}
+			else { // if (n->_parent!=NULL){
+				if (n->_parent->isDirty() or n->isDirty()){
+					n->applyCompoundTransform(n->_parent->getCompoundTransform());
+					// make sure our children know that they need to update too
+					n->setDirty(true);
+				}
+			}
+		}
+
+		// clean everything
+		foreach(shared_ptr<Node> n, mNodesSortedTopologically){
+			n->setDirty(false);
+		}
 	}
 
-	NodeGraph::NodeUpdater::NodeUpdater(IndexMap im, NodeMap nm):index(im),nodemap(nm){}
+	std::list<shared_ptr<Node> > mNodesSortedTopologically;
+
+	void NodeGraph::_sortNodes(){ // sort the nodes
+		mNodesSortedTopologically.clear();
+		NodeUpdater vis(mIndexMap,mNodeMap,&mNodesSortedTopologically);
+		breadth_first_search(mG, vertex(0, mG), visitor(vis));
+		mHaveNodesBeenSorted = true;
+	}
+
+	NodeGraph::NodeUpdater::NodeUpdater(IndexMap im, NodeMap nm, std::list<shared_ptr<Node> >* nodesSortedTopologically)
+	:index(im),nodemap(nm),nst(nodesSortedTopologically){}
+
 	void NodeGraph::NodeUpdater::initialize_vertex(Vertex v, Graph g){
 		// std::cout << "init: " << v << "\n";
 		// std::cout << (index)(v) << ":" << *(nodemap)(v) << "\n";
-		(nodemap)(v)->resetCompoundTransform();
+		// (nodemap)(v)->resetCompoundTransform();
+		(nodemap)(v)->_parent = NULL;
 	}
 
 	void NodeGraph::NodeUpdater::discover_vertex(Vertex v, Graph g){
 		boost::shared_ptr<Node> n = nodemap(v);
 		// If the compound transform hasn't been applied,
 		// then we must be at the root
-		if (!n->hasCompoundTransformBeenApplied()){
-			n->applyCompoundTransform();
-		}
+		//if (!n->hasCompoundTransformBeenApplied()){
+		//	n->applyCompoundTransform();
+		//}
+		nst->push_back(n);
 	}
 
 	void NodeGraph::NodeUpdater::examine_edge(Edge e, Graph g){
 		// propagate combines to all children
-		nodemap(target(e,g))->applyCompoundTransform(nodemap(source(e,g))->getCompoundTransform());
+		//nodemap(target(e,g))->applyCompoundTransform(nodemap(source(e,g))->getCompoundTransform());
+		nodemap(target(e,g))->_parent = nodemap(source(e,g)).get();
 	}
 }
 

@@ -49,14 +49,14 @@ function new_stalk(l,d,dl,dd) -- use the global mesh m
 	  bert = fg.turtle()
 
       bert:pushState()
-	  bert:setFrame(fg.vec3(.07,0.,0.),fg.vec3(0.,1.,0.),fg.vec3(0.,0.,1.))
+	  bert:setFrame(vec3(.07,0.,0.),vec3(0.,1.,0.),vec3(0.,0.,1.))
 	  bert:setStiffness(0.3,0.3)
 	  bert:beginCrossSection()
-	  bert:setFrame(fg.vec3(0.,.07,0.),fg.vec3(-1.,0.,0.),fg.vec3(0.,0.,1.))
+	  bert:setFrame(vec3(0.,.07,0.),vec3(-1.,0.,0.),vec3(0.,0.,1.))
 	  bert:addPoint()
-	  bert:setFrame(fg.vec3(-.07,0.,0.),fg.vec3(0.,-1.,0.),fg.vec3(0.,0.,1.))
+	  bert:setFrame(vec3(-.07,0.,0.),vec3(0.,-1.,0.),vec3(0.,0.,1.))
 	  bert:addPoint()
-	  bert:setFrame(fg.vec3(.0,-.07,0.),fg.vec3(1.,0.,0.),fg.vec3(0.,0.,1.))
+	  bert:setFrame(vec3(.0,-.07,0.),vec3(1.,0.,0.),vec3(0.,0.,1.))
 	  inner = bert:endCrossSection()
 
 	  -- Create the cylinder
@@ -83,17 +83,17 @@ function new_stalk(l,d,dl,dd) -- use the global mesh m
 
 	obj.update = function(self,dt)
 	    self.t = self.t + dt
-		t = fg.clamp(self.t, 0., self.growTimeLength)
+		t = clamp(self.t, 0., self.growTimeLength)
 		x = self.t / self.growTimeLength
-		self.currentLength = self.maxLength * fg.smoothstep(0., 1, x)
+		self.currentLength = self.maxLength * smoothstep(0., 1, x)
 
-		t = fg.clamp(self.t, 0., self.growTimeBase)
+		t = clamp(self.t, 0., self.growTimeBase)
 		x = self.t / self.growTimeBase
-		self.baseWidth = self.baseWidthInit + self.maxWidth * fg.smoothstep(0., 1., x)
+		self.baseWidth = self.baseWidthInit + self.maxWidth * smoothstep(0., 1., x)
 
-		t = fg.clamp(self.t, 0., self.growTimeTip)
+		t = clamp(self.t, 0., self.growTimeTip)
 		x = self.t / self.growTimeTip
-		self.tipWidth = self.tipWidthInit + self.maxWidth * fg.smoothstep(0., 1., x)
+		self.tipWidth = self.tipWidthInit + self.maxWidth * smoothstep(0., 1., x)
 	end
 
 	return obj
