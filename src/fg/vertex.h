@@ -64,6 +64,8 @@ namespace fg {
 		void setColour(Vec3 c);
 		void setColour(double r, double g, double b);
 
+		void setUV(double u, double v);
+
 		// Special functions
 		int getNumBones() const;
 

@@ -279,7 +279,12 @@ namespace fg {
 	// std::vector<Vec3> mVertices;
 	// std::vector<boost::tuple<int,int,int> > mTriangles;
 
-	Mesh::MeshBuilder::MeshBuilder():mVertices(),mTriangles(){}
+	Mesh::MeshBuilder::MeshBuilder()
+	:mVertices()
+	,mVertexColours()
+	,mVertexUVs()
+	,mTriangles(){}
+
 	Mesh::MeshBuilder::~MeshBuilder(){
 
 	}
@@ -296,6 +301,19 @@ namespace fg {
 		mVertices.push_back(Vec3(x,y,z));
 	}
 
+	void Mesh::MeshBuilder::addVertex(Vec3 pos){
+		mVertices.push_back(pos);
+	}
+
+	void Mesh::MeshBuilder::addVertexColour(Vec3 colour){
+		mVertexColours.push_back(colour);
+	}
+
+	void Mesh::MeshBuilder::addVertexUV(double u, double v){
+		mVertexUVs.push_back(make_pair(u,v));
+	}
+
+
 	void Mesh::MeshBuilder::addFace(int v1, int v2, int v3){
 		mTriangles.push_back(boost::make_tuple(v1,v2,v3));
 	}
@@ -303,9 +321,26 @@ namespace fg {
 	boost::shared_ptr<Mesh> Mesh::MeshBuilder::createMesh(){
 		Mesh* m = new Mesh();
 
+		int numcols = mVertexColours.size();
+		int numuvs = mVertexUVs.size();
+
 		vcg::tri::Allocator<MeshImpl>::AddVertices(*m->_impl(),mVertices.size());
 		for(int i=0;i<mVertices.size();i++){
 			m->_impl()->vert[i].P() = mVertices[i];
+
+			if (i < numcols){
+				vcg::Color4b &c = m->_impl()->vert[i].C();
+				Vec3& col = mVertexColours[i];
+				c.X() = 255*col.X();
+				c.Y() = 255*col.Y();
+				c.Z() = 255*col.Z();
+			}
+
+			if (i < numuvs){
+				// Set UV's...
+				m->_impl()->vert[i].T().U() = mVertexUVs[i].first;
+				m->_impl()->vert[i].T().V() = mVertexUVs[i].second;
+			}
 		}
 
 		vcg::tri::Allocator<MeshImpl>::AddFaces(*m->_impl(),mTriangles.size());
