@@ -63,6 +63,9 @@ namespace fg {
 				static bool isTexLoaded = false;
 				static GLuint tex = 0;
 
+				glPushAttrib(GL_TEXTURE_BIT);
+				glEnable(GL_TEXTURE_2D);
+
 				if (!isTexLoaded){
 					// make sure the texture is loaded...
 					Ppm ppm("../assets/UV.ppm");
@@ -75,9 +78,10 @@ namespace fg {
 					}
 
 				}
-
 				tm.TMId.push_back(tex);
 				tm.Draw<vcg::GLW::DMSmooth, vcg::GLW::CMPerVert,vcg::GLW::TMPerVert> ();
+
+				glPopAttrib();
 				break;
 			}
 			default: {}
