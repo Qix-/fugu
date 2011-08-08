@@ -28,6 +28,7 @@
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
+#include <utility>
 
 /* Define foreach. (With workaround for eclipse cdt parser.) */
 #ifdef __CDT_PARSER__
@@ -38,5 +39,8 @@
 
 using boost::shared_ptr;
 using boost::weak_ptr;
+
+using std::pair;
+using std::make_pair;
 
 #endif

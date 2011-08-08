@@ -206,7 +206,7 @@ namespace fg {
 		   .def("setMesh", &fg::MeshNode::setMesh)
 		];
 
-		// fg/mesh.h
+		// fg/vertex.h
 		module(L,"fg")[
 		   class_<fg::VertexProxy>("vertex")
 		   .def(tostring(const_self))
@@ -224,8 +224,13 @@ namespace fg {
 		   .def("setColour", (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setColour))
 		   .def("setColour", (void(fg::VertexProxy::*)(double,double,double)) (&fg::VertexProxy::setColour))
 
-		   .property("valid", &fg::VertexProxy::isValid),
+		   .def("setUV", &fg::VertexProxy::setUV)
 
+		   .property("valid", &fg::VertexProxy::isValid)
+		];
+
+		// fg/mesh.h
+		module(L,"fg")[
 		   class_<fg::Mesh::VertexSet>("vertexset")
 		   .property("all", &fg::luaAllAdapter<fg::Mesh::VertexSet>, return_stl_iterator),
 

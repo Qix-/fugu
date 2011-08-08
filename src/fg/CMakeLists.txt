@@ -21,6 +21,7 @@ set(SRC
 	pbezcarrier.cpp
 	pbezinterpdiv.cpp
 	plylib.cpp	
+	ppm.cpp
 	proxy.cpp
 	quat.cpp	
 	recsubdiv.cpp	
@@ -61,7 +62,8 @@ set(HDRS
 	operator.h
 	pbezinterp.h
 	pbezinterpdiv.h
-	proxy.h
+	ppm.h
+	proxy.h	
 	quat.h
 	recsubdiv.h
 	scaleinterpcrosssec.h
