@@ -223,6 +223,7 @@ namespace fg {
 		   .def("pitch",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::pitch)
 
 		   .def("setFrame",(void(fg::gc::Turtle::*)(Vec3,Vec3,Vec3))&fg::gc::Turtle::setFrame)
+		   .def("setFrameRel",(void(fg::gc::Turtle::*)(Vec3,Vec3,Vec3))&fg::gc::Turtle::setFrameRel)
 		   .def("setStiffness",(void(fg::gc::Turtle::*)(double,double))&fg::gc::Turtle::setStiffness)
 		   .def("setScale",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::setScale)
 		   .def("setCrossSection",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCrossSection)

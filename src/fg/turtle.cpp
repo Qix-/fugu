@@ -57,6 +57,15 @@ namespace fg {
             }
         }
 
+		void Turtle::setFrameRel( Vec3 pos, Vec3 heading, Vec3 up)
+		{
+			Mat4 tmp1, tmp2;
+			tmp1.setTranslate( pos.getX(), pos.getY(), pos.getZ() );
+			tmp2.set( up.cross(heading), up, heading );
+
+			mState.frame = mState.frame * tmp1 * tmp2;
+		}
+
         void Turtle::setFrame( Vec3 pos, Vec3 heading, Vec3 up )
 		{
 			Mat4 tmp1, tmp2;

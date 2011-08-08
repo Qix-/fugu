@@ -104,11 +104,15 @@ namespace fg {
             double vinc;
             double v = 0.;
             int pCsIndex, nCsIndex;
+			double pTLength, nTLength, pRTLength, nRTLength, pLength, nLength;
+
             // Get the first cross section add add the verticies to the mesh
 			csv = getCrossSectionV( v );
             sv = getScaleV( v );
 			scale = mScale.getPosition( sv );
             vector<Vec3> pCs = mCrossSection.getCrossSection( csv, scale );
+			nTLength = getTotalLengthSquared( pCs );
+			nLength = 0.;
             vector<Vec3> nCs;
             Quat ori;
             ori = orient( v );
@@ -127,6 +131,7 @@ namespace fg {
             // Add on control point at a time
 			for( int l = 0; l < mCarrier.getInterpolator()->getNumControlPoints() - 1; ++l )
 			{
+				m = mStrips[l];
 				vinc = 1. / ( ( double ) mStrips[l] );
 
             	for( int k = 0; k < m; ++k ) {
@@ -135,6 +140,8 @@ namespace fg {
             		sv = getScaleV( v );
 					scale = mScale.getPosition( sv );
             	    nCs = mCrossSection.getCrossSection( csv, scale );
+
+					// Orient it and add the vertecies to the mesh
             	    ori = orient( v + vinc );
             	    cCpos = mCarrier.getInterpolator()->getPosition( v + vinc );
 
@@ -150,18 +157,73 @@ namespace fg {
             	    int s1 = pCs.size();
             	    int s2 = nCs.size();
 
+					// Calculate the total length of the new cs
+					pTLength = getTotalLengthSquared( pCs );
+					nTLength = getTotalLengthSquared( nCs );
+					pLength = (pCs[0] - pCs[(1) % s1]).length() / pTLength;
+					nLength = (nCs[0] - nCs[(1) % s2]).length() / nTLength;
+					pRTLength = 0.;
+					nRTLength = 0.;
+
+					//std::cout << "pTLength = " << pTLength << ", nTLength = " << nTLength << "\n";
+
+
             	    while( i < s1 && j < s2 )
             	    {
-            	        if( ( pCs[i] - nCs[( j + 1 ) % s2] ).lengthSquared() < ( pCs[( i + 1 ) % s1] - nCs[j] ).lengthSquared() )
-            	        {
+						//std::cout << "i = " << i << ", j = " << j << "\n";
+						//std::cout << ( pCs[i] - nCs[( j + 1 ) % s2] ).lengthSquared() << std::endl;
+						//std::cout << "p = " << pLength / pTLength << ", n = " << nLength / nTLength << "\n";
+						//std::cout << "\n\ni = " << i << ", j = " << j <<std::endl;
+
+						//if( nLength < 1E-6 ) std::cout << "Oh noess!\n";
+
+						// They are almost the same, add both triangles
+						//std::cout << "p = " << pLength + pRTLength << ", n = " << nLength + nRTLength << "\n";
+						if( fabs(nLength + nRTLength - pLength - pRTLength) < 1E-9 ) {
             	            mb.addFace( pCsIndex + i, nCsIndex + ( ( j + 1 ) % s2 ), nCsIndex + j );
             	            ++j;
-            	        }
-            	        else
-            	        {
+							nRTLength += nLength;
+							nLength = (nCs[j] - nCs[(j + 1) % s2]).length() / nTLength;
+
+							//std::cout << "Adding the point on the p.\n";
+            	            mb.addFace( pCsIndex + i, pCsIndex + ( ( i + 1 ) % s1 ), nCsIndex + (j % s2) );
+            	            ++i;
+							pRTLength += pLength;
+							pLength = (pCs[i] - pCs[(i + 1) % s1]).length() / pTLength;
+						}
+						else if( nLength + nRTLength < pLength + pRTLength ) {
+							//std::cout << "Adding the point on the n.\n";
+            	            mb.addFace( pCsIndex + i, nCsIndex + ( ( j + 1 ) % s2 ), nCsIndex + j );
+            	            ++j;
+							nRTLength += nLength;
+							nLength = (nCs[j] - nCs[(j + 1) % s2]).length() / nTLength;
+						}
+						else {
+							//std::cout << "Adding the point on the p.\n";
             	            mb.addFace( pCsIndex + i, pCsIndex + ( ( i + 1 ) % s1 ), nCsIndex + j );
             	            ++i;
-            	        }
+							pRTLength += pLength;
+							pLength = (pCs[i] - pCs[(i + 1) % s1]).length() / pTLength;
+						}
+
+//						if( nRTLength > pRTLength )
+//            	        //if( ( pCs[i] - nCs[( j + 1 ) % s2] ).lengthSquared() > ( pCs[( i + 1 ) % s1] - nCs[j] ).lengthSquared() )
+//            	        {
+//							std::cout << "Adding the point on the p.\n";
+//            	            mb.addFace( pCsIndex + i, pCsIndex + ( ( i + 1 ) % s1 ), nCsIndex + j );
+//            	            ++i;
+//							pLength = (pCs[i] - pCs[(i + 1) % s1]).lengthSquared() / pTLength;
+//							pRTLength += pLength;
+//            	        }
+//            	        else
+//            	        {
+//							std::cout << "Adding the point on the n.\n";
+//            	            mb.addFace( pCsIndex + i, nCsIndex + ( ( j + 1 ) % s2 ), nCsIndex + j );
+//            	            ++j;
+//							nLength = (nCs[j] - nCs[(j + 1) % s2]).lengthSquared() / nTLength;
+//							nRTLength += nLength;
+//            	        }
+
             	    }
 
             	    // Finish off any unjoined verticies
@@ -240,6 +302,24 @@ namespace fg {
 				return lerp<double,double>( mScaleDomain[i-1].second, mScaleDomain[i].second, (v - mScaleDomain[i-1].first)/(mScaleDomain[i].first - mScaleDomain[i-1].first) );
 			}
 		}
+
+		double GeneralisedCylinder::getTotalLengthSquared( const std::vector< Vec3 > &polyLine ) const
+		{
+			double length = 0.;
+
+			//std::cout << "in getTL size = " << polyLine.size() << "\n";
+
+			int i;
+			for( i = 1; i < polyLine.size(); ++i )
+			{
+				length += (polyLine[i - 1] - polyLine[i]).length();
+				//std::cout << length << "\n";
+			}
+			length += (polyLine[i - 1] - polyLine[0]).length();
+
+			return length;
+		}
+
 //boost::shared_ptr<Mesh> GeneralisedCylinder::createMesh(int n, int m) const
 //{
 //  fg::Mesh::MeshBuilder mb;

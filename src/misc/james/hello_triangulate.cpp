@@ -56,6 +56,26 @@ int main(int argc, char *argv[])
 	setupWindowAndGL();
 
     gc::Turtle bert;
+	
+	bert.pushState();
+
+	bert.setStiffness( .3, 0. );
+
+	bert.setFrame( Vec3( 1., 0., 0. ), Vec3( 0., 1., 0. ), Vec3( 0., 0., 1. ) );
+	bert.beginCrossSection();
+	bert.setFrame( Vec3( 0.5, 1., 0. ), Vec3( -1., 0., 0. ), Vec3( 0., 0., 1. ) );
+	bert.setStiffness( .1, .6 );
+	bert.addPoint();
+	bert.setFrame( Vec3( -.1, 0., 0. ), Vec3( 0., -1., 0. ), Vec3( 0., 0., 1. ) );
+	bert.setStiffness( .0, .0 );
+	bert.addPoint();
+	bert.setFrame( Vec3( 0., -1., 0. ), Vec3( 1., 0., 0. ), Vec3( 0., 0., 1. ) );
+	bert.endCrossSection();
+
+	bert.popState();
+
+    bert.setCrossSection(1);
+    bert.setScale(.1);
 	bert.beginCylinder();
 	bert.move(1.);
 	/*
@@ -75,7 +95,8 @@ int main(int argc, char *argv[])
 	bert.move(1.);
 	bert.yaw(M_PI*.25);
 	*/
-	bert.endCylinder(1);
+	bert.setScale(3.);
+	bert.endCylinder(3);
 	boost::shared_ptr<Mesh> m = bert.getMesh();
 	//m->smoothSubdivide(4);
 
@@ -127,7 +148,7 @@ int main(int argc, char *argv[])
 		glVertex3d(zaxis.getX(),zaxis.getY(),zaxis.getZ());
 		glEnd();
 
-		fg::GLRenderer::renderMesh(m);
+		fg::GLRenderer::renderMesh(m, fg::GLRenderer::RENDER_WIRE);
 		
 		glPopMatrix();
 

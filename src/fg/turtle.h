@@ -28,6 +28,7 @@ namespace fg {
                 Turtle();
                 ~Turtle();
 				void setFrame( Vec3 pos, Vec3 heading, Vec3 up);
+				void setFrameRel( Vec3 pos, Vec3 heading, Vec3 up);
                 void move( double distance );
                 void yaw( double theta );
                 void pitch( double theta );

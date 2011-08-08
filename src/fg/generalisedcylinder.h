@@ -37,6 +37,7 @@ namespace fg {
 				std::vector< std::pair<double, double> > mCSDomain;
 				std::vector< std::pair<double, double> > mScaleDomain;
 				std::vector< int > mStrips;
+				double getTotalLengthSquared( const std::vector< Vec3 > &polyLine ) const;
 
                 void updateOrients( const std::vector<Quat> &orients );
 				double getCrossSectionV( double v ) const;

@@ -23,3 +23,6 @@ target_link_libraries(hello_recsubdiv ${ALL_LIBS})
 
 add_executable(hello_morph hello_morph.cpp trackball.cpp)
 target_link_libraries(hello_morph ${ALL_LIBS})
+
+add_executable(hello_triangulate hello_triangulate.cpp trackball.cpp)
+target_link_libraries(hello_triangulate ${ALL_LIBS})

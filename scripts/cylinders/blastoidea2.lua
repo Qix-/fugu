@@ -14,14 +14,16 @@ function setup()
 --	node[1] = fg.meshnode(m[1])
 
     -- stalk
-	stalk = new_stalk(.3,.5,30)
+	stalk = new_stalk(.35,.7,15)
 
     -- holdfast
-	hold_fast = new_holdfast(5,.5,5,.1)
+	hold_fast = new_holdfast(4.,.7,6,.7)
 
 	-- calyx
-	calyx = new_cylax(5,.5,5)
+	calyx = new_cylax(.9,.7,5)
 
+
+    -- brachioles
     donatello = fg.turtle()
 
     donatello:pushState()
@@ -32,7 +34,11 @@ function setup()
 	donatello:popState()
 	stalk:build(donatello)
 
+	donatello:pushState()
+
 	calyx:build(donatello)
+
+	donatello:popState()
 
 	node = fg.meshnode(donatello:getMesh())
 	fgu:add(node)
@@ -83,7 +89,7 @@ function new_root(length,width,meander)
 			end
 			bert:addPoint()
 			pos = bert:getPosition()
-			rateCur = rateCur + fg.fracSum(pos.x, pos.y, pos.z, 1, 1)
+			rateCur = rateCur + self.rootMeander * fg.fracSum(pos.x, pos.y, pos.z, 1, 1)
 			bert:yaw(rateCur)
 			bert:move(stepLength)
 			distance = distance + self.stepLength
@@ -114,7 +120,7 @@ function new_holdfast(length,width,n,meander)
 
             donatello:pushState()
 
-            donatello:roll(math.pi / self.numRoots * 2 * i)
+            donatello:roll(math.pi / self.numRoots * 2 * i + .03)
 			self.roots[i]:build(donatello)
 
 			donatello:popState()
@@ -133,7 +139,7 @@ function new_stalk(length,width,n)
 		dl = length * .1,
 		dw = width * .5,
 
-		bendy = 0.05
+		bendy = 0.01
 	}
 
 	obj.build = function(self, bert)
@@ -179,9 +185,9 @@ function new_cylax(width,length,n)
 		length = length,
 		numBumps = n,
 
-		outerS = 1.7,
-		innerS = 0.6,
-		innerRat = 0.6
+		outerS = 1.9,
+		innerS = 1.2,
+		innerRat = 0.54
 	}
 
 	obj.build = function(self, bert)
@@ -230,24 +236,203 @@ function new_cylax(width,length,n)
 
 		-- create a cylinder
 		bert:popState()
+		bert:pushState()
 
     	bert:setCrossSection(0)
+		bert:setScale(self.baseWidth)
 
 		bert:beginCylinder()
-		bert:move(1)
+		bert:move(self.length)
     	bert:setCrossSection(cs)
-		bert:setScale(1.8)
+		bert:setScale(1.8*self.baseWidth)
 		bert:addPoint(7)
-		bert:move(1)
-		bert:setScale(0.9)
+		bert:move(self.length)
+		bert:setScale(0.9*self.baseWidth)
 		bert:addPoint(7)
-		bert:move(0.6)
-		bert:setScale(0.6)
+		bert:move(0.6*self.length)
+		bert:setScale(0.6*self.baseWidth)
 		bert:addPoint(7)
-		bert:move(0.4)
-		bert:setScale(0.1)
+		bert:move(0.4*self.length)
+		bert:setScale(0.1*self.baseWidth)
 		bert:setCrossSection(0)
 		bert:endCylinder(7)
+
+		bert:popState()
+
+		bert:move(0.7)
+
+	  	for i = 1, self.numBumps, 1 do
+			bert:pushState()
+
+			brachioles = new_brachioles_bunch(.03,.2,7,8)
+
+			pos = fg.vec3(.7*math.cos((i + .5) * 2 * math.pi / self.numBumps), 
+			              .7*math.sin((i + .5) * 2 * math.pi / self.numBumps),
+						  0)
+			up = fg.vec3(-math.cos((i+.5) * 2 * math.pi / self.numBumps),
+						   -math.sin((i+.5) * 2 * math.pi / self.numBumps),
+						   0)
+
+			donatello:setFrameRel( pos, fg.vec3(0,0,1), up )
+
+			brachioles:build(donatello)
+
+			bert:popState()
+		end
+
+	end
+
+	return obj
+end
+
+function new_brachioles(width,length,n)
+	local obj = {
+		segWidth = width,
+		segLength = length,
+		numSegs = n,
+
+		l = 0.2,
+		dl = length * .2,
+		meander = 0.08,
+		meander2 = 0.007
+	}
+
+	obj.build = function(self, bert)
+	    bert:pushState()
+		
+		-- create cross section
+		bert:setStiffness(.3,.3)
+		bert:setFrame(fg.vec3(1+self.l,0.,0.),fg.vec3(0.,1.,0.),fg.vec3(0.,0.,1.))
+		bert:beginCrossSection()
+
+		bert:setFrame(fg.vec3(0,1,0),fg.vec3(-1,0.,0.),fg.vec3(0.,0.,1.))
+		bert:addPoint()
+
+		bert:setFrame(fg.vec3(-1-self.l,0,0),fg.vec3(0,-1,0),fg.vec3(0.,0.,1.))
+		bert:addPoint()
+
+		bert:setFrame(fg.vec3(0,-1,0),fg.vec3(1,0,0),fg.vec3(0.,0.,1.))
+		bert:addPoint()
+		cs1 = bert:endCrossSection()
+
+		-- create cross section
+		bert:setFrame(fg.vec3(1-self.l,0.,0.),fg.vec3(0.,1.,0.),fg.vec3(0.,0.,1.))
+		bert:beginCrossSection()
+
+		bert:setFrame(fg.vec3(0,1,0),fg.vec3(-1,0.,0.),fg.vec3(0.,0.,1.))
+		bert:addPoint()
+
+		bert:setFrame(fg.vec3(-1+self.l,0,0),fg.vec3(0,-1,0),fg.vec3(0.,0.,1.))
+		bert:addPoint()
+
+		bert:setFrame(fg.vec3(0,-1,0),fg.vec3(1,0,0),fg.vec3(0.,0.,1.))
+		bert:addPoint()
+		cs2 = bert:endCrossSection()
+
+		theta = 0
+		theta2 = 0
+
+		-- create a cylinder
+		width = self.segWidth
+		length = self.segLength
+
+		bert:popState()
+
+    	bert:setCrossSection(0)
+		bert:setScale(width)
+		bert:setStiffness(.3,.3)
+
+		bert:beginCylinder()
+
+		notScaled = true
+
+	  	for i = 1, self.numSegs, 1 do
+			width = fg.randomN(self.segWidth, self.segWidth * .1)
+			length = fg.randomN(self.segLength, self.segLength * .1)
+
+			pos = bert:getPosition()
+			theta = self.meander * fg.fracSum(pos.x, pos.y, pos.z, 3, 1.5)
+			theta2 = self.meander2 * fg.fracSum(pos.x, pos.y, pos.z, 1, 1)
+
+ 			bert:yaw(theta)
+			bert:pitch(theta)
+			bert:move(length)
+			bert:addPoint(5)
+
+        	bert:move(self.dl * .3)
+    		bert:setCrossSection(cs1)
+			bert:addPoint(5)
+
+			bert:move(self.dl * .2)
+    		bert:setCrossSection(cs2)
+			bert:addPoint(5)
+
+        	bert:move(self.dl * .2)
+    		bert:setCrossSection(cs1)
+			bert:addPoint(5)
+
+        	bert:move(self.dl * .3)
+    		bert:setCrossSection(0)
+			bert:addPoint(5)
+
+--			length = length * .9
+		end
+
+        bert:setScale(self.segWidth)
+		bert:move(self.dl)
+		bert:addPoint()
+
+        bert:setScale(0.1 * self.segWidth)
+		bert:move(self.segLength * .5)
+		bert:endCylinder(12)
+	end
+
+	return obj
+end
+
+function new_brachioles_bunch(width,length,nsegs,n)
+	local obj = {
+		segWidth = width,
+		segLength = length,
+		numSegs = nsegs,
+		numBs = n
+	}
+
+	obj.build = function(self, bert)
+    	numSegs = self.numSegs * .5
+		segInc  = self.numSegs / self.numBs
+
+		width = self.segWidth * .5
+		widthInc  = self.segWidth / self.numBs
+
+		length = self.segLength * .7
+		lengthInc  = self.segLength * .45 / self.numBs
+
+		notSwaped = true
+
+		--place some brachioles
+	  	for i = 1, self.numBs, 1 do
+			if (i > self.numBs * .5 and notSwaped) then
+				widthInc = -widthInc
+				segInc = -segInc
+				lengthInc = -lengthInc
+				notSwaped = false
+			end
+
+			bert:pushState()
+
+			bert:pitch(math.pi * .5)
+			b = new_brachioles(width, length, numSegs)
+			b:build(bert)
+
+			bert:popState()
+			bert:move(width * 3)
+
+			numSegs = numSegs + segInc
+			width = width + widthInc
+			length = length + lengthInc
+		end
+
 	end
 
 	return obj
