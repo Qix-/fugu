@@ -35,6 +35,7 @@
 #include <luabind/iterator_policy.hpp>
 
 #include <sstream>
+#include <cmath>
 
 #include "fg/vec3.h"
 #include "fg/mat4.h"
@@ -51,12 +52,130 @@
 
 int debugFileAndLine(lua_State* L);
 
+// hack
+fg::Vec3 matmul(const fg::Mat4& m, const fg::Vec3& v){
+	return m*((vcg::Point3<double>)(v));
+}
+
 namespace fg {
 	int loadLuaBindings(lua_State* L){
 		using namespace luabind;
 
 		//set_pcall_callback(debugFileAndLine);
 		open(L);
+
+		// All functions and math types populate the global namespace
+		// NB: If this causes problems, well ... we'll change it I guess
+
+		// fg/functions.h
+		module(L)[
+		   def("min", &min<double>),
+		   def("lerp", &lerp<double, double>),
+           def("mix", &mix<double, double>),
+           def("clamp", &clamp<double>),
+           def("step", &step<double, double>),
+           def("pulse", &pulse<double, double>),
+           def("smoothstep", &smoothstep<double>),
+           // def("catmullSpline", &catmullSpline<double>), can't use this without adapting the array (BP)
+           def("bias", &fg::bias<double>),
+           def("gain", &fg::gain<double>),
+           def("gamma", &gammaCorrect<double>),
+           def("invSqrt", &invSqrt<double>),
+           def("sqrt", (double(*)(double)) &std::sqrt),
+           def("sqr", &sqr<double>),
+           def("sign", &sign<double>),
+
+           def("noise", (double(*)(double)) &noise),
+		   def("noise", (double(*)(double,double)) &noise),
+		   def("noise", (double(*)(double,double,double)) &noise),
+                       
+           def("fracSum", (double(*)(double,double,double,int,double))&fracSum),
+           def("turbulence", (double(*)(double,double,double,int,double))&turbulence),
+
+		   def("random", (double(*)()) &fg::random),
+		   def("random", (double(*)(double,double)) &fg::random),
+           def("randomN", (double(*)(double,double))&randomN)
+		   ];
+
+
+		/*
+		module(L)[
+		          class_<vcg::Point3<double> >("point3d")
+		];*/
+
+		// fg/vec3.h
+		module(L)[
+		   class_<fg::Vec3>("vec3")
+		   .def(constructor<>())
+		   .def(constructor<double,double,double>())
+		   .def(constructor<const vcg::Point3d&>())
+		   .property("x", &fg::Vec3::getX, &fg::Vec3::setX)
+		   .property("y", &fg::Vec3::getY, &fg::Vec3::setY)
+		   .property("z", &fg::Vec3::getZ, &fg::Vec3::setZ)
+
+		   // can also access like a colour
+		   .property("r", &fg::Vec3::getX, &fg::Vec3::setX)
+		   .property("g", &fg::Vec3::getY, &fg::Vec3::setY)
+		   .property("b", &fg::Vec3::getZ, &fg::Vec3::setZ)
+
+		   .def(tostring(const_self))
+
+		   // operators
+		   .def(const_self + other<fg::Vec3>())
+		   .def(const_self - other<fg::Vec3>())
+		   .def(const_self * double())
+		   .def(const_self / double())
+		   .def(-(const_self))
+
+		   .def(const_self == other<fg::Vec3>())
+
+		   // methods
+		   .def("normalise",&fg::Vec3::normalise),
+
+		   // vec3 free functions (after GLSL Geometric Functions)
+		   def("length",(void(*)(const Vec3&)) &fg::length),
+		   def("distance",(void(*)(const Vec3&,const Vec3&)) &fg::distance),
+		   def("dot",(void(*)(const Vec3&,const Vec3&)) &fg::dot),
+		   def("cross",(Vec3(*)(const Vec3&,const Vec3&)) &fg::cross),
+		   def("normalise",(Vec3(*)(const Vec3&)) &fg::normalise)
+		];
+
+
+		// fg/mat4.h
+		module(L)[
+		   class_<fg::Mat4>("mat4")
+		   .def(constructor<>())
+		   /* // Would like to do this but luabind can only take up to 10 params
+		   .def(constructor<double,double,double,double,
+				   double,double,double,double,
+				   double,double,double,double,
+				   double,double,double,double>())
+			*/
+		   .def(tostring(const_self))
+
+		   // operators
+		   .def(const_self + other<fg::Mat4>())
+		   .def(const_self - other<fg::Mat4>())
+		   .def(-(const_self))
+		   .def(const_self * double())
+		   .def(const_self * other<fg::Mat4>())
+		   .def("__mul", (fg::Vec3(*)(const fg::Mat4&, const fg::Vec3&))&matmul)
+		   // .def(const_self * other<fg::Vec3>()) // free function
+		   .def(const_self == other<fg::Mat4>())
+
+		   // methods
+		   .def("get", (double(fg::Mat4::*)(int,int)const) &fg::Mat4::get)
+
+		   // transform methods
+		   .def("set", (void(fg::Mat4::*)(const Vec3&, const Vec3&, const Vec3&)) &fg::Mat4::set)
+		   .def("setBasis", (void(fg::Mat4::*)(const Vec3&, const Vec3&, const Vec3&)) &fg::Mat4::set)
+		   .def("setTranslate", (void(fg::Mat4::*)(double,double,double)) &fg::Mat4::setTranslate)
+		   .def("setTranslate", (void(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setTranslate)
+		   .def("setRotateRad", (void(fg::Mat4::*)(double,double,double,double)) &fg::Mat4::setRotateRad)
+		   .def("setRotateRad", (void(fg::Mat4::*)(double,const Vec3&)) &fg::Mat4::setRotateRad)
+		   .def("setScale", (void(fg::Mat4::*)(double,double,double)) &fg::Mat4::setScale)
+		   .def("setScale", (void(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setScale)
+		];
 
 		// fg/universe.h
 		module(L,"fg")[
@@ -73,75 +192,11 @@ namespace fg {
 		   .def("time", &fg::Universe::time)
 		];
 
-		// fg/functions.h
-		module(L,"fg")[
-		   def("min", &min<double>),
-		   def("lerp", &lerp<double, double>),
-           def("mix", &mix<double, double>),
-           def("clamp", &clamp<double>),
-           def("step", &step<double, double>),
-           def("pulse", &pulse<double, double>),
-           def("smoothstep", &smoothstep<double>),
-           def("catmullSpline", &catmullSpline<double>),
-           def("bias", &fg::bias<double>),
-           def("gain", &fg::gain<double>),
-           def("gamma", &gammaCorrect<double>),
-           def("invSqrt", &invSqrt<double>),
-           def("sqr", &sqr<double>),
-           def("sign", &sign<double>),
-
-           def("noise", (double(*)(double)) &noise),
-		   def("noise", (double(*)(double,double)) &noise),
-		   def("noise", (double(*)(double,double,double)) &noise),
-                       
-           def("fracSum", (double(*)(double,double,double,int,double))&fracSum),
-           def("turbulence", (double(*)(double,double,double,int,double))&turbulence),
-
-		   def("random", (double(*)()) &fg::random),
-		   def("random", (double(*)(double,double)) &fg::random),
-           def("randomN", (double(*)(double,double))&randomN)
-		   ];
-
-		// fg/vec3.h
-		module(L, "fg")[
-		   class_<fg::Vec3>("vec3")
-		   .def(constructor<double,double,double>())
-		   .property("x", &fg::Vec3::getX, &fg::Vec3::setX)
-		   .property("y", &fg::Vec3::getY, &fg::Vec3::setY)
-		   .property("z", &fg::Vec3::getZ, &fg::Vec3::setZ)
-
-		   // can also access like a colour
-		   .property("r", &fg::Vec3::getX, &fg::Vec3::setX)
-		   .property("g", &fg::Vec3::getY, &fg::Vec3::setY)
-		   .property("b", &fg::Vec3::getZ, &fg::Vec3::setZ)
-
-		   .def(tostring(const_self))
-
-		   .def("normalise",&fg::Vec3::normalise)
-		   .def(const_self + other<fg::Vec3>())
-		   .def(const_self - other<fg::Vec3>())
-		   .def(const_self * double())
-		];
-
-		// fg/mat4.h
-		module(L, "fg")[
-		   class_<fg::Mat4>("mat4")
-		   .def(constructor<>())
-		   .def(tostring(const_self))
-
-		   .def("setTranslate", (void(fg::Mat4::*)(double,double,double)) &fg::Mat4::setTranslate)
-		   .def("setRotateRad", (void(fg::Mat4::*)(double,double,double,double)) &fg::Mat4::setRotateRad)
-
-		   .def(const_self + other<fg::Mat4>())
-		   .def(const_self - other<fg::Mat4>())
-		   .def(const_self * double())
-		];
-
 		// fg/node.h
 		module(L, "fg")[
 		  class_<fg::Node, boost::shared_ptr<fg::Node> >("node")
 		  .def(constructor<>())
-		  .property("transform", &fg::Node::getRelativeTransform)
+		  .property("transform", &fg::Node::getRelativeTransform, &fg::Node::setRelativeTransform)
 		];
 
 		// fg/meshnode.h
@@ -184,18 +239,19 @@ namespace fg {
 		   .def("subdivide", &Mesh::subdivide)
 		   .def("smoothSubdivide", &Mesh::smoothSubdivide)
 		   .def("sync", &Mesh::sync)
+		   .def("applyTransform", &Mesh::applyTransform)
 
 		   .scope [
 			   class_<fg::Mesh::Primitives>("primitives")
 			   .scope [
+			           def("cube",&fg::Mesh::Primitives::Cube),
 					   def("icosahedron",&fg::Mesh::Primitives::Icosahedron),
 					   def("sphere",&fg::Mesh::Primitives::Sphere),
 					   def("tetrahedron", &fg::Mesh::Primitives::Tetrahedron),
 					   def("dodecahedron", &fg::Mesh::Primitives::Dodecahedron),
 					   def("octahedron", &fg::Mesh::Primitives::Octahedron),
-					   def("hexahedron", &fg::Mesh::Primitives::Hexahedron),
-					   def("cone", &fg::Mesh::Primitives::Cone), // (r1,r2,h,subdiv=36)
-					   def("cylinder", &fg::Mesh::Primitives::Cylinder) // (slices,stacks)
+					   def("cone", &fg::Mesh::Primitives::Cone), // (r1,r2,subdiv=36)
+					   def("cylinder", &fg::Mesh::Primitives::Cylinder) // (slices) // ,stacks)
 			   ]
 		   ]
 

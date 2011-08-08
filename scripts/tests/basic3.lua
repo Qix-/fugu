@@ -13,7 +13,7 @@ end
 
 function update(dt)		
 	local rnd = function(max) return max*math.random() end	
-	local perturb = function(x,y,z) return fg.noise(x,y,z+fgu.t) end
+	local perturb = function(x,y,z) return noise(x,y,z+fgu.t) end
 	
 	vs = m:selectAllVertices()	
 	for v in vs.all do

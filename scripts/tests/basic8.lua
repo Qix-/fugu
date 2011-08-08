@@ -13,7 +13,7 @@ local tentacle = nil
 local sphereVerts = nil -- all verts on the initial sphere
 
 function randomElement(t)
-	return t[math.floor(fg.random(1,#t+1))]	
+	return t[math.floor(random(1,#t+1))]	
 end
 
 function convertToTable(vtxSet)
@@ -121,7 +121,7 @@ function new_tentacle(m,v)
 		n:normalise()
 		
 		for k=1,self.numSegments do
-			local r = fg.vec3(fg.random(-.3,.3),1,fg.random(-.3,.3))
+			local r = vec3(random(-.3,.3),1,random(-.3,.3))
 			r:normalise()					
 			
 			n = n*(1-self.attractor) + r*(self.attractor)

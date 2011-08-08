@@ -26,6 +26,7 @@
 #include "fg/mesh.h"
 #include "fg/meshimpl.h"
 #include "fg/functions.h"
+#include "fg/util.h"
 
 // VCG
 #include <vcg/space/point3.h>
@@ -48,6 +49,7 @@
 #include <vcg/complex/algorithms/update/normal.h>
 #include <vcg/complex/algorithms/update/topology.h>
 #include <vcg/complex/algorithms/update/flag.h>
+#include <vcg/complex/algorithms/update/position.h>
 
 #include <vcg/simplex/vertex/component_ocf.h>
 #include <vcg/simplex/face/component_ocf.h>
@@ -181,6 +183,19 @@ namespace fg {
 		vcg::tri::UpdateNormals<MeshImpl>::PerVertexFromCurrentFaceNormal(*mpMesh);
 	}
 
+	void Mesh::applyTransform(const Mat4& T){
+		vcg::tri::UpdatePosition<MeshImpl>::Matrix(*mpMesh,T,true);
+		/*
+		foreach(VertexImpl& v, mpMesh->vert){
+			// only return non-dead vertices
+			if (!v.IsD()){
+				v.P() = T*v.P();
+			}
+		}
+		sync();
+		*/
+	}
+
 	MeshImpl* Mesh::_impl(){
 		return mpMesh;
 	}
@@ -192,9 +207,19 @@ namespace fg {
 
 	// PRIMITIVES
 
+	boost::shared_ptr<Mesh> Mesh::Primitives::Cube(){
+		Mesh* m = new Mesh();
+		// A Hexahedron is a Cube!
+		vcg::tri::Hexahedron<MeshImpl>(*(m->mpMesh));
+		// vcg::tri::Box<MeshImpl>(*(m->mpMesh),vcg::Box3<double>(vcg::Point3<double>(-1,-1,-1),vcg::Point3<double>(1,1,1)));
+		return sync(m);
+	}
+
 	boost::shared_ptr<Mesh> Mesh::Primitives::Icosahedron(){
 		Mesh* m = new Mesh();
 		vcg::tri::Icosahedron<MeshImpl>(*(m->mpMesh));
+		Mat4 s; s.setScale(1/1.7,1/1.7,1/1.7);
+		m->applyTransform(s);
 		return sync(m);
 	}
 
@@ -213,6 +238,8 @@ namespace fg {
 	boost::shared_ptr<Mesh> Mesh::Primitives::Dodecahedron(){
 		Mesh* m = new Mesh();
 		vcg::tri::Dodecahedron<MeshImpl>(*(m->mpMesh));
+		Mat4 s; s.setScale(1/4.2,1/4.2,1/4.2);
+		m->applyTransform(s);
 		return sync(m);
 	}
 	boost::shared_ptr<Mesh> Mesh::Primitives::Octahedron(){
@@ -220,20 +247,23 @@ namespace fg {
 		vcg::tri::Octahedron<MeshImpl>(*(m->mpMesh));
 		return sync(m);
 	}
+	/*
 	boost::shared_ptr<Mesh> Mesh::Primitives::Hexahedron(){
 		Mesh* m = new Mesh();
 		vcg::tri::Hexahedron<MeshImpl>(*(m->mpMesh));
 		return sync(m);
 	}
-	boost::shared_ptr<Mesh> Mesh::Primitives::Cone(double r1, double r2, double h, const int SubDiv){
+	*/
+	boost::shared_ptr<Mesh> Mesh::Primitives::Cone(double r1, double r2, const int SubDiv){
 		Mesh* m = new Mesh();
-		vcg::tri::Cone<MeshImpl>(*(m->mpMesh), r1, r2, h, SubDiv);
+		vcg::tri::Cone<MeshImpl>(*(m->mpMesh), r1, r2, 2, SubDiv);
 		return sync(m);
 	}
 
-	boost::shared_ptr<Mesh> Mesh::Primitives::Cylinder(int slices, int stacks){
+	boost::shared_ptr<Mesh> Mesh::Primitives::Cylinder(int slices){
 		Mesh* m = new Mesh();
-		vcg::tri::Cylinder<MeshImpl>(slices,stacks,*(m->mpMesh));
+		vcg::tri::Cone<MeshImpl>(*(m->mpMesh), 1, 1, 2, slices);
+		//vcg::tri::Cylinder<MeshImpl>(slices,stacks,*(m->mpMesh));
 		return sync(m);
 	}
 
@@ -252,6 +282,10 @@ namespace fg {
 	Mesh::MeshBuilder::MeshBuilder():mVertices(),mTriangles(){}
 	Mesh::MeshBuilder::~MeshBuilder(){
 
+	}
+
+	int Mesh::MeshBuilder::getNumVertices(){
+		return mVertices.size();
 	}
 
 	int Mesh::MeshBuilder::getNumVerticies(){

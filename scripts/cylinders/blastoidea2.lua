@@ -8,10 +8,10 @@ function setup()
 --	-- roots
 --	root = new_root(15,.5,.5)
 --
---	don = fg.turtle()
+--	don = turtle()
 --	root:build(don)
 --	m[1] = don:getMesh()
---	node[1] = fg.meshnode(m[1])
+--	node[1] = meshnode(m[1])
 
     -- stalk
 	stalk = new_stalk(.35,.7,15)
@@ -89,7 +89,7 @@ function new_root(length,width,meander)
 			end
 			bert:addPoint()
 			pos = bert:getPosition()
-			rateCur = rateCur + self.rootMeander * fg.fracSum(pos.x, pos.y, pos.z, 1, 1)
+			rateCur = rateCur + self.rootMeander * fracSum(pos.x, pos.y, pos.z, 1, 1)
 			bert:yaw(rateCur)
 			bert:move(stepLength)
 			distance = distance + self.stepLength
@@ -115,7 +115,7 @@ function new_holdfast(length,width,n,meander)
     obj.build = function(self,donatello)
 		for i = 1, self.numRoots, 1 do
 			-- create a root
-			length = fg.randomN(self.meanLength,.2)
+			length = randomN(self.meanLength,.2)
 			self.roots[i] = new_root(length,self.rootWidth,meander)
 
             donatello:pushState()
@@ -157,14 +157,14 @@ function new_stalk(length,width,n)
 	  	bert:addPoint(7)
 
         bert:yaw(self.bendy)
---		bert:pitch(fg.random(-.07,.07))
+--		bert:pitch(random(-.07,.07))
 		bert:move(self.dl * .5)
 		bert:setScale(self.dw)
 		bert:addPoint(7)
 		bert:move(self.dl * .5)
 
-	  	width = fg.randomN(self.beadWidth, self.beadWidth * .03)
-	  	length = fg.randomN(self.beadLength, self.beadLength * .2)
+	  	width = randomN(self.beadWidth, self.beadWidth * .03)
+	  	length = randomN(self.beadLength, self.beadLength * .2)
 		bert:setScale(width)
 		bert:addPoint(7)
 		bert:move(length)
@@ -194,7 +194,7 @@ function new_cylax(width,length,n)
 	    bert:pushState()
 		
 		-- create cross section
-		bert:setFrame(fg.vec3(1,0.,0.),fg.vec3(0.,1.,0.),fg.vec3(0.,0.,1.))
+		bert:setFrame(vec3(1,0.,0.),vec3(0.,1.,0.),vec3(0.,0.,1.))
 		bert:setStiffness(self.outerS,self.outerS)
 		bert:beginCrossSection()
 		y = self.innerRat * math.sin((.5) * 2 * math.pi / self.numBumps)
@@ -203,7 +203,7 @@ function new_cylax(width,length,n)
 		dy = math.cos((.5) * 2 * math.pi / self.numBumps)
 		dx = -math.sin((.5) * 2 * math.pi / self.numBumps)
 
-		bert:setFrame(fg.vec3(x,y,0),fg.vec3(dx,dy,0),fg.vec3(0,0,1))
+		bert:setFrame(vec3(x,y,0),vec3(dx,dy,0),vec3(0,0,1))
 		bert:setStiffness(self.innerS,self.innerS)
 		bert:addPoint()
 
@@ -215,7 +215,7 @@ function new_cylax(width,length,n)
 			dy = math.cos(i * 2 * math.pi / self.numBumps)
 			dx = -math.sin(i * 2 * math.pi / self.numBumps)
 
-			bert:setFrame(fg.vec3(x,y,0),fg.vec3(dx,dy,0),fg.vec3(0,0,1))
+			bert:setFrame(vec3(x,y,0),vec3(dx,dy,0),vec3(0,0,1))
 			bert:setStiffness(self.outerS,self.outerS)
 			bert:addPoint()
 
@@ -225,7 +225,7 @@ function new_cylax(width,length,n)
 			dy = math.cos((i+.5) * 2 * math.pi / self.numBumps)
 			dx = -math.sin((i+.5) * 2 * math.pi / self.numBumps)
 
-			bert:setFrame(fg.vec3(x,y,0),fg.vec3(dx,dy,0),fg.vec3(0,0,1))
+			bert:setFrame(vec3(x,y,0),vec3(dx,dy,0),vec3(0,0,1))
 			bert:setStiffness(self.innerS,self.innerS)
 			bert:addPoint()
 
@@ -266,14 +266,14 @@ function new_cylax(width,length,n)
 
 			brachioles = new_brachioles_bunch(.03,.2,7,8)
 
-			pos = fg.vec3(.7*math.cos((i + .5) * 2 * math.pi / self.numBumps), 
+			pos = vec3(.7*math.cos((i + .5) * 2 * math.pi / self.numBumps), 
 			              .7*math.sin((i + .5) * 2 * math.pi / self.numBumps),
 						  0)
-			up = fg.vec3(-math.cos((i+.5) * 2 * math.pi / self.numBumps),
+			up = vec3(-math.cos((i+.5) * 2 * math.pi / self.numBumps),
 						   -math.sin((i+.5) * 2 * math.pi / self.numBumps),
 						   0)
 
-			donatello:setFrameRel( pos, fg.vec3(0,0,1), up )
+			donatello:setFrameRel( pos, vec3(0,0,1), up )
 
 			brachioles:build(donatello)
 
@@ -302,30 +302,30 @@ function new_brachioles(width,length,n)
 		
 		-- create cross section
 		bert:setStiffness(.3,.3)
-		bert:setFrame(fg.vec3(1+self.l,0.,0.),fg.vec3(0.,1.,0.),fg.vec3(0.,0.,1.))
+		bert:setFrame(vec3(1+self.l,0.,0.),vec3(0.,1.,0.),vec3(0.,0.,1.))
 		bert:beginCrossSection()
 
-		bert:setFrame(fg.vec3(0,1,0),fg.vec3(-1,0.,0.),fg.vec3(0.,0.,1.))
+		bert:setFrame(vec3(0,1,0),vec3(-1,0.,0.),vec3(0.,0.,1.))
 		bert:addPoint()
 
-		bert:setFrame(fg.vec3(-1-self.l,0,0),fg.vec3(0,-1,0),fg.vec3(0.,0.,1.))
+		bert:setFrame(vec3(-1-self.l,0,0),vec3(0,-1,0),vec3(0.,0.,1.))
 		bert:addPoint()
 
-		bert:setFrame(fg.vec3(0,-1,0),fg.vec3(1,0,0),fg.vec3(0.,0.,1.))
+		bert:setFrame(vec3(0,-1,0),vec3(1,0,0),vec3(0.,0.,1.))
 		bert:addPoint()
 		cs1 = bert:endCrossSection()
 
 		-- create cross section
-		bert:setFrame(fg.vec3(1-self.l,0.,0.),fg.vec3(0.,1.,0.),fg.vec3(0.,0.,1.))
+		bert:setFrame(vec3(1-self.l,0.,0.),vec3(0.,1.,0.),vec3(0.,0.,1.))
 		bert:beginCrossSection()
 
-		bert:setFrame(fg.vec3(0,1,0),fg.vec3(-1,0.,0.),fg.vec3(0.,0.,1.))
+		bert:setFrame(vec3(0,1,0),vec3(-1,0.,0.),vec3(0.,0.,1.))
 		bert:addPoint()
 
-		bert:setFrame(fg.vec3(-1+self.l,0,0),fg.vec3(0,-1,0),fg.vec3(0.,0.,1.))
+		bert:setFrame(vec3(-1+self.l,0,0),vec3(0,-1,0),vec3(0.,0.,1.))
 		bert:addPoint()
 
-		bert:setFrame(fg.vec3(0,-1,0),fg.vec3(1,0,0),fg.vec3(0.,0.,1.))
+		bert:setFrame(vec3(0,-1,0),vec3(1,0,0),vec3(0.,0.,1.))
 		bert:addPoint()
 		cs2 = bert:endCrossSection()
 
@@ -347,12 +347,12 @@ function new_brachioles(width,length,n)
 		notScaled = true
 
 	  	for i = 1, self.numSegs, 1 do
-			width = fg.randomN(self.segWidth, self.segWidth * .1)
-			length = fg.randomN(self.segLength, self.segLength * .1)
+			width = randomN(self.segWidth, self.segWidth * .1)
+			length = randomN(self.segLength, self.segLength * .1)
 
 			pos = bert:getPosition()
-			theta = self.meander * fg.fracSum(pos.x, pos.y, pos.z, 3, 1.5)
-			theta2 = self.meander2 * fg.fracSum(pos.x, pos.y, pos.z, 1, 1)
+			theta = self.meander * fracSum(pos.x, pos.y, pos.z, 3, 1.5)
+			theta2 = self.meander2 * fracSum(pos.x, pos.y, pos.z, 1, 1)
 
  			bert:yaw(theta)
 			bert:pitch(theta)

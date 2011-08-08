@@ -41,6 +41,7 @@ set(HDRS
 	pbezcarrier.h
 	crosssection.h
 	crosssectioncircular.h
+	exportmeshnode.h
 	fg.h
 	functions.h
 	generalisedcylinder.h

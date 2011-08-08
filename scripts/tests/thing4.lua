@@ -1,5 +1,5 @@
 --[[
-	A thing, with some fractal and gaussian madness!
+	A thing	
 --]]
 
 module(...,package.seeall)
@@ -27,13 +27,14 @@ end
 
 function setup()
 	m = fg.mesh.primitives.sphere()	
+	m:smoothSubdivide(1)
 	fgu:addMesh(m)
 	
 	sphereVerts = convertToTable(m:selectAllVertices())
 
-	for i=1,20 do
+	for i=1,90 do
 		local el = sphereVerts[i] -- randomElement(sphereVerts)
-		table.insert(suckers,new_thing(el,random(0,10),randomN(1,.2)))
+		table.insert(suckers,new_thing(el,random(0,10),random(1,3)))
 	end
 end
 
@@ -67,7 +68,7 @@ function new_thing(v,p,s) -- use the global mesh m
 		vertex = v,
 		phase = p,
 		speed = s,
-		numSegments = 5,
+		numSegments = 20,
 		totalLength = 1,
 		hasGrown = false, -- has this sucker gone through the grow phase?
 		edgeRings = {} -- keep track of the rings of vertices so we can animate them
@@ -78,12 +79,33 @@ function new_thing(v,p,s) -- use the global mesh m
 		-- as a function of u, where u is between 0 and 1
 		local n = self.vertex:getN()
 		n:normalise()
+		expandFactor = 1
 		function f(u)
-			local len = stepFunction({{0.5,random(.6,.8)},{.6,.01},{.7,-.2},{1.1,-.1}})(u)
-			local exp = stepFunction({{.1,random(.1,.4)},{.3,-.01},{.6,-.6},{1.1,-.1}})(u)
+			--local len = stepFunction({{0.5,random(.6,.8)},{.6,.01},{.7,-.2},{1.1,-.1}})(u)
+			local len = 1
+			if (u<.8) then 
+				len = 1
+			else
+				len = -.3
+			end
+
+			local exp = nil 
+			if (u<.6) then 
+				exp = lerp(-.2,0,u/.6) 
+			elseif (u<.8) then
+				exp=lerp(2,0,(u-.6)/.2) 
+			else
+				exp=lerp(0,-.3,(u-.8)/.2)
+			end
+
+			-- stepFunction({{.1,random(0,.1)},{.3,random(.1,.5)},{.6,0},{1.1,-.3}})(u)
 			local d = nil
+			local R = .2 -- .2
+			local r = vec3(random(-R,R),random(-R,R),random(-R,R))
 			if (len > 0) then d = n else d = n*-1 end
-			return math.abs(len)*self.totalLength/self.numSegments, exp, d
+			d = (d+r)
+			d:normalise()
+			return math.abs(len)*self.totalLength/self.numSegments, expandFactor*exp, d
 		end
 		
 		for k=1,self.numSegments do
@@ -112,8 +134,8 @@ function new_thing(v,p,s) -- use the global mesh m
 		table.foreachi(self.edgeRings, function(i, er)
 			for i=1,#er.ring do
 				if (er.ring[i].valid) then
-					local s = fracSum(self.speed*2*time, self.phase, 0, 3, 1)
-					-- s = math.pow(s,4)
+					local s = math.sin(self.speed*2*time + self.phase)
+					s = math.pow(s,4)
 					er.ring[i]:setPos(er.center + er.ringDP[i]*(1+0.5*s))
 				end
 			end
