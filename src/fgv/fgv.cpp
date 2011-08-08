@@ -40,6 +40,7 @@ float gZoom = 0;
 float gRotationQuat[4] = {0,0,0,1};
 float gRotationMatrix[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
 float gCameraTranslation[3] = {0,0,0};
+void TW_CALL resetCamera(void *clientData);
 
 struct MouseState {
 	//bool leftButtonDown;
@@ -137,7 +138,7 @@ int main(int argc, char *argv[])
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		gluLookAt(2,2,2,   0,0,0,   0,1,0);
+		gluLookAt(0,0,-4,   0,0,0,   0,1,0);
 
 		GLfloat lp[] = {.1, 1, .1, 0};
 		glLightfv(GL_LIGHT0,GL_POSITION,lp);
@@ -154,7 +155,7 @@ int main(int argc, char *argv[])
 
 		if (gViewMode.origin) drawOrigin();
 		if (gViewMode.ground) drawGroundPlane();
-
+        
 		foreach(shared_ptr<fg::MeshNode> m, u.meshNodes()){
 			m->mesh()->sync(); // make sure normals are okay
 
@@ -204,7 +205,8 @@ void setupWindowAndGL(){
 	// Create a window
 	glfwGetDesktopMode(&mode);
 
-	if (!glfwOpenWindow(gWidth,gHeight, mode.RedBits, mode.GreenBits, mode.BlueBits, 0,8,0, GLFW_WINDOW)){
+
+	if (!glfwOpenWindow(gWidth,gHeight, mode.RedBits, mode.GreenBits, mode.BlueBits, 0, 24, 0, GLFW_WINDOW)){
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
@@ -212,7 +214,7 @@ void setupWindowAndGL(){
 	glfwEnable(GLFW_KEY_REPEAT);
 
 	/*
-	if (!glfwOpenWindow(gWidth,gHeight, 0,0,0,0,8,0, GLFW_WINDOW)){
+	if (!glfwOpenWindow(gWidth,gHeight, 0,0,0,0,24,0, GLFW_WINDOW)){
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
@@ -228,7 +230,8 @@ void setupWindowAndGL(){
 
 	// Window is loaded, set up gui
 	TwInit(TW_OPENGL, NULL);
-	TwBar* mainBar = TwNewBar("O_o");
+	TwBar* mainBar = TwNewBar("fg menu");
+    TwAddButton(mainBar, "cam reset", resetCamera, NULL," label='Reset Camera'");
 	TwAddVarRW(mainBar, "origin", TW_TYPE_BOOLCPP, &gViewMode.origin,
 	               " group='View' help='Toggle origin.' ");
 	TwAddVarRW(mainBar, "ground", TW_TYPE_BOOLCPP, &gViewMode.ground,
@@ -324,8 +327,15 @@ void GLFWCALL mouseMoved(int x, int y){
 		float dY = -2*y*invHeight + 1;
 
 		// update position
-		// gCameraTranslation[0] += 5*(dX-dLastX);
-		gCameraTranslation[1] += 5*(dY-dLastY);
+        // along x-axis (left-right) in view plane...
+        gCameraTranslation[0] += 2*(dX-dLastX) * gRotationMatrix[0][0];
+		gCameraTranslation[1] += 2*(dX-dLastX) * gRotationMatrix[1][0];
+        gCameraTranslation[2] += 2*(dX-dLastX) * gRotationMatrix[2][0];
+        
+        // along y-axis (up-down) in view plane
+        gCameraTranslation[0] += 2*(dY-dLastY) * gRotationMatrix[0][1];
+		gCameraTranslation[1] += 2*(dY-dLastY) * gRotationMatrix[1][1];
+        gCameraTranslation[2] += 2*(dY-dLastY) * gRotationMatrix[2][1];
 
 		gMouseState.lastX = x;
 		gMouseState.lastY = y;
@@ -379,19 +389,15 @@ void GLFWCALL mouseButtoned(int button, int state){
 }
 
 void drawOrigin(){
-	glPushAttrib(GL_LIGHTING_BIT);
-	glPushAttrib(GL_LINE_BIT);
+	glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT);
 	glDisable(GL_LIGHTING);
 	glLineWidth(2);
 	fg::GLRenderer::renderAxes();
 	glPopAttrib();
-	glPopAttrib();
 }
 
 void drawGroundPlane(){
-	glPushAttrib(GL_LIGHTING_BIT);
-	glPushAttrib(GL_LINE_BIT);
-	glPushAttrib(GL_CURRENT_BIT);
+	glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_CURRENT_BIT);
 	glDisable(GL_LIGHTING);
 	glLineWidth(1);
 	glColor3f(.5,.5,.5);
@@ -405,8 +411,21 @@ void drawGroundPlane(){
 	glEnd();
 #undef F
 	glPopAttrib();
-	glPopAttrib();
-	glPopAttrib();
+}
+
+/** reset camera transformations
+ */
+void TW_CALL resetCamera(void *clientData)
+{
+    gZoom = 0;
+    gRotationQuat[0] = 0, gRotationQuat[1] = 0, gRotationQuat[2] = 0, gRotationQuat[3] = 1;
+    for (int i = 0; i < 4; ++i)
+    {
+        gRotationQuat[i] = (i == 3 ? 1 : 0);
+        for(int j = 0; j < 4; ++j)
+            gRotationMatrix[i][j] = (i == j ? 1 : 0);
+    }
+    gCameraTranslation[0] = gCameraTranslation[1] = gCameraTranslation[2] = 0;
 }
 
 #ifdef USESHADERS
