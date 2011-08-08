@@ -26,12 +26,11 @@
 #ifndef FG_MESH_H
 #define FG_MESH_H
 
-
-
 // fg dependencies
 #include "fg/vec3.h"
 #include "fg/vertex.h"
 #include "fg/mat4.h"
+#include "fg/util.h"
 
 // Stdlibs
 #include <ostream>
@@ -110,7 +109,13 @@ namespace fg {
 		public:
 			MeshBuilder();
 			~MeshBuilder();
+
 			void addVertex(double x, double y, double z);
+			void addVertex(Vec3 pos);
+
+			void addVertexColour(Vec3 colour);
+			void addVertexUV(double u, double v);
+
 			void addFace(int v1, int v2, int v3);
 			boost::shared_ptr<Mesh> createMesh();
 			int getNumVertices();
@@ -120,6 +125,8 @@ namespace fg {
 			static boost::shared_ptr<Mesh> createMesh(const std::vector<Vec3>& verts, const std::vector<boost::tuple<int,int,int> >& faces);
 		protected:
 			std::vector<Vec3> mVertices;
+			std::vector<Vec3> mVertexColours;
+			std::vector<pair<double,double> > mVertexUVs;
 			std::vector<boost::tuple<int,int,int> > mTriangles;
 		};
 

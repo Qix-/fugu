@@ -25,13 +25,15 @@
 #include "fg/glrenderer.h"
 
 #include <cassert>
+#include <stdexcept>
+
 #include "GL/glew.h"
 
 #include <wrap/gl/trimesh.h>
 
 #include "fg/meshimpl.h"
 #include "fg/mat4.h"
-
+#include "fg/ppm.h"
 #include "fg/gc/interpolator.h"
 #include "fg/gc/carriercurve.h"
 
@@ -55,6 +57,27 @@ namespace fg {
 			case RENDER_VERTICES: // tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break; 
 			{
 				tm.DrawPointsBase<vcg::GLW::NMPerVert,vcg::GLW::CMPerVert>();
+				break;
+			}
+			case RENDER_TEXTURED: {
+				static bool isTexLoaded = false;
+				static GLuint tex = 0;
+
+				if (!isTexLoaded){
+					// make sure the texture is loaded...
+					Ppm ppm("../assets/UV.ppm");
+					if (not ppm.IsValid()){
+						throw(std::runtime_error("Can't load ../assets/UV.ppm"));
+					}
+					else {
+						tex = ppm.GetGLTex();
+						isTexLoaded = true;
+					}
+
+				}
+
+				tm.TMId.push_back(tex);
+				tm.Draw<vcg::GLW::DMSmooth, vcg::GLW::CMPerVert,vcg::GLW::TMPerVert> ();
 				break;
 			}
 			default: {}

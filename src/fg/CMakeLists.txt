@@ -13,6 +13,7 @@ set(SRC
 	node.cpp
 	nodegraph.cpp	
 	plylib.cpp	
+	ppm.cpp
 	proxy.cpp
 	quat.cpp	
 	universe.cpp	
@@ -47,7 +48,8 @@ set(HDRS
 	node.h
 	nodegraph.h
 	operator.h
-	proxy.h
+	ppm.h
+	proxy.h	
 	quat.h
 	universe.h
 	util.h

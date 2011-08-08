@@ -52,6 +52,9 @@ namespace fg {
 				m.vert[i].N()[c] = fm.vert[i].N()[c];
 				m.vert[i].C()[c] = fm.vert[i].C()[c];
 			}
+			// texcoords
+			m.vert[i].T().U() = fm.vert[i].T().U();
+			m.vert[i].T().V() = fm.vert[i].T().V();
 		}
 
 		vcg::tri::Allocator<MeshImpl>::AddFaces(m,fm.face.size());

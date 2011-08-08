@@ -72,7 +72,13 @@ int main(int argc, char *argv[])
 	v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
 
 	for(int i=0;i<8;i++){
-		mb.addVertex(v[i][0],v[i][1],v[i][2]);
+		mb.addVertex(Vec3(v[i][0],v[i][1],v[i][2]));
+
+		// set colour based on coord
+		mb.addVertexColour(Vec3((v[i][0]+1)/2,(v[i][1]+1)/2,(v[i][2]+1)/2));
+
+		// set coordinate based on y value
+		mb.addVertexUV(0,(v[i][1]+1)/2);
 	}
 
 	for(int i=0;i<6;i++){

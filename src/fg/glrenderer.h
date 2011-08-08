@@ -45,7 +45,7 @@ namespace fg {
 	 */
 	class GLRenderer {
 	public:
-		enum RenderMeshMode{RENDER_FLAT=0,RENDER_SMOOTH,RENDER_WIRE,RENDER_VERTICES};
+		enum RenderMeshMode{RENDER_FLAT=0,RENDER_SMOOTH,RENDER_WIRE,RENDER_VERTICES,RENDER_TEXTURED};
 
 		static void renderMesh(Mesh* m, RenderMeshMode rmm = RENDER_FLAT);
 		static void renderMesh(boost::shared_ptr<Mesh> m, RenderMeshMode rmm = RENDER_FLAT);

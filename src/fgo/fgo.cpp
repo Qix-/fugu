@@ -69,7 +69,8 @@ int main(int argc, char *argv[])
 			vcg::tri::io::ExporterOBJ_Point3d<fg::MeshImpl>::Save(
 				*m->mesh()->_impl(),
 				oss.str().c_str(),
-				vcg::tri::io::Mask::IOM_VERTNORMAL
+				vcg::tri::io::Mask::IOM_VERTNORMAL |
+				vcg::tri::io::Mask::IOM_VERTTEXCOORD
 				/* | vcg::tri::io::Mask::IOM_VERTCOLOR */ // .obj doesnt support vertex colours apparently..
 				,
 				m->getCompoundTransform()

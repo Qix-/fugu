@@ -63,6 +63,11 @@ namespace fg {
 		pImpl()->C().Z() = b*255;
 	}
 
+	void VertexProxy::setUV(double u, double v){
+		pImpl()->T().U() = u;
+		pImpl()->T().V() = v;
+	}
+
 	int VertexProxy::getNumBones() const {
 		return constImpl().getNumBones();
 	}

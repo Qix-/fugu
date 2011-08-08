@@ -58,7 +58,7 @@ struct ViewMode {
 	bool ground;
 	bool showNodeAxes; // show node axes
 
-	enum MeshMode { MM_SMOOTH, MM_FLAT, MM_WIRE, MM_POINTS };
+	enum MeshMode { MM_SMOOTH, MM_FLAT, MM_WIRE, MM_POINTS, MM_TEXTURED };
 	MeshMode meshMode;
 
 } gViewMode = {true,true,false,ViewMode::MM_SMOOTH};
@@ -165,6 +165,7 @@ int main(int argc, char *argv[])
 				case ViewMode::MM_FLAT: rmm = fg::GLRenderer::RENDER_FLAT; break;
 				case ViewMode::MM_WIRE: rmm = fg::GLRenderer::RENDER_WIRE; break;
 				case ViewMode::MM_POINTS: rmm = fg::GLRenderer::RENDER_VERTICES; break;
+				case ViewMode::MM_TEXTURED: rmm = fg::GLRenderer::RENDER_TEXTURED; break;
 			}
 			fg::GLRenderer::renderMeshNode(m,rmm); // fg::GLRenderer::RenderMeshMode(DRAW_MODE));
 		}
@@ -242,9 +243,11 @@ void setupWindowAndGL(){
 	TwEnumVal mmEV[] = { { ViewMode::MM_SMOOTH, "Smooth"},
 			{ ViewMode::MM_FLAT, "Flat"},
 			{ ViewMode::MM_WIRE, "Wireframe"},
-			{ ViewMode::MM_POINTS, "Points"}};
+			{ ViewMode::MM_POINTS, "Points"},
+			{ ViewMode::MM_TEXTURED, "Textured"}
+	};
 
-	TwType mmType = TwDefineEnum( "Mesh Mode", mmEV, 4 );
+	TwType mmType = TwDefineEnum( "Mesh Mode", mmEV, 5 );
 	TwAddVarRW(mainBar, "view mesh", mmType, &gViewMode.meshMode,
 			" group='View' keyIncr=Tab keyDecr=SHIFT+Tab help='Change the mesh rendering mode.' ");
 
@@ -274,6 +277,14 @@ void setupWindowAndGL(){
 	GLfloat diff[] = {1,1,1,1};
 	glLightfv(GL_LIGHT0,GL_AMBIENT,amb);
 	glLightfv(GL_LIGHT0,GL_DIFFUSE,diff);
+
+	// glEnable(GL_TEXTURE_2D);
+	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
 
 void GLFWCALL resizeWindow(int _width, int _height){
