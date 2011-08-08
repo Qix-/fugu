@@ -29,10 +29,11 @@
 
 #include <wrap/gl/trimesh.h>
 
-#include "fg/interpolator.h"
-#include "fg/carriercurve.h"
 #include "fg/meshimpl.h"
 #include "fg/mat4.h"
+
+#include "fg/gc/interpolator.h"
+#include "fg/gc/carriercurve.h"
 
 namespace fg {
 
@@ -116,7 +117,7 @@ namespace fg {
 		glEnd();
 	}
 
-	void GLRenderer::renderInterpolator(const spline::Interpolator<Vec3>& s, int n){
+	void GLRenderer::renderInterpolator(const gc::Interpolator<Vec3>& s, int n){
 		assert (n>0);
 
 		std::vector<Vec3> arr = s.getApproxVector(n);

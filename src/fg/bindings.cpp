@@ -48,7 +48,7 @@
 #include "fg/meshnode.h"
 #include "fg/meshoperators.h"
 
-#include "fg/turtle.h"
+#include "fg/gc/turtle.h"
 
 int debugFileAndLine(lua_State* L);
 

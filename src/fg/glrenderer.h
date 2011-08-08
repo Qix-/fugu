@@ -27,15 +27,16 @@
 
 #include "fg/vec3.h"
 #include "fg/mesh.h"
-#include "fg/carriercurve.h"
 #include "fg/armature.h"
+
+#include "fg/gc/carriercurve.h"
 
 #include <GL/glew.h>
 #include <boost/shared_ptr.hpp>
 
 namespace fg {
 	// Forward decl
-	namespace spline {
+	namespace gc {
 		template <typename T> class Interpolator;
 	}
 
@@ -56,7 +57,7 @@ namespace fg {
 		 * @param s the curve
 		 * @param n the number of segments
 		 */
-		static void renderInterpolator(const spline::Interpolator<Vec3>& s, int n);
+		static void renderInterpolator(const gc::Interpolator<Vec3>& s, int n);
         static void renderCarrier(const gc::CarrierCurve &c, int n, double time);
 
         // Helpful primitives
