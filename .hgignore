@@ -1,0 +1,9 @@
+syntax:glob
+*~
+*.swp
+build
+*.DS_Store
+.project
+bin
+doc/html
+*.orig
