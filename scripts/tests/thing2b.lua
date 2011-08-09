@@ -27,17 +27,16 @@ end
 
 function setup()
 	m = fg.mesh.primitives.sphere()	
-	-- m:smoothSubdivide(1)
 	fgu:addMesh(m)
 	
 	sphereVerts = convertToTable(m:selectAllVertices())
 
-	for i=1,3 do
+	for i=1,20 do
 		local el = sphereVerts[i] -- randomElement(sphereVerts)
 		table.insert(suckers,new_thing(el,random(0,10),random(1,3)))
 	end
 
-	table.foreachi(suckers, 
+		table.foreachi(suckers, 
 		function(i,thing)
 			if (thing~=nil) then
 				if (not thing:update(0.01)) then suckers[i] = nil end		
@@ -45,7 +44,8 @@ function setup()
 		end)
 end
 
-function update(dt) end
+function update(dt)
+end
 
 -- Give step function a list of (x,t) pairs (0<=x<=1)
 -- and it returns a function which maps from 0<x<1 to t
@@ -65,8 +65,8 @@ function new_thing(v,p,s) -- use the global mesh m
 		vertex = v,
 		phase = p,
 		speed = s,
-		numSegments = 15,
-		totalLength = 2,
+		numSegments = 5,
+		totalLength = 1,
 		hasGrown = false, -- has this sucker gone through the grow phase?
 		edgeRings = {} -- keep track of the rings of vertices so we can animate them
 	}
@@ -76,64 +76,47 @@ function new_thing(v,p,s) -- use the global mesh m
 		-- as a function of u, where u is between 0 and 1
 		local n = self.vertex:getN()
 		n:normalise()
-		expandFactor = 1
-		dir = vec3(0,0,0)
 		function f(u)
-			--local len = stepFunction({{0.5,random(.6,.8)},{.6,.01},{.7,-.2},{1.1,-.1}})(u)
-			local len = 1
-			local exp = 0
-			local du = 0 -- normalised within section
-			local R = 0
-
-			if (u<.4) then 
-				du = u/.4
-				len = lerp(0,3,du)
-				exp = lerp(-.6,0,du)
-			elseif (u<.8) then				
-				du = (u-.4)/.4
-				len = 1
-				exp = lerp(0,-.2,sqrt(du))
-				R = lerp(0,.3,sqrt(du))
-			else
-				du = (u-.8)/.2
-				len = 2
-				exp = lerp(0,-1,du)
-				R = lerp(0,1,du)
-			end
-
-			--[[
-			if (u<.6) then 
-				exp = lerp(-.2,0,u/.6) 
-			elseif (u<.8) then
-				exp = lerp(2,0,(u-.6)/.2) 
-			else
-				exp = lerp(0,-.3,(u-.8)/.2)
-			end
-			--]]
-
-			-- stepFunction({{.1,random(0,.1)},{.3,random(.1,.5)},{.6,0},{1.1,-.3}})(u)
+			local len = stepFunction({{0.5,random(.6,.8)},{.6,.01},{.7,-.2},{1.1,-.1}})(u)
+			local exp = stepFunction({{.1,random(.1,.4)},{.3,-.01},{.6,-.6},{1.1,-.1}})(u)
 			local d = nil
-			local r = vec3(random(-R,R),random(-R,R),random(-R,R))
-			local r = r + vec3(0,1.5*u,0) 			
 			if (len > 0) then d = n else d = n*-1 end
-			d = (d+r)
-			d:normalise()
-			return math.abs(len)*self.totalLength/self.numSegments, expandFactor*exp, d
+			return math.abs(len)*self.totalLength/self.numSegments, exp, d
 		end
 		
 		for k=1,self.numSegments do
 			len,exp,dir = f((k-1)/(self.numSegments-1))
-			fg.extrude(m,self.vertex,4,dir,len,exp)
-			-- m:sync()
-		end
+			fg.extrude(m,self.vertex,1,dir,len,exp)
+			
+			-- store the center, edge ring, and original edge ring positions			
+			local ring = convertToTable(fg.getVerticesAtDistance(m,self.vertex,1))
 
-		m:sync()										
+			local ringDP = {}
+			table.foreachi(ring,function(i,r) 			
+				table.insert(ringDP,r:getPos() - self.vertex:getPos()) 
+			end)
+			table.insert(self.edgeRings,
+				{center=self.vertex:getPos(),
+				ring=ring,
+				ringDP=ringDP})
+			-- recompute the normals if needed
+			m:sync()										
+		end	
 
 		self.hasGrown = true
 	end
 
 	obj.animateSucker = function(self,dt)
-	
+		table.foreachi(self.edgeRings, function(i, er)
+			for i=1,#er.ring do
+				if (er.ring[i].valid) then
+					local s = math.sin(self.speed*2*time + self.phase)
+					s = math.pow(s,4)
+					er.ring[i]:setPos(er.center + er.ringDP[i]*(1+0.5*s))
+				end
+			end
+		end)
+		m:sync()
 	end
 
 	obj.update = function(self,dt)
