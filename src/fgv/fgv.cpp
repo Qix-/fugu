@@ -138,8 +138,9 @@ int main(int argc, char *argv[])
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		gluLookAt(0,0,-4,   0,0,0,   0,1,0);
-
+		gluLookAt(0,0,4,   0,0,0,   0,1,0);
+		GLfloat lp[] = {1, 1, 1, 0};
+		glLightfv(GL_LIGHT0,GL_POSITION,lp);
 		glPushMatrix();
 		glMultMatrixf((GLfloat*) gRotationMatrix);
 
@@ -147,8 +148,8 @@ int main(int argc, char *argv[])
 				gCameraTranslation[1],
 				gCameraTranslation[2]);
 
-		GLfloat lp[] = {.1, 1, .1, 0};
-		glLightfv(GL_LIGHT0,GL_POSITION,lp);
+		// GLfloat lp[] = {.1, 1, .1, 0};
+		// glLightfv(GL_LIGHT0,GL_POSITION,lp);
 
 		float z = std::exp(-gZoom);
 		glScalef(z,z,z);
