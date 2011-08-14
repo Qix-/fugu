@@ -62,6 +62,7 @@ namespace fg {
                 pair<Quat, Quat> no;
                 no.first = orients[i] * co.first.inverse();
                 no.second = orients[i + 1] * co.second.inverse();
+//				cout << no.first << ", " << no.second << endl;
                 mOrients.push_back( no );
             }
         }
@@ -119,10 +120,17 @@ namespace fg {
             Vec3 cVert;
             Vec3 cCpos = mCarrier.getInterpolator()->getPosition( v );
 
+			double vrange, dummy, urange;
+			mCarrier.getInterpolator()->getDomain( dummy, vrange );
+			pTLength = getTotalLengthSquared( pCs );
+			pLength = 0.;
+
             for( int i = 0; i < pCs.size(); ++i )
             {
                 cVert = cCpos + ori * pCs[i];
                 mb.addVertex( cVert.getX(), cVert.getY(), cVert.getZ() );
+				mb.addVertexUV( pLength / pTLength, v / vrange );
+				pLength += (pCs[(i + 1) % pCs.size()] - pCs[i]).length();
             }
 
             pCsIndex = oldVerticies;
@@ -145,12 +153,6 @@ namespace fg {
             	    ori = orient( v + vinc );
             	    cCpos = mCarrier.getInterpolator()->getPosition( v + vinc );
 
-            	    for( int i = 0; i < nCs.size(); ++i )
-            	    {
-            	        cVert = cCpos + ori * nCs[i];
-            	        mb.addVertex( cVert.getX(), cVert.getY(), cVert.getZ() );
-            	    }
-
             	    // While neither cross section is empty add the required triangles
             	    int i = 0;
             	    int j = 0;
@@ -163,6 +165,15 @@ namespace fg {
 					pLength = (pCs[0] - pCs[(1) % s1]).length() / pTLength;
 					nLength = (nCs[0] - nCs[(1) % s2]).length() / nTLength;
 					pRTLength = 0.;
+					nRTLength = 0.;
+
+            	    for( int i = 0; i < nCs.size(); ++i )
+            	    {
+            	        cVert = cCpos + ori * nCs[i];
+            	        mb.addVertex( cVert.getX(), cVert.getY(), cVert.getZ() );
+						mb.addVertexUV( nRTLength / nTLength, ( v + vinc ) / vrange );
+						nRTLength += (nCs[(i + 1) % nCs.size()] - nCs[i]).length();
+            	    }
 					nRTLength = 0.;
 
 					//std::cout << "pTLength = " << pTLength << ", nTLength = " << nTLength << "\n";

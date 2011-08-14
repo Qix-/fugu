@@ -224,6 +224,10 @@ namespace fg {
         T PBezInterp<T>::getDerivative( double t ) const
         {
 			int seg = getSegment(t);
+//			std::cout << "Here, t = " << t << "\n";
+//			std::cout << "Here, tint = " << seg << "\n";
+//			std::cout << "Here, tfrac = " << t - (double) seg << "\n";
+//            std::cout << "deriv = " << getSegmentInterpolator(seg).getDerivative( t - ( double ) seg ) << "\n";
             return getSegmentInterpolator(seg).getDerivative( t - ( double ) seg );
         }
 

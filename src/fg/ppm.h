@@ -7,7 +7,8 @@
 
 #include <string>
 #include <cstdio>
-#include <GL/gl.h>
+
+#include "GL/glew.h"
 
 class Ppm
 {

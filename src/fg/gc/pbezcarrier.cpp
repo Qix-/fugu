@@ -23,6 +23,8 @@
  * \endcond
  */
 
+#include <stdio.h>
+
 #include "fg/fg.h"
 #include "fg/mat4.h"
 
@@ -149,24 +151,81 @@ namespace fg {
 
         Quat PBezCarrier::getFrenetFrame( double v ) const
         {
+            int vint = ( int ) v;
+            vint = clamp<int>( vint, 0, mInterpolator->getNumSegments() - 1 );
+            double localV = v - ( double ) vint;
+
+			bool straight = false;
+
             Vec3 vel = mInterpolator->getDerivative( v );
+			if( vel.length() < 1E-6 )
+			{
+				//Vec3 cp1 = mInterpolator->getControlPoint(vint);
+				//Vec3 cp2 = mInterpolator->getControlPoint( (vint + 1) % mInterpolator->getNumControlPoints() );
+				//vel = cp2 - cp1;
+				vel = Vec3( 1., 0., 0. );
+			} else {
+			}
+
             Vec3 tangent = vel;
+
             tangent.normalise();
+
             Vec3 acc = mInterpolator->getSecondDerivative( v );
             double vDotV = vel.dot( vel );
             double vDotA = vel.dot( acc );
             Vec3 norm = acc * vDotV - vel * vDotA;
             norm.normalise();
+
+            switch (mSegType[vint]) {
+                case 0: // No inflection
+                    break;
+                case 1: // One inflection
+					//cout << "seg = " << vint << ", type = " << mSegType[vint] << endl;
+					//cout << mInflectionPoints[vint].first << "\n";
+                    if ( fabs( localV - mInflectionPoints[vint].first ) < 1E-6 ) {
+                        return getFrenetFrame( v - 0.05 );
+                    } else 
+					if (localV > mInflectionPoints[vint].first) {
+                        norm = norm * -1.;
+                    }
+                    break;
+				case 2: // Two inflection Points
+                    if ( fabs( localV - mInflectionPoints[vint].first ) < 1E-6 ) {
+                        return getFrenetFrame( v - 0.05 );
+					}
+                    if (localV > mInflectionPoints[vint].first) {
+                        norm = norm * -1.;
+                    }
+                    if ( fabs( localV - mInflectionPoints[vint].second ) < 1E-6 ) {
+                        return getFrenetFrame( v - 0.05 );
+					}
+                    if (localV > mInflectionPoints[vint].second) {
+                        norm = norm * -1.;
+                    }
+                    break;
+                case 3: // Straight
+				default:
+                {
+					return Quat();
+                    break;
+                }
+			}
+
             Quat qt = Quat( Vec3( 1., 0., 0. ), tangent );
-            //Quat qn = Quat(qt * Vec3(0.,1.,0.), norm);
+			Quat qn;
+
+			if( straight ) {
+				qn = Quat();
+			} else {
+             	qn = Quat(qt * Vec3(0.,1.,0.), norm);
+			}
+
             return qt;//*qn;
         }
 
         Quat PBezCarrier::orient( double v ) const
         {
-            int vint = ( int ) v;
-            vint = clamp<int>( vint, 0, mInterpolator->getNumSegments() - 1 );
-            double localV = v - ( double ) vint;
             Quat ff = getFrenetFrame( v );
             /*
                 switch (segmentType[vint]) {
@@ -216,8 +275,10 @@ namespace fg {
             min = ( double ) seg;
             max = min + 0.99999;
             min = clamp<double>( min, min + 0.000001, min + 1. );
+//			cout << min << ", " << max << endl;
             Quat q1 = orient( min );
             Quat q2 = orient( max );
+//			cout << q1 << ", " << q2 << endl;
             return pair<Quat, Quat>( q1, q2 );
         }
 		
@@ -319,6 +380,7 @@ namespace fg {
 
             // Zero everywhere
             if( xall && yall && zall ) {
+				//std::cout << "a = " << a << ", b = " << b << ", c = " << c << endl;
                 return -1;
             }
 
@@ -338,7 +400,7 @@ namespace fg {
             } else { // do the intersection
                 for( int i = 0; i < irootsx; ++i ) {
                     for( int j = 0; j < irootsy; ++j ) {
-                        if( Interpolator<float>::AlmostEqual2sComplement( rootsx[i], rootsy[j], 100000 ) ) {
+                        if( fabs( rootsx[i] - rootsy[j] ) < 1E-3 ) {
                             xinty[ixinty] = rootsx[i];
                             ++ixinty;
                         }
@@ -365,7 +427,7 @@ namespace fg {
             } else { // do the intersection
                 for( int i = 0; i < ixinty; ++i ) {
                     for( int j = 0; j < irootsz; ++j ) {
-                        if( Interpolator<float>::AlmostEqual2sComplement( xinty[i], rootsz[j], 100000 ) ) {
+                        if( fabs( xinty[i] - rootsz[j] ) < 1E-3 ) {
                             xintyintz[ixintyintz] = xinty[i];
                             ++ixintyintz;
                         }
@@ -375,6 +437,7 @@ namespace fg {
 
             *r1 = xintyintz[0];
             *r2 = xintyintz[1];
+			//cout << "roots = " << ixintyintz << "\n";
             return ixintyintz;
         }
 
@@ -389,7 +452,7 @@ namespace fg {
          */
         int PBezCarrier::rootsQuad( double a, double b, double det, double *r1, double *r2 )
         {
-            if( Interpolator<double>::AlmostEqual2sComplement( det, 0.f, 10000000 ) ) {
+            if( fabs( det ) < 1E-3 ) {
                 *r1 = ( -b / ( 2.f * a ) );
                 *r2 = *r1;
                 return 1;
@@ -421,11 +484,12 @@ namespace fg {
         int PBezCarrier::roots( double a, double b, double c, double *r1, double *r2 )
         {
             // Not a quadratic
-            if( Interpolator<double>::AlmostEqual2sComplement( a, 0.f, 10000000 ) ) {
+            if( fabs( a ) < 1E-6 ) {
                 // if it not linear
-                if( Interpolator<double>::AlmostEqual2sComplement( b, 0.f, 10000000 ) ) {
+                if( fabs( b ) < 1E-6 ) {
                     // zero every where
-                    if( Interpolator<double>::AlmostEqual2sComplement( c, 0.f, 10000000 ) ) {
+                    if( fabs( c ) < 1E-6 ) {
+						//cout << "a = " << a << ", b = " << b << ", c = " << c << endl;
                         return -1;
                     } else {        // Zero nowhere
                         return 0;
@@ -454,12 +518,12 @@ namespace fg {
             float l12 = v1.SquaredNorm( );
             float l22 = v2.SquaredNorm( );
 
-            if( Interpolator<double>::AlmostEqual2sComplement( l12, 0.f, 1000 ) || Interpolator<double>::AlmostEqual2sComplement( l22, 0.f, 1000 ) ) {
+            if( fabs( l12 ) < 1E-3 || fabs( l22 ) < 1E-3 ) {
                 return true;
             }
 
             float ctheta = v1.dot( v2 ) / ( sqrt( l12 ) * sqrt( l22 ) );
-            return Interpolator<double>::AlmostEqual2sComplement( ctheta, 1.f, 1000 );
+            return fabs( ctheta - 1.f ) < 1E-3; 
         }
 
     }
