@@ -77,19 +77,22 @@ namespace fg {
 
 		// Transformation functions
 		/// \brief Set this matrix basis to consist of the supplied axes
-		void setBasis(const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis);
+		Mat4& setBasis(const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis);
 		/// \brief Set this matrix to be a translation transform
-		void setTranslate(double x, double y, double z);
+		Mat4& setTranslate(double x, double y, double z);
 		/// \brief Set this matrix to be a translation transform
-		void setTranslate(const Vec3& t);
+		Mat4& setTranslate(const Vec3& t);
 		/// \brief Set this matrix to be a rotation transform (radians, axis)
-		void setRotateRad(double radians, double x, double y, double z);
+		Mat4& setRotateRad(double radians, double x, double y, double z);
 		/// \brief Set this matrix to be a rotation transform (radians, axis)
-		void setRotateRad(double radians, const Vec3& axis);
+		Mat4& setRotateRad(double radians, const Vec3& axis);
+		/// \brief Set this matrix to be a rotation transform (fromDir, toDir)
+		Mat4& setRotate(const Vec3& from, const Vec3& to);
+
 		/// \brief Set this matrix to be a scaling transform
-		void setScale(double sx, double sy, double sz);
+		Mat4& setScale(double sx, double sy, double sz);
 		/// \brief Set this matrix to be a scaling transform
-		void setScale(const Vec3& scale);
+		Mat4& setScale(const Vec3& scale);
 
 		/// \deprecated use setBasis (its intention is clearer)
 		void set(const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis);

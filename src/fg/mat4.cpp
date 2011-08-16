@@ -22,8 +22,11 @@
  * \endcond
  */
 
-#include "fg/mat4.h"
 #include <iomanip>
+
+#include "fg/mat4.h"
+#include "fg/quat.h"
+
 
 namespace fg {
 	Mat4::Mat4():vcg::Matrix44<double>(){}
@@ -61,7 +64,7 @@ namespace fg {
         setBasis(xaxis,yaxis,zaxis);
 	}
 
-	void Mat4::setBasis(const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis){
+	Mat4& Mat4::setBasis(const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis){
 		double kRot[16];
 		kRot[0] = xaxis.getX();
 		kRot[4] = xaxis.getY();
@@ -81,6 +84,7 @@ namespace fg {
 		kRot[15] = 1;
 
 		(*this) = Mat4(kRot);
+		return *this;
 	}
 
 	double& Mat4::get(int r, int c){
@@ -97,28 +101,41 @@ namespace fg {
 	}
 	*/
 
-	void Mat4::setTranslate(double x, double y, double z){
+	Mat4& Mat4::setTranslate(double x, double y, double z){
 		vcg::Matrix44<double>::SetTranslate(x,y,z);
+		return *this;
 	}
 
-	void Mat4::setTranslate(const Vec3& t){
+	Mat4& Mat4::setTranslate(const Vec3& t){
 		vcg::Matrix44<double>::SetTranslate(t[0],t[1],t[2]);
+		return *this;
 	}
 
-	void Mat4::setRotateRad(double radians, double x, double y, double z){
+	Mat4& Mat4::setRotateRad(double radians, double x, double y, double z){
 		vcg::Matrix44<double>::SetRotateRad(radians,vcg::Point3<double>(x,y,z));
+		return *this;
 	}
 
-	void Mat4::setRotateRad(double radians, const Vec3& axis){
+	Mat4& Mat4::setRotateRad(double radians, const Vec3& axis){
 		vcg::Matrix44<double>::SetRotateRad(radians,axis);
+		return *this;
 	}
 
-	void Mat4::setScale(double sx, double sy, double sz){
+	/// \brief Set this matrix to be a rotation transform (fromDir, toDir)
+	Mat4& Mat4::setRotate(const Vec3& from, const Vec3& to){
+		Quat q(from,to);
+		*this = q.toMat4();
+		return *this;
+	}
+
+	Mat4& Mat4::setScale(double sx, double sy, double sz){
 		vcg::Matrix44<double>::SetScale(sx,sy,sz);
+		return *this;
 	}
 
-	void Mat4::setScale(const Vec3& scale){
+	Mat4& Mat4::setScale(const Vec3& scale){
 		vcg::Matrix44<double>::SetScale(scale[0],scale[1],scale[2]);
+		return *this;
 	}
 
 	// operators
@@ -149,6 +166,7 @@ namespace fg {
 }
 
 std::ostream& operator<<(std::ostream& o, const fg::Mat4& m){
+	o << "mat4\n";
 	for(int r=0;r<4;r++){
 		for(int c=0;c<4;c++){
 			o << std::setprecision(3) << m.ElementAt(r,c);

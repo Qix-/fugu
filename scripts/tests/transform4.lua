@@ -7,7 +7,7 @@ require "table"
 
 -- constants
 local branches = 5
-local depth = 4
+local depth = 3
 
 -- Shorthand for transforms
 function R(rad,x,y,z)
@@ -48,7 +48,7 @@ function branch(parent,tr,d)
 	
 	-- add an empty node to the end of the branch
 	local empty = fg.node()
-	empty.transform = tr*S(.6,.6,.6)
+	empty:setTransform(tr*S(.6,.6,.6))
 	fgu:add(empty)
 	fgu:makeChildOf(parent,empty)
 		
@@ -58,7 +58,7 @@ function branch(parent,tr,d)
 		fgu:add(n)
 		fgu:makeChildOf(empty,n)
 		table.insert(nodes,n)
-		n.transform = R(db*i,0,1,0)*R(math.pi/3,1,0,0)	
+		n:setTransform(R(db*i,0,1,0)*R(math.pi/3,1,0,0))	
 		branch(n,T(0,1,0),d-1)
 	end
 end
@@ -69,7 +69,7 @@ function update(dt)
 	table.foreach(nodes, 
 		function(i,n) 
 			local s = 1+0.003*math.sin(time+.7*i)
-			n.transform = n.transform*R(dt,0,1,0)*S(s,s,s)
+			n:setTransform(n:getTransform()*R(dt,0,1,0)*S(s,s,s))
 		end
 	)
 	--[[
