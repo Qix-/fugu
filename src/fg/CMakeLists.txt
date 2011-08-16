@@ -1,6 +1,7 @@
 set(SRC 
 	armature.cpp
 	bindings.cpp
+	face.cpp
 	fg.cpp
 	functions.cpp
 	glrenderer.cpp
@@ -36,6 +37,7 @@ set(HDRS
 	armature.h
 	bindings.h
 	exportmeshnode.h
+	face.h
 	fg.h
 	functions.h
 	glrenderer.h
@@ -77,7 +79,8 @@ set(HDRS
 
 set(INLS
 	functions.inl
-
+	proxy.inl 
+	
 	gc/bezinterp.inl
 	gc/crinterp.inl
 	gc/interpolator.inl

@@ -45,6 +45,8 @@
 #include "fg/node.h"
 
 #include "fg/mesh.h"
+#include "fg/vertex.h"
+#include "fg/face.h"
 #include "fg/meshnode.h"
 #include "fg/meshoperators.h"
 
@@ -168,13 +170,14 @@ namespace fg {
 
 		   // transform methods
 		   .def("set", (void(fg::Mat4::*)(const Vec3&, const Vec3&, const Vec3&)) &fg::Mat4::set)
-		   .def("setBasis", (void(fg::Mat4::*)(const Vec3&, const Vec3&, const Vec3&)) &fg::Mat4::set)
-		   .def("setTranslate", (void(fg::Mat4::*)(double,double,double)) &fg::Mat4::setTranslate)
-		   .def("setTranslate", (void(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setTranslate)
-		   .def("setRotateRad", (void(fg::Mat4::*)(double,double,double,double)) &fg::Mat4::setRotateRad)
-		   .def("setRotateRad", (void(fg::Mat4::*)(double,const Vec3&)) &fg::Mat4::setRotateRad)
-		   .def("setScale", (void(fg::Mat4::*)(double,double,double)) &fg::Mat4::setScale)
-		   .def("setScale", (void(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setScale)
+		   .def("setBasis", (Mat4&(fg::Mat4::*)(const Vec3&, const Vec3&, const Vec3&)) &fg::Mat4::set)
+		   .def("setTranslate", (Mat4&(fg::Mat4::*)(double,double,double)) &fg::Mat4::setTranslate)
+		   .def("setTranslate", (Mat4&(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setTranslate)
+		   .def("setRotateRad", (Mat4&(fg::Mat4::*)(double,double,double,double)) &fg::Mat4::setRotateRad)
+		   .def("setRotateRad", (Mat4&(fg::Mat4::*)(double,const Vec3&)) &fg::Mat4::setRotateRad)
+		   .def("setRotate",  (Mat4&(fg::Mat4::*)(const Vec3&,const Vec3&)) &fg::Mat4::setRotate)
+		   .def("setScale", (Mat4&(fg::Mat4::*)(double,double,double)) &fg::Mat4::setScale)
+		   .def("setScale", (Mat4&(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setScale)
 		];
 
 		// fg/universe.h
@@ -196,7 +199,11 @@ namespace fg {
 		module(L, "fg")[
 		  class_<fg::Node, boost::shared_ptr<fg::Node> >("node")
 		  .def(constructor<>())
-		  .property("transform", &fg::Node::getRelativeTransform, &fg::Node::setRelativeTransform)
+
+		  .def("getTransform", &fg::Node::getRelativeTransform)
+		  .def("setTransform", &fg::Node::setRelativeTransform)
+
+		  // .property("transform", &fg::Node::getRelativeTransform, &fg::Node::setRelativeTransform)
 		];
 
 		// fg/meshnode.h
@@ -215,7 +222,7 @@ namespace fg {
 		   .def("getPos", &fg::VertexProxy::getPos)
 		   .def("setPos", (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setPos))
 		   .def("setPos", (void(fg::VertexProxy::*)(double,double,double)) (&fg::VertexProxy::setPos))
-		   // .property("pos", &fg::VertexProxy::getPos, &fg::VertexProxy::setPos)
+		   .property("p", &fg::VertexProxy::getPos, (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setPos))
 
 		   .def("getN", &fg::VertexProxy::getN)
 		   // class_<fg::Mesh::VertexContainer>("vertexcontainer"),
@@ -229,16 +236,34 @@ namespace fg {
 		   .property("valid", &fg::VertexProxy::isValid)
 		];
 
+		// fg/face.h
+		module(L,"fg")[
+		   class_<fg::FaceProxy>("face")
+		   .def(tostring(const_self))
+
+		   .property("n", &fg::FaceProxy::getN)
+		   .def("v", &fg::FaceProxy::getV)
+
+		   .property("valid", &fg::FaceProxy::isValid)
+		];
+
 		// fg/mesh.h
 		module(L,"fg")[
+		   // containers
 		   class_<fg::Mesh::VertexSet>("vertexset")
 		   .property("all", &fg::luaAllAdapter<fg::Mesh::VertexSet>, return_stl_iterator),
 
+		   class_<fg::Mesh::FaceSet>("faceset")
+		   .property("all", &fg::luaAllAdapter<fg::Mesh::FaceSet>, return_stl_iterator),
+
+		   // mesh
 		   class_<fg::Mesh>("mesh")
 		   .def(tostring(const_self))
 
 		   // Selectors
 		   .def("selectAllVertices", &Mesh::selectAllVertices)
+		   .def("selectAllFaces", &Mesh::selectAllFaces)
+
 		   .def("selectRandomVertex", &Mesh::selectRandomVertex)
 
 		   .def("subdivide", &Mesh::subdivide)

@@ -29,6 +29,7 @@
 // fg dependencies
 #include "fg/vec3.h"
 #include "fg/vertex.h"
+#include "fg/face.h"
 #include "fg/mat4.h"
 #include "fg/util.h"
 
@@ -48,14 +49,6 @@
 #include <wrap/gl/trimesh.h>
 
 namespace fg {
-	/**
-	 * \brief A triangular face in an fg::Mesh
-	 */
-	class Face {
-	public:
-		// Currently empty
-	};
-
 	// forward decl
 	class MeshImpl;
 	
@@ -67,7 +60,8 @@ namespace fg {
 	 */
 	class Mesh {
 		public:
-		typedef std::list<boost::shared_ptr<VertexProxy> > VertexSet;
+		typedef std::list<shared_ptr<VertexProxy> > VertexSet;
+		typedef std::list<shared_ptr<FaceProxy> > FaceSet;
 
 		/**
 		 * \brief Common mesh primitives.
@@ -133,14 +127,12 @@ namespace fg {
 		static boost::shared_ptr<Mesh> Load(std::string path);
 		static boost::shared_ptr<Mesh> Load(boost::filesystem::path file);
 
+		// Mesh(); // empty constructor is hidden
 		~Mesh();
 
-		// Accessors
-		
-		/**
-		 * \brief Select (retrieve) all the vertices in this mesh
-		 */
-		boost::shared_ptr<VertexSet> selectAllVertices();
+		// Selectors
+		boost::shared_ptr<VertexSet> selectAllVertices(); ///< \brief Select (retrieve) all the vertices in this mesh
+		boost::shared_ptr<FaceSet> selectAllFaces(); ///< \brief Select (retrieve) all the faces in this mesh
 
 		/**
 		 *\brief Select a random vertex
@@ -175,13 +167,17 @@ namespace fg {
 		/// \brief (LOW LEVEL) Return the VCG implementation in this mesh
 		MeshImpl* _impl();
 
-		/// \brief (LOW LEVEL) return the VertexProxyList, so vertices can get their references updated
-		VertexProxyList* _vpl();
+		shared_ptr<VertexProxy> _newSP(VertexImpl*); ///< \brief (LOW LEVEL) Create a new shared_ptr<vertexproxy> and track it usin the proxylist
+		shared_ptr<FaceProxy> _newSP(FaceImpl*); ///< \brief (LOW LEVEL) Create a new shared_ptr<faceproxy> and track it usin the proxylist
+		VertexProxyList* _vpl(); ///< \brief (LOW LEVEL)
+		FaceProxyList* _fpl(); ///< \brief (LOW LEVEL)
 
 		private:
 		Mesh(); // Can't construct a blank mesh.
 		MeshImpl* mpMesh;
+
 		VertexProxyList mVertexProxyList;
+		FaceProxyList mFaceProxyList;
 	};
 }
 
