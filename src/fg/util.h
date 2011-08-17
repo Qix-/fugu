@@ -28,6 +28,8 @@
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
+#include <boost/ref.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <utility>
 
 /* Define foreach. (With workaround for eclipse cdt parser.) */
@@ -39,6 +41,8 @@
 
 using boost::shared_ptr;
 using boost::weak_ptr;
+using boost::tuple;
+using boost::make_tuple;
 
 using std::pair;
 using std::make_pair;

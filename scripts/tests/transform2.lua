@@ -22,15 +22,15 @@ function setup()
 	fgu:makeChildOf(n1,n3)
 	fgu:makeChildOf(n3,n2)	
 	
-	n2.transform:setTranslate(3,0,0)		
+	n2:setTransform(mat4():setTranslate(3,0,0))		
 end
 
 
 function update(dt) 
 	y = math.sin(.5*fgu.t * math.pi)
 	y = y*y*math.abs(y)
-	n1.transform:setTranslate(0,y,0)
-	n3.transform:setRotateRad(fgu.t,math.cos(fgu.t),1+math.sin(fgu.t),1)
+	n1:setTransform(mat4():setTranslate(0,y,0))
+	n3:setTransform(mat4():setRotateRad(fgu.t,math.cos(fgu.t),1+math.sin(fgu.t),1))
 	
 	updateThing(dt)
 end

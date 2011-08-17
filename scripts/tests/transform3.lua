@@ -6,7 +6,7 @@ module(...,package.seeall)
 
 -- constants
 local branches = 3
-local depth = 2
+local depth = 3
 
 -- Shorthand for transforms
 function R(rad,x,y,z)
@@ -48,7 +48,7 @@ function branch(parent,tr,d)
 		n = fg.meshnode(cyl)
 		fgu:add(n)
 		fgu:makeChildOf(parent,n)
-		n.transform = tr*S(.6,.6,.6)*R(db*i,0,1,0)*R(math.pi/3,1,0,0)	
+		n:setTransform(tr*S(.6,.6,.6)*R(db*i,0,1,0)*R(math.pi/3,1,0,0))	
 		branch(n,T(0,1,0),d-1)
 	end
 end

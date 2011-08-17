@@ -19,12 +19,13 @@ function setup()
 	fgu:makeChildOf(n1,n3)
 	fgu:makeChildOf(n3,n2)	
 	
-	n2.transform:setTranslate(4,0,0)		
+	local m = mat4():setTranslate(4,0,0)
+	n2:setTransform(m)		
 end
 
 function update(dt) 
-	n1.transform:setTranslate(0,2*math.sin(fgu.t * math.pi),0)
-	n3.transform:setRotateRad(fgu.t,0,1,1)
+	n1:setTransform(mat4():setTranslate(0,2*math.sin(fgu.t * math.pi),0))
+	n3:setTransform(mat4():setRotateRad(fgu.t,0,1,1))
 end
 
 
