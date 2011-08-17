@@ -8,7 +8,7 @@ function setup()
 	string = {'-', 'F', '+', 'F', '+', 'F', '-', '&', 'F', '^', '-', 'F', '+', '&', '&', 'F', '+', 'F', '+'}
 	interpret(bert, string)
 
-	m = bert:getMesh(10,10)
+	m = bert:getMesh()
 	fgu:addMesh(m)
 end
 
@@ -17,7 +17,7 @@ function update(dt)
 	t = t + dt
 end
 
-local d=1.
+local d=10.
 local del=math.pi*.5
 function interpret(turt,string)
 	for i,v in ipairs(string) do

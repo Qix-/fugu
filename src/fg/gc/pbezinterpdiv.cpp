@@ -11,7 +11,7 @@ namespace fg {
 		    RecSubDiv sd;
 			for (int i = 0; i < PBezInterp<Vec3>::getNumSegments(); ++i)
 			{
-				sd.approximation_scale(150.);
+				sd.approximation_scale(10.);
 				sd.angle_tolerance(0.05);
 				sd.init( PBezInterp<Vec3>::getSegmentControlPoints(i) );;
 				tmp = sd.get_data();

@@ -95,7 +95,7 @@ namespace fg {
             return Quat( ar * cr );
         }
 
-        void GeneralisedCylinder::createMesh( Mesh::MeshBuilder &mb ) const
+        int GeneralisedCylinder::createMesh( Mesh::MeshBuilder &mb ) const
         {
 			int m = mStrips[0];
 			int oldVerticies = mb.getNumVerticies();
@@ -129,7 +129,15 @@ namespace fg {
             {
                 cVert = cCpos + ori * pCs[i];
                 mb.addVertex( cVert.getX(), cVert.getY(), cVert.getZ() );
-				mb.addVertexUV( pLength / pTLength, v / vrange );
+				/* reversing texture */
+				if( pLength / pTLength > 0.5 )
+				{
+					mb.addVertexUV( 2 * (1. - pLength / pTLength), v / vrange );
+				}
+				else
+				{
+					mb.addVertexUV( 2. * pLength / pTLength, v / vrange );
+				}
 				pLength += (pCs[(i + 1) % pCs.size()] - pCs[i]).length();
             }
 
@@ -171,7 +179,15 @@ namespace fg {
             	    {
             	        cVert = cCpos + ori * nCs[i];
             	        mb.addVertex( cVert.getX(), cVert.getY(), cVert.getZ() );
-						mb.addVertexUV( nRTLength / nTLength, ( v + vinc ) / vrange );
+						/* reversing texture */
+						if( nRTLength / nTLength > 0.5 )
+						{
+							mb.addVertexUV( 2 * (1. - nRTLength / nTLength), v / vrange );
+						}
+						else
+						{
+							mb.addVertexUV( 2. * nRTLength / nTLength, v / vrange );
+						}
 						nRTLength += (nCs[(i + 1) % nCs.size()] - nCs[i]).length();
             	    }
 					nRTLength = 0.;
@@ -258,6 +274,14 @@ namespace fg {
             	    v += vinc;
             	}
 			}
+
+			mb.addVertex( cCpos.getX(), cCpos.getY(), cCpos.getZ() );
+			for( int i = 0; i < pCs.size(); ++i )
+			{
+				mb.addFace( pCsIndex + i, pCsIndex + ((1 + i) % pCs.size()), nCsIndex );
+			}
+
+			return nCsIndex;
         }
 
 		double GeneralisedCylinder::getCrossSectionV( double v ) const

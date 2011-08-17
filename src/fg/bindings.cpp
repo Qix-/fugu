@@ -303,6 +303,9 @@ namespace fg {
 
 		   .def("getPosition",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getPosition)
 		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getMesh)
+
+		   .def("getNumEndCaps",&fg::gc::Turtle::getNumEndCaps)
+		   .def("getEndCap",&fg::gc::Turtle::getEndCap)
 		];
 
 		return 0;

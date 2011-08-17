@@ -28,7 +28,7 @@ namespace fg {
 									 const Interpolator<double> &scale,
 									 const std::vector< std::pair<double,double> > &scaleDomains, const std::vector< int > &strips );
                 Vec3 getPosition( double u, double v ) const;
-                void createMesh( Mesh::MeshBuilder &mb ) const;
+                int createMesh( Mesh::MeshBuilder &mb ) const;
 
             protected:
                 const CarrierCurve &mCarrier;

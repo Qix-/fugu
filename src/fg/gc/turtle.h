@@ -50,6 +50,15 @@ namespace fg {
 				Vec3 getPosition();
                 boost::shared_ptr<Mesh> getMesh( );
 
+				int getNumEndCaps() {
+					return mEndCaps.size();
+				}
+				int getEndCap(int i) {
+					if( i < 0 || i >= getNumEndCaps() )
+						return -1;
+					return mEndCaps[i];
+				}
+
             protected:
 				// The state
 				struct TurtleState
@@ -60,20 +69,20 @@ namespace fg {
 					double scale;
 					std::pair<double,double> stiffness;
                 	Mat4 frame;
+
+	                // Data to be used for the next cylinder/cross section
+					std::vector<double> scaleArr;
+					std::vector< std::pair<double, double> > scaleDomains;
+					std::vector<int> crossSecArr;
+					std::vector< std::pair<double, double> > crossSecDomains;
+	                std::vector<Mat4> prevFrames;
+					std::vector< std::pair<double, double> > stiffnessArr;
+					std::vector<int> strips;
 				};
 				TurtleState mState;
 
 				// Stack of states
 				std::stack<TurtleState> mStateStack;
-
-                // Data to be used for the next cylinder/cross section
-				std::vector<double> mScaleArr;
-				std::vector< std::pair<double, double> > mScaleDomains;
-				std::vector<int> mCrossSecArr;
-				std::vector< std::pair<double, double> > mCrossSecDomains;
-                std::vector<Mat4> mPrevFrames;
-				std::vector< std::pair<double, double> > mStiffnessArr;
-				std::vector<int> mStrips;
 
 				// Storage of previous cylinders
 				std::vector<PBezInterpDiv *> mCrossSecLibrary;
@@ -81,6 +90,7 @@ namespace fg {
                 std::vector<const CrossSection *> mCrossSections;
                 std::vector<const GeneralisedCylinder *> mCylinders;
 				std::vector<const Interpolator<double> *> mScalers;
+				std::vector<int> mEndCaps;
         };
     }
 }
