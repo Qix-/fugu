@@ -138,6 +138,7 @@ namespace fg {
 		 *\brief Select a random vertex
 		 */
 		boost::shared_ptr<VertexProxy> selectRandomVertex();
+		boost::shared_ptr<FaceProxy> selectRandomFace();
 
 		// Queries
 		void getBounds(double& minx, double& miny, double& minz, double& maxx, double& maxy, double& maxz);

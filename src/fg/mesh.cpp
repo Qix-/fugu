@@ -109,12 +109,11 @@ namespace fg {
 
 	boost::shared_ptr<VertexProxy> Mesh::selectRandomVertex(){
 		return _newSP(&mpMesh->vert[(int)(fg::random(0,mpMesh->vert.size()))]);
-		/*
-		VertexProxy* vp = new VertexProxy(this,&mpMesh->vert[(int)(fg::random(0,mpMesh->vert.size()))]);
-		boost::shared_ptr<VertexProxy> pvp(vp);
-		mVertexProxyList.add(pvp);
-		return pvp;
-		*/
+	}
+
+
+	boost::shared_ptr<FaceProxy> Mesh::selectRandomFace(){
+		return _newSP(&mpMesh->face[(int)(fg::random(0,mpMesh->face.size()))]);
 	}
 
 	void Mesh::getBounds(double& minx, double& miny, double& minz, double& maxx, double& maxy, double& maxz){

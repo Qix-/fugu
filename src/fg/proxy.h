@@ -101,6 +101,7 @@ namespace fg {
 		 * Invalidate the internal pointer. (E.g., if the pointed to object gets deleted)
 		 */
 		void invalidate(){mImpl = NULL;}
+
 	private:
 		T* mImpl;
 	};

@@ -37,6 +37,7 @@
 
 namespace fg {
 	// forward decl
+	class FaceProxy;
 	class VertexImpl;
 	class Mesh;
 
@@ -67,9 +68,12 @@ namespace fg {
 
 		void setUV(double u, double v);
 
+		shared_ptr<FaceProxy> getAdjacentFace(); ///< Retrieve a face adjacent to this vertex
+
 		// Special functions
 		int getNumBones() const;
 
+		Mesh* _mesh() const {return mMesh;}
 	private:
 		Mesh* mMesh;
 	};

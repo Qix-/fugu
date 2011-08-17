@@ -41,14 +41,13 @@
 #include "fg/mat4.h"
 #include "fg/universe.h"
 #include "fg/functions.h"
-
 #include "fg/node.h"
-
 #include "fg/mesh.h"
 #include "fg/vertex.h"
 #include "fg/face.h"
 #include "fg/meshnode.h"
 #include "fg/meshoperators.h"
+#include "fg/pos.h"
 
 #include "fg/gc/turtle.h"
 
@@ -233,6 +232,8 @@ namespace fg {
 
 		   .def("setUV", &fg::VertexProxy::setUV)
 
+		   .def("getAdjacentFace", &fg::VertexProxy::getAdjacentFace)
+
 		   .property("valid", &fg::VertexProxy::isValid)
 		];
 
@@ -245,6 +246,24 @@ namespace fg {
 		   .def("v", &fg::FaceProxy::getV)
 
 		   .property("valid", &fg::FaceProxy::isValid)
+
+		   .def(const_self == other<fg::FaceProxy>())
+		];
+
+		// fg/pos.h
+		module(L,"fg")[
+
+		  class_<fg::Pos>("pos")
+		  .def(constructor<boost::shared_ptr<fg::FaceProxy>,int,boost::shared_ptr<fg::VertexProxy> >())
+		  .def(tostring(const_self))
+
+		  .def("flipV", &fg::Pos::flipV)
+		  .def("flipE", &fg::Pos::flipE)
+		  .def("flipF", &fg::Pos::flipF)
+
+		  .property("v", &fg::Pos::getV)
+		  .property("e", &fg::Pos::getE)
+		  .property("f", &fg::Pos::getF)
 		];
 
 		// fg/mesh.h
@@ -265,6 +284,7 @@ namespace fg {
 		   .def("selectAllFaces", &Mesh::selectAllFaces)
 
 		   .def("selectRandomVertex", &Mesh::selectRandomVertex)
+		   .def("selectRandomFace", &Mesh::selectRandomFace)
 
 		   .def("subdivide", &Mesh::subdivide)
 		   .def("smoothSubdivide", &Mesh::smoothSubdivide)
