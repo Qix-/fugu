@@ -36,8 +36,10 @@
 #include "fg/vec3.h"
 
 namespace fg {
-	// Forward declaration of vertex implementation
+	// forward decl
+	class FaceProxy;
 	class VertexImpl;
+	class Mesh;
 
 	/**
 	 * \brief Provides a proxy to a fg::Vertex
@@ -50,7 +52,7 @@ namespace fg {
 	 */
 	class VertexProxy: public Proxy<VertexImpl> {
 	public:
-		VertexProxy(VertexImpl* vi);
+		VertexProxy(Mesh* m, VertexImpl* vi);
 		~VertexProxy();
 
 		// Accessors
@@ -58,7 +60,7 @@ namespace fg {
 		void setPos(Vec3 v);
 		void setPos(double x, double y, double z);
 
-		Vec3 getN(); // hmm, can't be const (because of vcg...)
+		Vec3 getN() const;
 
 		Vec3 getColour() const;
 		void setColour(Vec3 c);
@@ -66,10 +68,14 @@ namespace fg {
 
 		void setUV(double u, double v);
 
+		shared_ptr<FaceProxy> getAdjacentFace(); ///< Retrieve a face adjacent to this vertex
+
 		// Special functions
 		int getNumBones() const;
 
-
+		Mesh* _mesh() const {return mMesh;}
+	private:
+		Mesh* mMesh;
 	};
 
 	/**
@@ -80,34 +86,7 @@ namespace fg {
 	 * XXX: Need to accommodate VCG's Allocator PointerUpdater design.
 	 * 		i.e., be compatible with a std::vector<VertexPointer*>...
 	 */
-	class VertexProxyList {
-	public:
-		VertexProxyList();
-		~VertexProxyList();
-
-		/**
-		 * Add a new vertexproxy to this list. It will be removed when their are no
-		 * more references to the vertexproxy (besides this one).
-		 */
-		void add(boost::shared_ptr<VertexProxy>);
-
-		/**
-		 * Remove any unreferenced proxies.
-		 *
-		 * XXX: Using shared_ptr::use_count may be slow according to boost docs...
-		 */
-		void doGarbageCollection();
-
-		/**
-		 * Return a list of pointers to pointers to vcg::vertex,
-		 * this will be used in the vcg Allocator to update the
-		 * internal refs of VertexProxies
-		 */
-		std::vector<VertexImpl**> getUpdateList();
-
-	private:
-		std::list<boost::shared_ptr<VertexProxy> > mProxies;
-	};
+	typedef ProxyList<VertexImpl> VertexProxyList;
 
 }
 

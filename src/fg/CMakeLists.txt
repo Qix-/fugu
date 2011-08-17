@@ -1,6 +1,7 @@
 set(SRC 
 	armature.cpp
 	bindings.cpp
+	face.cpp
 	fg.cpp
 	functions.cpp
 	glrenderer.cpp
@@ -12,7 +13,8 @@ set(SRC
 	meshoperators_vcg.cpp
 	node.cpp
 	nodegraph.cpp	
-	plylib.cpp	
+	plylib.cpp
+	pos.cpp	
 	ppm.cpp
 	proxy.cpp
 	quat.cpp	
@@ -36,6 +38,7 @@ set(HDRS
 	armature.h
 	bindings.h
 	exportmeshnode.h
+	face.h
 	fg.h
 	functions.h
 	glrenderer.h
@@ -48,6 +51,7 @@ set(HDRS
 	node.h
 	nodegraph.h
 	operator.h
+	pos.h
 	ppm.h
 	proxy.h	
 	quat.h
@@ -77,7 +81,8 @@ set(HDRS
 
 set(INLS
 	functions.inl
-
+	proxy.inl 
+	
 	gc/bezinterp.inl
 	gc/crinterp.inl
 	gc/interpolator.inl

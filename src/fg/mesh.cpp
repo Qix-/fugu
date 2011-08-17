@@ -67,6 +67,7 @@ namespace fg {
 	Mesh::Mesh()
 	:mpMesh(NULL)
 	,mVertexProxyList()
+	,mFaceProxyList()
 	{
 		mpMesh = new MeshImpl();
 	}
@@ -86,19 +87,33 @@ namespace fg {
 		BOOST_FOREACH(VertexImpl& v, mpMesh->vert){
 			// only return non-dead vertices
 			if (!v.IsD()){
-				boost::shared_ptr<VertexProxy> pvp(new VertexProxy(&v));
-				r->push_back(pvp);
-				mVertexProxyList.add(pvp);
+				r->push_back(_newSP(&v));
+				//boost::shared_ptr<VertexProxy> pvp(new VertexProxy(this, &v));
+				//r->push_back(pvp);
+				//mVertexProxyList.add(pvp);
+			}
+		}
+		return r;
+	}
+
+	boost::shared_ptr<Mesh::FaceSet> Mesh::selectAllFaces(){
+		boost::shared_ptr<FaceSet> r(new FaceSet());
+		BOOST_FOREACH(FaceImpl& f, mpMesh->face){
+			// only return non-dead vertices
+			if (!f.IsD()){
+				r->push_back(_newSP(&f));
 			}
 		}
 		return r;
 	}
 
 	boost::shared_ptr<VertexProxy> Mesh::selectRandomVertex(){
-		VertexProxy* vp = new VertexProxy(&mpMesh->vert[(int)(fg::random(0,mpMesh->vert.size()))]);
-		boost::shared_ptr<VertexProxy> pvp(vp);
-		mVertexProxyList.add(pvp);
-		return pvp;
+		return _newSP(&mpMesh->vert[(int)(fg::random(0,mpMesh->vert.size()))]);
+	}
+
+
+	boost::shared_ptr<FaceProxy> Mesh::selectRandomFace(){
+		return _newSP(&mpMesh->face[(int)(fg::random(0,mpMesh->face.size()))]);
 	}
 
 	void Mesh::getBounds(double& minx, double& miny, double& minz, double& maxx, double& maxy, double& maxz){
@@ -200,8 +215,24 @@ namespace fg {
 		return mpMesh;
 	}
 
+	shared_ptr<VertexProxy> Mesh::_newSP(VertexImpl* v){
+		shared_ptr<VertexProxy> pvp(new VertexProxy(this, v));
+		mVertexProxyList.add(pvp);
+		return pvp;
+	}
+
+	shared_ptr<FaceProxy> Mesh::_newSP(FaceImpl* f){
+		shared_ptr<FaceProxy> pvp(new FaceProxy(this, f));
+		mFaceProxyList.add(pvp);
+		return pvp;
+	}
+
 	VertexProxyList* Mesh::_vpl(){
 		return &mVertexProxyList;
+	}
+
+	FaceProxyList* Mesh::_fpl(){
+		return &mFaceProxyList;
 	}
 
 
@@ -399,8 +430,4 @@ namespace fg {
 
 std::ostream& operator<<(std::ostream& o, const fg::Mesh& mesh){
 	return o << "mesh " << &mesh;
-}
-
-std::ostream& operator<<(std::ostream& o, const fg::VertexProxy& v){
-	return o << "vertex " << &v;
 }

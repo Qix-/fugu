@@ -27,6 +27,14 @@
 
 #include <ostream>
 #include <iostream>
+#include <vector>
+#include <list>
+
+#include <boost/foreach.hpp>
+#include <boost/ref.hpp>
+#include <boost/shared_ptr.hpp>
+
+#include "fg/util.h"
 
 namespace fg {
 
@@ -93,9 +101,48 @@ namespace fg {
 		 * Invalidate the internal pointer. (E.g., if the pointed to object gets deleted)
 		 */
 		void invalidate(){mImpl = NULL;}
+
 	private:
 		T* mImpl;
 	};
+
+	/**
+	 * A ProxyList maintains a list of proxies and is responsible
+	 * for updating the internal pointers when the data changes location or
+	 * notifying proxies if the data is deleted..
+	 */
+	template <class T>
+	class ProxyList {
+	public:
+		typedef Proxy<T> TProxy;
+		ProxyList();
+		~ProxyList();
+
+		/**
+		 * Add a new proxy to this list. It will be removed when there are no
+		 * more references to the proxy (besides this one).
+		 */
+		void add(shared_ptr<TProxy>);
+
+		/**
+		 * Remove any unreferenced proxies from this list.
+		 *
+		 * XXX: Using shared_ptr::use_count may be slow according to boost docs...
+		 */
+		void doGarbageCollection();
+
+		/**
+		 * Return a list of pointers to pointers to T,
+		 * this will be used in the vcg Allocator to update the
+		 * internal refs of Vertex and Face Proxies.
+		 */
+		std::vector<T**> getUpdateList();
+
+	private:
+		std::list<shared_ptr<TProxy> > mProxies;
+	};
 }
+
+#include "fg/proxy.inl"
 
 #endif

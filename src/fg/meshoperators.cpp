@@ -63,7 +63,7 @@ namespace fg {
 		ring.expand(n); // NB: expand(2 or more) will not give the verts in proper sequence, have to fix this...
 		Mesh::VertexSet* l = new Mesh::VertexSet();
 		BOOST_FOREACH(VertexImpl* v, ring.lastV){
-			l->push_back(boost::shared_ptr<VertexProxy>(new VertexProxy(v)));
+			l->push_back(boost::shared_ptr<VertexProxy>(new VertexProxy(m,v)));
 		}
 		ring.clear();
 		return boost::shared_ptr<Mesh::VertexSet>(l);

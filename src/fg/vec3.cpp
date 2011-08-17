@@ -104,5 +104,5 @@ namespace fg {
 }
 
 std::ostream& operator<<(std::ostream& o, const fg::Vec3& v){
-	o << "{" << v.X() << "," << v.Y() << "," << v.Z() << "}";
+	o << "vec3(" << v.X() << "," << v.Y() << "," << v.Z() << ")";
 }
