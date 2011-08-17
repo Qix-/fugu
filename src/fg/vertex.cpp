@@ -24,6 +24,7 @@
 #include "fg/vertex.h"
 #include "fg/mesh.h"
 #include "fg/meshimpl.h" // VertexImpl
+#include "fg/face.h"
 
 namespace fg {
 	VertexProxy::VertexProxy(Mesh* m, VertexImpl* vi):Proxy<VertexImpl>(vi),mMesh(m){}
@@ -68,6 +69,10 @@ namespace fg {
 	void VertexProxy::setUV(double u, double v){
 		pImpl()->T().U() = u;
 		pImpl()->T().V() = v;
+	}
+
+	shared_ptr<FaceProxy> VertexProxy::getAdjacentFace(){
+		return mMesh->_newSP(static_cast<FaceImpl*>(pImpl()->VFp()));
 	}
 
 	int VertexProxy::getNumBones() const {

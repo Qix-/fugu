@@ -13,7 +13,8 @@ set(SRC
 	meshoperators_vcg.cpp
 	node.cpp
 	nodegraph.cpp	
-	plylib.cpp	
+	plylib.cpp
+	pos.cpp	
 	ppm.cpp
 	proxy.cpp
 	quat.cpp	
@@ -50,6 +51,7 @@ set(HDRS
 	node.h
 	nodegraph.h
 	operator.h
+	pos.h
 	ppm.h
 	proxy.h	
 	quat.h

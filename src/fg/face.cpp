@@ -37,6 +37,10 @@ namespace fg {
 	Vec3 FaceProxy::getN() const {
 		return constImpl().cN();
 	}
+
+	bool FaceProxy::operator==(const FaceProxy& fp) const {
+		return (&fp.constImpl()==&constImpl());
+	}
 } // namespace fg
 
 std::ostream& operator<<(std::ostream& o, const fg::FaceProxy& vp){

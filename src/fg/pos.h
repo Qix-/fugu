@@ -1,28 +1,37 @@
 #ifndef FG_POS_H
 #define FG_POS_H
 
-#include <vcg/simplex/vertex/base.h>
-#include <vcg/simplex/vertex/component_ocf.h>
-#include <vcg/simplex/face/base.h>
-#include <vcg/simplex/face/component_ocf.h>
+#include <ostream>
+
 #include <vcg/simplex/face/pos.h>
-#include <vcg/complex/complex.h>
-#include <vcg/complex/allocate.h>
-#include <vcg/complex/algorithms/nring.h>
-#include <vcg/complex/algorithms/update/topology.h>
-#include <vcg/complex/algorithms/update/color.h>
 
 #include "fg/mesh.h"
 #include "fg/meshimpl.h"
 #include "fg/util.h"
 
 namespace fg {
-	typedef vcg::face::Pos<Face> Pos;
-
-	class PosProxy: public Proxy<Pos> {
+	/** \brief A Pos is a (vertex,edge,face) tuple, which can be used to navigate a mesh.
+	 *
+	 * It is a wrapper around vcg::Pos, which implements the cell-tuple data structure.
+	 */
+	class Pos {
 	public:
-		PosProxy(VertexProxy vp, int edge, FaceProxy fp){}
+		Pos( shared_ptr<FaceProxy> fp, int edge, shared_ptr<VertexProxy> vp);
+
+		void flipV();
+		void flipE();
+		void flipF();
+
+		shared_ptr<VertexProxy> getV();
+		int getE();
+		shared_ptr<FaceProxy> getF();
+	private:
+		typedef vcg::face::Pos<fg::FaceImpl> VCGPos;
+		VCGPos mPos;
+		Mesh* mMesh;
 	};
 }
+
+std::ostream& operator<<(std::ostream& o, const fg::Pos& p);
 
 #endif
