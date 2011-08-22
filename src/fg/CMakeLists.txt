@@ -13,6 +13,7 @@ set(SRC
 	meshoperators_vcg.cpp
 	node.cpp
 	nodegraph.cpp	
+	phyllo.cpp
 	plylib.cpp
 	pos.cpp	
 	ppm.cpp
@@ -51,6 +52,7 @@ set(HDRS
 	node.h
 	nodegraph.h
 	operator.h
+	phyllo.h
 	pos.h
 	ppm.h
 	proxy.h	
