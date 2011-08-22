@@ -74,6 +74,8 @@ namespace fg {
 		int getNumBones() const;
 
 		Mesh* _mesh() const {return mMesh;}
+
+		bool operator==(const VertexProxy& p) const;
 	private:
 		Mesh* mMesh;
 	};

@@ -17,6 +17,7 @@ namespace fg {
 	class Pos {
 	public:
 		Pos( shared_ptr<FaceProxy> fp, int edge, shared_ptr<VertexProxy> vp);
+		Pos( const Pos& p );
 
 		void flipV();
 		void flipE();
@@ -25,6 +26,8 @@ namespace fg {
 		shared_ptr<VertexProxy> getV();
 		int getE();
 		shared_ptr<FaceProxy> getF();
+
+		bool operator==(const Pos& p) const;
 	private:
 		typedef vcg::face::Pos<fg::FaceImpl> VCGPos;
 		VCGPos mPos;

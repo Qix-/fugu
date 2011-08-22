@@ -79,6 +79,10 @@ namespace fg {
 		return constImpl().getNumBones();
 	}
 
+	bool VertexProxy::operator==(const VertexProxy& p) const {
+		return (&constImpl())==(&p.constImpl());
+	}
+
 } // namespace fg
 
 std::ostream& operator<<(std::ostream& o, const fg::VertexProxy& vp){

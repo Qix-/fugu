@@ -4,7 +4,7 @@
 
 module(...,package.seeall)
 
-require 'fg.nring'
+require 'fgx.nloop'
 
 local m = nil
 function setup()
@@ -25,7 +25,7 @@ function doit()
 	local col = vec3(random(),random(),random())
 	local v = m:selectRandomVertex()
 	v:setColour(vec3(1,1,1)-col)
-	for _,pv in ipairs(fg.nring.onering(v)) do
+	for _,pv in ipairs(fgx.nloop.loopv(v)) do
 		pv:setColour(col)
 	end	
 end

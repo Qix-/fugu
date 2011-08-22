@@ -19,6 +19,14 @@ namespace fg {
 
 	}
 
+	Pos::Pos( const Pos& p )
+	:mPos(p.mPos.f, p.mPos.z, p.mPos.v)
+	,mMesh(p.mMesh)
+	{
+
+
+	}
+
 	void Pos::flipV(){
 		mPos.FlipV();
 	}
@@ -41,6 +49,10 @@ namespace fg {
 
 	shared_ptr<FaceProxy> Pos::getF() {
 		return mMesh->_newSP(mPos.F());
+	}
+
+	bool Pos::operator==(const Pos& p) const{
+		return mPos==p.mPos;
 	}
 }
 

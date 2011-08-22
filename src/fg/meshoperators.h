@@ -50,6 +50,8 @@ namespace fg {
 	/**
 	 * \brief Extended version of extrude
 	 *
+	 * \deprecated Use expand-less version of extrude instead
+	 *
 	 * \param m The mesh
 	 * \param v The vertex to extrude around
 	 * \param width Width of extrusion (specifies the radius of a fan of faces surrounding v)
@@ -61,13 +63,33 @@ namespace fg {
 	 */
 	void extrude(Mesh* m, VertexProxy v, int width, Vec3 direction, double length, double expand);
 
+	/**
+	 * \brief Extrudes all faces within distance w of v. Note that the extruded faces will remain aligned as
+	 * they were before. They have to be manually rotated if you want them to line up with the axis of extrusion.
+	 *
+	 * \param m The mesh
+	 * \param v The vertex to extrude around
+	 * \param w Width of extrusion (specifies the radius of a fan of faces surrounding v)
+	 * \param direction The direction to extrude
+	 * \param magnitude The distance to extrude
+	 *
+	 * \ingroup meshops
+	 */
+	void extrude(Mesh* m, VertexProxy v, int width, Vec3 direction, double magnitude);
+
 
 	/**
-	 * \brief Get all vertices a distance n (in edges) surrounding a vertex.
-	 * 
+	 * \brief Get all vertices (unordered) lying a distance n (in edges) surrounding a vertex.
+	 *
 	 * \ingroup meshops
 	 */
 	boost::shared_ptr<Mesh::VertexSet> getVerticesAtDistance(Mesh* m, VertexProxy v, int n);
+
+	/**
+	 * \brief Get the edge loop at distance n surrounding vertex v
+	 * \ingroup meshops
+	 */
+	boost::shared_ptr<Mesh::VertexSet> nloop(Mesh* m, VertexProxy v, int n);
 }
 
 #endif

@@ -71,7 +71,10 @@ namespace fg {
 		// fg/functions.h
 		module(L)[
 		   def("min", &min<double>),
+
 		   def("lerp", &lerp<double, double>),
+		   def("lerp", &lerp<Vec3, double>),
+
            def("mix", &mix<double, double>),
            def("clamp", &clamp<double>),
            def("step", &step<double, double>),
@@ -134,9 +137,9 @@ namespace fg {
 		   .def("normalise",&fg::Vec3::normalise),
 
 		   // vec3 free functions (after GLSL Geometric Functions)
-		   def("length",(void(*)(const Vec3&)) &fg::length),
-		   def("distance",(void(*)(const Vec3&,const Vec3&)) &fg::distance),
-		   def("dot",(void(*)(const Vec3&,const Vec3&)) &fg::dot),
+		   def("length",(double(*)(const Vec3&)) &fg::length),
+		   def("distance",(double(*)(const Vec3&,const Vec3&)) &fg::distance),
+		   def("dot",(double(*)(const Vec3&,const Vec3&)) &fg::dot),
 		   def("cross",(Vec3(*)(const Vec3&,const Vec3&)) &fg::cross),
 		   def("normalise",(Vec3(*)(const Vec3&)) &fg::normalise)
 		];
@@ -224,6 +227,7 @@ namespace fg {
 		   .property("p", &fg::VertexProxy::getPos, (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setPos))
 
 		   .def("getN", &fg::VertexProxy::getN)
+		   .property("n", &fg::VertexProxy::getN)
 		   // class_<fg::Mesh::VertexContainer>("vertexcontainer"),
 
 		   .def("getColour", &fg::VertexProxy::getColour)
@@ -235,6 +239,8 @@ namespace fg {
 		   .def("getAdjacentFace", &fg::VertexProxy::getAdjacentFace)
 
 		   .property("valid", &fg::VertexProxy::isValid)
+
+		   .def(const_self == other<fg::VertexProxy>())
 		];
 
 		// fg/face.h
@@ -244,6 +250,7 @@ namespace fg {
 
 		   .property("n", &fg::FaceProxy::getN)
 		   .def("v", &fg::FaceProxy::getV)
+		   .def("getV", &fg::FaceProxy::getV)
 
 		   .property("valid", &fg::FaceProxy::isValid)
 
@@ -255,6 +262,7 @@ namespace fg {
 
 		  class_<fg::Pos>("pos")
 		  .def(constructor<boost::shared_ptr<fg::FaceProxy>,int,boost::shared_ptr<fg::VertexProxy> >())
+		  .def(constructor<const Pos&>())
 		  .def(tostring(const_self))
 
 		  .def("flipV", &fg::Pos::flipV)
@@ -264,16 +272,20 @@ namespace fg {
 		  .property("v", &fg::Pos::getV)
 		  .property("e", &fg::Pos::getE)
 		  .property("f", &fg::Pos::getF)
+
+		  .def(const_self == other<fg::Pos>())
 		];
 
 		// fg/mesh.h
 		module(L,"fg")[
 		   // containers
 		   class_<fg::Mesh::VertexSet>("vertexset")
-		   .property("all", &fg::luaAllAdapter<fg::Mesh::VertexSet>, return_stl_iterator),
+		   .property("all", &fg::luaAllAdapter<fg::Mesh::VertexSet>, return_stl_iterator)
+		   .property("verts", &fg::luaAllAdapter<fg::Mesh::VertexSet>, return_stl_iterator),
 
 		   class_<fg::Mesh::FaceSet>("faceset")
-		   .property("all", &fg::luaAllAdapter<fg::Mesh::FaceSet>, return_stl_iterator),
+		   .property("all", &fg::luaAllAdapter<fg::Mesh::FaceSet>, return_stl_iterator)
+		   .property("faces", &fg::luaAllAdapter<fg::Mesh::FaceSet>, return_stl_iterator),
 
 		   // mesh
 		   class_<fg::Mesh>("mesh")
@@ -314,9 +326,14 @@ namespace fg {
 		module(L,"fg")[
 		   // def("extrude", &fg::extrude),
 		   def("extrude", (void(*)(Mesh*,VertexProxy,double))&fg::extrude),
-		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double,double))&fg::extrude),
 
-		   def("getVerticesAtDistance", getVerticesAtDistance)
+		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double))&fg::extrude),
+
+		   def("getVerticesAtDistance", getVerticesAtDistance),
+		   def("nloop", nloop),
+
+		   /// \deprecated
+		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double,double))&fg::extrude)
 		];
 
 		// fg/turtle.h
