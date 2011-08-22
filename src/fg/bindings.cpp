@@ -48,6 +48,7 @@
 #include "fg/meshnode.h"
 #include "fg/meshoperators.h"
 #include "fg/pos.h"
+#include "fg/phyllo.h"
 
 #include "fg/gc/turtle.h"
 
@@ -98,7 +99,11 @@ namespace fg {
 
 		   def("random", (double(*)()) &fg::random),
 		   def("random", (double(*)(double,double)) &fg::random),
-           def("randomN", (double(*)(double,double))&randomN)
+           def("randomN", (double(*)(double,double))&randomN),
+                  
+           def("getEllipseArea", (double(*)(double,double,double))&getEllipseArea),
+           def("findEllipseH", (double(*)(double,double,double))&findEllipseH),
+           def("getAngleFromH", (double(*)(double,double,double))&getAngleFromH)
 		   ];
 
 
