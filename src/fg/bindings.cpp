@@ -185,6 +185,7 @@ namespace fg {
 		   .def("setRotate",  (Mat4&(fg::Mat4::*)(const Vec3&,const Vec3&)) &fg::Mat4::setRotate)
 		   .def("setScale", (Mat4&(fg::Mat4::*)(double,double,double)) &fg::Mat4::setScale)
 		   .def("setScale", (Mat4&(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setScale)
+		   .def("setScale", (Mat4&(fg::Mat4::*)(double)) &fg::Mat4::setScale)
 		];
 
 		// fg/universe.h

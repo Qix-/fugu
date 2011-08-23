@@ -192,10 +192,11 @@ namespace fg {
 		*/
 	}
 
-
 	void Mesh::sync(){
 		vcg::tri::UpdateNormals<MeshImpl>::PerFace(*mpMesh);
-		vcg::tri::UpdateNormals<MeshImpl>::PerVertexFromCurrentFaceNormal(*mpMesh);
+		vcg::tri::UpdateNormals<MeshImpl>::NormalizeFace(*mpMesh);
+		vcg::tri::UpdateNormals<MeshImpl>::PerVertexNormalizedPerFace(*mpMesh);
+		// vcg::tri::UpdateNormals<MeshImpl>::PerVertexFromCurrentFaceNormal(*mpMesh);
 	}
 
 	void Mesh::applyTransform(const Mat4& T){

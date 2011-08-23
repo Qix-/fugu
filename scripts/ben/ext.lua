@@ -4,58 +4,56 @@
 
 module(...,package.seeall)
 
+require 'fgx.mesh'
 require 'fgx.extrude'
 require 'fgx.pos'
-require 'fgx.transform'
+require 'fgx.math'
+local tr = require 'fgx.transform'
+local T = tr.T
+local R = tr.R
+local S = tr.S
 
-
-local m = nil -- the mesh
-local v = nil -- a vertex selected randomly at the start
-
--- returns the length and expansion at each extrusion
-local exF = function(x) 
-	local dx = x/maxEx
-	local length = dx
-	return length, 0
-end 
+--local myExtrude
+local n -- mesh node
 
 function setup()
-	m = fg.mesh.primitives.icosahedron()	
-	m:smoothSubdivide(2)
-	fgu:addMesh(m)
-	
-	-- select a random vertex
-	v = m:selectRandomVertex()
-	local n = v.n
-	
-	-- rotate n towards up (crudely) 
-	local up = vec3(0,1,0)
-	n = normalise(lerp(n,up,.5))	
-	
-	local cap
-	cap = fgx.extrude.extrude(m,v,n,1)
-	m:sync()
-	
-	--[[
-	print("cap pos")
-	table.foreach(cap,print)
-	print("ifaces")	
-	for _,f in fgx.pos.ifaces(cap) do 
-		print(f) 
-	end
-	--]]
-	
-	fgx.transform.scalef(cap,v.p,2)
+	local m = fg.mesh.primitives.icosahedron()	
+	m:subdivide(2)
+	n = fg.meshnode(m)
+	fgu:add(n)
 		
-	--[[
-	fg.extrude(m,v,1,n,1)
-	m:sync()
-	local loop = fg.getVerticesAtDistance(m,v,1) -- fg.nloop(m,v,1)
-	for nv in loop.all do
-		nv.p = nv.p + nv.n*.1
-	end	
-	--]]	
+	-- select the first vertex
+	local v = fgx.mesh.vertexlist(m)[1]		
+	myExtrude(m,v,4,2.0,S(.7)*R(math.pi/4,vec3(.3,1,0)))
 end
 
-function update(dt) end
+-- extrude a vertex n times by amount e, applying transform t to each new set of faces 
+function myExtrude(m,v,n,e,t)
+	--local m = fg.mesh.primitives.icosahedron()
+	--m:subdivide(1)
+	--n:setMesh(m)
+
+	-- select the first vertex
+	--local v = fgx.mesh.vertexlist(m)[1]	
+	
+	-- rotate n towards up (crudely)
+	--local up = vec3(0,1,0)
+	--n = normalise(lerp(n,up,rotation))
+	
+	for i=1,n do 
+		print(length(v.n))
+		local cap = fgx.extrude.extrude(m,v,v.n,e)		
+		tr.transformf(cap,T(v.p)*t*T(-v.p))
+		m:sync() -- recompute normals
+	end
+end
+
+local ticker = 0
+function update(dt)
+	ticker = ticker + dt
+	if (ticker>.1) then
+		-- makeMesh(fgu.t/10,lerp(0,1,clamp(0,1,fgu.t/10)))
+		ticker = 0
+	end	
+end
 
