@@ -500,35 +500,19 @@ namespace fg {
 		}
 
 		// Shift each vertex
-
-		// OLD: And make sure they are aligned perpendicular to the extrusion direction
-		double ddotd = direction.dot(direction);
-		double vdotd = v->P().dot(direction);
-
 		Vec3 diff = direction*length;
-		// vcg::Point3d newCenter = center + diff;
-
 		BOOST_FOREACH(VertexPointer p, internalVerts){
 			p->P() += diff;
-
-			/* // Adjustment is now made lua-side
-			if (p==v){
-				p->P() = newCenter; // direction*2*length;
-			}
-			else {
-				p->P() += direction*(length + (vdotd-p->P().dot(direction))/ddotd);
-
-				// plus the expansion
-				vcg::Point3d exp = (newCenter-p->P())*-expand;
-				p->P() += exp;
-			}
-			*/
 		}
 
 		// Do a big ass topo update
 		// TODO: can make efficient by manually fixing ptrs etc above
 		vcg::tri::UpdateTopology<MyMesh>::FaceFace(*m);
 		vcg::tri::UpdateTopology<MyMesh>::VertexFace(*m);
+
+		// XXX: for debugging only!
+		//vcg::tri::UpdateTopology<MyMesh>::TestFaceFace(*m);
+		//vcg::tri::UpdateTopology<MyMesh>::TestVertexFace(*m);
 
 		return internalVerts;
 	}

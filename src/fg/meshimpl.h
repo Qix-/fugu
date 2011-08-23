@@ -94,6 +94,18 @@ namespace fg {
 		vcg::face::InfoOcf> {};
 	class MeshImpl: public vcg::tri::TriMesh< std::vector< VertexImpl>, std::vector< FaceImpl > > {};
 
+	// useful typedefs
+	typedef typename MeshImpl::VertexType     VertexType;
+	typedef typename MeshImpl::CoordType     CoordType;
+	typedef typename VertexType::NormalType     NormalType;
+	typedef typename VertexType::ScalarType ScalarType;
+	typedef typename MeshImpl::VertexPointer  VertexPointer;
+	typedef typename MeshImpl::VertexIterator VertexIterator;
+	typedef typename MeshImpl::FaceType       FaceType;
+	typedef typename MeshImpl::FacePointer    FacePointer;
+	typedef typename MeshImpl::FaceIterator   FaceIterator;
+
+
 	// Implementations of mesh that use float (used for importing/exporting/...)
 	class _FloatVertexImpl;
 	class _FloatFaceImpl;

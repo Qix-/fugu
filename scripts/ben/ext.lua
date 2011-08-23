@@ -23,28 +23,33 @@ function setup()
 	fgu:add(n)
 		
 	-- select the first vertex
-	local v = fgx.mesh.vertexlist(m)[1]		
-	myExtrude(m,v,4,2.0,S(.7)*R(math.pi/4,vec3(.3,1,0)))
+	local verts = fgx.mesh.vertexlist(m)
+	
+	for i=1,#verts,3 do
+		local v = verts[i]
+		myExtrude(m,v,3,
+			function(i,cv)
+				local up = vec3(0,1,0)
+				local n = cv.n
+				n = normalise(lerp(n,up,.2))
+				return T(n*.5)*T(cv.p)*S(.5)*R(math.pi/4,vec3(.3,1,0))*T(-cv.p)
+			end
+		)
+	end
 end
 
--- extrude a vertex n times by amount e, applying transform t to each new set of faces 
-function myExtrude(m,v,n,e,t)
-	--local m = fg.mesh.primitives.icosahedron()
-	--m:subdivide(1)
-	--n:setMesh(m)
-
-	-- select the first vertex
-	--local v = fgx.mesh.vertexlist(m)[1]	
-	
-	-- rotate n towards up (crudely)
-	--local up = vec3(0,1,0)
-	--n = normalise(lerp(n,up,rotation))
-	
-	for i=1,n do 
-		print(length(v.n))
-		local cap = fgx.extrude.extrude(m,v,v.n,e)		
-		tr.transformf(cap,T(v.p)*t*T(-v.p))
-		m:sync() -- recompute normals
+-- extrude a vertex n times, applying the 
+-- transform function tf to each new set of faces 
+function myExtrude(m,v,n,tf)
+	for i=1,n do
+		local cap = fgx.extrude.extrude(m,v,v.n,0.01)	
+		tr.transformf(cap,tf(i,v))
+		-- recompute normals of close faces and vertices
+		local nearverts = fgx.mesh.nearbyv(m,v,1)
+		local nearfaces = fgx.mesh.tofaces(nearverts)
+		for _,f in ipairs(nearfaces) do f:calculateNormal() end
+		for _,v in ipairs(nearverts) do v:calculateNormal() end				
+		-- m:sync() -- recompute all normals (slow!)
 	end
 end
 

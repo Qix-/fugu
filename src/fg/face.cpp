@@ -38,6 +38,11 @@ namespace fg {
 		return constImpl().cN();
 	}
 
+	void FaceProxy::calculateNormal(){
+		vcg::face::ComputeNormal(*pImpl());
+		pImpl()->N().Normalize();
+	}
+
 	bool FaceProxy::operator==(const FaceProxy& fp) const {
 		return (&fp.constImpl()==&constImpl());
 	}

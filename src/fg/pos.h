@@ -17,6 +17,7 @@ namespace fg {
 	class Pos {
 	public:
 		Pos( shared_ptr<FaceProxy> fp, int edge, shared_ptr<VertexProxy> vp);
+		Pos( shared_ptr<FaceProxy> fp, shared_ptr<VertexProxy> vp);
 		Pos( const Pos& p );
 
 		void flipV();

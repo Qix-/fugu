@@ -86,6 +86,13 @@ namespace fg {
 	boost::shared_ptr<Mesh::VertexSet> getVerticesAtDistance(Mesh* m, VertexProxy v, int n);
 
 	/**
+	 * \brief Get all vertices lying at distance n or less (in edges) surrounding a vertex.
+	 *
+	 * \ingroup meshops
+	 */
+	boost::shared_ptr<Mesh::VertexSet> getVerticesWithinDistance(Mesh* m, VertexProxy v, int n);
+
+	/**
 	 * \brief Get the edge loop at distance n surrounding vertex v
 	 * \ingroup meshops
 	 */

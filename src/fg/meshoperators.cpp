@@ -91,8 +91,22 @@ namespace fg {
 		return boost::shared_ptr<Mesh::VertexSet>(l);
 	}
 
+	boost::shared_ptr<Mesh::VertexSet> getVerticesWithinDistance(Mesh* m, VertexProxy v, int n){
+		vcg::tri::Nring<MeshImpl>::clearFlags(m->_impl()); // Probably necessary..
+		vcg::tri::Nring<MeshImpl> ring(v.pImpl(),m->_impl());
+		ring.expand(n); // NB: expand(2 or more) will not give the verts in proper sequence, have to fix this...
+		Mesh::VertexSet* l = new Mesh::VertexSet();
+		BOOST_FOREACH(VertexImpl* v, ring.allV){
+			// l->push_back(boost::shared_ptr<VertexProxy>(new VertexProxy(m,v)));
+			l->push_back(m->_newSP(v));
+		}
+		ring.clear();
+		return boost::shared_ptr<Mesh::VertexSet>(l);
+	}
+
 	typedef MeshImpl MyMesh;
 	// typedef typename MyMesh::VertexType VertexType;
+
 	typedef MyMesh::VertexType Vertex;
 	typedef MyMesh::VertexPointer VertexPointer;
 	typedef MyMesh::FaceType Face;

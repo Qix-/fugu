@@ -55,10 +55,12 @@ namespace fg {
 		shared_ptr<VertexProxy> getV(int i) const; ///< Return vertex i, where i is 0, 1 or 2.
 
 		Vec3 getN() const; // hmm, can't be const (because of vcg...)
+		void calculateNormal(); // recalculate normal
 
 		bool operator==(const FaceProxy& fp) const;
 
 		Mesh* _mesh() const {return mMesh;}
+
 	private:
 		Mesh* mMesh;
 	};

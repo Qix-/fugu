@@ -180,22 +180,13 @@ namespace fg {
 
 		glTriMesh.Update();
 		glTriMesh.Draw<vcg::GLW::DMFlat, vcg::GLW::CMNone, vcg::GLW::TMNone> ();
-
-		/*
-		glPushAttrib(GL_LIGHTING_BIT);
-		glPushAttrib(GL_CURRENT_BIT);
-		glDisable(GL_LIGHTING);
-		glColor3f(0,0,0);
-		glTriMesh.Draw<vcg::GLW::DMHidden,   vcg::GLW::CMNone,vcg::GLW::TMNone> ();
-		glPopAttrib();
-		glPopAttrib();
-		*/
 	}
 
 	void Mesh::sync(){
-		vcg::tri::UpdateNormals<MeshImpl>::PerFace(*mpMesh);
-		vcg::tri::UpdateNormals<MeshImpl>::NormalizeFace(*mpMesh);
+		//vcg::tri::UpdateNormals<MeshImpl>::PerFace(*mpMesh);
+		//vcg::tri::UpdateNormals<MeshImpl>::NormalizeFace(*mpMesh);
 		vcg::tri::UpdateNormals<MeshImpl>::PerVertexNormalizedPerFace(*mpMesh);
+		vcg::tri::UpdateNormals<MeshImpl>::NormalizeFace(*mpMesh);
 		// vcg::tri::UpdateNormals<MeshImpl>::PerVertexFromCurrentFaceNormal(*mpMesh);
 	}
 
