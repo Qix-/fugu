@@ -61,6 +61,7 @@ namespace fg {
 		void setPos(double x, double y, double z);
 
 		Vec3 getN() const;
+		void calculateNormal(); ///< \brief averages the adjacent face normals to compute the vertex normal
 
 		Vec3 getColour() const;
 		void setColour(Vec3 c);

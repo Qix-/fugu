@@ -49,6 +49,18 @@ namespace fg {
 		return constImpl().cN();
 	}
 
+	void VertexProxy::calculateNormal(){
+		NormalType n;
+		n.SetZero();
+		vcg::face::VFIterator<FaceImpl> vfi(pImpl()); //initialize the iterator to the first face
+		for(;!vfi.End();++vfi)
+		{
+			n += vfi.F()->cN();
+		}
+		n.Normalize();
+		pImpl()->N() = n;
+	}
+
 	Vec3 VertexProxy::getColour() const {
 		vcg::Color4b c = constImpl().C();
 		Vec3 v(c.X()/255.,c.Y()/255.,c.Z()/255.);

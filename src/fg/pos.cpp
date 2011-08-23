@@ -19,6 +19,11 @@ namespace fg {
 
 	}
 
+	Pos::Pos( shared_ptr<FaceProxy> fp, shared_ptr<VertexProxy> vp)
+	:mPos(fp->pImpl(),vp->pImpl())
+	,mMesh(fp->_mesh())
+	{}
+
 	Pos::Pos( const Pos& p )
 	:mPos(p.mPos.f, p.mPos.z, p.mPos.v)
 	,mMesh(p.mMesh)

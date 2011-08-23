@@ -234,6 +234,7 @@ namespace fg {
 
 		   .def("getN", &fg::VertexProxy::getN)
 		   .property("n", &fg::VertexProxy::getN)
+		   .def("calculateNormal", &fg::VertexProxy::calculateNormal)
 		   // class_<fg::Mesh::VertexContainer>("vertexcontainer"),
 
 		   .def("getColour", &fg::VertexProxy::getColour)
@@ -254,7 +255,10 @@ namespace fg {
 		   class_<fg::FaceProxy>("face")
 		   .def(tostring(const_self))
 
+		   .def("getN", &fg::FaceProxy::getN)
 		   .property("n", &fg::FaceProxy::getN)
+		   .def("calculateNormal", &fg::FaceProxy::calculateNormal)
+
 		   .def("v", &fg::FaceProxy::getV)
 		   .def("getV", &fg::FaceProxy::getV)
 
@@ -268,6 +272,7 @@ namespace fg {
 
 		  class_<fg::Pos>("pos")
 		  .def(constructor<boost::shared_ptr<fg::FaceProxy>,int,boost::shared_ptr<fg::VertexProxy> >())
+		  .def(constructor<boost::shared_ptr<fg::FaceProxy>,boost::shared_ptr<fg::VertexProxy> >())
 		  .def(constructor<const Pos&>())
 		  .def(tostring(const_self))
 
@@ -336,6 +341,7 @@ namespace fg {
 		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double))&fg::extrude),
 
 		   def("getVerticesAtDistance", getVerticesAtDistance),
+		   def("getVerticesWithinDistance", getVerticesWithinDistance),
 		   def("nloop", nloop),
 
 		   /// \deprecated

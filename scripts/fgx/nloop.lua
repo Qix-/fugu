@@ -6,7 +6,7 @@ require "table"
 function loopv(v)
 	local result = {}
 	local f = v:getAdjacentFace()
-	local p = fg.pos(f,0,v)
+	local p = fg.pos(f,v)
 	
 	local function push() -- add a new outside vertex to the list
 		p:flipV()
@@ -30,13 +30,14 @@ end
 function loopp(v)
 	local result = {}
 	local f = v:getAdjacentFace()
-	local p = fg.pos(f,0,v)
+	local p = fg.pos(f,v)
 	
-	local function push() -- push this pos onto the list
-		table.insert(result,fg.pos(p))
+	local function push() -- push this pos onto the list		
+		local newpos = fg.pos(p)
+		table.insert(result,newpos)
 	end	
 	push()
-		
+	
 	p:flipE()
 	p:flipF()
 	while (p.f~=f) do
