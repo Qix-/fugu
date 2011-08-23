@@ -14,8 +14,7 @@ function ifaces(poslist)
 	return faces_iter, state
 end
 
-function faces_iter (state)	
-	print(state.index)
+function faces_iter (state)
 	if (state.index==1) then 
 		state.index = state.index + 1
 		return (state.index-1), state.last.f

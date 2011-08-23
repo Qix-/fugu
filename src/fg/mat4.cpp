@@ -133,6 +133,11 @@ namespace fg {
 		return *this;
 	}
 
+	Mat4& Mat4::setScale(double s){
+		vcg::Matrix44<double>::SetScale(s,s,s);
+		return *this;
+	}
+
 	Mat4& Mat4::setScale(const Vec3& scale){
 		vcg::Matrix44<double>::SetScale(scale[0],scale[1],scale[2]);
 		return *this;

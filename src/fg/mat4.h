@@ -91,6 +91,8 @@ namespace fg {
 
 		/// \brief Set this matrix to be a scaling transform
 		Mat4& setScale(double sx, double sy, double sz);
+		/// \brief Set this matrix to be a uniform scaling transform
+		Mat4& setScale(double s);
 		/// \brief Set this matrix to be a scaling transform
 		Mat4& setScale(const Vec3& scale);
 
