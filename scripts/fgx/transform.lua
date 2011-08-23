@@ -13,6 +13,12 @@ function R(radian,axis)
 	return mat4():setRotateRad(radian,axis)
 end
 
+-- Rotates vec from to vec to
+function Rv(from,to)
+	return mat4():setRotate(from,to)
+end
+
+
 -- Translate by some amount
 function T(translation)
 	return mat4():setTranslate(translation)
