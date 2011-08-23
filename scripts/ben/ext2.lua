@@ -22,14 +22,18 @@ local NUM
 
 function setup()
 	local m = fg.mesh.primitives.icosahedron()	
-	m:subdivide(1)
+	m:subdivide(2)
 	n = fg.meshnode(m)
 	fgu:add(n)
 	
 	local verts = fgx.mesh.vertexlist(m)	
-	NUM = math.min(#verts,2) -- 12)
+	NUM = math.min(#verts,36) -- 12)
 	for i=1,NUM do
-		table.insert(splines, {S=random(.7,.8),R1=random(math.pi/7,math.pi*.6),V1=normalise(vec3(random(-.4,.4),1,random(-.4,.4)))})
+		table.insert(splines, 
+			{S=random(.7,.8),
+			 R1=random(math.pi/7,math.pi*.6),
+			 V1=normalise(vec3(random(-.4,.4),1,random(-.4,.4)))
+			 })
 	end
 	
 	makeThing(0)
@@ -37,26 +41,39 @@ end
 
 function makeThing(foo)
 	local m = fg.mesh.primitives.icosahedron()	
-	m:subdivide(1)
+	m:subdivide(2)
 	n:setMesh(m)
 	
 	local verts = fgx.mesh.vertexlist(m)
-	local oid = math.sin(foo)
-	oid = sqr(oid)
-	local pulse = .01 + oid
 	
-	local E = 5 + math.ceil(10*pulse)	
 	
+	--local oid = math.sin(foo)
+	--oid = sqr(oid)
+	--local pulse = .01 + oid
+	local pulse
+	if (foo <= 1) then 
+		pulse = sqr(sqr(sqr(foo)))
+	else
+		pulse = math.exp(1-foo)
+	end	
+	
+	local F = 10
+	local TL = F*pulse
+	local E = math.floor(TL)
+	local dp = TL - E
+		
 	for index=1,NUM do
 		local v = verts[index]					
 		local sp = splines[index]
 		myExtrude(m,v,E,
 			function(i,cv)				
 				local n = cv.n
-				local di = (i-1)/(E-1)
-				local L = 1 / E
+				local di = i/E
+				local L = 1/E
 				local s = sp.S
-				return T(n*pulse*L/s)*T(cv.p)*S(s)*R(pulse*sp.R1,sp.V1)*T(-cv.p)
+				local seglength = L*pulse*((E-i)+dp)
+				local axis = normalise(lerp(n,sp.V1,.7))
+				return T(n*seglength/s)*T(cv.p)*S(s)*R(pulse*sp.R1,axis)*T(-cv.p)
 			end
 		)
 	end
@@ -78,6 +95,6 @@ function myExtrude(m,v,n,tf)
 end
 
 function update(dt)
-	makeThing(fgu.t*10)	
+	makeThing(fgu.t)	
 end
 
