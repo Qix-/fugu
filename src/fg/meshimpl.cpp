@@ -42,6 +42,33 @@ namespace fg {
 		return mNumBones;
 	}
 
+	void _copyMeshIntoMesh(MeshImpl& fm, MeshImpl& m){
+		vcg::tri::Allocator<MeshImpl>::AddVertices(m,fm.vert.size());
+		std::map<VertexImpl*,int> ptrMap;
+		for(int i=0;i<fm.vert.size();i++){
+			ptrMap[&fm.vert[i]] = i;
+
+			m.vert[i].P() = fm.vert[i].P();
+			m.vert[i].N() = fm.vert[i].N();
+			m.vert[i].C() = fm.vert[i].C();
+
+			// texcoords
+			m.vert[i].T().U() = fm.vert[i].T().U();
+			m.vert[i].T().V() = fm.vert[i].T().V();
+		}
+
+		vcg::tri::Allocator<MeshImpl>::AddFaces(m,fm.face.size());
+		for(int i=0;i<fm.face.size();i++){
+			FaceImpl* f = &m.face[i];
+			f->V(0) = &m.vert[ptrMap[fm.face[i].V(0)]];
+			f->V(1) = &m.vert[ptrMap[fm.face[i].V(1)]];
+			f->V(2) = &m.vert[ptrMap[fm.face[i].V(2)]];
+		}
+
+		vcg::tri::UpdateTopology<MeshImpl>::VertexFace(m);
+		vcg::tri::UpdateTopology<MeshImpl>::FaceFace(m);
+	}
+
 	void _copyFloatMeshIntoMesh(_FloatMeshImpl& fm, MeshImpl& m){
 		vcg::tri::Allocator<MeshImpl>::AddVertices(m,fm.vert.size());
 		std::map<_FloatVertexImpl*,int> ptrMap;

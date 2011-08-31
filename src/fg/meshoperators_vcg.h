@@ -46,13 +46,14 @@ namespace fg {
 		// typedef typename MyMesh::VertexType VertexType;
 		typedef MyMesh::VertexType Vertex;
 		typedef MyMesh::VertexPointer VertexPointer;
+		typedef MyMesh::VertexIterator VertexIterator;
 		typedef MyMesh::FaceType Face;
 		typedef MyMesh::FacePointer FacePointer;
+		typedef MyMesh::FaceIterator FaceIterator;
+		typedef vcg::face::Pos<fg::FaceImpl> Pos;
 
 		typedef std::vector<VertexPointer*> VPUpdateList;
-
-		/// \deprecated Use the simpler extrude instead
-		static std::set<VertexPointer> extrude(MyMesh* m, Vertex*& v, VPUpdateList& vpul, int width, vcg::Point3d direction, double length, double expand);
+		typedef std::vector<FacePointer*> FPUpdateList;
 
 		/**
 		 * Extrudes the set of triangles within distance w in the specified direction and magnitude
@@ -64,9 +65,15 @@ namespace fg {
 		 * @param magnitude
 		 * @return
 		 */
-		static std::set<VertexPointer> extrude(MyMesh* m, Vertex*& v, VPUpdateList& vpul, int w, vcg::Point3d direction, double magnitude);
+		static std::set<VertexPointer> extrude(MyMesh* m, Vertex*& v, VPUpdateList& vpul, FPUpdateList& fpul, int w, vcg::Point3d direction, double magnitude);
+
+		/// Splits the edge specified by Pos
+		static void splitEdge(MyMesh* m, Pos& p, VPUpdateList& vpul, FPUpdateList& fpul);
 
 		static bool isEdgeLoop(std::vector<VertexPointer>& loop);
+
+		/// \deprecated Use the simpler extrude instead
+		static std::set<VertexPointer> extrude(MyMesh* m, Vertex*& v, VPUpdateList& vpul, FPUpdateList& fpul, int width, vcg::Point3d direction, double length, double expand);
 	private:
 		static void error(const char* msg);
 	};

@@ -23,6 +23,7 @@
  */
 
 #include "fg/meshoperators_vcg.h"
+#include "fg/util.h"
 
 #include <list>
 #include <set>
@@ -33,8 +34,8 @@
 #include <ctime>
 #include <iostream>
 
-#include <boost/foreach.hpp>
-#include <boost/tuple/tuple.hpp>
+// #include <boost/foreach.hpp> // in fg/util.h
+// #include <boost/tuple/tuple.hpp> // in fg/util.h
 
 #include <vcg/simplex/vertex/base.h>
 #include <vcg/simplex/vertex/component_ocf.h>
@@ -53,7 +54,7 @@ namespace fg {
 		exit(-1);
 	}
 
-	std::set<Extrude::VertexPointer> Extrude::extrude(MyMesh* m, Vertex*& v, VPUpdateList& vpul, int width, vcg::Point3d direction, double length, double expand){
+	std::set<Extrude::VertexPointer> Extrude::extrude(MyMesh* m, Vertex*& v, VPUpdateList& vpul, FPUpdateList& fpul, int width, vcg::Point3d direction, double length, double expand){
 		assert (width >= 1);
 
 		vcg::Point3d center = v->P();
@@ -234,6 +235,9 @@ namespace fg {
 		BOOST_FOREACH(FacePointer& f, internalFaces){
 			facePointersToUpdate.push_back(&f);
 		}
+		BOOST_FOREACH(FacePointer*& fv, fpul){
+			facePointersToUpdate.push_back(fv);
+		}
 		vcg::tri::Allocator<MyMesh>::AddFaces(*m,edgeLoop.size()*2,facePointersToUpdate);
 		for(int i=0;i<edgeLoop.size();i++){
 			Vertex* ve = edgeLoop[i];
@@ -290,7 +294,7 @@ namespace fg {
 		return internalVerts;
 	}
 
-	std::set<Extrude::VertexPointer> Extrude::extrude(MyMesh* m, Vertex*& v, VPUpdateList& vpul, int width, vcg::Point3d direction, double length)
+	std::set<Extrude::VertexPointer> Extrude::extrude(MyMesh* m, Vertex*& v, VPUpdateList& vpul, FPUpdateList& fpul, int width, vcg::Point3d direction, double length)
 	{
 		assert (width >= 1);
 
@@ -472,6 +476,9 @@ namespace fg {
 		BOOST_FOREACH(FacePointer& f, internalFaces){
 			facePointersToUpdate.push_back(&f);
 		}
+		BOOST_FOREACH(FacePointer*& fv, fpul){
+			facePointersToUpdate.push_back(fv);
+		}
 		vcg::tri::Allocator<MyMesh>::AddFaces(*m,edgeLoop.size()*2,facePointersToUpdate);
 		for(int i=0;i<edgeLoop.size();i++){
 			Vertex* ve = edgeLoop[i];
@@ -515,6 +522,109 @@ namespace fg {
 		//vcg::tri::UpdateTopology<MyMesh>::TestVertexFace(*m);
 
 		return internalVerts;
+	}
+
+	void Extrude::splitEdge(MyMesh* m, Extrude::Pos& pos, VPUpdateList& vpul, FPUpdateList& fpul){
+		/*
+		 * Given pos = (v,e,f)
+		 * find the following elements...
+		 *
+		 * v4----v3
+		 * |f2__/ |
+		 * | /  f1|
+		 * v1----v2
+		 * And the midpoint=(v1+v3)/2
+		 */
+
+		VertexPointer v1,v2,v3,v4;
+		FacePointer f1, f2;
+
+		v1 = pos.V();
+		f1 = pos.F();
+
+		pos.FlipE();
+		pos.FlipV();
+		v2 = pos.V();
+		pos.FlipV();
+		pos.FlipE();
+
+		pos.FlipV();
+		v3 = pos.V();
+		pos.FlipV();
+
+		pos.FlipF();
+		f2 = pos.F();
+		pos.FlipE();
+		pos.FlipV();
+		v4 = pos.V();
+
+		assert(v1!=v2 and v1!=v3 and v1!=v4 and v2!=v3 and v2!=v4 and v3!=v4 and f1!=f2 and "splitEdge failed, is edge correctly formed?");
+
+		// NOTE: pos is now useless/invalid
+
+		Vec3 midpoint = (v1->P() + v3->P())/2;
+
+		// Delete f',f, and update any pointers
+		vcg::tri::Allocator<MyMesh>::DeleteFace(*m,*f1);
+		vcg::tri::Allocator<MyMesh>::DeleteFace(*m,*f2);
+		foreach(FacePointer*& fv, fpul){
+			if (*fv==f1 or *fv==f2){
+				*fv = NULL;
+			}
+		}
+
+		/*
+		 * Add a new vertex, vn, to the midpoint.
+		 * And update the all the vertex pointers, including v1-v4
+		 */
+		VertexPointer vn;
+
+		std::vector<VertexPointer*> vtxPtrs;
+		vtxPtrs.push_back(&v1);
+		vtxPtrs.push_back(&v2);
+		vtxPtrs.push_back(&v3);
+		vtxPtrs.push_back(&v4);
+		BOOST_FOREACH(VertexPointer*& ev, vpul){
+			vtxPtrs.push_back(ev);
+		}
+		VertexIterator newvi = vcg::tri::Allocator<MyMesh>::AddVertices(*m,1,vtxPtrs);
+		vn = &*newvi;
+		vn->P() = midpoint;
+
+		// TODO: Interpolate other parameters, e.g., colour and uv?
+
+		// Add the four new faces,
+		// with appropriate topological pointers
+		// and recomputed normals?
+		std::vector<FacePointer*> facePointersToUpdate;
+		facePointersToUpdate.push_back(&f1);
+		facePointersToUpdate.push_back(&f2);
+		BOOST_FOREACH(FacePointer*& fv, fpul){
+			facePointersToUpdate.push_back(fv);
+		}
+		FaceIterator fi = vcg::tri::Allocator<MyMesh>::AddFaces(*m,4,facePointersToUpdate);
+
+		VertexPointer faces[][3] = {
+				{v1,v2,vn},
+				{v2,v3,vn},
+				{v3,v4,vn},
+				{v4,v1,vn}
+		};
+
+		int index = 0;
+		for(;fi!=m->face.end();fi++,index++)
+		{
+			FacePointer face = &*fi;
+			face->V(0) = faces[index][0];
+			face->V(1) = faces[index][1];
+			face->V(2) = faces[index][2];
+		}
+		assert(index==4 and "splitEdge failed, four edges not added");
+
+		// Do a big ass topo update
+		// TODO: can make efficient by manually fixing ptrs etc above
+		vcg::tri::UpdateTopology<MyMesh>::FaceFace(*m);
+		vcg::tri::UpdateTopology<MyMesh>::VertexFace(*m);
 	}
 
 	/**

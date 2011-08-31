@@ -313,6 +313,7 @@ namespace fg {
 		   .def("smoothSubdivide", &Mesh::smoothSubdivide)
 		   .def("sync", &Mesh::sync)
 		   .def("applyTransform", &Mesh::applyTransform)
+		   .def("clone", &Mesh::clone)
 
 		   .scope [
 			   class_<fg::Mesh::Primitives>("primitives")
@@ -335,14 +336,12 @@ namespace fg {
 
 		// fg/meshoperators.h
 		module(L,"fg")[
-		   // def("extrude", &fg::extrude),
 		   def("extrude", (void(*)(Mesh*,VertexProxy,double))&fg::extrude),
-
 		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double))&fg::extrude),
-
 		   def("getVerticesAtDistance", getVerticesAtDistance),
 		   def("getVerticesWithinDistance", getVerticesWithinDistance),
 		   def("nloop", nloop),
+		   def("splitEdge", splitEdge),
 
 		   /// \deprecated
 		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double,double))&fg::extrude)

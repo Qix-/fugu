@@ -134,6 +134,7 @@ namespace fg {
 		vcg::face::InfoOcf> {};
 	class _FloatMeshImpl: public vcg::tri::TriMesh< std::vector< _FloatVertexImpl>, std::vector< _FloatFaceImpl > > {};
 
+	void _copyMeshIntoMesh(MeshImpl& fm, MeshImpl& m);
 	void _copyFloatMeshIntoMesh(_FloatMeshImpl& fm, MeshImpl& m);
 }
 

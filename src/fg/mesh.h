@@ -152,6 +152,10 @@ namespace fg {
 
 		void applyTransform(const Mat4& T); ///< \brief Applies T to the positions of the vertices. (For each vertex v in mesh, v.pos = T*v.pos) Also syncs at the end so the normals are appropriate.
 
+		/** \brief Create a new mesh identical to this one
+		 */
+		boost::shared_ptr<Mesh> clone();
+
 		/**
 		 * \brief TODO: Merges mesh m into this mesh. NOTE: m is now invalid.
 		 */

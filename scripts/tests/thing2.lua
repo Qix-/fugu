@@ -6,6 +6,20 @@ module(...,package.seeall)
 
 require "table"
 
+
+-- *****
+-- re-implement (approximately) 
+-- the (deprecated) extended extrude function
+	require "fgx.extrude"
+	local fg_extrude = function(m,v,w,dir,len,exp)
+		-- map exp to sc
+		--  (p-n.p)*-expand == lerp(p,n.p,sc)
+		--=> p*(-expand)+n.p*expand == p*(1-sc) + n.p(sc)
+		--=> expand = sc-1 and expand=sc => sc =approx= expand+1	
+		fgx.extrude.extrudeAndScale(m,v,dir,len,exp+1)
+	end
+-- *****
+
 local m = nil -- the mesh
 local time = 0
 local tentacle = nil
@@ -88,7 +102,7 @@ function new_thing(v,p,s) -- use the global mesh m
 		
 		for k=1,self.numSegments do
 			len,exp,dir = f((k-1)/(self.numSegments-1))
-			fg.extrude(m,self.vertex,1,dir,len,exp)
+			fg_extrude(m,self.vertex,1,dir,len,exp)
 			
 			-- store the center, edge ring, and original edge ring positions			
 			local ring = convertToTable(fg.getVerticesAtDistance(m,self.vertex,1))

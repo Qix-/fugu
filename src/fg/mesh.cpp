@@ -203,6 +203,12 @@ namespace fg {
 		*/
 	}
 
+	boost::shared_ptr<Mesh> Mesh::clone(){
+		Mesh* m = new Mesh();
+		_copyMeshIntoMesh(*mpMesh,*m->mpMesh);
+		return boost::shared_ptr<Mesh>(m);
+	}
+
 	MeshImpl* Mesh::_impl(){
 		return mpMesh;
 	}

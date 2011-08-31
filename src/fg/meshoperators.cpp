@@ -40,6 +40,8 @@
 namespace fg {
 	void extrude(Mesh* m, VertexProxy v, double distance){
 		Extrude::VPUpdateList vpul = m->_vpl()->getUpdateList();
+		Extrude::FPUpdateList fpul = m->_fpl()->getUpdateList();
+
 		VertexImpl* impl = v.pImpl();
 		Extrude::extrude(
 				// static_cast<Extrude::MyMesh*>(m->impl()),
@@ -47,19 +49,22 @@ namespace fg {
 				// static_cast<Extrude::Vertex*&>(),
 				impl,
 				vpul,
+				fpul,
 				1,
 				static_cast<vcg::Point3d>(v.pImpl()->N()),
-				distance,
-				0.);
+				distance);
+		//,0.);
 	}
 
 	void extrude(Mesh* m, VertexProxy v, int width, Vec3 direction, double length, double expand){
 		Extrude::VPUpdateList vpul = m->_vpl()->getUpdateList();
+		Extrude::FPUpdateList fpul = m->_fpl()->getUpdateList();
 		VertexImpl* impl = v.pImpl();
 		Extrude::extrude(
 				m->_impl(),
 				impl,
 				vpul,
+				fpul,
 				width,
 				static_cast<vcg::Point3d>(direction),
 				length,
@@ -68,11 +73,13 @@ namespace fg {
 
 	void extrude(Mesh* m, VertexProxy v, int w, Vec3 direction, double magnitude){
 		Extrude::VPUpdateList vpul = m->_vpl()->getUpdateList();
+		Extrude::FPUpdateList fpul = m->_fpl()->getUpdateList();
 		VertexImpl* impl = v.pImpl();
 		Extrude::extrude(
 				m->_impl(),
 				impl,
 				vpul,
+				fpul,
 				w,
 				static_cast<vcg::Point3d>(direction),
 				magnitude);
@@ -178,5 +185,12 @@ namespace fg {
 		}
 		*/
 		return boost::shared_ptr<Mesh::VertexSet>(l);
+	}
+
+	void splitEdge(Mesh* m, Pos p){
+		Extrude::VPUpdateList vpul = m->_vpl()->getUpdateList();
+		Extrude::FPUpdateList fpul = m->_fpl()->getUpdateList();
+		vcg::face::Pos<fg::FaceImpl> vcgpos(p.getF()->pImpl(),p.getE(),p.getV()->pImpl());
+		Extrude::splitEdge(m->_impl(),vcgpos,vpul,fpul);
 	}
 }

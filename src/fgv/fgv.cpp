@@ -58,10 +58,12 @@ struct ViewMode {
 	bool ground;
 	bool showNodeAxes; // show node axes
 
+	int numberSubdivs;
+
 	enum MeshMode { MM_SMOOTH, MM_FLAT, MM_WIRE, MM_POINTS, MM_TEXTURED };
 	MeshMode meshMode;
 
-} gViewMode = {true,true,false,ViewMode::MM_SMOOTH};
+} gViewMode = {true,true,false,0,ViewMode::MM_SMOOTH};
 
 void GLFWCALL keyCallback(int key, int action)
 {
@@ -159,6 +161,16 @@ int main(int argc, char *argv[])
         
 		foreach(shared_ptr<fg::MeshNode> m, u.meshNodes()){
 			m->mesh()->sync(); // make sure normals are okay
+			// Subdivide the viewing mesh if required
+
+			shared_ptr<fg::Mesh> old = shared_ptr<fg::Mesh>();
+			if (gViewMode.numberSubdivs>0){
+				// copy the mesh
+				old = m->mesh();
+				shared_ptr<fg::Mesh> clone = old->clone();
+				clone->smoothSubdivide(gViewMode.numberSubdivs);
+				m->setMesh(clone);
+			}
 
 			fg::GLRenderer::RenderMeshMode rmm;
 			switch (gViewMode.meshMode){
@@ -169,6 +181,12 @@ int main(int argc, char *argv[])
 				case ViewMode::MM_TEXTURED: rmm = fg::GLRenderer::RENDER_TEXTURED; break;
 			}
 			fg::GLRenderer::renderMeshNode(m,rmm); // fg::GLRenderer::RenderMeshMode(DRAW_MODE));
+
+			if (gViewMode.numberSubdivs>0){
+				m->setMesh(old);
+			}
+
+			// clone should get garbage collected...
 		}
 
 		if (gViewMode.showNodeAxes){
@@ -240,6 +258,9 @@ void setupWindowAndGL(){
 	               " group='View' help='Toggle ground.' ");
 	TwAddVarRW(mainBar, "node axes", TW_TYPE_BOOLCPP, &gViewMode.showNodeAxes,
 		               " group='View' help='Toggle node axes.' ");
+
+	TwAddVarRW(mainBar, "smooth subdiv", TW_TYPE_INT32, &gViewMode.numberSubdivs,
+			" min=0 max=3 group='View' help='Turn on smooth subdivision for visualisation.' ");
 
 	TwEnumVal mmEV[] = { { ViewMode::MM_SMOOTH, "Smooth"},
 			{ ViewMode::MM_FLAT, "Flat"},

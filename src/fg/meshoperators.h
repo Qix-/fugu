@@ -32,6 +32,7 @@
 
 #include "fg/mesh.h"
 #include "fg/vertex.h"
+#include "fg/pos.h"
 
 #include <list>
 
@@ -97,6 +98,12 @@ namespace fg {
 	 * \ingroup meshops
 	 */
 	boost::shared_ptr<Mesh::VertexSet> nloop(Mesh* m, VertexProxy v, int n);
+
+	/**
+	 * \brief Split the edge pointed to by Pos p
+	 * \ingroup meshops
+	 */
+	void splitEdge(Mesh* m, Pos p);
 }
 
 #endif
