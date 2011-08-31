@@ -423,7 +423,7 @@ function new_brachioles_bunch(width,length,nsegs,n)
 		widthInc  = self.segWidth / self.numBs
 
 		length = self.segLength * .7
-		lengthInc  = self.segLength * .45 / self.numBs
+		lengthInc  = self.segLength * .5 / self.numBs
 
 		notSwaped = true
 
