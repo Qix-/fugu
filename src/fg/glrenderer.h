@@ -45,11 +45,23 @@ namespace fg {
 	 */
 	class GLRenderer {
 	public:
-		enum RenderMeshMode{RENDER_FLAT=0,RENDER_SMOOTH,RENDER_WIRE,RENDER_VERTICES,RENDER_TEXTURED};
+		enum RenderMeshMode{
+			RENDER_FLAT=0,
+			RENDER_SMOOTH,
+			RENDER_WIRE,
+			RENDER_VERTICES,
+			RENDER_TEXTURED
+		};
 
-		static void renderMesh(Mesh* m, RenderMeshMode rmm = RENDER_FLAT);
-		static void renderMesh(boost::shared_ptr<Mesh> m, RenderMeshMode rmm = RENDER_FLAT);
-		static void renderMeshNode(boost::shared_ptr<MeshNode> m, RenderMeshMode rmm = RENDER_FLAT);
+		enum ColourMode {
+			COLOUR_NONE=0,
+			COLOUR_VERTEX,
+			COLOUR_FACE_MANIFOLD,
+		};
+
+		static void renderMesh(Mesh* m, RenderMeshMode rmm = RENDER_FLAT, ColourMode cm = COLOUR_NONE);
+		static void renderMesh(boost::shared_ptr<Mesh> m, RenderMeshMode rmm = RENDER_FLAT, ColourMode cm = COLOUR_NONE);
+		static void renderMeshNode(boost::shared_ptr<MeshNode> m, RenderMeshMode rmm = RENDER_FLAT, ColourMode cm = COLOUR_NONE);
 
 		/**
 		 * Render an approximation of a curve interpolator

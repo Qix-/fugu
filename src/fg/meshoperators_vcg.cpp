@@ -597,8 +597,9 @@ namespace fg {
 		// with appropriate topological pointers
 		// and recomputed normals?
 		std::vector<FacePointer*> facePointersToUpdate;
-		facePointersToUpdate.push_back(&f1);
-		facePointersToUpdate.push_back(&f2);
+		//f1,f2 are gone
+		//facePointersToUpdate.push_back(&f1);
+		//facePointersToUpdate.push_back(&f2);
 		BOOST_FOREACH(FacePointer*& fv, fpul){
 			facePointersToUpdate.push_back(fv);
 		}
@@ -625,6 +626,10 @@ namespace fg {
 		// TODO: can make efficient by manually fixing ptrs etc above
 		vcg::tri::UpdateTopology<MyMesh>::FaceFace(*m);
 		vcg::tri::UpdateTopology<MyMesh>::VertexFace(*m);
+
+		// Debugging:
+		// vcg::tri::UpdateTopology<MyMesh>::TestVertexFace(*m);
+		// vcg::tri::UpdateTopology<MyMesh>::TestFaceFace(*m);
 	}
 
 	/**

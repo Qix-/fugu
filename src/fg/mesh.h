@@ -45,8 +45,8 @@
 #include <boost/filesystem.hpp>
 
 // for opengl
-#include "GL/glew.h"
-#include <wrap/gl/trimesh.h>
+// #include "GL/glew.h"
+// #include <wrap/gl/trimesh.h>
 
 namespace fg {
 	// forward decl

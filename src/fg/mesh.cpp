@@ -56,6 +56,9 @@
 
 #include <wrap/io_trimesh/import.h>
 
+// for deprecated draw()
+#include "GL/glew.h"
+#include <wrap/gl/trimesh.h>
 
 #include <boost/foreach.hpp>
 

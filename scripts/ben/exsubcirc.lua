@@ -15,14 +15,17 @@ require 'fgx.nloop'
 require 'fgx.math'
 
 local exsubcirc -- function
+local n
 
 function setup()
 	local m = fg.mesh.primitives.icosahedron()
-	m:smoothSubdivide(1)
-	fgu:addMesh(m)
+	m:smoothSubdivide(2)
+	n = fg.meshnode(m)
+	fgu:add(n)
 	
 	local v = m:selectRandomVertex()
-	exsubcirc(m,v,.1,16)	
+	exsubcirc(m,v,.1,12)
+	exsubcirc(m,v,.1,12)	
 end
 
 exsubcirc = function(m,v,d,totalNumEdges)
@@ -78,6 +81,8 @@ exsubcirc = function(m,v,d,totalNumEdges)
 		pc:flipE()
 		pc.v.p = v.p + normalise(pc.v.p - v.p)*avgRadius
 	end)
+		
+	-- m:smoothSubdivide(1)
 end
 
 function update(dt) end
