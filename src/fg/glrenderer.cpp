@@ -28,8 +28,7 @@
 #include <stdexcept>
 
 #include "GL/glew.h"
-
-#include <wrap/gl/trimesh.h>
+#include "fg/glrenderer_vcg.h" // modified <wrap/gl/trimesh.h>
 
 #include "fg/meshimpl.h"
 #include "fg/mat4.h"
@@ -37,26 +36,46 @@
 #include "fg/gc/interpolator.h"
 #include "fg/gc/carriercurve.h"
 
+class MyGLRenderer: public vcg::GlTrimesh<fg::MeshImpl> {
+	public:
+	MyGLRenderer():vcg::GlTrimesh<fg::MeshImpl>(){}
+};
+
+template <vcg::GLW::DrawMode DM, vcg::GLW::TextureMode TM>
+void DrawWrapper(MyGLRenderer& tm, fg::GLRenderer::ColourMode cm){
+	switch(cm){
+		case fg::GLRenderer::COLOUR_NONE: tm.Draw<DM, vcg::GLW::CMNone, TM>(); break;
+		case fg::GLRenderer::COLOUR_VERTEX: tm.Draw<DM, vcg::GLW::CMPerVert, TM>(); break;
+		case fg::GLRenderer::COLOUR_FACE_MANIFOLD: tm.Draw<DM, vcg::GLW::CMPerManifoldFace, TM>(); break;
+	}
+}
+
 namespace fg {
 
-	class MyGLRenderer: public vcg::GlTrimesh<fg::MeshImpl> {
-		public:
-		MyGLRenderer():vcg::GlTrimesh<fg::MeshImpl>(){}
-	};
-
-	void GLRenderer::renderMesh(Mesh* m, RenderMeshMode rmm){
+	void GLRenderer::renderMesh(Mesh* m, RenderMeshMode rmm, ColourMode cm){
 		// vcg::GlTrimesh<fg::MeshImpl> tm;
 		MyGLRenderer tm;
 		tm.m = m->_impl();
 		tm.Update();
 
 		switch (rmm){
-			case RENDER_FLAT: tm.Draw<vcg::GLW::DMFlat, vcg::GLW::CMPerVert, vcg::GLW::TMNone> (); break;
-			case RENDER_SMOOTH: tm.Draw<vcg::GLW::DMSmooth, vcg::GLW::CMPerVert, vcg::GLW::TMNone> ();	break;
-			case RENDER_WIRE: tm.Draw<vcg::GLW::DMWire,     vcg::GLW::CMPerVert,vcg::GLW::TMNone> (); break;
-			case RENDER_VERTICES: // tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break; 
-			{
-				tm.DrawPointsBase<vcg::GLW::NMPerVert,vcg::GLW::CMPerVert>();
+			case RENDER_FLAT: {
+				// tm.Draw<vcg::GLW::DMFlat, colorMode, vcg::GLW::TMNone> ();
+				DrawWrapper<vcg::GLW::DMFlat, vcg::GLW::TMNone>(tm,cm);
+				break;
+			}
+			case RENDER_SMOOTH: {
+				//tm.Draw<vcg::GLW::DMSmooth, colorMode, vcg::GLW::TMNone> ();
+				DrawWrapper<vcg::GLW::DMSmooth, vcg::GLW::TMNone>(tm,cm);
+				break;
+			}
+			case RENDER_WIRE: {
+				//tm.Draw<vcg::GLW::DMWire,     colorMode,vcg::GLW::TMNone> ();
+				DrawWrapper<vcg::GLW::DMWire, vcg::GLW::TMNone>(tm,cm);
+				break;
+			}
+			case RENDER_VERTICES: {
+				tm.DrawPointsBase<vcg::GLW::NMPerVert, vcg::GLW::CMPerVert>();
 				break;
 			}
 			case RENDER_TEXTURED: {
@@ -79,7 +98,8 @@ namespace fg {
 
 				}
 				tm.TMId.push_back(tex);
-				tm.Draw<vcg::GLW::DMSmooth, vcg::GLW::CMPerVert,vcg::GLW::TMPerVert> ();
+				//tm.Draw<vcg::GLW::DMSmooth, colorMode,vcg::GLW::TMPerVert> ();
+				DrawWrapper<vcg::GLW::DMSmooth, vcg::GLW::TMPerVert>(tm,cm);
 
 				glPopAttrib();
 				break;
@@ -88,30 +108,15 @@ namespace fg {
 		}
 	}
 
-	void GLRenderer::renderMesh(boost::shared_ptr<Mesh> m, RenderMeshMode rmm){
-		renderMesh(&*m,rmm);
-		
-		/*
-		// vcg::GlTrimesh<fg::MeshImpl> tm;
-		MyGLRenderer tm;
-		tm.m = m->_impl();
-		tm.Update();
-
-		switch (rmm){
-			case RENDER_FLAT: tm.Draw<vcg::GLW::DMFlat, vcg::GLW::CMPerFace, vcg::GLW::TMNone> (); break;
-			case RENDER_SMOOTH: tm.Draw<vcg::GLW::DMSmooth, vcg::GLW::CMPerFace, vcg::GLW::TMNone> ();	break;
-			case RENDER_WIRE: tm.Draw<vcg::GLW::DMWire,     vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
-			case RENDER_VERTICES: tm.Draw<vcg::GLW::DMPoints,   vcg::GLW::CMPerFace,vcg::GLW::TMNone> (); break;
-			default: {}
-		}
-		*/
+	void GLRenderer::renderMesh(boost::shared_ptr<Mesh> m, RenderMeshMode rmm, ColourMode cm){
+		renderMesh(&*m,rmm,cm);
 	}
 
-	void GLRenderer::renderMeshNode(boost::shared_ptr<MeshNode> m, RenderMeshMode rmm){
+	void GLRenderer::renderMeshNode(boost::shared_ptr<MeshNode> m, RenderMeshMode rmm, ColourMode cm){
 		glPushMatrix();
 		Mat4 t = m->getCompoundTransform().transpose();
 		glMultMatrixd(t.V());
-		renderMesh(m->mesh(),rmm);
+		renderMesh(m->mesh(),rmm,cm);
 		glPopMatrix();
 	}
 

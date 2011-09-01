@@ -63,6 +63,7 @@ struct ViewMode {
 	enum MeshMode { MM_SMOOTH, MM_FLAT, MM_WIRE, MM_POINTS, MM_TEXTURED };
 	MeshMode meshMode;
 
+	fg::GLRenderer::ColourMode colourMode;
 } gViewMode = {true,true,false,0,ViewMode::MM_SMOOTH};
 
 void GLFWCALL keyCallback(int key, int action)
@@ -180,7 +181,7 @@ int main(int argc, char *argv[])
 				case ViewMode::MM_POINTS: rmm = fg::GLRenderer::RENDER_VERTICES; break;
 				case ViewMode::MM_TEXTURED: rmm = fg::GLRenderer::RENDER_TEXTURED; break;
 			}
-			fg::GLRenderer::renderMeshNode(m,rmm); // fg::GLRenderer::RenderMeshMode(DRAW_MODE));
+			fg::GLRenderer::renderMeshNode(m,rmm,gViewMode.colourMode); // fg::GLRenderer::RenderMeshMode(DRAW_MODE));
 
 			if (gViewMode.numberSubdivs>0){
 				m->setMesh(old);
@@ -270,8 +271,19 @@ void setupWindowAndGL(){
 	};
 
 	TwType mmType = TwDefineEnum( "Mesh Mode", mmEV, 5 );
-	TwAddVarRW(mainBar, "view mesh", mmType, &gViewMode.meshMode,
+	TwAddVarRW(mainBar, "mesh mode", mmType, &gViewMode.meshMode,
 			" group='View' keyIncr=Tab keyDecr=SHIFT+Tab help='Change the mesh rendering mode.' ");
+
+	TwEnumVal mmEVCM[] = {
+			{fg::GLRenderer::COLOUR_NONE, "None"},
+			{fg::GLRenderer::COLOUR_VERTEX, "Vertex"},
+			{fg::GLRenderer::COLOUR_FACE_MANIFOLD, "Face (Is Manifold?)"},
+	};
+
+	TwType cmType = TwDefineEnum("Colour Mode", mmEVCM, 3);
+	TwAddVarRW(mainBar, "colour mode", cmType, &gViewMode.colourMode,
+				" group='View' help='Change the mesh colouring mode.' ");
+
 
 	// after GLFW initialization
 	// directly redirect GLFW events to AntTweakBar
