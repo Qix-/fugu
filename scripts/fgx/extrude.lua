@@ -47,7 +47,7 @@ end
 -- Note: Assumes direction is normalised. 
 -- Returns the pos loop at the end of the extrusion
 function extrudeAndScale(mesh,vertex,direction,magnitude,scale)
-	local ddotd = dot(direction,direction)
+	local ddotd = dot(direction,direction)	
 	local vdotd = dot(vertex.p,direction)
 	local vp = vertex.p + direction*magnitude
 	
@@ -56,13 +56,13 @@ function extrudeAndScale(mesh,vertex,direction,magnitude,scale)
 	
 	-- then change the vertex positions, so the faces are oriented correctly
 	vertex.p = vp	
-	
 	local posfan = fgx.nloop.loopp(vertex)
+	
 	for _,pos in ipairs(posfan) do
 		-- to get the outside vertex we need to flipV the pos
 		pos:flipV()
 		n = pos.v
-		n.p = n.p + direction*(magnitude + (vdotd-dot(n.p,direction))/ddotd)
+		n.p = n.p + direction*(magnitude + (vdotd-dot(n.p,direction))/ddotd)		
 		n.p = lerp(vp,n.p,scale)
 		pos:flipV()
 	end

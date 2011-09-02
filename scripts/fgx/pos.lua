@@ -8,6 +8,19 @@ require 'table'
 
 local faces_iter -- defined below
 
+-- return the outermost vertices of a cap (a fan of pos'es)
+function capov(cap)
+	local verts = {}
+	for _,p in ipairs(cap) do
+		local pp = fg.pos(p)
+		pp:flipV()
+		verts[#verts+1] = pp.v
+	end
+	return verts
+end
+
+
+
 -- get an iterator over all the faces in this poslist 
 function ifaces(poslist)
 	local state = {list = poslist, last = poslist[1], index = 1}	

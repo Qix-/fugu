@@ -12,6 +12,7 @@ require 'fgx.nloop'
 require 'fgx.math'
 require 'fgx.transform'
 require 'fgx.util' -- table.find
+meshops = require 'fgx.meshops'
 
 local exsubcirc, spherelump, nextvert -- functions 
 local n, m
@@ -92,11 +93,14 @@ exsubcirc = function(m,v,d,totalNumEdges)
 	v:calculateNormal()
 	
 	-- flatten the cap
+	local outer = {} -- outer verts 	
 	table.foreachi(cap, function(i,p)
 		local pc = fg.pos(p)
 		pc:flipV()		
-		pc.v.p = pc.v.p - v.n*dot(pc.v.p-v.p,v.n)
-	end)	
+		outer[#outer+1] = pc.v
+		-- pc.v.p = pc.v.p - v.n*dot(pc.v.p-v.p,v.n)
+	end)		
+	meshops.flattenvl(m,outer,v.p,v.n)
 	
 	-- then iterate around and identify the edges to split
 	-- split the longest ones first
@@ -142,7 +146,6 @@ exsubcirc = function(m,v,d,totalNumEdges)
 		-- get the cap (may have changed since last loop)					
 		cap = fgx.nloop.loopp(v)
 	end	
-	
 	
 	-- move all vertices to an equal distance from the center
 	table.foreachi(cap, function(i,p)
