@@ -66,13 +66,51 @@ struct ViewMode {
 	fg::GLRenderer::ColourMode colourMode;
 } gViewMode = {true,true,false,0,ViewMode::MM_SMOOTH};
 
-void GLFWCALL keyCallback(int key, int action)
-{
-	if (not TwEventKeyGLFW(key,action)){
-		// custom stuff...
+enum SimulationMode {SM_PLAYING, SM_PAUSED, SM_STEPPING, SM_RELOADING, SM_ERROR};
+
+struct AppState {
+	fg::Universe* universe;
+	char** argv;
+	SimulationMode simulationMode;
+	SimulationMode previousMode;
+} gAppState = {NULL, NULL, SM_PAUSED};
+
+// control callbacks
+void TW_CALL playCb(void *clientData){
+	if (gAppState.simulationMode==SM_ERROR) {
+		// don't change mode
 	}
+	else
+		gAppState.simulationMode = SM_PLAYING;
+}
+void TW_CALL pauseCb(void *clientData){
+	if (gAppState.simulationMode==SM_ERROR) {
+		// don't change mode
+	}
+	else
+		gAppState.simulationMode = SM_PAUSED;
+}
+void TW_CALL stepCb(void *clientData){
+	if (gAppState.simulationMode==SM_ERROR) {
+		// don't change mode
+	}
+	else
+		gAppState.simulationMode = SM_STEPPING;
+}
+void TW_CALL reloadCb(void *clientData){
+	if (gAppState.simulationMode==SM_ERROR) {
+		gAppState.previousMode = SM_PAUSED;
+	}
+	else {
+		gAppState.previousMode = gAppState.simulationMode;
+	}
+
+	gAppState.simulationMode = SM_RELOADING;
 }
 
+void loadUniverse(); // load or reload universe
+
+void GLFWCALL keyCallback(int key, int action);
 void GLFWCALL resizeWindow(int width, int height);
 void setupWindowAndGL();
 
@@ -114,15 +152,12 @@ int main(int argc, char *argv[])
 	passThruShader();
 #endif
 
-	// Create a new universe
-	fg::Universe u = fg::Universe();
-	u.addScriptDirectory("../scripts/?.lua");
-	u.loadScript(argv[1]);
+	// Initialise the universe
+	gAppState.argv = argv;
+	loadUniverse();
 
 	bool running = true;
-
 	double before = glfwGetTime();
-	// double dt = SPF;
 	double now = glfwGetTime();
 
 	// Run as fast as I can
@@ -131,7 +166,42 @@ int main(int argc, char *argv[])
 		before = glfwGetTime();
 
 		// Update the universe
-		u.update(SPF);
+		switch (gAppState.simulationMode)
+		{
+			case SM_PLAYING: {
+				if (gAppState.universe!=NULL)
+					gAppState.universe->update(SPF);
+				break;
+			}
+			case SM_PAUSED: {
+				// do nothing
+				break;
+			}
+			case SM_STEPPING: {
+				if (gAppState.universe!=NULL){
+					gAppState.universe->update(SPF);
+					gAppState.simulationMode = SM_PAUSED;
+				}
+				break;
+			}
+			case SM_RELOADING: {
+				loadUniverse();
+				if (gAppState.simulationMode==SM_ERROR){
+					// oh noes...
+					// do nothing
+				}
+				else { // oh yeas
+					// recompute before time so we don't do a massive first step
+					before = glfwGetTime();
+					gAppState.simulationMode = gAppState.previousMode;
+				}
+				break;
+			}
+			case SM_ERROR: {
+				// don't do anything...
+				break;
+			}
+		}
 
 		// Draw all the meshes in the universe
 		glEnable(GL_DEPTH_TEST);
@@ -160,43 +230,45 @@ int main(int argc, char *argv[])
 		if (gViewMode.origin) drawOrigin();
 		if (gViewMode.ground) drawGroundPlane();
         
-		foreach(shared_ptr<fg::MeshNode> m, u.meshNodes()){
-			m->mesh()->sync(); // make sure normals are okay
-			// Subdivide the viewing mesh if required
+		if (gAppState.universe!=NULL){
+			foreach(shared_ptr<fg::MeshNode> m, gAppState.universe->meshNodes()){
+				m->mesh()->sync(); // make sure normals are okay
+				// Subdivide the viewing mesh if required
 
-			shared_ptr<fg::Mesh> old = shared_ptr<fg::Mesh>();
-			if (gViewMode.numberSubdivs>0){
-				// copy the mesh
-				old = m->mesh();
-				shared_ptr<fg::Mesh> clone = old->clone();
-				clone->smoothSubdivide(gViewMode.numberSubdivs);
-				m->setMesh(clone);
+				shared_ptr<fg::Mesh> old = shared_ptr<fg::Mesh>();
+				if (gViewMode.numberSubdivs>0){
+					// copy the mesh
+					old = m->mesh();
+					shared_ptr<fg::Mesh> clone = old->clone();
+					clone->smoothSubdivide(gViewMode.numberSubdivs);
+					m->setMesh(clone);
+				}
+
+				fg::GLRenderer::RenderMeshMode rmm;
+				switch (gViewMode.meshMode){
+					case ViewMode::MM_SMOOTH: rmm = fg::GLRenderer::RENDER_SMOOTH; break;
+					case ViewMode::MM_FLAT: rmm = fg::GLRenderer::RENDER_FLAT; break;
+					case ViewMode::MM_WIRE: rmm = fg::GLRenderer::RENDER_WIRE; break;
+					case ViewMode::MM_POINTS: rmm = fg::GLRenderer::RENDER_VERTICES; break;
+					case ViewMode::MM_TEXTURED: rmm = fg::GLRenderer::RENDER_TEXTURED; break;
+				}
+				fg::GLRenderer::renderMeshNode(m,rmm,gViewMode.colourMode); // fg::GLRenderer::RenderMeshMode(DRAW_MODE));
+
+				if (gViewMode.numberSubdivs>0){
+					m->setMesh(old);
+				}
+
+				// clone should get garbage collected...
 			}
 
-			fg::GLRenderer::RenderMeshMode rmm;
-			switch (gViewMode.meshMode){
-				case ViewMode::MM_SMOOTH: rmm = fg::GLRenderer::RENDER_SMOOTH; break;
-				case ViewMode::MM_FLAT: rmm = fg::GLRenderer::RENDER_FLAT; break;
-				case ViewMode::MM_WIRE: rmm = fg::GLRenderer::RENDER_WIRE; break;
-				case ViewMode::MM_POINTS: rmm = fg::GLRenderer::RENDER_VERTICES; break;
-				case ViewMode::MM_TEXTURED: rmm = fg::GLRenderer::RENDER_TEXTURED; break;
-			}
-			fg::GLRenderer::renderMeshNode(m,rmm,gViewMode.colourMode); // fg::GLRenderer::RenderMeshMode(DRAW_MODE));
-
-			if (gViewMode.numberSubdivs>0){
-				m->setMesh(old);
-			}
-
-			// clone should get garbage collected...
-		}
-
-		if (gViewMode.showNodeAxes){
-			foreach(shared_ptr<fg::Node> n, u.nodes()){
-				glPushMatrix();
-				fg::Mat4 t = n->getCompoundTransform().transpose();
-				glMultMatrixd(t.V());
-				fg::GLRenderer::renderAxes();
-				glPopMatrix();
+			if (gViewMode.showNodeAxes){
+				foreach(shared_ptr<fg::Node> n, gAppState.universe->nodes()){
+					glPushMatrix();
+					fg::Mat4 t = n->getCompoundTransform().transpose();
+					glMultMatrixd(t.V());
+					fg::GLRenderer::renderAxes();
+					glPopMatrix();
+				}
 			}
 		}
 		glPopMatrix();
@@ -213,7 +285,47 @@ int main(int argc, char *argv[])
 
 	TwTerminate();
 	glfwTerminate();
+
+	if (gAppState.universe!=NULL){
+		// Clean up the old universe
+		delete gAppState.universe;
+		gAppState.universe = NULL;
+	}
+
 	return EXIT_SUCCESS;
+}
+
+void loadUniverse(){ // load or reload universe
+	std::cout << "Loading universe\n";
+
+	if (gAppState.universe!=NULL){
+		// Clean up the old universe
+		delete gAppState.universe;
+		gAppState.universe = NULL;
+		// TODO: make sure old slider values carry over into new state
+	}
+
+	try {
+		// Create a new universe
+		gAppState.universe = new fg::Universe();
+		gAppState.universe->addScriptDirectory("../scripts/?.lua");
+		gAppState.universe->loadScript(gAppState.argv[1]);
+	}
+	catch (std::runtime_error& e){
+		gAppState.simulationMode = SM_ERROR;
+		std::cerr << "ERROR: " << e.what() << "\n";
+		if (gAppState.universe!=NULL){
+			delete gAppState.universe;
+			gAppState.universe = NULL;
+		}
+	}
+}
+
+// Function called by AntTweakBar to copy the content of a std::string handled
+// by the AntTweakBar library to a std::string handled by your application
+void TW_CALL CopyStdStringToClient(std::string& destinationClientString, const std::string& sourceLibraryString)
+{
+  destinationClientString = sourceLibraryString;
 }
 
 void setupWindowAndGL(){
@@ -251,6 +363,8 @@ void setupWindowAndGL(){
 
 	// Window is loaded, set up gui
 	TwInit(TW_OPENGL, NULL);
+	TwCopyStdStringToClientFunc(CopyStdStringToClient); // must be called once (just after TwInit for instance)
+
 	TwBar* mainBar = TwNewBar("fg menu");
     TwAddButton(mainBar, "cam reset", resetCamera, NULL," label='Reset Camera'");
 	TwAddVarRW(mainBar, "origin", TW_TYPE_BOOLCPP, &gViewMode.origin,
@@ -284,8 +398,39 @@ void setupWindowAndGL(){
 	TwAddVarRW(mainBar, "colour mode", cmType, &gViewMode.colourMode,
 				" group='View' help='Change the mesh colouring mode.' ");
 
+	// ** CONTROL GROUP
+	TwAddButton(mainBar, "play", playCb, NULL, " group='Control' ");
+	TwAddButton(mainBar, "pause", pauseCb, NULL, " group='Control' ");
+	TwAddButton(mainBar, "step", stepCb, NULL, " group='Control' ");
+	TwAddButton(mainBar, "reload", reloadCb, NULL, " group='Control' ");
 
-	// after GLFW initialization
+	TwEnumVal mmEVSM[] = {
+			{SM_PLAYING, "Playing"},
+			{SM_PAUSED, "Paused"},
+			{SM_STEPPING, "Stepping"},
+			{SM_RELOADING, "Reloading"},
+			{SM_ERROR, "Error"},
+	};
+	TwType simType = TwDefineEnum("Simulation Mode", mmEVSM, 5);
+	TwAddVarRO(mainBar, "sim mode", simType, &gAppState.simulationMode,
+			" group='Control' help='The simulation mode' ");
+
+	// ** STATUS BAR
+	// ANTTWEAKBAR doesn't like std::string?
+	/*
+	TwBar* statusBar = TwNewBar("status");
+	std::ostringstream oss;
+	oss << " status position='" << 30 << " " << gHeight - 80 << "' "
+			<< "size='" << gWidth-60 << " " << 20 << "' ";
+	TwDefine(strdup(oss.str().c_str()));
+
+	std::string* error = new std::string("An error message this is.");
+	TwAddVarRO(statusBar, "err", TW_TYPE_STDSTRING, error, "");
+	// TwAddVarRO(statusBar, "err2", TW_TYPE_STDSTRING, &error2, "");
+	TwAddButton(statusBar, "play", playCb, NULL, "");
+	*/
+
+	// ** Redirect GLFW CALLBACKS
 	// directly redirect GLFW events to AntTweakBar
 	glfwSetWindowSizeCallback(resizeWindow);
 	//glfwSetMouseButtonCallback((GLFWmousebuttonfun)TwEventMouseButtonGLFW);
@@ -319,6 +464,13 @@ void setupWindowAndGL(){
 	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+}
+
+void GLFWCALL keyCallback(int key, int action)
+{
+	if (not TwEventKeyGLFW(key,action)){
+		// custom stuff...
+	}
 }
 
 void GLFWCALL resizeWindow(int _width, int _height){
