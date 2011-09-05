@@ -36,6 +36,7 @@
 #include <cmath>
 #include <cstring>
 #include <ctime>
+#include <exception>
 
 #include <luabind/luabind.hpp>
 #include <luabind/object.hpp>
@@ -64,12 +65,24 @@ namespace fg {
 	}
 	*/
 
+	/*
 	void error(const char* msg, ... ){
 		va_list arg_list;
 		va_start(arg_list, msg);
 		std::vfprintf(stderr, msg, arg_list);
 		va_end(arg_list);
 		std::exit(-1);
+	}
+	*/
+
+	void error(const char* msg, ... ){
+		va_list arg_list;
+		va_start(arg_list, msg);
+		char expandedMessage[1024];
+		std::vsprintf(expandedMessage, msg, arg_list);
+		va_end(arg_list);
+
+		throw(std::runtime_error(std::string(expandedMessage)));
 	}
 
 	Universe::Universe():
@@ -159,7 +172,7 @@ namespace fg {
 				else // call the setup function now..
 				{
 					if (lua_pcall(L, 0, 0, -2)!=0){ // NB: The "-2" references fgerrorfunc
-						error("! Error in %s.setup()\n! %s", scriptFileName.c_str(), lua_tostring(L, -1));
+						error("Lua error in %s.setup()\n! %s", scriptFileName.c_str(), lua_tostring(L, -1));
 						// debugFileAndLine(L);
 					}
 				}
@@ -221,7 +234,7 @@ namespace fg {
 				lua_pushnumber(L, dt);
 				if (lua_pcall(L, 1, 0, 0)!=0) {
 					// debugFileAndLine(L);
-					error("Error running function: %s",lua_tostring(L, -1));
+					error("Lua error: %s",lua_tostring(L, -1));
 				}
 			}
 			else {
