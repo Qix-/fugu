@@ -23,32 +23,14 @@ local vertices, vertex
 function setup()
 	-- here we are creating a new mesh, an icosahedron..
 	-- we can modify the script and press "RELOAD" to re-run it...
-	-- m = fg.mesh.primitives.icosahedron()
-  	-- m = fg.mesh.primitives.dodecahedron()  	
-  	m = fg.mesh.primitives.octahedron()
-  	m:smoothSubdivide(2)
-  	
-  	--[[
-  	p.cube(),
-		p.sphere(),
-		p.icosahedron(),
-		p.tetrahedron(),
-		p.dodecahedron(),
-		p.octahedron(), 
-		-- p.hexahedron(), 
-		p.cone(1,0.1,32),
-		p.cylinder(32)
-  	
-  	--]]
+	m = fg.mesh.primitives.icosahedron()
+  -- m = fg.mesh.primitives.dodecahedron()
+  m:smoothSubdivide(1)
 	
 	n = fg.meshnode(m)
 	fgu:add(n)
 	
 	vertices = fgx.mesh.vertexlist(m)
-	for _,v in ipairs(vertices) do
-		v:setUV(0,0)
-	end	
-	
 	smoothGrowth = nil
 end
 
@@ -84,40 +66,21 @@ newSmoothGrowth = function(m,v)
 		m=m,
 		v=v,		
 		INSET = .8, -- scale on first inset 
-		SPEED = .7,
+		SPEED = 1,
 		CIRC_SPEED = .1, -- speed the cap becomes circular
 		FL_SPEED = .1, -- speed the cap flattens
-		PULLDIST = .3, -- distance to pull the leading vertex
-		NUMSEGS = 4,
+		PULLDIST = 0.1, -- distance to pull the leading vertex
+		NUMSEGS = 8,
 		segs = 1,
-		AR = 0, -- average radius of first fan
-		pullDir = 1, -- direction to pull (*v.n)
-		-- timeWarp, affect the perception of time
-		timeWarp = function(dt,ds) return dt*math.exp(ds*ds) end,
 				
 		time=0,
 		state="waiting",
 		nextState="pull",
-		stateChange=.001}		
-		
-	-- calculate the avg radius of the loop around v 
-	-- this is used to scale the growth appropriately	
-	local ar = 0
-	local vloop = fgx.nloop.loopv(v)
-	for _,n in ipairs(vloop) do
-		ar = ar + distance(n.p,v.p)
-	end
-	ar = ar/#vloop
-	obj.AR = ar
-	obj.PULLDIST = obj.PULLDIST*obj.AR
-				
-	-- update
+		stateChange=.01}
+			
 	obj.update = function(self,dt)
-		local ds = self.segs/self.NUMSEGS
-		
-		local dt = self.timeWarp(dt,ds)		
 		self.time = self.time + dt
-		
+		local ds = self.segs/self.NUMSEGS
 		local startColour = lerp(vec3(1,1,1),vec3(.2,.6,1),self.segs/self.NUMSEGS)	
 		local targetColour = lerp(vec3(1,1,1),vec3(.2,.6,1),(self.segs+1)/self.NUMSEGS)
 		
@@ -135,7 +98,7 @@ newSmoothGrowth = function(m,v)
 				self.pullDist = 0
 			end	
 			local dist = self.SPEED*dt
-			self.v.p = self.v.p + self.v.n*dist*self.pullDir
+			self.v.p = self.v.p + self.v.n*dist
 			
 			-- adjust the outer loop on the cap
 			-- so it grows in the normal, 
@@ -144,21 +107,20 @@ newSmoothGrowth = function(m,v)
 			if (self.cap) then			
 				local t = self.pullDist/self.PULLDIST -- amount done
 				self.v:setColour(lerp(startColour,targetColour,t))
-				self.v:setUV(ds,0)
 				local outer = fgx.pos.capov(self.cap)
 
 				-- move the cap in the primary growth axis
 				-- and calculate the current cap center position
 				local center = vec3(0,0,0)
-				for i,ov in ipairs(outer) do									
-					ov.p = ov.p + self.v.n*dist*self.pullDir
+				for i,ov in ipairs(outer) do					
+					ov.p = ov.p + self.v.n*dist
+
 					local flattendist = ds*dot(ov.p-self.v.p,self.v.n)
 					ov.p = ov.p - self.v.n*flattendist
 
 					-- (dist + math.max(self.FL_SPEED*dt*flattendir,flattendist))
 					-- ov.p = ov.p + self.v.n*dist
 					ov:setColour(self.v:getColour())
-					ov:setUV(ds,0)
 					center = center + ov.p
 				end
 				center = center/#outer
@@ -185,18 +147,9 @@ newSmoothGrowth = function(m,v)
 			if (self.pullDist > self.PULLDIST) then
 				self.segs = self.segs + 1
 				if (self.segs < self.NUMSEGS) then
-					if (self.pullDir > 0) then					
-						self.state = "insetagain"
-					else
-						self.state = "inwardsinset"
-					end						
+					self.state = "insetagain"
 				else
-					if (self.pullDir > 0) then
-						self.state = "inwardsinset"
-						self.segs = 1
-					else
-						self.state = "done"
-					end
+					self.state = "done"
 				end
 			end		
 		elseif (self.state=="insetagain") then
@@ -205,44 +158,33 @@ newSmoothGrowth = function(m,v)
 			if self.cap==nil then			
 				insetVal = self.INSET
 			end
-			obj:insetCap(insetVal,startColour,{ds,0})
+			self.cap = meshops.inset(self.m,self.v,insetVal)
+			-- compute the avg radius of this cap so we can circulise it
+			-- also store the current radius of each outer vert
+			self.capRadii = {}
+			local outer = fgx.pos.capov(self.cap)
+			local center = vec3(0,0,0)
+			for i,ov in ipairs(outer) do
+				center = center + ov.p
+				ov:setColour(startColour)
+			end
+			center = center/#outer
+			local avgRadius = 0
+			for i,ov in ipairs(outer) do				
+				local r = distance(ov.p,center)
+				self.capRadii[#self.capRadii+1] = r
+				avgRadius = avgRadius + r
+			end
+			avgRadius = avgRadius/#outer
+			self.capAvgRadius = avgRadius
+			
 			self.state = "pull"
 			self.pullDist = nil --reset
-			self.pullDir = 1			
-		elseif (self.state=="inwardsinset") then 
-			-- do an "inny"!
-			obj:insetCap(.6,startColour,{1,0})
-			self.state = "pull"
-			self.pullDist = nil --reset
-			self.pullDir = -1			
 		elseif (self.state=="done") then 
 			return false -- finished!
 		end			
 		 
 		return true
-	end
-	
-	obj.insetCap = function(self, amount, col, uv)
-		self.cap = meshops.inset(self.m,self.v,amount)
-		-- compute the avg radius of this cap so we can circulise it
-		-- also store the current radius of each outer vert
-		self.capRadii = {}
-		local outer = fgx.pos.capov(self.cap)
-		local center = vec3(0,0,0)
-		for i,ov in ipairs(outer) do
-			center = center + ov.p
-			ov:setColour(col)
-			ov:setUV(uv[1],uv[2])			
-		end
-		center = center/#outer
-		local avgRadius = 0
-		for i,ov in ipairs(outer) do				
-			local r = distance(ov.p,center)
-			self.capRadii[#self.capRadii+1] = r
-			avgRadius = avgRadius + r
-		end
-		avgRadius = avgRadius/#outer
-		self.capAvgRadius = avgRadius		
 	end
 	
 	return obj

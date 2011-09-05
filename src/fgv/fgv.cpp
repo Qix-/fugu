@@ -73,7 +73,9 @@ struct AppState {
 	char** argv;
 	SimulationMode simulationMode;
 	SimulationMode previousMode;
-} gAppState = {NULL, NULL, SM_PAUSED};
+	double timeMultiplier;
+	double time; // current time in the simulation, read from universe->time
+} gAppState = {NULL, NULL, SM_PAUSED, SM_PAUSED, 1, 0};
 
 // control callbacks
 void TW_CALL playCb(void *clientData){
@@ -166,13 +168,15 @@ int main(int argc, char *argv[])
 		// compute how long this frame takes to update and draw
 		before = glfwGetTime();
 
+		double dt = SPF*gAppState.timeMultiplier;
+
 		// Update the universe
 		switch (gAppState.simulationMode)
 		{
 			case SM_PLAYING: {
 				if (gAppState.universe!=NULL)
 					try {
-						gAppState.universe->update(SPF);
+						gAppState.universe->update(dt);
 					}
 					catch (std::runtime_error& e){
 						std::cerr << "ERROR: " << e.what() << "\n";
@@ -188,7 +192,7 @@ int main(int argc, char *argv[])
 			case SM_STEPPING: {
 				if (gAppState.universe!=NULL){
 					try {
-						gAppState.universe->update(SPF);
+						gAppState.universe->update(dt);
 						gAppState.simulationMode = SM_PAUSED;
 					}
 					catch (std::runtime_error& e){
@@ -217,6 +221,9 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
+
+		if (gAppState.universe!=NULL)
+			gAppState.time = gAppState.universe->time();
 
 		// Draw all the meshes in the universe
 		glEnable(GL_DEPTH_TEST);
@@ -387,7 +394,8 @@ void setupWindowAndGL(){
 	TwInit(TW_OPENGL, NULL);
 	TwCopyStdStringToClientFunc(CopyStdStringToClient); // must be called once (just after TwInit for instance)
 
-	TwBar* mainBar = TwNewBar("fg menu");
+	TwBar* mainBar = TwNewBar("fgmenu");
+	TwDefine(" fgmenu label='fg menu' refresh=0.2 ");
     TwAddButton(mainBar, "cam reset", resetCamera, NULL," label='Reset Camera'");
 	TwAddVarRW(mainBar, "origin", TW_TYPE_BOOLCPP, &gViewMode.origin,
 	               " group='View' help='Toggle origin.' ");
@@ -436,6 +444,12 @@ void setupWindowAndGL(){
 	TwType simType = TwDefineEnum("Simulation Mode", mmEVSM, 5);
 	TwAddVarRO(mainBar, "sim mode", simType, &gAppState.simulationMode,
 			" group='Control' help='The simulation mode' ");
+	TwAddVarRO(mainBar, "time", TW_TYPE_DOUBLE, &gAppState.time,
+			" group='Control' help='Current simulation time' ");
+	TwAddVarRW(mainBar, "time mult", TW_TYPE_DOUBLE, &gAppState.timeMultiplier,
+			" group='Control' help='Speed the simulation up or down' min=0 max=5 step=.1 " );
+
+
 
 	// ** STATUS BAR
 	// ANTTWEAKBAR doesn't like std::string?
