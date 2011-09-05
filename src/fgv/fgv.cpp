@@ -109,6 +109,7 @@ void TW_CALL reloadCb(void *clientData){
 }
 
 void loadUniverse(); // load or reload universe
+void deleteUniverse(); // delete the universe (probably due to an error)
 
 void GLFWCALL keyCallback(int key, int action);
 void GLFWCALL resizeWindow(int width, int height);
@@ -170,7 +171,14 @@ int main(int argc, char *argv[])
 		{
 			case SM_PLAYING: {
 				if (gAppState.universe!=NULL)
-					gAppState.universe->update(SPF);
+					try {
+						gAppState.universe->update(SPF);
+					}
+					catch (std::runtime_error& e){
+						std::cerr << "ERROR: " << e.what() << "\n";
+						deleteUniverse();
+						gAppState.simulationMode = SM_ERROR;
+					}
 				break;
 			}
 			case SM_PAUSED: {
@@ -179,8 +187,15 @@ int main(int argc, char *argv[])
 			}
 			case SM_STEPPING: {
 				if (gAppState.universe!=NULL){
-					gAppState.universe->update(SPF);
-					gAppState.simulationMode = SM_PAUSED;
+					try {
+						gAppState.universe->update(SPF);
+						gAppState.simulationMode = SM_PAUSED;
+					}
+					catch (std::runtime_error& e){
+						std::cerr << "ERROR: " << e.what() << "\n";
+						deleteUniverse();
+						gAppState.simulationMode = SM_ERROR;
+					}
 				}
 				break;
 			}
@@ -318,6 +333,13 @@ void loadUniverse(){ // load or reload universe
 			delete gAppState.universe;
 			gAppState.universe = NULL;
 		}
+	}
+}
+
+void deleteUniverse(){
+	if (gAppState.universe!=NULL){
+		delete gAppState.universe;
+		gAppState.universe = NULL;
 	}
 }
 
