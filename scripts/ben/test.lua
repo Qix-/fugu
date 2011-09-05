@@ -1,15 +1,5 @@
 --[[
-	Screencast by BP.
-	
-  This is a short research vid, showing off some of the capabilities of a new generative form system, known as fg.
-
-	fg is a system for real-time procedural animation of meshes, and is driven by lua scripts, like this one.
-
-	fgv is the viewing application, let's run it now..
-  (the argument is the script (this one))
-
-	the script loads and runs the setup() function below.the simulator starts in "PAUSED" mode.
-
+	test
 --]]
 
 module(...,package.seeall)
@@ -44,11 +34,6 @@ function setup()
 	smoothGrowth = nil
 end
 
--- when we press "PLAY" the following function will get called over and over and over ...
--- in this case, I have written a program that generates small lumps on the surface..
--- we can "STEP" one frame at a time to examine the mesh modifcations in more detail...
--- we can also subdivide the output to get smoother forms..
--- the form is now finished!
 function update(dt)
 	if smoothGrowth~=nil then
 		local more = smoothGrowth:update(dt)
@@ -79,11 +64,12 @@ end
 newSmoothGrowth = function(m,v)
 	local obj = {
 		m=m,
-		v=v,
+		v=v,		
+		INSET = .6, -- scale on first inset 
 		SPEED = 1,
+		CIRC_SPEED = .1,
 		PULLDIST = 0.1, -- distance to pull the leading vertex
 		NUMSEGS = 5,
-		RADII = {1,.5,1.2,.9,.5}, -- parameters affecting the shape of the lumps...
 		segs = 1,
 				
 		time=0,
@@ -99,7 +85,7 @@ newSmoothGrowth = function(m,v)
 				self.state = self.nextState
 			end
 		elseif (self.state=="inset") then
-			meshops.inset(self.m,self.v,.8)
+			meshops.inset(self.m,self.v,self.INSET)
 			self.state = "waiting"
 			self.nextState = "pull"
 			self.stateChange = self.time + 1
@@ -109,36 +95,45 @@ newSmoothGrowth = function(m,v)
 			end	
 			local dist = self.SPEED*dt
 			self.v.p = self.v.p + self.v.n*dist
-			local targetColour = lerp(vec3(1,1,1),vec3(.4,1,.5),self.segs/self.NUMSEGS)
-			if (self.cap) then
-				-- adjust the outer loop on the cap
-				-- so it grows in the normal, 
-				-- reaches the right scale, 
-				-- and becomes circular				
+			local targetColour = lerp(vec3(1,1,1),vec3(.4,1,.5),self.segs/self.NUMSEGS)	
+			
+			-- adjust the outer loop on the cap
+			-- so it grows in the normal, 
+			-- reaches the right scale, 
+			-- and becomes circular				
+			if (self.cap) then			
 				local t = self.pullDist/self.PULLDIST -- amount done
 				self.v:setColour(lerp(vec3(1,1,1),targetColour,t))
 				local outer = fgx.pos.capov(self.cap)
+
+				-- move the cap in the primary growth axis
+				-- and calculate the current cap center position
 				local center = vec3(0,0,0)
 				for i,ov in ipairs(outer) do
-					-- move in growing direction
 					ov.p = ov.p + self.v.n*dist
 					ov:setColour(lerp(vec3(1,1,1),targetColour,t))
 					center = center + ov.p
 				end
 				center = center/#outer
-				local er = self.capAvgRadius * self.RADII[self.segs]
+		
+				-- adjust the cap verts to make 
+				-- them more circular				
 				for i,ov in ipairs(outer) do
-					-- make a bit more circular
-					-- current, start, end radii
+					-- current radius, start radius
 					local cr = distance(ov.p,center)
-					local sr = self.capRadii[i]					
-					local tr = math.max(1,self.SPEED*dt + (cr-sr)/(er-sr))
+					local sr = self.capRadii[i]
+					local t
+					if (self.capAvgRadius-sr==0) then
+						t = 1
+					else
+						t = (cr - sr) / (self.capAvgRadius - sr)
+					end
+					local tr = math.max(1, t + self.CIRC_SPEED*dt) 
 					local d = normalise(ov.p-center)
 					ov.p = center + d*lerp(sr,er,tr)
-					-- scale from the center some amount
-					-- ov.p = lerp(center,ov.p,1.01)
 				end
 			end			
+
 			self.pullDist = self.pullDist + dist			
 			if (self.pullDist > self.PULLDIST) then
 				self.segs = self.segs + 1
@@ -149,8 +144,12 @@ newSmoothGrowth = function(m,v)
 				end
 			end		
 		elseif (self.state=="insetagain") then
-			-- inset a tiny bit and store the cap for subsequent pulls								
-			self.cap = meshops.inset(self.m,self.v,.99)
+			-- inset a tiny bit and store the cap for subsequent pulls
+			local insetVal = .99
+			if self.cap==nil then			
+				insetVal = self.INSET
+			end
+			self.cap = meshops.inset(self.m,self.v,insetVal)
 			-- compute the avg radius of this cap so we can circulise it
 			-- also store the current radius of each outer vert
 			self.capRadii = {}
