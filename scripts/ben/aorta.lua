@@ -20,9 +20,6 @@ local nextvert
 local n, m
 local vertices, vertex
 
-local makeSpore -- generates a new spore in the universe
-local spores = {} -- the spores in the universe
-
 function setup()
 	-- here we are creating a new mesh, an icosahedron..
 	-- we can modify the script and press "RELOAD" to re-run it...
@@ -56,17 +53,9 @@ function setup()
 end
 
 function update(dt)
-	for _,s in ipairs(spores) do
-		if s then
-			local alive = s:update(dt)
-			if (not alive) then
-				s = nil			
-			end
-		end
-	end
 	if smoothGrowth~=nil then
-		local growing = smoothGrowth:update(dt)
-		if (not growing) then 
+		local more = smoothGrowth:update(dt)
+		if (not more) then 
 			smoothGrowth = nil
 		end
 	elseif #vertices>0 then
@@ -227,7 +216,6 @@ newSmoothGrowth = function(m,v)
 			self.pullDist = nil --reset
 			self.pullDir = -1			
 		elseif (self.state=="done") then 
-			makeSpore(self.v.p,self.v.n,self.AR)
 			return false -- finished!
 		end			
 		 
@@ -258,30 +246,4 @@ newSmoothGrowth = function(m,v)
 	end
 	
 	return obj
-end
-
-makeSpore = function(position,direction,size)
-	local obj = {
-		pos = position,
-		dir = direction,
-		size = size,		
-		node = nil,
-		SPEED = 1,
-		age = 0
-	}
-		
-	obj.update = function(self,dt)		
-		self.age = self.age + dt
-		-- print(self,self.age) -- definitely aging
-			
-		self.pos = self.pos + self.dir*dt*self.SPEED				
-		self.node:setTransform(mat4():setTranslate(self.pos)) --  * mat4():setScale(size))
-		return true	-- keep alive
-	end
-	
-	local mesh = fg.mesh.primitives.icosahedron()
-	mesh:applyTransform(mat4():setScale(size))
-	obj.node = fg.meshnode(mesh)
-	fgu:add(obj.node)
-	spores[#spores+1] = obj
 end

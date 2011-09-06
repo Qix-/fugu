@@ -90,7 +90,8 @@ namespace fg {
 	mLoadedScripts(),
 	mMeshes(),
 	mTime(0),
-	mNodeGraph()
+	mNodeGraph(),
+	mChangedNodeGraph(false)
 	{
 		// Global setup
 		std::srand(std::time(NULL));
@@ -194,6 +195,8 @@ namespace fg {
 
 	void Universe::addMesh(boost::shared_ptr<Mesh> m){
 		add(boost::shared_ptr<MeshNode>(new MeshNode(m)));
+
+		mChangedNodeGraph = true;
 	}
 
 	Universe::MeshContainer& Universe::meshes(){
@@ -203,12 +206,16 @@ namespace fg {
 	void Universe::add(boost::shared_ptr<Node> n){
 		mNodeGraph.addNode(n);
 		mNodes.push_back(n);
+
+		mChangedNodeGraph = true;
 	}
 
 	void Universe::add(boost::shared_ptr<MeshNode> n){
 		mNodeGraph.addNode(n);
 		mNodes.push_back(n);
 		mMeshNodes.push_back(n);
+
+		mChangedNodeGraph = true;
 	}
 
 	std::list<boost::shared_ptr<MeshNode> >& Universe::meshNodes(){
@@ -221,6 +228,8 @@ namespace fg {
 
 	void Universe::makeChildOf(boost::shared_ptr<Node> parent, boost::shared_ptr<Node> child){
 		mNodeGraph.addEdge(parent,child);
+
+		mChangedNodeGraph = true;
 	}
 
 	/**
@@ -240,6 +249,11 @@ namespace fg {
 			else {
 				error("Script \"%s\" doesn't have a update function",s.c_str());
 			}
+		}
+
+		if (mChangedNodeGraph){
+			mNodeGraph.recomputeOrdering();
+			mChangedNodeGraph = false;
 		}
 
 		mNodeGraph.update();

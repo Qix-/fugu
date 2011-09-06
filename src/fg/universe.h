@@ -114,6 +114,7 @@ namespace fg {
 
 		double mTime; ///< universe time
 		NodeGraph mNodeGraph;
+		bool mChangedNodeGraph;
 
 		std::list<boost::shared_ptr<Node> > mNodes;
 		std::list<boost::shared_ptr<MeshNode> > mMeshNodes;

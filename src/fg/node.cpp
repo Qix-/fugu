@@ -80,6 +80,9 @@ namespace fg {
 
 std::ostream& operator<<(std::ostream& o, const fg::Node& n){
 	return o << "Node@" << &n
-			<< ":\nRT:\n" << n.mRelativeTransform
-			<< ":\nCT:\n" << n.mCompoundTransform << "\n";
+			<< "\nRT:\n" << n.mRelativeTransform
+			<< "\nCT:\n" << n.mCompoundTransform
+			<< "dirty=" << (n.mDirty?"true":"false") << "\n"
+			<< "hasCompoundTransformBeenApplied=" << (n.mHasCompoundTransformBeenApplied?"true":"false") << "\n"
+			<< "\n";
 }

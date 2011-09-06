@@ -68,6 +68,8 @@ namespace fg {
 		void addEdge(boost::shared_ptr<Node> from, boost::shared_ptr<Node> to);
 		//void addEdge(int f, int t);
 
+		void recomputeOrdering(){mHaveNodesBeenSorted = false;} // make this nodegraph recompute the ordering next updated..
+
 		/// \brief update the node data based on the dependency graph
 		void update(); 
 

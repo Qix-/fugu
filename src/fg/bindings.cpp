@@ -207,6 +207,7 @@ namespace fg {
 		module(L, "fg")[
 		  class_<fg::Node, boost::shared_ptr<fg::Node> >("node")
 		  .def(constructor<>())
+		  .def(tostring(const_self))
 
 		  .def("getTransform", &fg::Node::getRelativeTransform)
 		  .def("setTransform", &fg::Node::setRelativeTransform)
@@ -218,6 +219,8 @@ namespace fg {
 		module(L, "fg")[
 		   class_<fg::MeshNode, fg::Node, boost::shared_ptr<fg::MeshNode> >("meshnode")
 		   .def(constructor<boost::shared_ptr<fg::Mesh> >())
+		   .def(tostring(const_self))
+
 		   .def("setMesh", &fg::MeshNode::setMesh)
 		];
 
