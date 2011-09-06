@@ -11,6 +11,7 @@ set(SRC
 	meshimpl.cpp
 	meshoperators.cpp
 	meshoperators_vcg.cpp
+	meshnode.cpp
 	node.cpp
 	nodegraph.cpp	
 	phyllo.cpp

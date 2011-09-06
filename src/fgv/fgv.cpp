@@ -254,6 +254,8 @@ int main(int argc, char *argv[])
         
 		if (gAppState.universe!=NULL){
 			foreach(shared_ptr<fg::MeshNode> m, gAppState.universe->meshNodes()){
+				// std::cout << m << "\n" << *m << "\n\n";
+
 				m->mesh()->sync(); // make sure normals are okay
 				// Subdivide the viewing mesh if required
 

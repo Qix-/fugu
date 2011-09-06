@@ -30,6 +30,10 @@
 #include "fg/node.h"
 #include "fg/mesh.h"
 
+// forward decl
+namespace fg {class MeshNode;}
+std::ostream& operator<<(std::ostream& o, const fg::MeshNode& n);
+
 namespace fg {
 	/**
 	 * \brief A fg::Node which references a fg::Mesh
@@ -40,6 +44,8 @@ namespace fg {
 		boost::shared_ptr<Mesh> mesh(){return mMesh;}
 
 		void setMesh(boost::shared_ptr<Mesh> m){mMesh = m;}
+
+		friend std::ostream& (::operator <<)(std::ostream& o, const fg::MeshNode& n);
 	protected:
 		boost::shared_ptr<Mesh> mMesh;
 	};
