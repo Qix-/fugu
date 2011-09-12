@@ -21,16 +21,16 @@ local n, m
 local vertices, vertex
 
 local function debug(msg)
-	-- print(msg)
+	print(msg)
 end
 
 function setup()
 	-- here we are creating a new mesh, an icosahedron..
 	-- we can modify the script and press "RELOAD" to re-run it...
 	-- m = fg.mesh.primitives.icosahedron()
-  	m = fg.mesh.primitives.dodecahedron()  	
+  	-- m = fg.mesh.primitives.dodecahedron()  	
   	-- m = fg.mesh.primitives.octahedron()
-  	-- m = fg.mesh.primitives.cube()
+  	m = fg.mesh.primitives.cube()
   	m:smoothSubdivide(2)
   	
   	--[[
@@ -55,17 +55,17 @@ function setup()
 	end	
 	
 	smoothGrowths = {}
-	for i=1,96 do
-		table.insert(smoothGrowths,{newSmoothGrowth(m,vertices[i]),true})
+	for i=1,24 do
+		smoothGrowths[i] = newSmoothGrowth(m,vertices[i])
 	end		
 end
 
 function update(dt)
 	for i,s in ipairs(smoothGrowths) do		
-		if s[2] then
-			local growing = s[1]:update(dt)
+		if s~=nil then
+			local growing = s:update(dt)
 			if (not growing) then 
-				s[2] = false
+				s = nil
 			end
 		end
 	end
@@ -249,6 +249,7 @@ newSmoothGrowth = function(m,v)
 					center = center + pgd*rest
 				end
 		
+				--[[
 				-- adjust the cap verts to make 
 				-- them more circular
 				for i,ov in ipairs(outer) do
@@ -265,6 +266,7 @@ newSmoothGrowth = function(m,v)
 					local d = normalise(ov.p-center)
 					ov.p =center + d*lerp(sr,self.capAvgRadius,tr)
 				end
+				--]]
 			end			
 
 			self.pullDist = self.pullDist + dist			

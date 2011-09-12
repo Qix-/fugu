@@ -75,6 +75,7 @@ namespace fg {
 
 		   def("lerp", &lerp<double, double>),
 		   def("lerp", &lerp<Vec3, double>),
+		   def("slerp", &slerp),
 
            def("mix", &mix<double, double>),
            def("clamp", &clamp<double>),
