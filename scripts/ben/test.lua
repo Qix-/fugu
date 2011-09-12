@@ -28,8 +28,9 @@ function setup()
 	-- here we are creating a new mesh, an icosahedron..
 	-- we can modify the script and press "RELOAD" to re-run it...
 	-- m = fg.mesh.primitives.icosahedron()
-  	m = fg.mesh.primitives.dodecahedron()  	
+  	-- m = fg.mesh.primitives.dodecahedron()  	
   	-- m = fg.mesh.primitives.octahedron()
+  	m = fg.mesh.primitives.cylinder(8)
   	-- m = fg.mesh.primitives.cube()
   	m:smoothSubdivide(2)
   	
@@ -55,7 +56,7 @@ function setup()
 	end	
 	
 	smoothGrowths = {}
-	for i=1,96 do
+	for i=1,143 do
 		table.insert(smoothGrowths,{newSmoothGrowth(m,vertices[i]),true})
 	end		
 end
