@@ -57,6 +57,7 @@ struct ViewMode {
 	bool origin;
 	bool ground;
 	bool showNodeAxes; // show node axes
+	bool enableLighting;
 
 	int numberSubdivs;
 
@@ -64,7 +65,7 @@ struct ViewMode {
 	MeshMode meshMode;
 
 	fg::GLRenderer::ColourMode colourMode;
-} gViewMode = {true,true,false,0,ViewMode::MM_SMOOTH};
+} gViewMode = {true,true,false,true,0,ViewMode::MM_SMOOTH};
 
 enum SimulationMode {SM_PLAYING, SM_PAUSED, SM_STEPPING, SM_RELOADING, SM_ERROR};
 
@@ -234,8 +235,15 @@ int main(int argc, char *argv[])
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		gluLookAt(0,0,4,   0,0,0,   0,1,0);
-		GLfloat lp[] = {1, 1, 1, 0};
-		glLightfv(GL_LIGHT0,GL_POSITION,lp);
+
+		if (gViewMode.enableLighting){
+			GLfloat lp[] = {1, 1, 1, 0};
+			glLightfv(GL_LIGHT0,GL_POSITION,lp);
+			glEnable(GL_LIGHTING);
+		}
+		else {
+			glDisable(GL_LIGHTING);
+		}
 		glPushMatrix();
 		glMultMatrixf((GLfloat*) gRotationMatrix);
 
@@ -369,20 +377,12 @@ void setupWindowAndGL(){
 	// Create a window
 	glfwGetDesktopMode(&mode);
 
-
 	if (!glfwOpenWindow(gWidth,gHeight, mode.RedBits, mode.GreenBits, mode.BlueBits, 0, 24, 0, GLFW_WINDOW)){
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 	glfwEnable(GLFW_MOUSE_CURSOR);
 	glfwEnable(GLFW_KEY_REPEAT);
-
-	/*
-	if (!glfwOpenWindow(gWidth,gHeight, 0,0,0,0,24,0, GLFW_WINDOW)){
-		glfwTerminate();
-		exit(EXIT_FAILURE);
-	}
-	*/
 
 	GLenum err = glewInit();
 	if (GLEW_OK != err){
@@ -405,6 +405,9 @@ void setupWindowAndGL(){
 	               " group='View' help='Toggle ground.' ");
 	TwAddVarRW(mainBar, "node axes", TW_TYPE_BOOLCPP, &gViewMode.showNodeAxes,
 		               " group='View' help='Toggle node axes.' ");
+
+	TwAddVarRW(mainBar, "lighting", TW_TYPE_BOOLCPP, &gViewMode.enableLighting,
+			" group='View' help='Enable lighting.' ");
 
 	TwAddVarRW(mainBar, "smooth subdiv", TW_TYPE_INT32, &gViewMode.numberSubdivs,
 			" min=0 max=3 group='View' help='Turn on smooth subdivision for visualisation.' ");

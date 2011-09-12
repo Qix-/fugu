@@ -20,17 +20,15 @@ local nextvert
 local n, m
 local vertices, vertex
 
-local function debug(msg)
-	print(msg)
-end
+local makeSpore -- generates a new spore in the universe
+local spores = {} -- the spores in the universe
 
 function setup()
 	-- here we are creating a new mesh, an icosahedron..
 	-- we can modify the script and press "RELOAD" to re-run it...
 	-- m = fg.mesh.primitives.icosahedron()
   	-- m = fg.mesh.primitives.dodecahedron()  	
-  	-- m = fg.mesh.primitives.octahedron()
-  	m = fg.mesh.primitives.cube()
+  	m = fg.mesh.primitives.octahedron()
   	m:smoothSubdivide(2)
   	
   	--[[
@@ -54,27 +52,30 @@ function setup()
 		v:setUV(0,0)
 	end	
 	
-	vertex = vertices[2]
-	smoothGrowth = newSmoothGrowth(m,vertex)
+	smoothGrowth = nil
 end
 
 function update(dt)
+	for _,s in ipairs(spores) do
+		if s then
+			local alive = s:update(dt)
+			if (not alive) then
+				s = nil			
+			end
+		end
+	end
 	if smoothGrowth~=nil then
 		local growing = smoothGrowth:update(dt)
 		if (not growing) then 
 			smoothGrowth = nil
 		end
-	end
-	--[[		
 	elseif #vertices>0 then
 		vertex = nextvert(m)
 		smoothGrowth = newSmoothGrowth(m,vertex)
 	end
-	--]]
 end -- empty
 
 -- get the next random vertex from vertices,
---[[
 nextvert = function(m)
 	if #vertices==0 then return nil end 
 	local v = vertices[math.ceil(random()*#vertices)]
@@ -88,7 +89,6 @@ nextvert = function(m)
 	
 	return v	
 end
---]]
 
 newSmoothGrowth = function(m,v)
 	local obj = {
@@ -96,8 +96,8 @@ newSmoothGrowth = function(m,v)
 		v=v,		
 		INSET = .8, -- scale on first inset 
 		SPEED = .7,
-		CIRC_SPEED = .3, -- speed the cap becomes circular
-		FL_SPEED = 0, --.1, -- speed the cap flattens
+		CIRC_SPEED = .1, -- speed the cap becomes circular
+		FL_SPEED = .1, -- speed the cap flattens
 		PULLDIST = .3, -- distance to pull the leading vertex
 		NUMSEGS = 4,
 		segs = 1,
@@ -133,25 +133,20 @@ newSmoothGrowth = function(m,v)
 		local targetColour = lerp(vec3(1,1,1),vec3(.2,.6,1),(self.segs+1)/self.NUMSEGS)
 		
 		if (self.state=="waiting") then
-			debug("w")
 			if (self.stateChange <= self.time) then
 				self.state = self.nextState
 			end
 		elseif (self.state=="inset") then
-			debug("i")
 			meshops.inset(self.m,self.v,self.INSET)
 			self.state = "waiting"
 			self.nextState = "pull"
 			self.stateChange = self.time + 1
 		elseif (self.state=="pull") then 
-			debug("p")
-			
 			if self.pullDist==nil then
 				self.pullDist = 0
 			end	
 			local dist = self.SPEED*dt
-			local pullvec = self.v.n*dist*self.pullDir
-			self.v.p = self.v.p + pullvec
+			self.v.p = self.v.p + self.v.n*dist*self.pullDir
 			
 			-- adjust the outer loop on the cap
 			-- so it grows in the normal, 
@@ -167,9 +162,9 @@ newSmoothGrowth = function(m,v)
 				-- and calculate the current cap center position
 				local center = vec3(0,0,0)
 				for i,ov in ipairs(outer) do									
-					ov.p = ov.p + pullvec
+					ov.p = ov.p + self.v.n*dist*self.pullDir
 					local flattendist = ds*dot(ov.p-self.v.p,self.v.n)
-					ov.p = ov.p - self.v.n*flattendist*self.FL_SPEED
+					ov.p = ov.p - self.v.n*flattendist
 
 					-- (dist + math.max(self.FL_SPEED*dt*flattendir,flattendist))
 					-- ov.p = ov.p + self.v.n*dist
@@ -180,7 +175,7 @@ newSmoothGrowth = function(m,v)
 				center = center/#outer
 		
 				-- adjust the cap verts to make 
-				-- them more circular
+				-- them more circular				
 				for i,ov in ipairs(outer) do
 					-- current radius, start radius
 					local cr = distance(ov.p,center)
@@ -191,7 +186,7 @@ newSmoothGrowth = function(m,v)
 					else
 						t = (cr - sr) / (self.capAvgRadius - sr)
 					end
-					local tr = math.min(1, t + self.CIRC_SPEED*dt) 
+					local tr = math.max(1, t + self.CIRC_SPEED*dt) 
 					local d = normalise(ov.p-center)
 					ov.p = center + d*lerp(sr,self.capAvgRadius,tr)
 				end
@@ -199,17 +194,23 @@ newSmoothGrowth = function(m,v)
 
 			self.pullDist = self.pullDist + dist			
 			if (self.pullDist > self.PULLDIST) then
-				self.segs = self.segs + 1				
-				if (self.segs <= (self.NUMSEGS+1)) then
+				self.segs = self.segs + 1
+				if (self.segs < self.NUMSEGS) then
 					if (self.pullDir > 0) then					
 						self.state = "insetagain"
+					else
+						self.state = "inwardsinset"
 					end						
 				else
-					self.state = "done"
+					if (self.pullDir > 0) then
+						self.state = "inwardsinset"
+						self.segs = 1
+					else
+						self.state = "done"
+					end
 				end
 			end		
 		elseif (self.state=="insetagain") then
-			debug("ia")
 			-- inset a tiny bit and store the cap for subsequent pulls
 			local insetVal = .99
 			if self.cap==nil then			
@@ -218,10 +219,15 @@ newSmoothGrowth = function(m,v)
 			obj:insetCap(insetVal,startColour,{ds,0})
 			self.state = "pull"
 			self.pullDist = nil --reset
-			self.pullDir = 1	
+			self.pullDir = 1			
+		elseif (self.state=="inwardsinset") then 
+			-- do an "inny"!
+			obj:insetCap(.6,startColour,{1,0})
+			self.state = "pull"
+			self.pullDist = nil --reset
+			self.pullDir = -1			
 		elseif (self.state=="done") then 
-			debug("d")
-			-- makeSpore(self.v.p,self.v.n,self.AR/3)
+			makeSpore(self.v.p,self.v.n,self.AR/3)
 			return false -- finished!
 		end			
 		 
@@ -252,4 +258,42 @@ newSmoothGrowth = function(m,v)
 	end
 	
 	return obj
+end
+
+makeSpore = function(position,direction,size)
+	local obj = {
+		pos = position,
+		vel = direction,
+		size = size,		
+		rotationAxis = normalise(vec3(random(-1,1),random(-1,1),random(-1,1))),
+		rotation = random(0,math.pi),
+		node = nil,
+		SPEED = 1,
+		rotvel = 1,
+		age = 0
+	}
+		
+	obj.update = function(self,dt)		
+		self.age = self.age + dt
+		-- print(self,self.age) -- definitely aging
+			
+		self.pos = self.pos + self.vel*dt*self.SPEED
+		self.vel = self.vel*.99		
+		self.rotation = self.rotation + self.rotvel*dt		
+		self.rotvel = self.rotvel*.992
+		self.node:setTransform(mat4():setTranslate(self.pos) * mat4():setRotateRad(self.rotation, self.rotationAxis))
+		return true	-- keep alive
+	end
+	
+	local mesh = fg.mesh.primitives.icosahedron()
+	mesh:applyTransform(mat4():setScale(size))
+	
+	for _,v in ipairs(fgx.mesh.vertexlist(mesh)) do
+		v:setColour(1,1,0)
+		v:setUV(0,1)
+	end
+	
+	obj.node = fg.meshnode(mesh)
+	fgu:add(obj.node)
+	spores[#spores+1] = obj
 end
