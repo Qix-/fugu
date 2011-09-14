@@ -10,7 +10,7 @@ require 'fgx.extrude'
 require 'fgx.pos'
 require 'fgx.nloop'
 require 'fgx.math'
-require 'fgx.transform'
+local tr = require 'fgx.transform'
 require 'fgx.util' -- table.find
 local meshops = require 'fgx.meshops'
 
@@ -27,10 +27,10 @@ end
 function setup()
 	-- here we are creating a new mesh, an icosahedron..
 	-- we can modify the script and press "RELOAD" to re-run it...
-	-- m = fg.mesh.primitives.icosahedron()
+	m = fg.mesh.primitives.icosahedron()
   	-- m = fg.mesh.primitives.dodecahedron()  	
   	-- m = fg.mesh.primitives.octahedron()
-  	m = fg.mesh.primitives.cylinder(8)
+  	-- m = fg.mesh.primitives.cylinder(8)
   	-- m = fg.mesh.primitives.cube()
   	m:smoothSubdivide(2)
   	
@@ -56,7 +56,7 @@ function setup()
 	end	
 	
 	smoothGrowths = {}
-	for i=1,143 do
+	for i=1,math.min(60,#vertices) do
 		table.insert(smoothGrowths,{newSmoothGrowth(m,vertices[i]),true})
 	end		
 end
@@ -96,37 +96,57 @@ end
 --]]
 
 newSmoothGrowth = function(m,v)
+	local randomPositions = {}
+	local targetPosition = v.p + v.n*20;
+	for i=1,10 do
+		randomPositions[#randomPositions+1] = targetPosition + vec3(random(-1,1),random(-1,1),random(-1,1))*10
+	end
+
 	local obj = {
 		m=m,
 		v=v,		
 		
 		initialPosition = v.p,
 		initialNormal = v.n,
+		perpVec = fgx.math.perp(normalise(v.n + vec3(random(-1,1),random(-1,1),random(-1,1))*.1)),
 		
 		INSET = .8, -- scale on first inset 
 		SPEED = .7,
 		CIRC_SPEED = 4, -- speed the cap becomes circular
 		FL_SPEED = .3, --.1, -- speed the cap flattens
+		
 		PULLDIST = .5, -- distance to pull the leading vertex
-		NUMSEGS = 6,
-		MAX_DETAIL = 16, -- maximum number of vertices around a cap
+		pullDistMult = 1, -- the pull distance multiplier
+		
+		NUMSEGS = 16,
+		MAX_DETAIL = 12, -- maximum number of vertices around a cap
 		detailF = 	function(dt,ds) 
 						return ds 
 					end, -- determines the detail at a segment (* max detail)		
 		shrinkF = 	function(dt,ds) 
-						return math.max(.8,sqr((1-ds))) 
+						return .92 -- math.max(.95,sqrt(1-ds)) 
 					end, -- radius multiplier 
 		
 		-- the goal point for the tentacle
-		goalF = 	function(self,dt,ds) 
-						return self.initialPosition + vec3(0,100,0) -- self.initialNormal*100 
+		--[[
+		goalF = 	function(self,dt,ds)
+						return self.initialPosition + randomPositions[1 + math.floor(ds*self.NUMSEGS)%(#randomPositions-1)] 
+							-- vec3(0,100,0) -- self.initialNormal*100 
 					end,
+		--]]
+					
+		-- the growth direction 			
+		growthDirectionF = function(self,dt,ds,dp)
+				local cdp = dp<.1 and 0 or sqr((dp-.1)/.9)
+				return tr.R(cdp*(math.pi*.8)*(self.NUMSEGS/8), self.perpVec)*self.initialNormal
+			end,			
 		
 		segs = 1,
 		AR = 0, -- average radius of first fan
 		pullDir = 1, -- direction to pull (*v.n)
 		-- timeWarp, affect the perception of time
-		timeWarp = function(dt,ds) return dt*math.exp(ds*ds) end,
+		-- timeWarp = function(dt,ds) return dt*math.exp(ds*ds) end,
+		timeWarp = function(dt,ds) return dt end,
 				
 		time=0,
 		state="waiting",
@@ -167,19 +187,22 @@ newSmoothGrowth = function(m,v)
 			self.stateChange = self.time + 1
 		elseif (self.state=="pull") then 
 			debug("p")
-			
+						
 			if self.pullDist==nil then
 				self.pullDist = 0
-			end	
-			
-			local dist = self.SPEED*dt
-			local goal = self:goalF(dt,ds)
-			
-			-- turn normal towards goal
-			local dir = normalise(goal - self.v.p)
-			local correctedNormal = slerp(self.initialNormal,dir,ds)	
+			end				
+			local dp = (self.segs + self.pullDist / self.PULLDIST)/self.NUMSEGS
+						
+			local dist = self.SPEED*dt*self.pullDistMult -- *self.shrinkF(dt,self.segs/self.NUMSEGS)
+						
+			-- local goal = self:goalF(dt,ds)
+			local dir = self:growthDirectionF(dt,ds,dp)						
+			-- normalise(goal - self.v.p)
+			local correctedNormal = dir
+			-- local correctedNormal = slerp(self.initialNormal,dir,ds)	
 			-- print(self.v.n,dir,ds*.01,correctedNormal)		
 			local pullvec = correctedNormal*dist*self.pullDir
+			local oldvp = self.v.p
 			self.v.p = self.v.p + pullvec
 			
 			-- adjust the outer loop on the cap
@@ -197,7 +220,7 @@ newSmoothGrowth = function(m,v)
 				self.v:setUV(ds,0)
 				local outer = fgx.pos.capov(self.cap)
 
-				-- compute current center
+				-- compute current center				
 				local center = vec3(0,0,0)
 				for i,ov in ipairs(outer) do
 					center = center + ov.p
@@ -209,8 +232,9 @@ newSmoothGrowth = function(m,v)
 				-- local pgd = normalise(self.v.p - center)
 				local pgd = correctedNormal
 				local tp = self.v.p + pgd -- target point to align to..
-				local cv = normalise(tp - center)				
+				local cv = tp - center				
 				local sqrlcv = sqr(length(cv))
+				-- print("*",tp,cv,sqrlcv)
 				
 				center = vec3(0,0,0) -- reset, to calculate new center
 				maxdist = 0 -- max distance shifted during orientation			
@@ -218,10 +242,10 @@ newSmoothGrowth = function(m,v)
 					-- shift to align to direction					
 					local ovv = tp - ov.p
 					local ovt = sqrlcv/dot(ovv,cv)					
-					ov.p = ov.p + ovv*(1-ovt)
-					
-					local dist = length(ovv*(1-ovt))
-					if (dist > maxdist) then maxdist = dist end					
+					ov.p = ov.p + ovv*(1-ovt)					
+					local dist = length(ovv*(1-ovt))					
+					-- print(">",ovv,ovt,dist)
+					if (dist > maxdist) then maxdist = dist end
 									
 					-- ov.p = ov.p + primaryGrowthDirection*dist					
 					-- ov.p = ov.p - pgd*dot(self.v.p-ov.p,pgd)
@@ -242,14 +266,21 @@ newSmoothGrowth = function(m,v)
 				center = center/#outer
 				
 				-- now shift the remaining amount
-				if (maxdist < dist) then
-					local rest = dist - maxdist
+				local distToV = distance(self.v.p,center)
+				local distToGo = dist + self.FL_SPEED*dt*distToV
+				if (maxdist < distToGo) then
+					local rest = distToGo - maxdist
 					for i,ov in ipairs(outer) do
 						ov.p = ov.p + pgd*rest
 					end
 					center = center + pgd*rest
 				end
-		
+				
+				-- calculate the new centroid
+				-- BAH: didn't really deviate that much				
+				-- center = fgx.math.acentroidvl(outer,pgd)
+				-- print("centerdiff",distance(oldcenter,center))				
+				
 				-- adjust the cap verts to make 
 				-- them more circular
 				for i,ov in ipairs(outer) do
@@ -264,8 +295,12 @@ newSmoothGrowth = function(m,v)
 					end
 					local tr = math.min(1, t + self.CIRC_SPEED*dt) 
 					local d = normalise(ov.p-center)
-					ov.p =center + d*lerp(sr,self.capAvgRadius,tr)
+					ov.p = center + d*lerp(sr,self.capAvgRadius,tr)
 				end
+				
+				-- and finally shift v
+				-- so it leads ...
+				self.v.p = center + pgd*(distToV - distToGo)
 			end			
 
 			self.pullDist = self.pullDist + dist			
@@ -294,8 +329,11 @@ newSmoothGrowth = function(m,v)
 			self.state = "pull"
 			self.pullDist = nil --reset
 			self.pullDir = 1	
+			self.pullDistMult = self.pullDistMult*self.shrinkF(dt,self.segs/self.NUMSEGS)
 		elseif (self.state=="done") then 
 			debug("d")
+			-- print("time", self.time)
+			-- print("dets", self.NUMSEGS, self.PULLDIST, self.SPEED)
 			-- makeSpore(self.v.p,self.v.n,self.AR/3)
 			return false -- finished!
 		end			

@@ -134,6 +134,7 @@ namespace fg {
 		   .def(const_self + other<fg::Vec3>())
 		   .def(const_self - other<fg::Vec3>())
 		   .def(const_self * double())
+		   .def(const_self * other<fg::Mat4>())
 		   .def(const_self / double())
 		   .def(-(const_self))
 
