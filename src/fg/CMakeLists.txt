@@ -4,6 +4,7 @@ set(SRC
 	face.cpp
 	fg.cpp
 	functions.cpp
+	geometry.cpp
 	glrenderer.cpp
 	glrenderer_glutprimitives.cpp	
 	mat4.cpp	
@@ -43,6 +44,7 @@ set(HDRS
 	face.h
 	fg.h
 	functions.h
+	geometry.h
 	glrenderer.h
 	mat4.h
 	mesh.h

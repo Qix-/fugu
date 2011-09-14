@@ -12,6 +12,7 @@
 #include <cmath>
 #include <string>
 #include <sstream>
+#include <iomanip>
 
 #define BOOST_FILESYSTEM_VERSION 3
 #include <boost/filesystem.hpp>
@@ -27,6 +28,9 @@ using namespace boost::filesystem;
 #include "fg/functions.h"
 #include "fg/glrenderer.h"
 #include "fg/util.h"
+#include "fg/mesh.h"
+#include "fg/meshimpl.h"
+#include "fg/exportmeshnode.h"
 
 #include "fgv/shader.h"
 #include "fgv/trackball.h"
@@ -110,6 +114,8 @@ void TW_CALL reloadCb(void *clientData){
 
 	gAppState.simulationMode = SM_RELOADING;
 }
+
+void TW_CALL outputObjCb(void* clientData); // output an obj of the current frame..
 
 void loadUniverse(); // load or reload universe
 void deleteUniverse(); // delete the universe (probably due to an error)
@@ -438,6 +444,7 @@ void setupWindowAndGL(){
 	TwAddButton(mainBar, "pause", pauseCb, NULL, " group='Control' ");
 	TwAddButton(mainBar, "step", stepCb, NULL, " group='Control' ");
 	TwAddButton(mainBar, "reload", reloadCb, NULL, " group='Control' ");
+	TwAddButton(mainBar, "save .obj", outputObjCb, NULL, " group='Control' ");
 
 	TwEnumVal mmEVSM[] = {
 			{SM_PLAYING, "Playing"},
@@ -664,6 +671,41 @@ void TW_CALL resetCamera(void *clientData)
             gRotationMatrix[i][j] = (i == j ? 1 : 0);
     }
     gCameraTranslation[0] = gCameraTranslation[1] = gCameraTranslation[2] = 0;
+}
+
+void outputObjCb(void* clientData){ // output an obj of the current frame..
+	if (gAppState.universe){
+		int nodeCount = 0;
+
+		// get time
+		time_t seconds;
+		seconds = time(NULL);
+		struct tm* timeinfo;
+		timeinfo = localtime(&seconds);
+
+
+		BOOST_FOREACH(boost::shared_ptr<fg::MeshNode> m, gAppState.universe->meshNodes()){
+			// m->mesh()->sync(); // make sure normals are okay
+			std::ostringstream oss;
+			oss << "obj_";
+			oss << std::setw(2) << std::setfill('0')
+				<< timeinfo->tm_hour
+				<< timeinfo->tm_min
+				<< timeinfo->tm_sec;
+			oss << "_" << nodeCount << ".obj";
+			std::cout << "Saving as: \"" << oss.str().c_str() << "\"\n";
+			vcg::tri::io::ExporterOBJ_Point3d<fg::MeshImpl>::Save(
+				*m->mesh()->_impl(),
+				oss.str().c_str(),
+				vcg::tri::io::Mask::IOM_VERTNORMAL |
+				vcg::tri::io::Mask::IOM_VERTTEXCOORD
+				/* | vcg::tri::io::Mask::IOM_VERTCOLOR */ // .obj doesnt support vertex colours apparently..
+				,
+				m->getCompoundTransform()
+			);
+			nodeCount++;
+		}
+	}
 }
 
 #ifdef USESHADERS

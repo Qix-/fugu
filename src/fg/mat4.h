@@ -70,6 +70,8 @@ namespace fg {
 
 		Mat4 operator-() const;
 		Mat4 operator*(const double k) const;
+		friend Vec3 operator*(const Vec3& a, const Mat4& b);
+
 		void operator+=(const Mat4 &m);
 		void operator-=(const Mat4 &m);
 		void operator*=( const Mat4 & m );
@@ -99,6 +101,9 @@ namespace fg {
 		/// \deprecated use setBasis (its intention is clearer)
 		void set(const Vec3 &xaxis, const Vec3 &yaxis, const Vec3 &zaxis);
 	};
+
+	// other operators
+	Vec3 operator*(const Vec3& a, const Mat4& b);
 };
 
 std::ostream& operator<<(std::ostream& o, const fg::Mat4& m);

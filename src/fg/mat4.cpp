@@ -168,6 +168,13 @@ namespace fg {
 	// Static
 	Mat4 Mat4::Identity(){return vcg::Matrix44<double>::Identity();}
 	Mat4 Mat4::Zero(){Mat4 m; m.SetZero(); return m;}
+
+	// free operators
+	Vec3 operator*(const Vec3& a, const Mat4& b){
+		return Vec3(a.X()*b.get(0,0) + a.Y()*b.get(1,0) + a.Z()*b.get(2,0),
+				a.X()*b.get(0,1) + a.Y()*b.get(1,1) + a.Z()*b.get(2,1),
+				a.X()*b.get(0,2) + a.Y()*b.get(1,2) + a.Z()*b.get(2,2));
+	}
 }
 
 std::ostream& operator<<(std::ostream& o, const fg::Mat4& m){
