@@ -2,11 +2,11 @@ find_package(Qt4 REQUIRED)
 set(QT_USE_QTOPENGL)
 include(${QT_USE_FILE})
 
-
 set(ALL_LIBS fg 
 	${LUA_LIBS}
 	${GL_LIBS} 
 	${BOOST_LIBS}
+	qscintilla2
 	AntTweakBar)
 
 set(SRC main.cpp 
@@ -15,6 +15,7 @@ set(SRC main.cpp
 	highlighter.cpp
 	mainwindow.cpp
 	fgview.cpp
+	fglexer.cpp
 	)
 
 set(SRCS ${SRC})
