@@ -39,10 +39,23 @@ QTabBar::tab:selected, QTabBar::tab:hover {
 	color: #c8c8c8;	
 }
 
+QTabBar::tab:hover {
+	background-color: #f27000;
+}
+
 QTabWidget::pane { 
 	border: 0; 
 	border-top: 2px solid #272727;
 }
+
+
+
+
+
+
+
+
+
 
 QMenu {
      background-color: #272727; /* sets background of the menu */
@@ -53,14 +66,91 @@ QMenu {
  QMenu::item {
      /* sets background of menu item. set this to something non-transparent
          if you want menu color and menu item color to be different */
-      background-color: transparent; 
+      background-color: #272727; 
       /* background-color: black; */
+     
+     /* padding: 2px 25px 2px 20px; */
+     padding: 2px 25px 2px 20px;
+    /*  border: 1px solid transparent; reserve space for selection border */
  }
 
  QMenu::item:selected { /* when user selects item using mouse or keyboard */
-     background-color: #3f3f3f;
+     background-color: #f27000;
  }
  
+  QMenu::item:checked {
+     background: #3f3f3f;
+ }
+ 
+  QMenu::item:checked:selected {
+     background-color: #f27000;
+ }
+ 
+ QMenu::icon:checked { /* appearance of a 'checked' icon */
+     background: transparent; /*#272727; */
+     border: 0; /* 1px inset gray; */
+     position: absolute;
+     top: 1px;
+     right: 1px;
+     bottom: 1px;
+     left: 1px;
+ }
+  
+ QMenu::indicator {
+     width: 13px;
+     height: 13px;
+     background-color: transparent; /* #272727; */
+     border: 0;
+     padding: 0;
+     margin: 0;
+ }
+ 
+ /* non-exclusive indicator = check box style indicator (see QActionGroup::setExclusive) */
+  QMenu::indicator:non-exclusive {
+ 	image: none;
+ 	 border: 0;
+     padding: 0;
+     margin: 0;
+ }
+ 
+ QMenu::indicator:non-exclusive:unchecked {
+ }
+
+ QMenu::indicator:non-exclusive:unchecked:selected {
+ 	background-color: #f27000;
+ }
+
+ QMenu::indicator:non-exclusive:checked {
+     /* image: url("../assets/icons/tick.png"); */     
+     background: #3f3f3f;
+ }
+
+ QMenu::indicator:non-exclusive:checked:selected {
+ 	background-color: #f27000;
+ }
+
+ /* exclusive indicator = radio button style indicator (see QActionGroup::setExclusive) */
+ QMenu::indicator:exclusive {
+ image: none;
+ 	 border: 0;
+     padding: 0;
+     margin: 0;
+ }
+ 
+ QMenu::indicator:exclusive:unchecked {
+ }
+
+ QMenu::indicator:exclusive:unchecked:selected {
+ 	background-color: #f27000; 	
+ }
+
+ QMenu::indicator:exclusive:checked {
+ 	background: #3f3f3f;
+ }
+
+ QMenu::indicator:exclusive:checked:selected {
+ 	background-color: #f27000;
+ }
  
 /* Customize the menu bar. */
 QMenuBar {
@@ -83,6 +173,17 @@ QMenuBar::item {
 QMenuBar::item:selected {
     background-color: #3f3f3f;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 QPushButton {
      border-style: outset;
@@ -166,3 +267,38 @@ QPushButton {
      image: none; /* url(images/splitter_pressed.png); */
      background: #3f3f3f;
  }
+ 
+ 
+ 
+  QToolBar {     
+     spacing: 0px; /* spacing between items in the tool bar */
+     background: #272727;
+ }
+
+ QToolBar::handle:horizontal {
+     /* image: url(handle.png); */
+     image: none;
+     width: 8px;
+     background: #3f3f3f;
+ }
+ 
+ QToolBar::handle:hover {
+     /* image: url(handle.png); */
+     image: none;
+ 	background: #f27000;         
+ } 
+ 
+ QToolButton { /* all types of tool button */
+	background-color: #272727;
+	margin: 4px;
+ }
+
+ QToolButton[popupMode="1"] { /* only for MenuButtonPopup */
+     padding-right: 10px; /* make way for the popup button */
+ }
+
+ QToolButton:pressed, QToolButton:hover {
+ 	background-color: #f27000;
+ }
+  
+ 

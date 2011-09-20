@@ -14,9 +14,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 	setWindowTitle(tr("fugu"));
 
+	mFGView = new FGView(this);
+
 	setupFileMenu();
 	setupEditMenu();
 	setupSimulationControls();
+	setupViewMenu();
 	setupHelpMenu();
 
 	QWidget *container = new QWidget;
@@ -45,8 +48,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-	mFGView = new FGView(this);
-
 	/*
 	layout()->addWidget(mFGView, BorderLayout::Center);
 	layout()->addWidget(mEditors, BorderLayout::West);
@@ -57,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
 	frame->addWidget(mFGView);
 	setCentralWidget(frame);
 
-	QFile stylesheet("fgestyle.css");
+	QFile stylesheet("../assets/fgestyle.css");
 	if (stylesheet.open(QFile::ReadOnly | QFile::Text)){
 		setStyleSheet(stylesheet.readAll());
 	}
@@ -415,24 +416,23 @@ void MainWindow::setupSimulationControls() {
 
 	QToolBar* simulationToolbar = new QToolBar(tr("&Simulation"), this);
 	addToolBar(simulationToolbar);
+	simulationToolbar->setMovable(false);
 
-	QIcon playIcon("../icons/control_play.png");
-	playIcon.addPixmap(QPixmap("../icons/control_pause.png"),QIcon::Normal,QIcon::On);
-	playIcon.addPixmap(QPixmap("../icons/control_play.png"),QIcon::Normal,QIcon::Off);
+	QIcon playIcon("../assets/icons/control_play.png");
+	playIcon.addPixmap(QPixmap("../assets/icons/control_pause.png"),QIcon::Normal,QIcon::On);
+	playIcon.addPixmap(QPixmap("../assets/icons/control_play.png"),QIcon::Normal,QIcon::Off);
 
 	QAction* simulate = new QAction(playIcon, tr("&Play/Pause"), this);
 	simulate->setCheckable(true);
 	simulate->setStatusTip(tr("Start/Stop the simulation"));
 	connect(simulate, SIGNAL(toggled(bool)), this, SLOT(togglePlay(bool)));
 
-
-
-	QAction* restart = new QAction(QIcon("../icons/control_start.png"), tr("&Reload"), this);
+	QAction* restart = new QAction(QIcon("../assets/icons/control_start.png"), tr("&Reload"), this);
 	restart->setStatusTip(tr("Reload the simulation"));
 	connect(restart, SIGNAL(triggered()), this, SLOT(reload()));
 
 
-	QAction* stepAction = new QAction(QIcon("../icons/control_step.png"), tr("&Step"), this);
+	QAction* stepAction = new QAction(QIcon("../assets/icons/control_step.png"), tr("&Step"), this);
 	stepAction->setStatusTip(tr("Perform one simulation step"));
 	connect(stepAction, SIGNAL(triggered()), this, SLOT(step()));
 
@@ -443,4 +443,84 @@ void MainWindow::setupSimulationControls() {
 	simulationMenu->addAction(simulate);
 	simulationMenu->addAction(restart);
 	simulationMenu->addAction(stepAction);
+}
+
+void MainWindow::setupViewMenu(){
+	QMenu *viewMenu = new QMenu(tr("&View"), this);
+	menuBar()->addMenu(viewMenu);
+
+	//QToolBar* viewToolbar = new QToolBar(tr("&View"), this);
+	//addToolBar(viewToolbar);
+
+
+
+	QAction* action = new QAction(tr("&Origin"),this);
+	action->setCheckable(true);
+	action->setChecked(true);
+	action->setStatusTip(tr("Show the universe origin"));
+	connect(action, SIGNAL(toggled(bool)), mFGView, SLOT(toggleOrigin(bool)));
+	viewMenu->addAction(action);
+	//viewToolbar->addAction(action);
+
+	action = new QAction(tr("&Ground"),this);
+	action->setCheckable(true);
+	action->setChecked(true);
+	action->setStatusTip(tr("Show the ground plane"));
+	connect(action, SIGNAL(toggled(bool)), mFGView, SLOT(toggleGround(bool)));
+	viewMenu->addAction(action);
+	//viewToolbar->addAction(action);
+
+	action = new QAction(tr("&NodeAxes"),this);
+	action->setCheckable(true);
+	action->setChecked(true);
+	action->setStatusTip(tr("Show node axes"));
+	connect(action, SIGNAL(toggled(bool)), mFGView, SLOT(toggleShowNodeAxes(bool)));
+	viewMenu->addAction(action);
+	//viewToolbar->addAction(action);
+
+	action = new QAction(tr("&Lighting"),this);
+	action->setCheckable(true);
+	action->setChecked(true);
+	action->setStatusTip(tr("Enable lighting"));
+	connect(action, SIGNAL(toggled(bool)), mFGView, SLOT(toggleLighting(bool)));
+	viewMenu->addAction(action);
+	//viewToolbar->addAction(action);
+
+	// Rendering mode..
+	QAction* setSmooth = new QAction(tr("&Smooth"),this);
+	QAction* setFlat = new QAction(tr("&Flat"),this);
+	QAction* setWire = new QAction(tr("&Wire"),this);
+	QAction* setPoints = new QAction(tr("&Points"),this);
+	QAction* setTextured = new QAction(tr("&Textured"),this);
+	QAction* setPhong = new QAction(tr("P&hong"),this);
+	connect(setSmooth, SIGNAL(triggered()), mFGView, SLOT(setDrawSmooth()));
+	connect(setFlat, SIGNAL(triggered()), mFGView, SLOT(setDrawFlat()));
+	connect(setWire, SIGNAL(triggered()), mFGView, SLOT(setDrawWire()));
+	connect(setPoints, SIGNAL(triggered()), mFGView, SLOT(setDrawPoints()));
+	connect(setTextured, SIGNAL(triggered()), mFGView, SLOT(setDrawTextured()));
+	connect(setPhong, SIGNAL(triggered()), mFGView, SLOT(setDrawPhong()));
+
+	setSmooth->setCheckable(true);
+	setFlat->setCheckable(true);
+	setWire->setCheckable(true);
+	setPoints->setCheckable(true);
+	setTextured->setCheckable(true);
+	setPhong->setCheckable(true);
+
+	QActionGroup* drawModeGroup = new QActionGroup(this);
+	drawModeGroup->addAction(setSmooth);
+	drawModeGroup->addAction(setFlat);
+	drawModeGroup->addAction(setWire);
+	drawModeGroup->addAction(setPoints);
+	drawModeGroup->addAction(setTextured);
+	drawModeGroup->addAction(setPhong);
+	setSmooth->setChecked(true);
+
+	viewMenu->addSeparator()->setText(tr("Draw Mode"));
+	viewMenu->addAction(setSmooth);
+	viewMenu->addAction(setFlat);
+	viewMenu->addAction(setWire);
+	viewMenu->addAction(setPoints);
+	viewMenu->addAction(setTextured);
+	viewMenu->addAction(setPhong);
 }
