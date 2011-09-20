@@ -46,14 +46,15 @@ FGView::FGView(QWidget *parent)
 	mGround = true;
 	mShowNodeAxes = true;
 	mEnableLighting = true;
-	mNumberSubdivs = 0;
-	mMeshMode = MM_FLAT;
+	mNumberSubdivs = 1;
+	mMeshMode = MM_SMOOTH;
 	mColourMode = fg::GLRenderer::COLOUR_NONE;
 
 	// theme...
+	mBackgroundColor = QColor("#272727");
 
-	qtGreen = QColor::fromCmykF(0.40, 0.0, 1.0, 0.0);
-	qtPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
+	// qtGreen = QColor::fromCmykF(0.40, 0.0, 1.0, 0.0);
+	// qtPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
 }
 
 FGView::~FGView()
@@ -110,9 +111,8 @@ void FGView::setZRotation(int angle)
 
 void FGView::initializeGL()
 {
-	qglClearColor(qtPurple.dark());
+	qglClearColor(mBackgroundColor);
 
-	glClearColor(0, 0, 0, 1);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_NORMALIZE);

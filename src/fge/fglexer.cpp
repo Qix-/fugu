@@ -13,27 +13,37 @@ FGLexer::~FGLexer(){
 
 }
 
-/*
- * <LexerType name="lua" desc="Lua" ext="">
-            <WordsStyle name="DEFAULT" styleID="0" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" fontSize="" />
-            <WordsStyle name="COMMENT" styleID="1" fgColor="008000" bgColor="FFFFFF" fontName="" fontStyle="0" fontSize="" />
-            <WordsStyle name="COMMENT LINE" styleID="2" fgColor="008000" bgColor="FFFFFF" fontName="" fontStyle="0" fontSize="" />
-            <WordsStyle name="COMMENT DOC" styleID="3" fgColor="008080" bgColor="FFFFFF" fontName="" fontStyle="0" fontSize="" />
-            <WordsStyle name="LITERALSTRING" styleID="8" fgColor="95004A" bgColor="FFFFFF" fontName="" fontStyle="0" fontSize="" />
-            <WordsStyle name="PREPROCESSOR" styleID="9" fgColor="804000" bgColor="FFFFFF" fontName="" fontStyle="0" fontSize="" />
-            <WordsStyle name="INSTRUCTION WORD" styleID="5" fgColor="0000FF" bgColor="FFFFFF" fontName="" fontStyle="1" fontSize="" keywordClass="instre1" />
-            <WordsStyle name="NUMBER" styleID="4" fgColor="FF8000" bgColor="FFFFFF" fontName="" fontStyle="0" fontSize="" />
-            <WordsStyle name="STRING" styleID="6" fgColor="808080" bgColor="FFFFFF" fontName="" fontStyle="0" fontSize="" />
-            <WordsStyle name="CHARACTER" styleID="7" fgColor="808080" bgColor="FFFFFF" fontName="" fontStyle="0" fontSize="" />
-            <WordsStyle name="OPERATOR" styleID="10" fgColor="000080" bgColor="FFFFFF" fontName="" fontStyle="1" fontSize="" />
-            <WordsStyle name="FUNC1" styleID="13" fgColor="0080C0" bgColor="FFFFFF" fontName="" fontStyle="1" fontSize="" keywordClass="instre2" />
-            <WordsStyle name="FUNC2" styleID="14" fgColor="8000FF" bgColor="FFFFFF" fontName="" fontStyle="1" fontSize="" keywordClass="type1" />
-            <WordsStyle name="FUNC3" styleID="15" fgColor="0000A0" bgColor="FFFFFF" fontName="" fontStyle="3" fontSize="" keywordClass="type2" />
- *
- *
- */
-
 QColor FGLexer::defaultColor (int style) const {
+
+	switch (style){
+		case Default:
+		case Identifier:
+			return QColor("#c8c8c8"); break;
+		case Comment:
+		case LineComment:
+			return QColor("#959595"); break;
+		case Number: return QColor("#c8c8c8"); break;
+		case Keyword: return QColor("#f27000"); break;
+		case String:
+		case Character: return QColor("#f27000"); break;
+		case LiteralString: return QColor("#f27000"); break;
+		case Preprocessor: return QColor("#804000"); break;
+		case Operator: return QColor("#c8c8c8"); break;
+		case UnclosedString: return QColor("#fc0000"); break;
+		case BasicFunctions:
+		case StringTableMathsFunctions:
+		case CoroutinesIOSystemFacilities: return QColor("#f27000"); break;
+		case KeywordSet5:
+		case KeywordSet6:
+		case KeywordSet7:
+		case KeywordSet8:
+		default:
+			return QColor("#c8c8c8"); break;
+	}
+
+
+	// notepad++ style
+	/*
 	switch (style){
 		case Default:
 		case Identifier:
@@ -59,6 +69,7 @@ QColor FGLexer::defaultColor (int style) const {
 		default:
 			return Qt::black; break;
 	}
+	*/
 }
 
 bool FGLexer::defaultEolFill (int style) const {
@@ -73,5 +84,5 @@ QFont FGLexer::defaultFont (int style) const {
 }
 
 QColor FGLexer::defaultPaper (int style) const {
-	return Qt::white;
+	return QColor("#272727"); // Qt::white;
 }

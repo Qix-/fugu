@@ -33,6 +33,7 @@ public slots:
 	void load(); // load the current script
 	void unload(); // unload the current universe
 
+	void togglePlay(bool);
 	void play();
 	void pause();
 	void step();
@@ -53,6 +54,7 @@ private:
 	void setupFileMenu();
 	void setupEditMenu();
 	void setupHelpMenu();
+	void setupSimulationControls();
 
 	// text editors
 	QTabWidget* mEditors;
