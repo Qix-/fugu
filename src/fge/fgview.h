@@ -50,8 +50,8 @@ private:
 	int yRot;
 	int zRot;
 	QPoint lastPos;
-	QColor qtGreen;
-	QColor qtPurple;
+
+	QColor mBackgroundColor;
 
 	// Camera information
 	float mZoom;

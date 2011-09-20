@@ -46,11 +46,11 @@ QT4_WRAP_CPP(MOC_SRC ${MOC_HDR})
 FILE(GLOB HEADERS "*.h")
 FILE(GLOB HEADER_INC "*.inc")
 
-add_executable(fge ${SRC} ${MOC_SRC} ${HEADERS} ${HEADER_INC})
-target_link_libraries(fge ${ALL_LIBS}) 
+add_executable(fugu ${SRC} ${MOC_SRC} ${HEADERS} ${HEADER_INC})
+target_link_libraries(fugu ${ALL_LIBS}) 
 
 # install fgv into bin
-install(TARGETS fge DESTINATION .)
+install(TARGETS fugu DESTINATION .)
 
 if(WIN32)
 	file(COPY "${BASE_DIR}/lib/msw/AntTweakBar.dll" DESTINATION ${CMAKE_INSTALL_PREFIX})

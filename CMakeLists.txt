@@ -72,7 +72,7 @@ add_subdirectory(src/fgo)
 #add_subdirectory(src/misc/james)
 #add_subdirectory(src/tests)
 if(WIN32) # ben's test code
-	#	add_subdirectory(src/fge)
+	add_subdirectory(src/fge)
 # add_subdirectory(src/misc/ben)
 # add_subdirectory(src/misc/vcgtests)
 endif(WIN32)

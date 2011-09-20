@@ -10,17 +10,40 @@ MainWindow::MainWindow(QWidget *parent)
 ,mUniverse(NULL)
 ,mSimulationTimer(NULL)
 {
+	QApplication::setStyle(new QCleanlooksStyle);
+
 	setWindowTitle(tr("fugu"));
 
 	setupFileMenu();
 	setupEditMenu();
+	setupSimulationControls();
 	setupHelpMenu();
 
-	mEditors = new QTabWidget();
+	QWidget *container = new QWidget;
+	// container->setStyleSheet("background: #101010;");
+	// qlineargradient( x1: 0, y1: 0, x2: 1, y2"	": 0, stop: 0 black, stop: 1 white);");
+
+	QHBoxLayout *layout = new QHBoxLayout(container);
+	layout->setContentsMargins(0, 0, 0, 0);
+
+	mEditors = new QTabWidget(container);
+	mEditors->setMinimumSize(100,100);
+	layout->addWidget(mEditors);
 	// mEditors->setTabsClosable(true);
-	mEditors->setDocumentMode(true);
+	mEditors->setDocumentMode(false);
 	mEditors->setMovable(true);
-	mEditors->setUsesScrollButtons(false);
+	mEditors->setUsesScrollButtons(true);
+
+	//mEditors->
+	/*
+	setStyleSheet(
+	      "QTabBar::tab { background: gray; color: white; padding: 10px; } "
+	      "QTabBar::tab:selected { background: lightgray; } "
+	      "QTabWidget::pane { border: 0; } "
+	      "QWidget { background: lightgray; } ");
+	      */
+
+
 
 	mFGView = new FGView(this);
 
@@ -30,9 +53,14 @@ MainWindow::MainWindow(QWidget *parent)
 	*/
 
 	QSplitter* frame = new QSplitter();
-	frame->addWidget(mEditors);
+	frame->addWidget(container);
 	frame->addWidget(mFGView);
 	setCentralWidget(frame);
+
+	QFile stylesheet("fgestyle.css");
+	if (stylesheet.open(QFile::ReadOnly | QFile::Text)){
+		setStyleSheet(stylesheet.readAll());
+	}
 
 	/*
 	QDockWidget *dock = new QDockWidget(tr("Editors"), this);
@@ -56,8 +84,9 @@ MainWindow::MainWindow(QWidget *parent)
 	mSimulationTimer = new QTimer(this);
 	connect(mSimulationTimer, SIGNAL(timeout()), this, SLOT(simulateOneStep()));
 
+	newEditor(new QFile("../scripts/ben/aorta.lua"));
+
 	load();
-	play();
 }
 
 void MainWindow::about()
@@ -168,6 +197,11 @@ void MainWindow::unload(){
 	}
 }
 
+void MainWindow::togglePlay(bool doplay){
+	if (doplay) play();
+	else pause();
+}
+
 void MainWindow::play(){
 	if (mSimulationMode==SM_ERROR) {
 		// don't change mode
@@ -206,8 +240,9 @@ void MainWindow::step(){
 		if (mSimulationTimer!=NULL){
 			mSimulationTimer->stop();
 		}
-		simulateOneStep();
 		mSimulationMode = SM_STEPPING;
+		simulateOneStep();
+		mSimulationMode = SM_PAUSED;
 	}
 }
 
@@ -220,11 +255,22 @@ void MainWindow::reload(){
 	}
 
 	mSimulationMode = SM_RELOADING;
+	load();
+
 }
 
 void MainWindow::simulateOneStep(){
 	if (mUniverse!=NULL){
-		mUniverse->update(0.01);
+
+		try {
+			mUniverse->update(0.01);
+		}
+		catch (std::runtime_error& e){
+			std::cerr << "ERROR: " << e.what() << "\n";
+			unload();
+			mSimulationMode = SM_ERROR;
+		}
+
 		mFGView->update();
 	}
 }
@@ -270,10 +316,12 @@ bool MainWindow::saveFile(QsciScintilla* editor, QString fileName){
 
 void MainWindow::newEditor(QFile* file)
 {
+	/*
 	QFont font;
 	font.setFamily("Courier");
 	font.setFixedPitch(true);
 	font.setPointSize(10);
+	*/
 
 	// text editor
 	// see the Qt CodeEditor example for line numbers, and line highlighting
@@ -294,6 +342,10 @@ void MainWindow::newEditor(QFile* file)
 
 	editor->setWrapMode(QsciScintilla::WrapCharacter);
 
+	editor->setCaretForegroundColor(QColor("#959595"));
+	editor->setMarginsBackgroundColor(QColor("#272727"));
+	editor->setMarginsForegroundColor(QColor("#959595"));
+
 	if (file==NULL){
 		// Open a blank editor
 		int t = mEditors->addTab(editor, "unnamed");
@@ -309,6 +361,7 @@ void MainWindow::newEditor(QFile* file)
 			editor->setText(file->readAll());
 			mFileNames.insert(editor,file->fileName());
 		}
+		delete file;
 	}
 	mEditors->setCurrentWidget(editor);
 
@@ -354,4 +407,40 @@ void MainWindow::setupHelpMenu()
 	helpMenu->addAction(tr("&Reference"), this, SLOT(about()));
 	helpMenu->addAction(tr("&About"), this, SLOT(about()));
 	// helpMenu->addAction(tr("About &Qt"), qApp, SLOT(aboutQt()));
+}
+
+void MainWindow::setupSimulationControls() {
+	QMenu* simulationMenu = new QMenu(tr("&Simulation"), this);
+	menuBar()->addMenu(simulationMenu);
+
+	QToolBar* simulationToolbar = new QToolBar(tr("&Simulation"), this);
+	addToolBar(simulationToolbar);
+
+	QIcon playIcon("../icons/control_play.png");
+	playIcon.addPixmap(QPixmap("../icons/control_pause.png"),QIcon::Normal,QIcon::On);
+	playIcon.addPixmap(QPixmap("../icons/control_play.png"),QIcon::Normal,QIcon::Off);
+
+	QAction* simulate = new QAction(playIcon, tr("&Play/Pause"), this);
+	simulate->setCheckable(true);
+	simulate->setStatusTip(tr("Start/Stop the simulation"));
+	connect(simulate, SIGNAL(toggled(bool)), this, SLOT(togglePlay(bool)));
+
+
+
+	QAction* restart = new QAction(QIcon("../icons/control_start.png"), tr("&Reload"), this);
+	restart->setStatusTip(tr("Reload the simulation"));
+	connect(restart, SIGNAL(triggered()), this, SLOT(reload()));
+
+
+	QAction* stepAction = new QAction(QIcon("../icons/control_step.png"), tr("&Step"), this);
+	stepAction->setStatusTip(tr("Perform one simulation step"));
+	connect(stepAction, SIGNAL(triggered()), this, SLOT(step()));
+
+	simulationToolbar->addAction(restart);
+	simulationToolbar->addAction(simulate);
+	simulationToolbar->addAction(stepAction);
+
+	simulationMenu->addAction(simulate);
+	simulationMenu->addAction(restart);
+	simulationMenu->addAction(stepAction);
 }
