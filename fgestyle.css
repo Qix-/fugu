@@ -1,0 +1,168 @@
+/*
+	zbrush-like palette
+	darkerbg: #101010
+	background: #272727	
+	lighterbg: #3f3f3f
+	inactive font: #959595
+	active font: #c8c8c8	
+	orange: #f27000
+*/
+
+QWidget {
+	background: #272727;
+	background-color: #272727;
+	color: #c8c8c8;
+	border: 0;
+}
+
+QTabBar {
+	background-color: #272727;
+	border: 0;
+}
+
+QTabBar::tab { 
+	background-color: #272727;
+	color: #959595;	 
+	padding: 6px;
+	/* border: 1px solid black; */ 
+	
+	border: 0; /* px solid #C4C4C3; */
+	 
+	border-bottom: 2px solid #272727; /* same as the pane color */
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	min-width: 8ex;
+}
+ 
+QTabBar::tab:selected, QTabBar::tab:hover {
+	background-color: #3f3f3f;
+	color: #c8c8c8;	
+}
+
+QTabWidget::pane { 
+	border: 0; 
+	border-top: 2px solid #272727;
+}
+
+QMenu {
+     background-color: #272727; /* sets background of the menu */
+     color: #c8c8c8;
+     border: 1px solid black;     
+ }
+
+ QMenu::item {
+     /* sets background of menu item. set this to something non-transparent
+         if you want menu color and menu item color to be different */
+      background-color: transparent; 
+      /* background-color: black; */
+ }
+
+ QMenu::item:selected { /* when user selects item using mouse or keyboard */
+     background-color: #3f3f3f;
+ }
+ 
+ 
+/* Customize the menu bar. */
+QMenuBar {
+	background-color: #272727;
+	color: #c8c8c8;
+	
+    border-image: none;
+    border-style: none;
+    padding: 2px;
+    border-bottom: 1px solid black;
+}
+
+QMenuBar::item {
+    background-color: transparent;
+    
+    /* border: 1px solid black; */
+    /* padding: 4px; */
+}
+
+QMenuBar::item:selected {
+    background-color: #3f3f3f;
+}
+
+QPushButton {
+     border-style: outset;
+     border-width: 1px;
+     border-radius: 6px;
+     border-color: black;
+     font: bold;
+     min-width: 10em;
+     padding: 3px;
+ }
+ 
+ QPushButton:pressed {
+     background-color: #3f3f3f;
+     border-style: inset;
+ }
+ 
+ QScrollBar {
+ 	background: #272727;
+ }
+ 
+ QScrollBar:vertical {
+      background: #272727;      
+      width: 10px;
+      margin: 10px 0 10px 0;
+  }
+  
+  QScrollBar::handle:vertical {
+      background: #3f3f3f; 
+      min-height: 5px;
+  }
+  
+  QScrollBar::handle:vertical:pressed {
+      background: #959595;
+  }
+  
+  QScrollBar::add-line:vertical {      
+      background: black;
+      border: 2px solid #3f3f3f;
+      height: 6px;
+      subcontrol-position: bottom;
+      subcontrol-origin: margin;
+  }
+
+  QScrollBar::sub-line:vertical {      
+      background: black;
+      border: 2px solid #3f3f3f;
+      height: 6px;
+      subcontrol-position: top;
+      subcontrol-origin: margin;
+  }
+  
+  QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {  	 
+      width: 0px;
+      height: 0px;
+      background: none;
+  }
+
+  QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+      background: none;
+  }
+  
+  
+  
+  
+  
+  
+   QSplitter::handle {
+     image: none; /* url(images/splitter.png); */
+     background: transparent;
+ }
+
+ QSplitter::handle:horizontal {
+     width: 8px;
+ }
+
+ QSplitter::handle:vertical {
+     height: 8px;
+ }
+
+ QSplitter::handle:pressed, QSplitter::handle:hover {
+     image: none; /* url(images/splitter_pressed.png); */
+     background: #3f3f3f;
+ }
