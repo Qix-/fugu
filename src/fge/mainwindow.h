@@ -54,6 +54,7 @@ private:
 	void setupFileMenu();
 	void setupEditMenu();
 	void setupHelpMenu();
+	void setupViewMenu();
 	void setupSimulationControls();
 
 	// text editors

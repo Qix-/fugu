@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <QtOpenGL>
+#include <QGLShaderProgram>
 
 #include <cmath>
 #include <cstring>
@@ -55,6 +56,7 @@ FGView::FGView(QWidget *parent)
 
 	// qtGreen = QColor::fromCmykF(0.40, 0.0, 1.0, 0.0);
 	// qtPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
+
 }
 
 FGView::~FGView()
@@ -109,6 +111,58 @@ void FGView::setZRotation(int angle)
 	}
 }
 
+void FGView::toggleOrigin(bool show){
+	mOrigin = show;
+	update();
+}
+
+void FGView::toggleGround(bool show){
+	mGround = show;
+	update();
+}
+
+void FGView::toggleShowNodeAxes(bool show){
+	mShowNodeAxes = show;
+	update();
+}
+
+void FGView::toggleLighting(bool on){
+	mEnableLighting = on;
+	update();
+}
+
+void FGView::setNumberOfSubdivs(int num){
+	mNumberSubdivs = num;
+	update();
+}
+
+void FGView::setDrawSmooth(){
+	mMeshMode = MM_SMOOTH;
+	update();
+}
+
+void FGView::setDrawFlat(){
+	mMeshMode = MM_FLAT;
+	update();
+}
+
+void FGView::setDrawWire(){
+	mMeshMode = MM_WIRE;
+	update();
+}
+void FGView::setDrawPoints(){
+	mMeshMode = MM_POINTS;
+	update();
+}
+void FGView::setDrawTextured(){
+	mMeshMode = MM_TEXTURED;
+	update();
+}
+void FGView::setDrawPhong(){
+	mMeshMode = MM_PHONG;
+	update();
+}
+
 void FGView::initializeGL()
 {
 	qglClearColor(mBackgroundColor);
@@ -131,8 +185,26 @@ void FGView::initializeGL()
 	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
-
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	// load the shaders
+	mPhongShader = new QGLShaderProgram(context());
+	QFile phongV("../assets/shaders/phong.vert");
+	QFile phongF("../assets/shaders/phong.frag");
+	if (phongV.open(QFile::ReadOnly | QFile::Text)
+			and
+			phongF.open(QFile::ReadOnly | QFile::Text))
+	{
+		mPhongShader->addShaderFromSourceCode(QGLShader::Vertex, phongV.readAll());
+		mPhongShader->addShaderFromSourceCode(QGLShader::Fragment, phongF.readAll());
+		mPhongShader->link();
+		// mPhongShader->bind();
+
+		mPhongShader->setUniformValue("shininess",(GLfloat)5);
+	}
+	else {
+		std::cerr << "Could load ../assets/shaders/phong.vert or phong.frag\n";
+	}
 }
 
 void FGView::paintGL()
@@ -163,6 +235,12 @@ void FGView::paintGL()
 		if (mGround) drawGroundPlane();
 
 		if (mUniverse!=NULL){
+
+			if (mPhongShader!=NULL and mMeshMode==MM_PHONG){
+				mPhongShader->bind();
+				mPhongShader->setUniformValue("shininess",(GLfloat)5);
+			}
+
 			foreach(shared_ptr<fg::MeshNode> m, mUniverse->meshNodes()){
 				// std::cout << m << "\n" << *m << "\n\n";
 
@@ -180,7 +258,7 @@ void FGView::paintGL()
 
 				fg::GLRenderer::RenderMeshMode rmm;
 				switch (mMeshMode){
-					case MM_SMOOTH: rmm = fg::GLRenderer::RENDER_SMOOTH; break;
+					case MM_SMOOTH: case MM_PHONG: rmm = fg::GLRenderer::RENDER_SMOOTH; break;
 					case MM_FLAT: rmm = fg::GLRenderer::RENDER_FLAT; break;
 					case MM_WIRE: rmm = fg::GLRenderer::RENDER_WIRE; break;
 					case MM_POINTS: rmm = fg::GLRenderer::RENDER_VERTICES; break;
@@ -193,6 +271,10 @@ void FGView::paintGL()
 				}
 
 				// clone should get garbage collected...
+			}
+
+			if (mPhongShader!=NULL){
+				mPhongShader->release();
 			}
 
 			if (mShowNodeAxes){
