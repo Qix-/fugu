@@ -15,6 +15,7 @@ class QTabWidget;
 class QFile;
 class QString;
 class QsciScintilla;
+class ConsoleWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -56,6 +57,7 @@ private:
 	void setupHelpMenu();
 	void setupViewMenu();
 	void setupSimulationControls();
+	void setupConsoleWidget();
 
 	// text editors
 	QTabWidget* mEditors;
@@ -65,7 +67,7 @@ private:
 	FGView* mFGView;
 
 	// console
-	// QTextEdit* mConsole;
+	ConsoleWidget* mConsoleWidget;
 
 	// Current simulation state ...
 	enum SimulationMode {SM_PLAYING, SM_PAUSED, SM_STEPPING, SM_RELOADING, SM_ERROR};

@@ -1,9 +1,11 @@
+#include "mainwindow.h"
+
 #include <QtGui>
 #include <Qsci/qsciscintilla.h>
 
 #include "fglexer.h"
+#include "consolewidget.h"
 
-#include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
@@ -21,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
 	setupSimulationControls();
 	setupViewMenu();
 	setupHelpMenu();
+	setupConsoleWidget();
 
 	QWidget *container = new QWidget;
 	// container->setStyleSheet("background: #101010;");
@@ -53,9 +56,14 @@ MainWindow::MainWindow(QWidget *parent)
 	layout()->addWidget(mEditors, BorderLayout::West);
 	*/
 
-	QSplitter* frame = new QSplitter();
-	frame->addWidget(container);
-	frame->addWidget(mFGView);
+	QSplitter* subframe = new QSplitter();
+	subframe->addWidget(container);
+	subframe->addWidget(mFGView);
+
+	QSplitter* frame = new QSplitter(Qt::Vertical);
+	frame->addWidget(subframe);
+	frame->addWidget(mConsoleWidget);
+
 	setCentralWidget(frame);
 
 	QFile stylesheet("../assets/fgestyle.css");
@@ -170,6 +178,8 @@ void MainWindow::load(){
 		delete mUniverse;
 		mUniverse = NULL;
 		// TODO: make sure old slider values carry over into new state
+
+		// mFGView->repaint();
 	}
 
 	try {
@@ -179,6 +189,7 @@ void MainWindow::load(){
 		mUniverse->loadScript("ben/aorta");
 
 		mFGView->setUniverse(mUniverse);
+		// mFGView->repaint();
 	}
 	catch (std::runtime_error& e){
 		mSimulationMode = SM_ERROR;
@@ -338,7 +349,7 @@ void MainWindow::newEditor(QFile* file)
 	editor->setTabWidth(2);
 	editor->setAutoIndent(true);
 
-	editor->setMarginWidth(1,40);
+	editor->setMarginWidth(1,QString("999"));
 	editor->setMarginLineNumbers(1,true);
 
 	editor->setWrapMode(QsciScintilla::WrapCharacter);
@@ -523,4 +534,9 @@ void MainWindow::setupViewMenu(){
 	viewMenu->addAction(setPoints);
 	viewMenu->addAction(setTextured);
 	viewMenu->addAction(setPhong);
+}
+
+void MainWindow::setupConsoleWidget(){
+	mConsoleWidget = new ConsoleWidget();
+
 }
