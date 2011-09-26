@@ -16,6 +16,7 @@ set(SRC main.cpp
 	mainwindow.cpp
 	fgview.cpp
 	fglexer.cpp
+	consolewidget.cpp
 	)
 
 set(SRCS ${SRC})
@@ -39,6 +40,7 @@ SET(MOC_HDR
   mainwindow.h
   highlighter.h
   fgview.h
+  consolewidget.h
 )
 
 QT4_WRAP_CPP(MOC_SRC ${MOC_HDR})

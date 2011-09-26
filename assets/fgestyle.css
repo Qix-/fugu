@@ -12,7 +12,7 @@ QWidget {
 	background: #272727;
 	background-color: #272727;
 	color: #c8c8c8;
-	border: 0;
+	border: 0;	
 }
 
 QTabBar {
@@ -204,8 +204,49 @@ QPushButton {
  	background: #272727;
  }
  
+ QScrollBar:horizontal {
+ 	height: 10px;
+    margin: 0 10px 0 10px;
+ }
+ 
+  QScrollBar::handle:horizontal {
+      background: #3f3f3f; 
+      min-width: 5px;
+  }
+  
+  QScrollBar::handle:horizontal:pressed {
+      background: #959595;
+  }
+  
+  QScrollBar::add-line:horizontal {      
+      background: black;
+      border: 2px solid #3f3f3f;
+      width: 6px;
+      subcontrol-position: right;
+      subcontrol-origin: margin;
+  }
+
+  QScrollBar::sub-line:horizontal {      
+      background: black;
+      border: 2px solid #3f3f3f;
+      width: 6px;
+      subcontrol-position: left;
+      subcontrol-origin: margin;
+  }
+  
+  QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {  	 
+      width: 0px;
+      height: 0px;
+      background: none;
+  }
+
+  QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+      background: none;
+  }
+  
+  
  QScrollBar:vertical {
-      background: #272727;      
+      /* background: #272727; */      
       width: 10px;
       margin: 10px 0 10px 0;
   }
@@ -250,22 +291,25 @@ QPushButton {
   
   
   
-   QSplitter::handle {
-     image: none; /* url(images/splitter.png); */
-     background: transparent;
- }
+QSplitter::handle {
+	image: none; /* url(images/splitter.png); */
+	background: transparent;	
+}
 
  QSplitter::handle:horizontal {
-     width: 8px;
+     width: 4px;
+     border-right: 2px dotted #3f3f3f;
  }
 
  QSplitter::handle:vertical {
-     height: 8px;
+     height: 4px;
+     border-bottom: 2px dotted #3f3f3f;
  }
 
  QSplitter::handle:pressed, QSplitter::handle:hover {
      image: none; /* url(images/splitter_pressed.png); */
-     background: #3f3f3f;
+     /* background: #3f3f3f; */
+     border-color: #f27000;
  }
  
  

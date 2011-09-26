@@ -18,8 +18,8 @@ public:
 	QSize minimumSizeHint() const;
 	QSize sizeHint() const;
 
-	void setUniverse(fg::Universe* u){mUniverse = u;}
-	void unsetUniverse(){mUniverse = NULL;}
+	void setUniverse(fg::Universe* u);
+	void unsetUniverse();
 
 public slots:
 	void setXRotation(int angle);
