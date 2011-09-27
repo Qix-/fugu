@@ -54,6 +54,11 @@ Vec3 MorphCrossSec::getDerivativeV( double u, double v ) const
     return Vec3(0.,0.,0.);
 }
 
+double MorphCrossSec::unNormalise( double u, double v ) const
+{
+	return getCrossSectionInterp( v ).unNormalise( u );
+}
+
 vector<Vec3> MorphCrossSec::getCrossSection( double v, double scale ) const
 {
 	int n = -1;

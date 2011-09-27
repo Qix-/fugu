@@ -12,8 +12,8 @@
 #include "fg/functions.h"
 #include "fgv/trackball.h"
 
-#include "fg/lincarrier.h"
-#include "fg/pbezcarrier.h"
+#include "fg/gc/lincarrier.h"
+#include "fg/gc/pbezcarrier.h"
 #include "fg/glrenderer.h"
 
 // opengl viz, hack

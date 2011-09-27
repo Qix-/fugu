@@ -128,6 +128,15 @@ namespace fg {
             return data;
         }
 
+		template< class T >
+		double Interpolator<T>::unNormalise( double t ) const
+		{
+			std::cout << "Here\n";
+			std::cout << "t = " << t << "\n";
+			std::cout << "cps = " << getNumControlPoints() << "\n";
+			return t * (getNumControlPoints() - 1);
+		}
+
         template< class T >
         std::vector<T> Interpolator<T>::getApproxVector( int &n ) const
         {

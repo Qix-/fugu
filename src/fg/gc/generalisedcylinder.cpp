@@ -67,9 +67,17 @@ namespace fg {
             }
         }
 
+		double GeneralisedCylinder::unNormalise( double u, double v ) const
+		{
+			double csv = getCrossSectionV( v );
+			std::cout << "In gc, u = " << u << "\n";
+			return mCrossSection.unNormalise( u, csv );
+		}
+
         Vec3 GeneralisedCylinder::getPosition( double u, double v ) const
         {
 			double csv = getCrossSectionV( v );
+
             // Position on cross section
             Vec3 cs = mCrossSection.getPosition( u, csv ) * mScale.getPosition( getScaleV( v ) );
             // Carriers frame rotation
@@ -82,6 +90,47 @@ namespace fg {
             // Put it all together
             return mCarrier.getInterpolator()->getPosition( v ) + ar * cr * cs;
         }
+
+		Vec3 GeneralisedCylinder::getDerivativeU( double u, double v ) const
+		{
+			double t = 1E-9;
+			Vec3 n1 = getPosition( u - t, v );
+			Vec3 n2 = getPosition( u + t, v );
+
+			return (n2 - n1) * 5E8;
+		}
+
+		Vec3 GeneralisedCylinder::getDerivativeV( double u, double v ) const
+		{
+			double t = 1E-9;
+			Vec3 n1 = getPosition( u, v - t );
+			Vec3 n2 = getPosition( u, v + t );
+
+			return (n2 - n1) * 5E8;
+		}
+
+		Vec3 GeneralisedCylinder::getNorm( double u, double v ) const
+		{
+			return getDerivativeU( u, v ).cross( getDerivativeV( u, v ) );
+		}
+
+		Vec3 GeneralisedCylinder::getNormU( double u, double v ) const
+		{
+			double t = 1E-9;
+			Vec3 n1 = getNorm( u - t, v );
+			Vec3 n2 = getNorm( u + t, v );
+		
+			return (n2 - n1) * 5E8;
+		}
+		
+		Vec3 GeneralisedCylinder::getNormV( double u, double v ) const
+		{
+			double t = 1E-9;
+			Vec3 n1 = getNorm( u, v - t );
+			Vec3 n2 = getNorm( u, v + t );
+		
+			return (n2 - n1) * 5E8;
+		}
 
         Quat GeneralisedCylinder::orient( double v ) const
         {

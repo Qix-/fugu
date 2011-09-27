@@ -37,5 +37,10 @@ namespace fg {
             return vector<Vec3>( ret );
         }
 
+		double CrossSectionCircular::unNormalise( double u, double v ) const
+		{
+			return u * 2. * M_PI;
+		}
+
     }
 }

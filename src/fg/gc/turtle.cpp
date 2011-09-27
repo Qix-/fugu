@@ -185,6 +185,8 @@ namespace fg {
 
         void Turtle::endCylinder( int n )
         {
+			mEndCaps.push_back( 0 );
+
 			mState.strips.push_back( n );
 
 			if (mState.scale > 0.)
@@ -345,5 +347,26 @@ namespace fg {
 			}
 			return mb.createMesh();
         }
+
+		int Turtle::getNumGC( )
+		{
+			return mCylinders.size( );
+		}
+
+        boost::shared_ptr< Mesh > Turtle::getMesh( int gc )
+        {
+			Mesh::MeshBuilder mb;
+
+			if( gc < 0 || gc > getNumGC() - 1 )
+				return mb.createMesh();
+
+            int cap = mCylinders[gc]->createMesh( mb );
+			mEndCaps[gc] = cap;
+
+			return mb.createMesh();
+        }
     }
 }
+
+
+

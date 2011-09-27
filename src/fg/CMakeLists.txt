@@ -34,6 +34,10 @@ set(SRC
 	gc/recsubdiv.cpp	
 	gc/scaleinterpcrosssec.cpp
 	gc/turtle.cpp	
+
+	gc/generalisedcylinderimpl.cpp
+	gc/frontpoly.cpp
+	gc/impltri.cpp
 	)
 
 set(HDRS
@@ -80,6 +84,10 @@ set(HDRS
 	gc/recsubdiv.h
 	gc/scaleinterpcrosssec.h
 	gc/turtle.h
+
+	gc/generalisedcylinderimpl.h
+	gc/frontpoly.h
+	gc/impltri.h
 	)
 
 set(INLS

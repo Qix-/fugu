@@ -43,6 +43,7 @@ namespace fg {
                 virtual Vec3 getPosition( double u, double v ) const;
                 virtual Vec3 getDerivativeU( double u, double v ) const;
                 virtual Vec3 getDerivativeV( double u, double v ) const;
+				virtual double unNormalise( double u, double v ) const;
 
                 virtual std::vector<Vec3> getCrossSection( double v, double scale = 1. ) const;
                 virtual PBezInterpDiv getCrossSectionInterp( double v ) const;

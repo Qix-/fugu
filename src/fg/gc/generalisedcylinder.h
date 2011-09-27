@@ -28,6 +28,12 @@ namespace fg {
 									 const Interpolator<double> &scale,
 									 const std::vector< std::pair<double,double> > &scaleDomains, const std::vector< int > &strips );
                 Vec3 getPosition( double u, double v ) const;
+				Vec3 getDerivativeU( double u, double v ) const;
+				Vec3 getDerivativeV( double u, double v ) const;
+				Vec3 getNorm( double u, double v ) const;
+				Vec3 getNormU( double u, double v ) const;
+				Vec3 getNormV( double u, double v ) const;
+				double unNormalise( double u, double v ) const;
                 int createMesh( Mesh::MeshBuilder &mb ) const;
 
             protected:

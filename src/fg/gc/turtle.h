@@ -49,6 +49,8 @@ namespace fg {
 				int endCrossSection();
 				Vec3 getPosition();
                 boost::shared_ptr<Mesh> getMesh( );
+				boost::shared_ptr<Mesh> getMesh( int gc );
+				int getNumGC( );
 
 				int getNumEndCaps() {
 					return mEndCaps.size();
@@ -59,7 +61,7 @@ namespace fg {
 					return mEndCaps[i];
 				}
 
-            protected:
+            //protected:
 				// The state
 				struct TurtleState
 				{

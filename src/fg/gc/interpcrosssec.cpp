@@ -46,6 +46,10 @@ namespace fg {
         {
             return Vec3( 0., 0., 0. );
         }
+		double InterpCrossSec::unNormalise( double u, double v ) const
+		{
+			return mInterpolator.unNormalise( u );
+		}
 
         vector<Vec3> InterpCrossSec::getCrossSection( double v, double scale ) const
         {

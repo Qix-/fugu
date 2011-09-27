@@ -56,6 +56,11 @@ namespace fg {
                  */
                 virtual T getPosition( double t ) const = 0;
 
+				/**
+				 * \brief Turns a normalised parameter into a non-normalised one.
+				 */
+				double unNormalise( double t ) const;
+
                 /**
                  *\brief  Gets the derivative along the curve for parameter value t.
                  */

@@ -382,6 +382,9 @@ namespace fg {
 
 		   .def("getNumEndCaps",&fg::gc::Turtle::getNumEndCaps)
 		   .def("getEndCap",&fg::gc::Turtle::getEndCap)
+
+		   .def("getNumGC",&fg::gc::Turtle::getNumGC)
+		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(int))&fg::gc::Turtle::getMesh)
 		];
 
 		return 0;
