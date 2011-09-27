@@ -134,7 +134,7 @@ void FGAPIENTRY GLRenderer::glutSolidCube( GLdouble dSize )
  *    The sign of n can be flipped to get the reverse loop
  */
 
-static void fghCircleTable(double **sint,double **cost,const int n)
+void GLRenderer::fghCircleTable(double **sint,double **cost,const int n)
 {
     int i;
 

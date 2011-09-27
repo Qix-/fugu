@@ -15,6 +15,12 @@ QWidget {
 	border: 0;	
 }
 
+QFrame {
+	margin: 0;
+	padding: 0;
+}
+
+
 QTabBar {
 	background-color: #272727;
 	border: 0;
@@ -297,13 +303,25 @@ QSplitter::handle {
 }
 
  QSplitter::handle:horizontal {
-     width: 4px;
-     border-right: 2px dotted #3f3f3f;
+     width: 8px;
+     /* border-right: 2px dotted #3f3f3f; */
+     
+    /* 
+     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+		stop: 0 #101010, stop: 1.0 #272727 ); */
+	background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+		stop: 0 #181818, 
+		stop: 1 #272727 );
+     
+     
  }
 
  QSplitter::handle:vertical {
-     height: 4px;
-     border-bottom: 2px dotted #3f3f3f;
+     height: 6px;
+     /* border-bottom: 2px dotted #3f3f3f; */
+     
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+		stop: 0 #181818, stop: 1.0 #272727 );
  }
 
  QSplitter::handle:pressed, QSplitter::handle:hover {

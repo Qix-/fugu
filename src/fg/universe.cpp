@@ -193,6 +193,25 @@ namespace fg {
 		}
 	}
 
+	/** \brief Immediately run the lua code passed in script.
+	 *
+	 * @param script A string containing the lua code to execute.
+	 */
+	void Universe::runScript(std::string script){
+		const char* buff = script.c_str();
+		luaL_loadbuffer(L, buff, script.length(), "line");
+		if (lua_pcall(L, 0, 0, 0)){
+			// an error has occurred
+			try {
+				error(lua_tostring(L, -1));
+			}
+			catch (std::runtime_error& e){
+				std::cerr << e.what();
+			}
+			lua_pop(L,1);
+		}
+	}
+
 	void Universe::addMesh(boost::shared_ptr<Mesh> m){
 		add(boost::shared_ptr<MeshNode>(new MeshNode(m)));
 

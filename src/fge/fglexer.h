@@ -11,7 +11,7 @@
  */
 class FGLexer: public QsciLexerLua {
 public:
-	FGLexer();
+	FGLexer(QColor bg = QColor("#272727"));
 	~FGLexer();
 
 	QColor defaultColor (int style) const;
@@ -22,6 +22,7 @@ public:
 protected:
 	QFont mFont;
 	QFont mBoldFont;
+	QColor mBackgroundColor;
 };
 
 #endif

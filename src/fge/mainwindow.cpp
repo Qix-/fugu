@@ -1,11 +1,12 @@
 #include "mainwindow.h"
 
+#include <iostream>
+
 #include <QtGui>
 #include <Qsci/qsciscintilla.h>
 
 #include "fglexer.h"
 #include "consolewidget.h"
-
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
@@ -16,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 	setWindowTitle(tr("fugu"));
 
+	setupConsoleWidget();
+
 	mFGView = new FGView(this);
 
 	setupFileMenu();
@@ -23,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent)
 	setupSimulationControls();
 	setupViewMenu();
 	setupHelpMenu();
-	setupConsoleWidget();
 
 	QWidget *container = new QWidget;
 	// container->setStyleSheet("background: #101010;");
@@ -56,13 +58,15 @@ MainWindow::MainWindow(QWidget *parent)
 	layout()->addWidget(mEditors, BorderLayout::West);
 	*/
 
-	QSplitter* subframe = new QSplitter();
+	QSplitter* subframe = new QSplitter(Qt::Vertical);
 	subframe->addWidget(container);
-	subframe->addWidget(mFGView);
+	subframe->addWidget(mConsoleWidget);
 
-	QSplitter* frame = new QSplitter(Qt::Vertical);
+
+	QSplitter* frame = new QSplitter();
 	frame->addWidget(subframe);
-	frame->addWidget(mConsoleWidget);
+	frame->addWidget(mFGView);
+
 
 	setCentralWidget(frame);
 
@@ -299,6 +303,23 @@ void MainWindow::redo(){
 	if (qw!=NULL){
 		static_cast<QsciScintilla*>(qw)->redo();
 	}
+}
+
+void MainWindow::runScript(QString code){
+	// TODO: pause the update timer, run the script, the re-run the update timer
+	if (mSimulationTimer->isActive()){
+		mSimulationTimer->stop();
+		if (mUniverse){
+			mUniverse->runScript(code.toStdString());
+		}
+		mSimulationTimer->start(mSimulationTimer->interval());
+	}
+	else {
+		if (mUniverse){
+			mUniverse->runScript(code.toStdString());
+		}
+	}
+
 }
 
 // Save the the editor's contents to the file fileName
@@ -538,5 +559,5 @@ void MainWindow::setupViewMenu(){
 
 void MainWindow::setupConsoleWidget(){
 	mConsoleWidget = new ConsoleWidget();
-
+	connect(mConsoleWidget, SIGNAL(emitCommand(QString)), this, SLOT(runScript(QString)));
 }
