@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 
 #include <iostream>
+#include "redirect.h"
 
 void outcallback( const char* ptr, std::streamsize count, void* console )
 {
@@ -57,6 +58,7 @@ ConsoleWidget::ConsoleWidget(QWidget *parent)
 
     mStdOutRedirector = new StdRedirector<>( std::cout, outcallback, mConsole );
     mStdErrRedirector = new StdRedirector<>( std::cerr, errcallback, mConsole );
+
 }
 
 ConsoleWidget::~ConsoleWidget()

@@ -46,6 +46,7 @@ public slots:
 	void redo();
 
 	void runScript(QString code);
+	void redirectStreams();
 private:
 
 	// Save the the editor's contents to the file fileName

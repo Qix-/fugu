@@ -17,6 +17,7 @@ set(SRC main.cpp
 	fgview.cpp
 	fglexer.cpp
 	consolewidget.cpp
+	redirect.cpp
 	)
 
 set(SRCS ${SRC})
