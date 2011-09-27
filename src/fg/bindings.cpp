@@ -75,6 +75,7 @@ namespace fg {
 
 		   def("lerp", &lerp<double, double>),
 		   def("lerp", &lerp<Vec3, double>),
+		   def("slerp", &slerp),
 
            def("mix", &mix<double, double>),
            def("clamp", &clamp<double>),
@@ -133,6 +134,7 @@ namespace fg {
 		   .def(const_self + other<fg::Vec3>())
 		   .def(const_self - other<fg::Vec3>())
 		   .def(const_self * double())
+		   .def(const_self * other<fg::Mat4>())
 		   .def(const_self / double())
 		   .def(-(const_self))
 

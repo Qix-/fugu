@@ -57,6 +57,12 @@ namespace fg {
 	 */
 	template <class T, typename Real> 
     T lerp(const T& a, const T& b, Real t);
+
+	/**
+	 * \brief spherical interpolation between two (normalised) vectors
+	 * \ingroup functions
+	 */
+	Vec3 slerp(const Vec3& a, const Vec3& b, double t);
     
 	/** 
 	 * \brief Mixes two values, "a" and "b" by amount "mixValue"
