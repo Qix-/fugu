@@ -76,6 +76,7 @@ namespace fg {
         static void renderAxes(double lengthOfAxes = 1);
         static void renderBone(Vec3 from, Vec3 to, double r = 0);
         static void renderArmature(const Armature& arm, bool alsoRenderInitialPose = false);
+        static void renderSkySphere(GLdouble radius, GLint slices, GLint stacks, Vec3 bottomColour, Vec3 horizonColour, Vec3 topColour);
 
         // GLUT primitives (implementation in glut_primitives.cpp)
         static void glutWireCube( GLdouble dSize );
@@ -86,6 +87,10 @@ namespace fg {
         static void glutWireCylinder(GLdouble radius, GLdouble height, GLint slices, GLint stacks);
         static void glutSolidCone( GLdouble base, GLdouble height, GLint slices, GLint stacks );
         static void glutWireCone( GLdouble base, GLdouble height, GLint slices, GLint stacks);
+
+	private:
+        // shared GLUT helpers..
+        static void fghCircleTable(double **sint,double **cost,const int n);
 	};
 }
 

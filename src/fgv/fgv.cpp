@@ -12,6 +12,7 @@
 #include <cmath>
 #include <string>
 #include <sstream>
+#include <iomanip>
 
 #define BOOST_FILESYSTEM_VERSION 3
 #include <boost/filesystem.hpp>
@@ -27,6 +28,9 @@ using namespace boost::filesystem;
 #include "fg/functions.h"
 #include "fg/glrenderer.h"
 #include "fg/util.h"
+#include "fg/mesh.h"
+#include "fg/meshimpl.h"
+#include "fg/exportmeshnode.h"
 
 #include "fgv/shader.h"
 #include "fgv/trackball.h"
@@ -57,6 +61,7 @@ struct ViewMode {
 	bool origin;
 	bool ground;
 	bool showNodeAxes; // show node axes
+	bool enableLighting;
 
 	int numberSubdivs;
 
@@ -64,7 +69,7 @@ struct ViewMode {
 	MeshMode meshMode;
 
 	fg::GLRenderer::ColourMode colourMode;
-} gViewMode = {true,true,false,0,ViewMode::MM_SMOOTH};
+} gViewMode = {true,true,false,true,0,ViewMode::MM_SMOOTH};
 
 enum SimulationMode {SM_PLAYING, SM_PAUSED, SM_STEPPING, SM_RELOADING, SM_ERROR};
 
@@ -109,6 +114,8 @@ void TW_CALL reloadCb(void *clientData){
 
 	gAppState.simulationMode = SM_RELOADING;
 }
+
+void TW_CALL outputObjCb(void* clientData); // output an obj of the current frame..
 
 void loadUniverse(); // load or reload universe
 void deleteUniverse(); // delete the universe (probably due to an error)
@@ -234,8 +241,15 @@ int main(int argc, char *argv[])
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		gluLookAt(0,0,4,   0,0,0,   0,1,0);
-		GLfloat lp[] = {1, 1, 1, 0};
-		glLightfv(GL_LIGHT0,GL_POSITION,lp);
+
+		if (gViewMode.enableLighting){
+			GLfloat lp[] = {1, 1, 1, 0};
+			glLightfv(GL_LIGHT0,GL_POSITION,lp);
+			glEnable(GL_LIGHTING);
+		}
+		else {
+			glDisable(GL_LIGHTING);
+		}
 		glPushMatrix();
 		glMultMatrixf((GLfloat*) gRotationMatrix);
 
@@ -369,20 +383,12 @@ void setupWindowAndGL(){
 	// Create a window
 	glfwGetDesktopMode(&mode);
 
-
 	if (!glfwOpenWindow(gWidth,gHeight, mode.RedBits, mode.GreenBits, mode.BlueBits, 0, 24, 0, GLFW_WINDOW)){
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 	glfwEnable(GLFW_MOUSE_CURSOR);
 	glfwEnable(GLFW_KEY_REPEAT);
-
-	/*
-	if (!glfwOpenWindow(gWidth,gHeight, 0,0,0,0,24,0, GLFW_WINDOW)){
-		glfwTerminate();
-		exit(EXIT_FAILURE);
-	}
-	*/
 
 	GLenum err = glewInit();
 	if (GLEW_OK != err){
@@ -405,6 +411,9 @@ void setupWindowAndGL(){
 	               " group='View' help='Toggle ground.' ");
 	TwAddVarRW(mainBar, "node axes", TW_TYPE_BOOLCPP, &gViewMode.showNodeAxes,
 		               " group='View' help='Toggle node axes.' ");
+
+	TwAddVarRW(mainBar, "lighting", TW_TYPE_BOOLCPP, &gViewMode.enableLighting,
+			" group='View' help='Enable lighting.' ");
 
 	TwAddVarRW(mainBar, "smooth subdiv", TW_TYPE_INT32, &gViewMode.numberSubdivs,
 			" min=0 max=3 group='View' help='Turn on smooth subdivision for visualisation.' ");
@@ -435,6 +444,7 @@ void setupWindowAndGL(){
 	TwAddButton(mainBar, "pause", pauseCb, NULL, " group='Control' ");
 	TwAddButton(mainBar, "step", stepCb, NULL, " group='Control' ");
 	TwAddButton(mainBar, "reload", reloadCb, NULL, " group='Control' ");
+	TwAddButton(mainBar, "save .obj", outputObjCb, NULL, " group='Control' ");
 
 	TwEnumVal mmEVSM[] = {
 			{SM_PLAYING, "Playing"},
@@ -661,6 +671,41 @@ void TW_CALL resetCamera(void *clientData)
             gRotationMatrix[i][j] = (i == j ? 1 : 0);
     }
     gCameraTranslation[0] = gCameraTranslation[1] = gCameraTranslation[2] = 0;
+}
+
+void outputObjCb(void* clientData){ // output an obj of the current frame..
+	if (gAppState.universe){
+		int nodeCount = 0;
+
+		// get time
+		time_t seconds;
+		seconds = time(NULL);
+		struct tm* timeinfo;
+		timeinfo = localtime(&seconds);
+
+
+		BOOST_FOREACH(boost::shared_ptr<fg::MeshNode> m, gAppState.universe->meshNodes()){
+			// m->mesh()->sync(); // make sure normals are okay
+			std::ostringstream oss;
+			oss << "obj_";
+			oss << std::setw(2) << std::setfill('0')
+				<< timeinfo->tm_hour
+				<< timeinfo->tm_min
+				<< timeinfo->tm_sec;
+			oss << "_" << nodeCount << ".obj";
+			std::cout << "Saving as: \"" << oss.str().c_str() << "\"\n";
+			vcg::tri::io::ExporterOBJ_Point3d<fg::MeshImpl>::Save(
+				*m->mesh()->_impl(),
+				oss.str().c_str(),
+				vcg::tri::io::Mask::IOM_VERTNORMAL |
+				vcg::tri::io::Mask::IOM_VERTTEXCOORD
+				/* | vcg::tri::io::Mask::IOM_VERTCOLOR */ // .obj doesnt support vertex colours apparently..
+				,
+				m->getCompoundTransform()
+			);
+			nodeCount++;
+		}
+	}
 }
 
 #ifdef USESHADERS

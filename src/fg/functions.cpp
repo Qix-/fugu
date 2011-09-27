@@ -25,16 +25,26 @@
 
  
 #include "fg/functions.h"
+#include "fg/quat.h"
 
 #include <cstdlib>
 #include <cmath>
 #include <cassert>
 #include <algorithm>
 
-
 #include <vcg/math/perlin_noise.h>
 
 namespace fg {
+
+	/**
+	 * \brief spherical interpolation between two (normalised) vectors
+	 * \ingroup functions
+	 */
+	Vec3 slerp(const Vec3& a, const Vec3& b, double t){
+		Quat qa(Vec3(1,0,0),a);
+		Quat qb(Vec3(1,0,0),b);
+		return qa.slerp(t,qb)*Vec3(1,0,0);
+	}
         
     /**
      * noise in 1, 2 and 3D

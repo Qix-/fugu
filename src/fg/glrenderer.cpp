@@ -50,6 +50,11 @@ void DrawWrapper(MyGLRenderer& tm, fg::GLRenderer::ColourMode cm){
 	}
 }
 
+// BP: Remove glut defines and errors
+#define FGAPIENTRY
+#define FREEGLUT_EXIT_IF_NOT_INITIALISED(x) ;
+#define fgError(x) ;
+
 namespace fg {
 
 	void GLRenderer::renderMesh(Mesh* m, RenderMeshMode rmm, ColourMode cm){
@@ -284,5 +289,105 @@ namespace fg {
 
 
 		}
+	}
+
+	/*
+	 * Draws a solid sphere
+	 */
+	void GLRenderer::renderSkySphere(GLdouble radius, GLint slices, GLint stacks, Vec3 bc, Vec3 hc, Vec3 tc)
+	{
+		glPushMatrix();
+		glRotatef(-90,1,0,0);
+
+	    int i,j;
+
+	    /* Adjust z and radius as stacks are drawn. */
+
+	    double z0,z1;
+	    double r0,r1;
+
+	    /* Pre-computed circle */
+
+	    double *sint1,*cost1;
+	    double *sint2,*cost2;
+
+	    FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutSolidSphere" );
+
+	    fghCircleTable(&sint1,&cost1,-slices);
+	    fghCircleTable(&sint2,&cost2,stacks*2);
+
+	    /* The top stack is covered with a triangle fan */
+
+	    z0 = 1.0;
+	    z1 = cost2[(stacks>0)?1:0];
+	    r0 = 0.0;
+	    r1 = sint2[(stacks>0)?1:0];
+
+	    glBegin(GL_TRIANGLE_FAN);
+
+        	glColor3f(tc.X(),tc.Y(),tc.Z());
+	        glNormal3d(0,0,1);
+	        glVertex3d(0,0,radius);
+
+	        for (j=slices; j>=0; j--)
+	        {
+	            glNormal3d(cost1[j]*r1,        sint1[j]*r1,        z1       );
+	            glVertex3d(cost1[j]*r1*radius, sint1[j]*r1*radius, z1*radius);
+	        }
+
+	    glEnd();
+
+	    /* Cover each stack with a quad strip, except the top and bottom stacks */
+
+	    for( i=1; i<stacks-1; i++ )
+	    {
+	        z0 = z1; z1 = cost2[i+1];
+	        r0 = r1; r1 = sint2[i+1];
+
+	        Vec3 c0 = z0>=0?lerp(hc,tc,z0):lerp(bc,hc,z0+1);
+	        Vec3 c1 = z1>=0?lerp(hc,tc,z1):lerp(bc,hc,z1+1);
+
+	        glBegin(GL_QUAD_STRIP);
+
+	            for(j=0; j<=slices; j++)
+	            {
+	            	glColor3f(c1.X(),c1.Y(),c1.Z());
+	                glNormal3d(cost1[j]*r1,        sint1[j]*r1,        z1       );
+	                glVertex3d(cost1[j]*r1*radius, sint1[j]*r1*radius, z1*radius);
+
+	                glColor3f(c0.X(),c0.Y(),c0.Z());
+	                glNormal3d(cost1[j]*r0,        sint1[j]*r0,        z0       );
+	                glVertex3d(cost1[j]*r0*radius, sint1[j]*r0*radius, z0*radius);
+	            }
+
+	        glEnd();
+	    }
+
+	    /* The bottom stack is covered with a triangle fan */
+
+	    z0 = z1;
+	    r0 = r1;
+
+	    glBegin(GL_TRIANGLE_FAN);
+
+	        glNormal3d(0,0,-1);
+	        glVertex3d(0,0,-radius);
+	        glColor3f(bc.X(),bc.Y(),bc.Z());
+	        for (j=0; j<=slices; j++)
+	        {
+	            glNormal3d(cost1[j]*r0,        sint1[j]*r0,        z0       );
+	            glVertex3d(cost1[j]*r0*radius, sint1[j]*r0*radius, z0*radius);
+	        }
+
+	    glEnd();
+
+	    /* Release sin and cos tables */
+
+	    free(sint1);
+	    free(cost1);
+	    free(sint2);
+	    free(cost2);
+
+	    glPopMatrix();
 	}
 }
