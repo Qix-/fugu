@@ -5,6 +5,20 @@
 
 #include <iostream>
 
+void outcallback( const char* ptr, std::streamsize count, void* console )
+{
+  (void) count;
+  QsciScintilla* p = static_cast< QsciScintilla* >( console );
+  p->append( ptr );
+}
+
+void errcallback( const char* ptr, std::streamsize count, void* console )
+{
+  (void) count;
+  QsciScintilla* p = static_cast< QsciScintilla* >( console );
+  p->append( ptr );
+}
+
 ConsoleWidget::ConsoleWidget(QWidget *parent)
 : QWidget(parent)
 {
@@ -21,7 +35,7 @@ ConsoleWidget::ConsoleWidget(QWidget *parent)
 	mConsole->setReadOnly(true);
 
     mCommandLine = new CommandLineWidget();
-    mCommandLine->setLexer(new FGLexer());
+    mCommandLine->setLexer(new FGLexer(QColor("#101010")));
     mCommandLine->setTabWidth(2);
     mCommandLine->setMarginWidth(1,0); // disable line number margin
     mCommandLine->setCaretForegroundColor(QColor("#959595"));
@@ -35,35 +49,32 @@ ConsoleWidget::ConsoleWidget(QWidget *parent)
     mCommandLine->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 
     // hook up command line signals...
-    /*
-    connect(mCommandLine, SIGNAL(textChanged()), this, SLOT(textChanged()));
-    connect(mCommandLine, SIGNAL(cursorPositionChanged(int,int)), this, SLOT(cursorPositionChanged(int,int)));
-    connect(mCommandLine, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
-    connect(mCommandLine, SIGNAL(linesChanged()), this, SLOT(linesChanged()));
-    */
     connect(mCommandLine, SIGNAL(emitCommand(QString)), this, SLOT(processCommand(QString)));
 
     QVBoxLayout* qvb = new QVBoxLayout(this);
     qvb->addWidget(mConsole);
     qvb->addWidget(mCommandLine);
 
-    // mCommandLine->setSizePolicy(QSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum));
+    mStdOutRedirector = new StdRedirector<>( std::cout, outcallback, mConsole );
+    mStdErrRedirector = new StdRedirector<>( std::cerr, errcallback, mConsole );
 }
 
 ConsoleWidget::~ConsoleWidget()
 {
-	// do something?
-
+	delete mStdOutRedirector;
+	delete mStdErrRedirector;
 }
 
 void ConsoleWidget::processCommand(QString cmd){
+
 	// Echo command
 	mConsole->append(QString(">> ") + cmd + "\n");
-
-	// TODO: Process command and print output...
-
 	// Scroll to bottom
-	mConsole->ensureLineVisible(mConsole->lines()-1);
+	mConsole->setCursorPosition(mConsole->lines()-1,0);
+	// mConsole->ensureLineVisible(mConsole->lines()-1);
+
+	// send the command out
+	emit emitCommand(cmd);
 }
 /*
 void ConsoleWidget::OnChildStarted()

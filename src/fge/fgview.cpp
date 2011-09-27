@@ -52,7 +52,8 @@ FGView::FGView(QWidget *parent)
 	mColourMode = fg::GLRenderer::COLOUR_NONE;
 
 	// theme...
-	mBackgroundColor = QColor("#272727");
+	// mBackgroundColor = QColor("#272727");
+	mBackgroundColor = QColor("#000000");
 
 	// qtGreen = QColor::fromCmykF(0.40, 0.0, 1.0, 0.0);
 	// qtPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
@@ -206,7 +207,7 @@ void FGView::initializeGL()
 		mPhongShader->setUniformValue("shininess",(GLfloat)5);
 	}
 	else {
-		std::cerr << "Could load ../assets/shaders/phong.vert or phong.frag\n";
+		std::cerr << "Couldn't load ../assets/shaders/phong.vert or phong.frag\n";
 	}
 }
 
@@ -215,8 +216,37 @@ void FGView::paintGL()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	gluLookAt(0,0,4,   0,0,0,   0,1,0);
+
 	glPushMatrix();
 	{
+
+		glMultMatrixf((GLfloat*) mRotationMatrix);
+		glTranslatef(mCameraTranslation[0],
+				mCameraTranslation[1],
+				mCameraTranslation[2]);
+
+		// draw encapsulating sphere...
+		glPushAttrib(GL_DEPTH_BUFFER_BIT);
+		glPushAttrib(GL_LIGHTING_BIT);
+		glPushAttrib(GL_TEXTURE_BIT);
+		glPushAttrib(GL_ENABLE_BIT);
+
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_TEXTURE_2D);
+		glDepthMask(GL_FALSE);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_CULL_FACE);
+		// glColor3f(1,0,1);
+		// fg::GLRenderer::glutSolidSphere(20,64,64);
+		fg::Vec3 hc = fg::Vec3(79./255,79./255,79./255);
+		fg::Vec3 tc = fg::Vec3(16./255,16./255,16./255);
+
+		fg::GLRenderer::renderSkySphere(20,64,64,hc,tc,tc);
+		glPopAttrib(); // GL_LIGHTING_BIT
+		glPopAttrib(); // GL_DEPTH_BUFFER_BIT
+		glPopAttrib(); // GL_TEXTURE_BIT
+		glPopAttrib(); // GL_ENABLE_BIT
+
 		if (mEnableLighting){
 			GLfloat lp[] = {1, 1, 1, 0};
 			glLightfv(GL_LIGHT0,GL_POSITION,lp);
@@ -225,11 +255,6 @@ void FGView::paintGL()
 		else {
 			glDisable(GL_LIGHTING);
 		}
-
-		glMultMatrixf((GLfloat*) mRotationMatrix);
-		glTranslatef(mCameraTranslation[0],
-				mCameraTranslation[1],
-				mCameraTranslation[2]);
 
 		float z = std::exp(-mZoom);
 		glScalef(z,z,z);
@@ -241,9 +266,10 @@ void FGView::paintGL()
 
 			if (mPhongShader!=NULL and mMeshMode==MM_PHONG){
 				mPhongShader->bind();
-				mPhongShader->setUniformValue("shininess",(GLfloat)5);
+				mPhongShader->setUniformValue("shininess",(GLfloat)15);
 			}
 
+			glColor3f(1,1,1);
 			foreach(shared_ptr<fg::MeshNode> m, mUniverse->meshNodes()){
 				// std::cout << m << "\n" << *m << "\n\n";
 

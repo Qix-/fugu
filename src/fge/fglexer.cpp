@@ -1,8 +1,9 @@
 #include "fglexer.h"
 #include <QApplication>
 
-FGLexer::FGLexer()
+FGLexer::FGLexer(QColor bg)
 :QsciLexerLua()
+,mBackgroundColor(bg)
 {
 	mFont = QFont("Courier New", 8);
 	mBoldFont = mFont;
@@ -84,5 +85,5 @@ QFont FGLexer::defaultFont (int style) const {
 }
 
 QColor FGLexer::defaultPaper (int style) const {
-	return QColor("#272727"); // Qt::white;
+	return mBackgroundColor; // QColor("#272727"); // Qt::white;
 }

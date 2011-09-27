@@ -33,10 +33,12 @@
 #include <utility>
 
 /* Define foreach. (With workaround for eclipse cdt parser.) */
-#ifdef __CDT_PARSER__
-    #define foreach(a, b) for(a : b)
-#else
-    #define foreach(a, b) BOOST_FOREACH(a, b)
+#ifndef foreach
+	#ifdef __CDT_PARSER__
+		#define foreach(a, b) for(a : b)
+	#else
+    	#define foreach(a, b) BOOST_FOREACH(a, b)
+	#endif
 #endif
 
 using boost::shared_ptr;

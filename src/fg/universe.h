@@ -63,7 +63,13 @@ namespace fg {
 		 * It will also add it to the list of scripts to be updated if it
 		 * has an update function.
 		 */
-		void loadScript(std::string scriptName);
+		void loadScript(std::string fileName);
+
+		/** \brief Immediately run the lua code passed in script.
+		 *
+		 * @param script A string containing the lua code to execute.
+		 */
+		void runScript(std::string script);
 
 		/**
 		 * /brief Add a mesh to the universe
