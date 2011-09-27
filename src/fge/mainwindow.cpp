@@ -7,6 +7,7 @@
 
 #include "fglexer.h"
 #include "consolewidget.h"
+#include "redirect.h"
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
@@ -18,6 +19,10 @@ MainWindow::MainWindow(QWidget *parent)
 	setWindowTitle(tr("fugu"));
 
 	setupConsoleWidget();
+
+	QTimer::singleShot(0, this, SLOT(redirectStreams()));
+	// redirectStreams();
+
 
 	mFGView = new FGView(this);
 
@@ -98,6 +103,8 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(mSimulationTimer, SIGNAL(timeout()), this, SLOT(simulateOneStep()));
 
 	newEditor(new QFile("../scripts/ben/aorta.lua"));
+
+
 
 	load();
 }
@@ -320,6 +327,10 @@ void MainWindow::runScript(QString code){
 		}
 	}
 
+}
+
+void MainWindow::redirectStreams(){
+	redirectConsoleOutput();
 }
 
 // Save the the editor's contents to the file fileName
