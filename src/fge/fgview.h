@@ -32,6 +32,12 @@ public slots:
 	void toggleShowNodeAxes(bool show);
 	void toggleLighting(bool on);
 	void setNumberOfSubdivs(int num);
+	void setSubdivs0();
+	void setSubdivs1();
+	void setSubdivs2();
+	void setSubdivs3();
+
+
 
 	void setDrawSmooth();
 	void setDrawFlat();

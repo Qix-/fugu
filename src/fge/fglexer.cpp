@@ -1,17 +1,26 @@
 #include "fglexer.h"
 #include <QApplication>
+#include <QPalette>
 
 FGLexer::FGLexer(QColor bg)
 :QsciLexerLua()
 ,mBackgroundColor(bg)
+,mParent(NULL)
 {
-	mFont = QFont("Courier New", 8);
+	// QApplication::desktop()->physicalDpiX();
+	// QApplication::desktop()->physicalDpiY();
+	mFont = QFont("Courier New", QApplication::font().pointSize());
+	mFont.setStyleHint(QFont::TypeWriter);
 	mBoldFont = mFont;
 	mBoldFont.setBold(true);
 }
 
 FGLexer::~FGLexer(){
 
+}
+
+void FGLexer::inheritColoursFrom(QWidget* p){
+	mParent = p;
 }
 
 QColor FGLexer::defaultColor (int style) const {
@@ -85,5 +94,11 @@ QFont FGLexer::defaultFont (int style) const {
 }
 
 QColor FGLexer::defaultPaper (int style) const {
-	return mBackgroundColor; // QColor("#272727"); // Qt::white;
+	/*
+	if (mParent){
+		return mParent->palette().color(QPalette::Window);
+	}
+	else
+	*/
+		return mBackgroundColor; // QColor("#272727"); // Qt::white;
 }

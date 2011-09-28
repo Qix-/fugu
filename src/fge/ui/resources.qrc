@@ -1,0 +1,35 @@
+<RCC>
+  <qresource>
+    <file>res/axes.png</file>
+    <file>res/ground.png</file>
+    <file>res/nodeaxes.png</file>
+    <file>res/subdiv0.png</file>
+    <file>res/subdiv1.png</file>
+    <file>res/subdiv2.png</file>
+    <file>res/subdiv3.png</file>
+    <file>res/wire.png</file>
+    <file>res/flat.png</file>
+    <file>res/points.png</file>
+    <file>res/textured.png</file>
+    <file>res/phong.png</file>
+    <file>res/cells.png</file>
+    <file>res/chart_bar.png</file>
+    <file>res/control_stop.png</file>
+    <file>res/eye.png</file>
+    <file>res/flag_blue.png</file>
+    <file>res/flag_red.png</file>
+    <file>res/information.png</file>
+    <file>res/lightbulb.png</file>
+    <file>res/lightbulb_off.png</file>
+    <file>res/magnifier.png</file>
+    <file>res/pencil.png</file>
+    <file>res/smooth.png</file>
+    <file>res/surface.png</file>
+    <file>res/tick.png</file>
+    <file>res/wireframe.png</file>
+    <file>res/control_pause.png</file>
+    <file>res/control_step.png</file>
+    <file>res/control_play.png</file>
+    <file>res/control_start.png</file>
+  </qresource>
+</RCC>
