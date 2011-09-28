@@ -20,6 +20,7 @@
 
 FGView::FGView(QWidget *parent)
 : QGLWidget(QGLFormat(QGL::DepthBuffer), parent)
+, mUniverse(NULL) // Very important to intialise as null
 {
 	//logo = 0;
 	xRot = 0;
@@ -28,12 +29,7 @@ FGView::FGView(QWidget *parent)
 
 	// set camera defaults
 	mZoom = 0;
-	float rotq[4] = {0,0,0,1};
-	float rotmat[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
-	float camtr[3] = {0,0,0};
-	memcpy(mRotationQuat,rotq,sizeof rotq);
-	memcpy(mRotationMatrix,rotmat,sizeof rotmat);
-	memcpy(mCameraTranslation,camtr,sizeof camtr);
+	resetCamera();
 
 	// mouse state
 	mMouseState.lastX = 0;
@@ -48,7 +44,7 @@ FGView::FGView(QWidget *parent)
 	mShowNodeAxes = true;
 	mEnableLighting = true;
 	mNumberSubdivs = 1;
-	mMeshMode = MM_SMOOTH;
+	mMeshMode = MM_PHONG;
 	mColourMode = fg::GLRenderer::COLOUR_NONE;
 
 	// theme...
@@ -139,6 +135,20 @@ void FGView::setNumberOfSubdivs(int num){
 	mNumberSubdivs = num;
 	update();
 }
+
+void FGView::setSubdivs0(){
+	setNumberOfSubdivs(0);
+}
+void FGView::setSubdivs1(){
+	setNumberOfSubdivs(1);
+}
+void FGView::setSubdivs2(){
+	setNumberOfSubdivs(2);
+}
+void FGView::setSubdivs3(){
+	setNumberOfSubdivs(3);
+}
+
 
 void FGView::setDrawSmooth(){
 	mMeshMode = MM_SMOOTH;

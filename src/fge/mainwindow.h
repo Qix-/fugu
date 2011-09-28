@@ -27,9 +27,10 @@ public:
 public slots:
 	void about();
 	void newFile();
-	void openFile(const QString &path = QString());
+	void open();
 	void save();
 	void saveAs();
+	void quit();
 
 	void load(); // load the current script
 	void unload(); // unload the current universe
@@ -45,9 +46,12 @@ public slots:
 	void undo();
 	void redo();
 
+
 	void runScript(QString code);
 	void redirectStreams();
 private:
+
+	void openFile(const QString &path = QString());
 
 	// Save the the editor's contents to the file fileName
 	bool saveFile(QsciScintilla* editor, QString fileName);

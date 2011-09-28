@@ -9,21 +9,34 @@
 #include "consolewidget.h"
 #include "redirect.h"
 
+#include "ui_mainwindow.h"
+
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
 ,mUniverse(NULL)
 ,mSimulationTimer(NULL)
 {
-	QApplication::setStyle(new QCleanlooksStyle);
+	Ui::MainWindow ui;
+	ui.setupUi(this);
 
-	setWindowTitle(tr("fugu"));
-
-	setupConsoleWidget();
+	mConsoleWidget = findChild<ConsoleWidget*>("consolewidget");
+	mFGView = findChild<FGView*>("fgview");
+	mEditors = findChild<QTabWidget*>("editors");
 
 	QTimer::singleShot(0, this, SLOT(redirectStreams()));
-	// redirectStreams();
 
+	/*
 
+	QFile stylesheet("../assets/fgestyle.css");
+	if (stylesheet.open(QFile::ReadOnly | QFile::Text)){
+		setStyleSheet(stylesheet.readAll());
+	}
+
+	setWindowTitle(tr("fugu"));
+	setupConsoleWidget();
+	QTimer::singleShot(0, this, SLOT(redirectStreams()));
+
+	//
 	mFGView = new FGView(this);
 
 	setupFileMenu();
@@ -47,21 +60,6 @@ MainWindow::MainWindow(QWidget *parent)
 	mEditors->setMovable(true);
 	mEditors->setUsesScrollButtons(true);
 
-	//mEditors->
-	/*
-	setStyleSheet(
-	      "QTabBar::tab { background: gray; color: white; padding: 10px; } "
-	      "QTabBar::tab:selected { background: lightgray; } "
-	      "QTabWidget::pane { border: 0; } "
-	      "QWidget { background: lightgray; } ");
-	      */
-
-
-
-	/*
-	layout()->addWidget(mFGView, BorderLayout::Center);
-	layout()->addWidget(mEditors, BorderLayout::West);
-	*/
 
 	QSplitter* subframe = new QSplitter(Qt::Vertical);
 	subframe->addWidget(container);
@@ -75,25 +73,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 	setCentralWidget(frame);
 
-	QFile stylesheet("../assets/fgestyle.css");
-	if (stylesheet.open(QFile::ReadOnly | QFile::Text)){
-		setStyleSheet(stylesheet.readAll());
-	}
-
-	/*
-	QDockWidget *dock = new QDockWidget(tr("Editors"), this);
-	dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	dock->setWidget(mEditors);
-	addDockWidget(Qt::LeftDockWidgetArea, dock);
-
-	dock = new QDockWidget(tr("FG View"), this);
-	dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	dock->setWidget(mFGView);
-	addDockWidget(Qt::RightDockWidgetArea, dock);
-	*/
-
-	// setCentralWidget(mEditors);
-
 	mSimulationMode = SM_PAUSED;
 	mPreviousMode =SM_PAUSED;
 	mTimeMultiplier = 1;
@@ -101,11 +80,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 	mSimulationTimer = new QTimer(this);
 	connect(mSimulationTimer, SIGNAL(timeout()), this, SLOT(simulateOneStep()));
-
+*/
 	newEditor(new QFile("../scripts/ben/aorta.lua"));
-
-
-
 	load();
 }
 
@@ -121,26 +97,9 @@ void MainWindow::newFile()
 	newEditor();
 }
 
-void MainWindow::openFile(const QString &path)
+void MainWindow::open()
 {
-	QString fileName = path;
-	if (fileName.isNull())
-		fileName = QFileDialog::getOpenFileName(this,
-				tr("Open File"), "", "fugu script (*.lua)");
-
-	if (!fileName.isEmpty()) {
-
-		// check if its already open...
-		// if so, just switch to that file
-		for(int i=0;i<mEditors->count();i++){
-			if (mFileNames[mEditors->widget(i)]==fileName){
-				mEditors->setCurrentIndex(i);
-				return;
-			}
-		}
-		// if not, open a new editor
-		newEditor(new QFile(fileName));
-	}
+	openFile();
 }
 
 void MainWindow::save(){
@@ -178,6 +137,10 @@ void MainWindow::saveAs(){
 		// reset filename
 		mFileNames[qw] = fileName;
 	}
+}
+
+void MainWindow::quit(){
+	QApplication::exit();
 }
 
 void MainWindow::load(){
@@ -333,6 +296,28 @@ void MainWindow::redirectStreams(){
 	redirectConsoleOutput();
 }
 
+void MainWindow::openFile(const QString &path)
+{
+	QString fileName = path;
+	if (fileName.isNull())
+		fileName = QFileDialog::getOpenFileName(this,
+				tr("Open File"), "", "fugu script (*.lua)");
+
+	if (!fileName.isEmpty()) {
+
+		// check if its already open...
+		// if so, just switch to that file
+		for(int i=0;i<mEditors->count();i++){
+			if (mFileNames[mEditors->widget(i)]==fileName){
+				mEditors->setCurrentIndex(i);
+				return;
+			}
+		}
+		// if not, open a new editor
+		newEditor(new QFile(fileName));
+	}
+}
+
 // Save the the editor's contents to the file fileName
 bool MainWindow::saveFile(QsciScintilla* editor, QString fileName){
 	// Save the currently active script
@@ -360,28 +345,12 @@ bool MainWindow::saveFile(QsciScintilla* editor, QString fileName){
 
 void MainWindow::newEditor(QFile* file)
 {
-	/*
-	QFont font;
-	font.setFamily("Courier");
-	font.setFixedPitch(true);
-	font.setPointSize(10);
-	*/
-
-	// text editor
-	// see the Qt CodeEditor example for line numbers, and line highlighting
-	/*
-	QTextEdit* editor = new QTextEdit;
-	editor->setFont(font);
-	editor->setTabStopWidth(20);
-	Highlighter* highlighter = new Highlighter(editor->document());
-	*/
-
 	QsciScintilla* editor = new QsciScintilla();
 	editor->setLexer(new FGLexer());
 	editor->setTabWidth(2);
 	editor->setAutoIndent(true);
 
-	editor->setMarginWidth(1,QString("999"));
+	editor->setMarginWidth(1,QString("9999"));
 	editor->setMarginLineNumbers(1,true);
 
 	editor->setWrapMode(QsciScintilla::WrapCharacter);
@@ -398,22 +367,18 @@ void MainWindow::newEditor(QFile* file)
 	else {
 		if (file->open(QFile::ReadOnly | QFile::Text)){
 			QFileInfo fi(*file);
-			// TODO: Store the file pointer with the editor (or somewhere..)
-			// Open an editor with the contents of fileName
 			int t = mEditors->addTab(editor, fi.fileName());
-			// editor->setPlainText(file->readAll());
 			editor->setText(file->readAll());
 			mFileNames.insert(editor,file->fileName());
 		}
 		delete file;
 	}
 	mEditors->setCurrentWidget(editor);
-
-	// setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("Application")));
 }
 
 void MainWindow::setupFileMenu()
 {
+	/*
 	QMenu *fileMenu = new QMenu(tr("&File"), this);
 	menuBar()->addMenu(fileMenu);
 
@@ -431,9 +396,11 @@ void MainWindow::setupFileMenu()
 
 	fileMenu->addAction(tr("E&xit"), qApp, SLOT(quit()),
 			QKeySequence::Quit);
+			*/
 }
 
 void MainWindow::setupEditMenu(){
+	/*
 	QMenu *editMenu = new QMenu(tr("&Edit"), this);
 	menuBar()->addMenu(editMenu);
 
@@ -441,19 +408,23 @@ void MainWindow::setupEditMenu(){
 			QKeySequence::Undo);
 	editMenu->addAction(tr("Redo"), this, SLOT(redo()),
 				QKeySequence::Redo);
+	*/
 }
 
 void MainWindow::setupHelpMenu()
 {
+	/*
 	QMenu *helpMenu = new QMenu(tr("&Help"), this);
 	menuBar()->addMenu(helpMenu);
 
 	helpMenu->addAction(tr("&Reference"), this, SLOT(about()));
 	helpMenu->addAction(tr("&About"), this, SLOT(about()));
+	*/
 	// helpMenu->addAction(tr("About &Qt"), qApp, SLOT(aboutQt()));
 }
 
 void MainWindow::setupSimulationControls() {
+	/*
 	QMenu* simulationMenu = new QMenu(tr("&Simulation"), this);
 	menuBar()->addMenu(simulationMenu);
 
@@ -486,6 +457,7 @@ void MainWindow::setupSimulationControls() {
 	simulationMenu->addAction(simulate);
 	simulationMenu->addAction(restart);
 	simulationMenu->addAction(stepAction);
+	*/
 }
 
 void MainWindow::setupViewMenu(){
@@ -557,7 +529,7 @@ void MainWindow::setupViewMenu(){
 	drawModeGroup->addAction(setPoints);
 	drawModeGroup->addAction(setTextured);
 	drawModeGroup->addAction(setPhong);
-	setSmooth->setChecked(true);
+	setPhong->setChecked(true);
 
 	viewMenu->addSeparator()->setText(tr("Draw Mode"));
 	viewMenu->addAction(setSmooth);

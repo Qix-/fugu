@@ -7,7 +7,9 @@ set(ALL_LIBS fg
 	${GL_LIBS} 
 	${BOOST_LIBS}
 	qscintilla2
-	AntTweakBar)
+	${QT_LIBRARIES}
+	${QT_QTOPENGL_LIBRARIES}
+)
 
 set(SRC main.cpp 
 	trackball.cpp 
@@ -23,18 +25,19 @@ set(SRC main.cpp
 set(SRCS ${SRC})
 
 set(UIS
-
+	"ui/mainwindow.ui"
 )
 QT4_WRAP_UI(UIS_H ${UIS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR}) # required to be able to include the generated ui headers
 
+SET(RCS
+	ui/resources.qrc
+)
+QT4_ADD_RESOURCES( RC_SRC ${RCS} )
+  
 INCLUDE_DIRECTORIES(
    ${QT_INCLUDE_DIR}
    ${QT_QTOPENGL_INCLUDE_DIR}
-)
-
-set(ALL_LIBS ${ALL_LIBS}
-   ${QT_LIBRARIES}
-   ${QT_QTOPENGL_LIBRARIES}
 )
 
 SET(MOC_HDR
@@ -49,22 +52,17 @@ QT4_WRAP_CPP(MOC_SRC ${MOC_HDR})
 FILE(GLOB HEADERS "*.h")
 FILE(GLOB HEADER_INC "*.inc")
 
-add_executable(fugu ${SRC} ${MOC_SRC} ${HEADERS} ${HEADER_INC})
+SET(EVERYTHING ${SRC} ${MOC_SRC} ${HEADERS} ${HEADER_INC} ${UIS_H} ${RC_SRC})
+IF(MINGW)
+	add_executable(fugu WIN32 ${EVERYTHING})
+ELSE(MINGW)
+	add_executable(fugu ${EVERYTHING})
+ENDIF(MINGW)
 target_link_libraries(fugu ${ALL_LIBS}) 
 
 # install fgv into bin
 install(TARGETS fugu DESTINATION .)
 
-if(WIN32)
-	file(COPY "${BASE_DIR}/lib/msw/AntTweakBar.dll" DESTINATION ${CMAKE_INSTALL_PREFIX})
-endif(WIN32)
+install(DIRECTORY ui/res DESTINATION ui/res)
 
-if(APPLE)
-# still can't get rpath to work properly with cmake
-# so use DYLD_LIBRARY_PATH
-endif(APPLE)
-
-# don't install scripts, just use the fg/scripts directory as is 
-# install(DIRECTORY ${BASE_DIR}/scripts DESTINATION fgv)
- 
 

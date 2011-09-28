@@ -95,6 +95,7 @@ private:
     int fixedPosition;
 
     QsciScintilla* mConsole;
+
     // QsciScintilla* mCommandLine;
     CommandLineWidget* mCommandLine;
     StdRedirector<>* mStdOutRedirector;
