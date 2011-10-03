@@ -376,6 +376,10 @@ QToolBar::separator:horizontal {
      padding-right: 10px; /* make way for the popup button */
  }
 
+ QToolButton:checked {
+	 background: #3f3f3f;
+}
+
  QToolButton:pressed, QToolButton:hover {
  	background-color: #f27000;
  }
@@ -465,7 +469,6 @@ QToolBar::separator:horizontal {
          <height>0</height>
         </size>
        </property>
-       <zorder>splitter</zorder>
       </widget>
      </widget>
     </item>
@@ -540,15 +543,16 @@ QToolBar::separator:horizontal {
    <addaction name="actionSetDrawPoints"/>
    <addaction name="actionSetDrawWire"/>
    <addaction name="actionSetDrawFlat"/>
-   <addaction name="actionSetDrawSmooth"/>
-   <addaction name="actionSetDrawTextured"/>
    <addaction name="actionSetDrawPhong"/>
+   <addaction name="actionSetDrawTextured"/>
    <addaction name="separator"/>
    <addaction name="actionSetSubdivs0"/>
    <addaction name="actionSetSubdivs1"/>
    <addaction name="actionSetSubdivs2"/>
    <addaction name="actionSetSubdivs3"/>
    <addaction name="separator"/>
+   <addaction name="actionSetColourNone"/>
+   <addaction name="actionSetColourVertex"/>
   </widget>
   <action name="actionNew">
    <property name="text">
@@ -664,6 +668,9 @@ QToolBar::separator:horizontal {
    </property>
   </action>
   <action name="actionSetDrawWire">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/res/wire.png</normaloff>:/res/wire.png</iconset>
@@ -673,6 +680,9 @@ QToolBar::separator:horizontal {
    </property>
   </action>
   <action name="actionSetDrawFlat">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/res/flat.png</normaloff>:/res/flat.png</iconset>
@@ -682,6 +692,9 @@ QToolBar::separator:horizontal {
    </property>
   </action>
   <action name="actionSetDrawSmooth">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/res/smooth.png</normaloff>:/res/smooth.png</iconset>
@@ -691,6 +704,9 @@ QToolBar::separator:horizontal {
    </property>
   </action>
   <action name="actionSetDrawPhong">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/res/phong.png</normaloff>:/res/phong.png</iconset>
@@ -700,6 +716,9 @@ QToolBar::separator:horizontal {
    </property>
   </action>
   <action name="actionSetDrawPoints">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/res/points.png</normaloff>:/res/points.png</iconset>
@@ -709,6 +728,9 @@ QToolBar::separator:horizontal {
    </property>
   </action>
   <action name="actionSetDrawTextured">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/res/textured.png</normaloff>:/res/textured.png</iconset>
@@ -718,6 +740,9 @@ QToolBar::separator:horizontal {
    </property>
   </action>
   <action name="actionSetSubdivs0">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/res/subdiv0.png</normaloff>:/res/subdiv0.png</iconset>
@@ -727,6 +752,9 @@ QToolBar::separator:horizontal {
    </property>
   </action>
   <action name="actionSetSubdivs1">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/res/subdiv1.png</normaloff>:/res/subdiv1.png</iconset>
@@ -736,6 +764,9 @@ QToolBar::separator:horizontal {
    </property>
   </action>
   <action name="actionSetSubdivs2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/res/subdiv2.png</normaloff>:/res/subdiv2.png</iconset>
@@ -745,6 +776,9 @@ QToolBar::separator:horizontal {
    </property>
   </action>
   <action name="actionSetSubdivs3">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/res/subdiv3.png</normaloff>:/res/subdiv3.png</iconset>
@@ -798,6 +832,30 @@ QToolBar::separator:horizontal {
     <string>toggleShowNodeOrigins</string>
    </property>
   </action>
+  <action name="actionSetColourNone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/res/colour_none.png</normaloff>:/res/colour_none.png</iconset>
+   </property>
+   <property name="text">
+    <string>setColourNone</string>
+   </property>
+  </action>
+  <action name="actionSetColourVertex">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/res/colour_vertex.png</normaloff>:/res/colour_vertex.png</iconset>
+   </property>
+   <property name="text">
+    <string>setColourVertex</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -826,6 +884,8 @@ QToolBar::separator:horizontal {
     <slot>toggleOrigin(bool)</slot>
     <slot>toggleGround(bool)</slot>
     <slot>toggleShowNodeAxes(bool)</slot>
+    <slot>setColourModeNone()</slot>
+    <slot>setColourModeVertex()</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -968,8 +1028,8 @@ QToolBar::separator:horizontal {
    <slot>open()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>399</x>
-     <y>299</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>399</x>
@@ -1144,8 +1204,8 @@ QToolBar::separator:horizontal {
    <slot>setSubdivs0()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>399</x>
-     <y>299</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
@@ -1245,6 +1305,38 @@ QToolBar::separator:horizontal {
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
+     <y>315</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSetColourNone</sender>
+   <signal>triggered()</signal>
+   <receiver>fgview</receiver>
+   <slot>setColourModeNone()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>627</x>
+     <y>315</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSetColourVertex</sender>
+   <signal>triggered()</signal>
+   <receiver>fgview</receiver>
+   <slot>setColourModeVertex()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>627</x>
      <y>315</y>
     </hint>
    </hints>

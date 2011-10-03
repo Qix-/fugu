@@ -8,8 +8,10 @@
 
 varying vec3 normal;
 varying vec3 vpos;
+varying vec3 vcol;
 
 uniform float shininess;
+uniform bool useVertexColour;
 
 void main()
 {
@@ -21,6 +23,9 @@ void main()
 	// the material properties are embedded in the shader (for now)
 	vec4 mat_ambient = vec4(1.0, 1.0, 1.0, 1.0);
 	vec4 mat_diffuse = vec4(1.0, 1.0, 1.0, 1.0);
+	if (useVertexColour){
+		mat_diffuse = vec4(vcol,1);
+	}
 	vec4 mat_specular = vec4(1.0, 1.0, 1.0, 1.0);
 	
 	// ambient term

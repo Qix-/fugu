@@ -19,9 +19,10 @@
 #endif
 
 FGView::FGView(QWidget *parent)
-: QGLWidget(QGLFormat(QGL::DepthBuffer), parent)
+: QGLWidget(parent) // NOTE: GLformat set in main.cpp
 , mUniverse(NULL) // Very important to intialise as null
 {
+
 	//logo = 0;
 	xRot = 0;
 	yRot = 0;
@@ -45,7 +46,7 @@ FGView::FGView(QWidget *parent)
 	mEnableLighting = true;
 	mNumberSubdivs = 1;
 	mMeshMode = MM_PHONG;
-	mColourMode = fg::GLRenderer::COLOUR_NONE;
+	mColourMode = fg::GLRenderer::COLOUR_VERTEX;
 
 	// theme...
 	// mBackgroundColor = QColor("#272727");
@@ -177,6 +178,16 @@ void FGView::setDrawPhong(){
 	update();
 }
 
+void FGView::setColourModeNone(){
+	mColourMode = fg::GLRenderer::COLOUR_NONE;
+	update();
+}
+
+void FGView::setColourModeVertex(){
+	mColourMode = fg::GLRenderer::COLOUR_VERTEX;
+	update();
+}
+
 void FGView::initializeGL()
 {
 	qglClearColor(mBackgroundColor);
@@ -219,6 +230,25 @@ void FGView::initializeGL()
 	else {
 		std::cerr << "Couldn't load ../assets/shaders/phong.vert or phong.frag\n";
 	}
+
+	mSubdivisionShader = new QGLShaderProgram(context());
+	QFile subdivV("../assets/shaders/subdivision_vs.glsl");
+	QFile subdivG("../assets/shaders/subdivision_gs.glsl");
+	QFile subdivF("../assets/shaders/subdivision_fs.glsl");
+	if (subdivV.open(QFile::ReadOnly | QFile::Text)
+		and subdivG.open(QFile::ReadOnly | QFile::Text)
+		and subdivF.open(QFile::ReadOnly | QFile::Text))
+	{
+		mSubdivisionShader->addShaderFromSourceCode(QGLShader::Vertex, subdivV.readAll());
+		mSubdivisionShader->addShaderFromSourceCode(QGLShader::Geometry, subdivG.readAll());
+		mSubdivisionShader->addShaderFromSourceCode(QGLShader::Fragment, subdivF.readAll());
+		mSubdivisionShader->setGeometryInputType ( GL_TRIANGLES );
+		mSubdivisionShader->setGeometryOutputType ( GL_TRIANGLE_STRIP );
+		mSubdivisionShader->link();
+	}
+	else {
+		std::cerr << "Couldn't load subdivision shader\n";
+	}
 }
 
 void FGView::paintGL()
@@ -251,7 +281,7 @@ void FGView::paintGL()
 		fg::Vec3 hc = fg::Vec3(79./255,79./255,79./255);
 		fg::Vec3 tc = fg::Vec3(16./255,16./255,16./255);
 
-		fg::GLRenderer::renderSkySphere(20,64,64,hc,tc,tc);
+		// fg::GLRenderer::renderSkySphere(20,64,64,hc,tc,tc);
 		glPopAttrib(); // GL_LIGHTING_BIT
 		glPopAttrib(); // GL_DEPTH_BUFFER_BIT
 		glPopAttrib(); // GL_TEXTURE_BIT
@@ -274,10 +304,19 @@ void FGView::paintGL()
 
 		if (mUniverse!=NULL){
 
+			mSubdivisionShader->bind();
+			fg::GLRenderer::glutSolidCube(2);
+
+			/*
 			if (mPhongShader!=NULL and mMeshMode==MM_PHONG){
 				mPhongShader->bind();
 				mPhongShader->setUniformValue("shininess",(GLfloat)15);
+				mPhongShader->setUniformValue("useVertexColour",false);
+				if (mColourMode==fg::GLRenderer::COLOUR_VERTEX){
+					mPhongShader->setUniformValue("useVertexColour",true);
+				}
 			}
+			*/
 
 			glColor3f(1,1,1);
 			foreach(shared_ptr<fg::MeshNode> m, mUniverse->meshNodes()){

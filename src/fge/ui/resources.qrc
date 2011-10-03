@@ -1,5 +1,7 @@
 <RCC>
   <qresource>
+    <file>res/colour_none.png</file>
+    <file>res/colour_vertex.png</file>
     <file>res/axes.png</file>
     <file>res/ground.png</file>
     <file>res/nodeaxes.png</file>
