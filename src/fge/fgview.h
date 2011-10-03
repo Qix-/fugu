@@ -37,14 +37,15 @@ public slots:
 	void setSubdivs2();
 	void setSubdivs3();
 
-
-
 	void setDrawSmooth();
 	void setDrawFlat();
 	void setDrawWire();
 	void setDrawPoints();
 	void setDrawTextured();
 	void setDrawPhong();
+
+	void setColourModeNone();
+	void setColourModeVertex();
 
 signals:
 	void xRotationChanged(int angle);
@@ -101,6 +102,7 @@ private:
 	fg::GLRenderer::ColourMode mColourMode;
 
 	QGLShaderProgram* mPhongShader;
+	QGLShaderProgram* mSubdivisionShader;
 };
 
 #endif

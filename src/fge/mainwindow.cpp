@@ -23,7 +23,31 @@ MainWindow::MainWindow(QWidget *parent)
 	mFGView = findChild<FGView*>("fgview");
 	mEditors = findChild<QTabWidget*>("editors");
 
-	QTimer::singleShot(0, this, SLOT(redirectStreams()));
+	// XXX: disable redirect for now
+	// QTimer::singleShot(0, this, SLOT(redirectStreams()));
+
+	// create action groups..
+
+	QActionGroup* drawModeGroup = new QActionGroup(this);
+	drawModeGroup->addAction(ui.actionSetDrawSmooth);
+	drawModeGroup->addAction(ui.actionSetDrawFlat);
+	drawModeGroup->addAction(ui.actionSetDrawWire);
+	drawModeGroup->addAction(ui.actionSetDrawPoints);
+	drawModeGroup->addAction(ui.actionSetDrawTextured);
+	drawModeGroup->addAction(ui.actionSetDrawPhong);
+	ui.actionSetDrawPhong->setChecked(true);
+
+	QActionGroup* subdivModeGroup = new QActionGroup(this);
+	subdivModeGroup->addAction(ui.actionSetSubdivs0);
+	subdivModeGroup->addAction(ui.actionSetSubdivs1);
+	subdivModeGroup->addAction(ui.actionSetSubdivs2);
+	subdivModeGroup->addAction(ui.actionSetSubdivs3);
+	ui.actionSetSubdivs1->setChecked(true);
+
+	QActionGroup* colourModeGroup = new QActionGroup(this);
+	colourModeGroup->addAction(ui.actionSetColourNone);
+	colourModeGroup->addAction(ui.actionSetColourVertex);
+	ui.actionSetColourVertex->setChecked(true);
 
 	/*
 

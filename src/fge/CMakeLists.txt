@@ -25,7 +25,7 @@ set(SRC main.cpp
 set(SRCS ${SRC})
 
 set(UIS
-	"ui/mainwindow.ui"
+	ui/mainwindow.ui
 )
 QT4_WRAP_UI(UIS_H ${UIS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}) # required to be able to include the generated ui headers
@@ -53,11 +53,12 @@ FILE(GLOB HEADERS "*.h")
 FILE(GLOB HEADER_INC "*.inc")
 
 SET(EVERYTHING ${SRC} ${MOC_SRC} ${HEADERS} ${HEADER_INC} ${UIS_H} ${RC_SRC})
-IF(MINGW)
-	add_executable(fugu WIN32 ${EVERYTHING})
-ELSE(MINGW)
+
+#IF(MINGW)
+	#add_executable(fugu WIN32 ${EVERYTHING})
+#ELSE(MINGW)
 	add_executable(fugu ${EVERYTHING})
-ENDIF(MINGW)
+#ENDIF(MINGW)
 target_link_libraries(fugu ${ALL_LIBS}) 
 
 # install fgv into bin
