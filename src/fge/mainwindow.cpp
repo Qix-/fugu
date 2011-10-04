@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
 	mEditors = findChild<QTabWidget*>("editors");
 
 	// XXX: disable redirect for now
-	QTimer::singleShot(1000, this, SLOT(redirectStreams()));
+	QTimer::singleShot(1, this, SLOT(redirectStreams()));
 
 	// create action groups..
 

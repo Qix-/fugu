@@ -72,7 +72,7 @@ void redirectConsoleOutput(){
 
 #include <stdexcept>
 void redirectConsoleOutput(){
-	throw(std::runtime_error("Sorry, not yet implemented!"));
+	//throw(std::runtime_error("Sorry, not yet implemented!"));
 }
 
 
