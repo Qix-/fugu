@@ -9,8 +9,10 @@
      QApplication::setStyle(new QCleanlooksStyle);
 
      QGLFormat glFormat(QGL::DepthBuffer);
+     /*
      glFormat.setVersion( 3, 3 );
      glFormat.setProfile( QGLFormat::CompatibilityProfile );
+     */
      QGLFormat::setDefaultFormat(glFormat);
 
      MainWindow window;

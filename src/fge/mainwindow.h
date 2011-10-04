@@ -46,9 +46,11 @@ public slots:
 	void undo();
 	void redo();
 
-
 	void runScript(QString code);
 	void redirectStreams();
+
+	void showLineNumbers(bool);
+
 private:
 
 	void openFile(const QString &path = QString());

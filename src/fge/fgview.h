@@ -30,6 +30,7 @@ public slots:
 	void toggleOrigin(bool show);
 	void toggleGround(bool show);
 	void toggleShowNodeAxes(bool show);
+	void toggleShowOverWire(bool show);
 	void toggleLighting(bool on);
 	void setNumberOfSubdivs(int num);
 	void setSubdivs0();
@@ -96,13 +97,16 @@ private:
 	bool mGround;
 	bool mShowNodeAxes; // show node axes
 	bool mEnableLighting;
+	bool mShowOverWire;
 	int mNumberSubdivs;
 	enum MeshMode { MM_SMOOTH, MM_FLAT, MM_WIRE, MM_POINTS, MM_TEXTURED, MM_PHONG };
 	MeshMode mMeshMode;
 	fg::GLRenderer::ColourMode mColourMode;
 
 	QGLShaderProgram* mPhongShader;
-	QGLShaderProgram* mSubdivisionShader;
+	QGLShaderProgram* mOverWireShader;
+
+	// QGLShaderProgram* mSubdivisionShader;
 };
 
 #endif

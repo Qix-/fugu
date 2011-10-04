@@ -320,6 +320,18 @@ void MainWindow::redirectStreams(){
 	redirectConsoleOutput();
 }
 
+void MainWindow::showLineNumbers(bool b){
+	for(int i=0;i<mEditors->count();i++){
+		QsciScintilla* editor = static_cast<QsciScintilla*>(mEditors->widget(i));
+		if (!b){
+			editor->setMarginWidth(1,0);
+		}
+		else {
+			editor->setMarginWidth(1,QString("9999"));
+		}
+	}
+}
+
 void MainWindow::openFile(const QString &path)
 {
 	QString fileName = path;

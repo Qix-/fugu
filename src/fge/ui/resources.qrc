@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>res/overwire.png</file>
     <file>res/colour_none.png</file>
     <file>res/colour_vertex.png</file>
     <file>res/axes.png</file>
