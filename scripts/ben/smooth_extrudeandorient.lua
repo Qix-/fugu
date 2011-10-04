@@ -21,7 +21,7 @@ local n, m
 local vertices, vertex
 
 local function debug(msg)
-	print(msg)
+	-- print(msg)
 end
 
 function setup()
