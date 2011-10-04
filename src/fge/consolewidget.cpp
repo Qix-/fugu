@@ -11,6 +11,7 @@ void outcallback( const char* ptr, std::streamsize count, void* console )
   (void) count;
   QsciScintilla* p = static_cast< QsciScintilla* >( console );
   p->append( ptr );
+  p->setCursorPosition(p->lines()-1,0);
 }
 
 void errcallback( const char* ptr, std::streamsize count, void* console )
@@ -18,6 +19,7 @@ void errcallback( const char* ptr, std::streamsize count, void* console )
   (void) count;
   QsciScintilla* p = static_cast< QsciScintilla* >( console );
   p->append( ptr );
+  p->setCursorPosition(p->lines()-1,0);
 }
 
 ConsoleWidget::ConsoleWidget(QWidget *parent)

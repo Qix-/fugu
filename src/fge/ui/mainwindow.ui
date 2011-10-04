@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>877</width>
     <height>600</height>
    </rect>
   </property>
@@ -22,6 +22,7 @@
 	inactive font: #959595
 	active font: #c8c8c8	
 	orange: #f27000
+	yellow: #FFDE00
 */
 
 QWidget {
@@ -49,7 +50,17 @@ QTabBar::tab {
 	border-top-right-radius: 0px;
 	min-width: 8ex;
 }
- 
+
+/* doesnt work..
+*[activeScript=&quot;true&quot;]{ 
+	background-color: #FFDE00;
+}
+
+QTabBar::tab[activeScript=&quot;true&quot;]{
+	background-color: #FFDE00;
+}
+*/
+
 QTabBar::tab:selected, QTabBar::tab:hover {
 	background-color: #3f3f3f;
 	color: #c8c8c8;	
@@ -146,6 +157,10 @@ QMenu {
  QMenu::indicator:non-exclusive:checked:selected {
  	background-color: #f27000;
  }
+
+QMenu::separator {
+	background: transparent; /* #3f3f3f; */
+}
 
  /* exclusive indicator = radio button style indicator (see QActionGroup::setExclusive) */
  QMenu::indicator:exclusive {
@@ -360,6 +375,18 @@ QToolBar::separator:horizontal {
      width: 8px;
      background: #3f3f3f;
  }
+
+QToolBar::separator:vertical {
+	height: 8px;
+	 background: transparent; /* #3f3f3f; */
+}
+
+ QToolBar::handle:vertical {
+     /* image: url(handle.png); */
+     image: none;
+     height: 8px;
+     background: #3f3f3f;
+ }
  
  QToolBar::handle:hover {
      /* image: url(handle.png); */
@@ -482,7 +509,7 @@ QToolBar::separator:horizontal {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>877</width>
      <height>25</height>
     </rect>
    </property>
@@ -494,11 +521,12 @@ QToolBar::separator:horizontal {
     <addaction name="action_Open"/>
     <addaction name="action_Save"/>
     <addaction name="actionSave_As"/>
+    <addaction name="actionClose"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
-     <string>Edit</string>
+     <string>Editor</string>
     </property>
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
@@ -536,10 +564,23 @@ QToolBar::separator:horizontal {
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionMakeCurrentScriptActive"/>
+   <addaction name="separator"/>
    <addaction name="actionReload"/>
    <addaction name="actionPlay"/>
    <addaction name="actionStep"/>
    <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_2">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
    <addaction name="actionToggleLighting"/>
    <addaction name="actionToggleOrigin"/>
    <addaction name="actionToggleGround"/>
@@ -887,6 +928,26 @@ QToolBar::separator:horizontal {
    </property>
    <property name="text">
     <string>toggleShowOverWire</string>
+   </property>
+  </action>
+  <action name="actionMakeCurrentScriptActive">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/res/tick.png</normaloff>:/res/tick.png</iconset>
+   </property>
+   <property name="text">
+    <string>makeCurrentScriptActive</string>
+   </property>
+   <property name="toolTip">
+    <string>Make the current script active</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F4</string>
    </property>
   </action>
  </widget>
@@ -1407,6 +1468,38 @@ QToolBar::separator:horizontal {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionMakeCurrentScriptActive</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>makeCurrentScriptActive()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>438</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionClose</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>closeFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>438</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>about()</slot>
@@ -1428,5 +1521,7 @@ QToolBar::separator:horizontal {
   <slot>quit()</slot>
   <slot>open()</slot>
   <slot>showLineNumbers(bool)</slot>
+  <slot>makeCurrentScriptActive()</slot>
+  <slot>closeFile()</slot>
  </slots>
 </ui>

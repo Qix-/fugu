@@ -30,7 +30,9 @@ public slots:
 	void open();
 	void save();
 	void saveAs();
+	void closeFile();
 	void quit();
+
 
 	void load(); // load the current script
 	void unload(); // unload the current universe
@@ -48,6 +50,7 @@ public slots:
 
 	void runScript(QString code);
 	void redirectStreams();
+	void makeCurrentScriptActive();
 
 	void showLineNumbers(bool);
 
@@ -71,6 +74,7 @@ private:
 	// text editors
 	QTabWidget* mEditors;
 	QHash<QWidget*,QString> mFileNames; // map: texteditor -> filename
+	QWidget* mActiveScript; // the script that is executed when play/restart is pressed...
 
 	// 3d view
 	FGView* mFGView;
