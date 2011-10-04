@@ -410,6 +410,9 @@ QToolBar::separator:horizontal {
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="margin">
+         <number>0</number>
+        </property>
         <item>
          <widget class="QSplitter" name="splitter_2">
           <property name="orientation">
@@ -499,6 +502,8 @@ QToolBar::separator:horizontal {
     </property>
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowLineNumbers"/>
    </widget>
    <widget class="QMenu" name="menuSimulation">
     <property name="title">
@@ -553,6 +558,8 @@ QToolBar::separator:horizontal {
    <addaction name="separator"/>
    <addaction name="actionSetColourNone"/>
    <addaction name="actionSetColourVertex"/>
+   <addaction name="separator"/>
+   <addaction name="actionToggleShowOverWire"/>
   </widget>
   <action name="actionNew">
    <property name="text">
@@ -856,6 +863,32 @@ QToolBar::separator:horizontal {
     <string>setColourVertex</string>
    </property>
   </action>
+  <action name="actionShowLineNumbers">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>showLineNumbers</string>
+   </property>
+  </action>
+  <action name="actionToggleShowOverWire">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/res/overwire.png</normaloff>:/res/overwire.png</iconset>
+   </property>
+   <property name="text">
+    <string>toggleShowOverWire</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -886,6 +919,7 @@ QToolBar::separator:horizontal {
     <slot>toggleShowNodeAxes(bool)</slot>
     <slot>setColourModeNone()</slot>
     <slot>setColourModeVertex()</slot>
+    <slot>toggleShowOverWire(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -1341,6 +1375,38 @@ QToolBar::separator:horizontal {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionShowLineNumbers</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showLineNumbers(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionToggleShowOverWire</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>fgview</receiver>
+   <slot>toggleShowOverWire(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>627</x>
+     <y>315</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>about()</slot>
@@ -1361,5 +1427,6 @@ QToolBar::separator:horizontal {
   <slot>redirectStreams()</slot>
   <slot>quit()</slot>
   <slot>open()</slot>
+  <slot>showLineNumbers(bool)</slot>
  </slots>
 </ui>
