@@ -5,10 +5,11 @@ local node = {}
 
 function setup()
 
-	b = new_blastoidea(.4,.5,45,.5,.5,.022)
+	b = new_blastoidea(.40,.35,20,.5,.5,.015)
 
     donatello = fg.turtle()
 	donatello:pitch(-math.pi*.5)
+	donatello:roll(.9)
 
 	b:build(donatello)
 
@@ -31,7 +32,7 @@ function new_blastoidea(width,length,numbeads,rootmeander,brachiolesmeander,bend
 		b = bendy,
 		n = numbeads,
 
-		nroots = 7
+		nroots = 8
 	}
 
 	obj.build = function(self,bert)
@@ -82,7 +83,7 @@ function new_root(length,width,meander)
 		bert:pitch(math.pi * .25)
 		bert:move(self.rootWidth)
 		bert:setScale(self.rootWidth * .7)
-		bert:addPoint(10)
+		bert:addPoint(2)
 		bert:move(self.rootWidth)
 		bert:pitch(math.pi * .25)
 		bert:move(self.rootWidth)
@@ -92,7 +93,7 @@ function new_root(length,width,meander)
 		distance = 0
 		rateCur = 0
 		stepLength = self.stepLength
-		bert:addPoint(10)
+		bert:addPoint(2)
 		bert:move(self.stepLength)
 		distance = distance + stepLength
 --
@@ -101,7 +102,7 @@ function new_root(length,width,meander)
 			--	bert:setScale(0.2)
 			end
 			bert:yaw(rateCur/2)
-			bert:addPoint()
+			bert:addPoint(2)
 			pos = bert:getPosition()
 			rateCur = rateCur + self.rootMeander * fracSum(pos.x, pos.y, pos.z, 1, 1)
 			bert:yaw(rateCur/2)
@@ -111,7 +112,7 @@ function new_root(length,width,meander)
 		end
 		bert:setScale(0.001)
 		bert:yaw(rateCur/2)
-		bert:endCylinder(10)
+		bert:endCylinder(2)
 	end
 
 	return obj
@@ -169,23 +170,26 @@ function new_stalk(length,width,n,bendy)
   	  --bert:setScale(width)
 
 	  for i = 2, self.numBeads, 1 do
-	  	bert:addPoint(7)
+	  	bert:addPoint(1)
 
         bert:yaw(self.b)
 --		bert:pitch(random(-.07,.07))
 		bert:move(self.dl * .5)
 		bert:setScale(self.dw)
-		bert:addPoint(7)
+		bert:addPoint(1)
 		bert:move(self.dl * .5)
 
 	  	width = randomN(self.beadWidth, self.beadWidth * .03)
 	  	length = randomN(self.beadLength, self.beadLength * .2)
 		bert:setScale(width)
-		bert:addPoint(7)
-		bert:move(length)
+		bert:addPoint(1)
+
 		bert:setScale(width)
+		bert:move(.2*length)
+		bert:addPoint(2)
+		bert:move(length)
 	  end
-	  bert:endCylinder()
+	  bert:endCylinder(2)
 	end
 
 	obj.update = function(self,dt)
@@ -281,7 +285,7 @@ function new_cylax(width,length,n)
 	  	for i = 1, self.numBumps, 1 do
 			bert:pushState()
 
-			brachioles = new_brachioles_bunch(self.baseWidth*.15,self.baseWidth*1.2,7,12)
+			brachioles = new_brachioles_bunch(self.baseWidth*.15,self.baseWidth*1.2,5,9)
 
 			pos = vec3(2.4*self.innerRat*math.cos((i + .5) * 2 * math.pi / self.numBumps), 
 			              2.4*self.innerRat*math.sin((i + .5) * 2 * math.pi / self.numBumps),
@@ -374,34 +378,34 @@ function new_brachioles(width,length,n)
  			bert:yaw(theta)
 			bert:pitch(theta)
 			bert:move(length)
-			bert:addPoint(5)
+			bert:addPoint(4)
 
         	bert:move(self.dl * .3)
     		bert:setCrossSection(cs1)
-			bert:addPoint(5)
+			bert:addPoint(1)
 
 			bert:move(self.dl * .2)
     		bert:setCrossSection(cs2)
-			bert:addPoint(5)
+			bert:addPoint(1)
 
         	bert:move(self.dl * .2)
     		bert:setCrossSection(cs1)
-			bert:addPoint(5)
+			bert:addPoint(1)
 
         	bert:move(self.dl * .3)
     		bert:setCrossSection(0)
-			bert:addPoint(5)
+			bert:addPoint(1)
 
 --			length = length * .9
 		end
 
         bert:setScale(self.segWidth)
 		bert:move(self.dl)
-		bert:addPoint()
+		bert:addPoint(1)
 
         bert:setScale(0.1 * self.segWidth)
 		bert:move(self.segLength * .5)
-		bert:endCylinder(12)
+		bert:endCylinder(4)
 	end
 
 	return obj

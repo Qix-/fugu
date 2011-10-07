@@ -9,7 +9,7 @@ function setup()
 
 	m[1] = stalk:getMesh()
 	-- Node for the mesh
-	node[1] = fg.meshnode(m[1])
+	--node[1] = fg.meshnode(m[1])
 	fgu:add(node[1])
 	-- roots
 	holdfast = new_holdfast(4,2,7,.5)

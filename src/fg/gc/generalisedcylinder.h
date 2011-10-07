@@ -36,6 +36,13 @@ namespace fg {
 				double unNormalise( double u, double v ) const;
                 int createMesh( Mesh::MeshBuilder &mb ) const;
 
+				void impl( Vec3 x, double &u_i, double &v_i, double &d, Vec3 &grad ) const;
+
+				void sim(double &x, double &y, double &z,
+        		         double a, double b, double c, double d,
+        		      	 double l, double m, double n, double k,
+        		         double p, double q, double r, double s) const;
+
             protected:
                 const CarrierCurve &mCarrier;
                 const CrossSection &mCrossSection;
@@ -45,6 +52,8 @@ namespace fg {
 				std::vector< std::pair<double, double> > mScaleDomain;
 				std::vector< int > mStrips;
 				double getTotalLengthSquared( const std::vector< Vec3 > &polyLine ) const;
+				const static int mMaxIts = 100;
+				const static double mThreshHold = 1E-30;
 
                 void updateOrients( const std::vector<Quat> &orients );
 				double getCrossSectionV( double v ) const;

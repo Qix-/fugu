@@ -168,7 +168,7 @@ namespace fg {
 		glPointSize(3);
 
 		// Draw Approx Curve
-		glColor3f(1,1,1);
+		glColor3f(0,0,0);
 		glBegin(GL_LINES);
 		for(int i=0;i<arr.size();i++){
 			// draw a line from arr[i] to arr[i+1]
@@ -182,12 +182,15 @@ namespace fg {
 		}
 		glEnd();
 
+/*
 		glBegin(GL_POINTS);
 		for(int i=0;i<arr.size();i++){
 			glVertex3d(arr[i].getX(),arr[i].getY(),arr[i].getZ());
 		}
 		glEnd();
+*/
 
+		/*
 		// Draw Convex Hull
 		glColor3f(1,0,1);
 		glBegin(GL_LINES);
@@ -197,23 +200,27 @@ namespace fg {
 			glVertex3d(cp[i+1].getX(),cp[i+1].getY(),cp[i+1].getZ());
 		}
 		glEnd();
+		*/
 
+/*
+		glColor3f(.5,0,0);
+		glPointSize(5);
 		glBegin(GL_POINTS);
-		glColor3f(1,0,1);
-		glPointSize(10);
 		for(int i=0;i<s.getNumControlPoints();i++){
 			glVertex3d(cp[i].getX(),cp[i].getY(),cp[i].getZ());
 		}
 		glEnd();
+		*/
 
-        glPointSize(6);
+/*
+        glPointSize(10);
+		glColor3f(1,0,0);
 		glBegin(GL_POINTS);
-		glColor3f(1,0,1);
 		for(int i=0;i<s.getNumControlPoints();i++){
 			glVertex3d(s.getPosition(0.).getX(),s.getPosition(0.).getY(),s.getPosition(0.).getZ());
 		}
 		glEnd();
-
+*/
 		glPopAttrib();
 		glPopAttrib();
 		glPopAttrib();

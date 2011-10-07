@@ -5,7 +5,7 @@ local node = {}
 local cs = {}
 local m = {}
 function setup()
-	local l = new_leaf(1.2, 4., .0, .0, 1.)
+	local l = new_leaf(1.2, 4., .2, .2, 0.)
 
 	donatello = fg.turtle()
 
@@ -137,32 +137,32 @@ function new_leaf_cs(width,thickness,fold,back)
 		bert:setStiffness(0.,0.)
 		bert:beginCrossSection()
 
-		bert:setFrame(vec3(.6*self.w,0.5*self.t,-1*self.b),vec3(-1,0,0),vec3(0,0,1))
-		bert:setStiffness(0.3,0.3)
-		bert:addPoint()
+--		bert:setFrame(vec3(.6*self.w,0.5*self.t,-1*self.b),vec3(-1,0,0),vec3(0,0,1))
+--		bert:setStiffness(0.3,0.3)
+--		bert:addPoint()
 
 		bert:setStiffness(0.3,0.3)
 		bert:setFrame(vec3(0,self.t,0.),vec3(-1,0,0),vec3(0,0,1))
 		bert:addPoint()
 
-		bert:setFrame(vec3(-.6*self.w,.5*self.t,-1.*self.b),vec3(-1,0,0),vec3(0,0,1))
-		bert:setStiffness(0.3,0.3)
-		bert:addPoint()
+--		bert:setFrame(vec3(-.6*self.w,.5*self.t,-1.*self.b),vec3(-1,0,0),vec3(0,0,1))
+--		bert:setStiffness(0.3,0.3)
+--		bert:addPoint()
 
-		bert:setStiffness(0.1,0.1)
+		bert:setStiffness(0.0,0.0)
 		bert:setFrame(vec3(-self.w,self.f,0.),vec3(0,-1,0),vec3(0,0,1))
 		bert:addPoint()
 
-		bert:setFrame(vec3(-.6*self.w,-.5*self.t,0),vec3(-1,0,0),vec3(0,0,1))
-		bert:setStiffness(0.3,0.3)
-		bert:addPoint()
+--		bert:setFrame(vec3(-.6*self.w,-.5*self.t,0),vec3(-1,0,0),vec3(0,0,1))
+--		bert:setStiffness(0.3,0.3)
+--		bert:addPoint()
 
 		bert:setStiffness(0.3,0.3)
 		bert:setFrame(vec3(0,-self.t,0),vec3(1,0,0),vec3(0,0,1))
-		bert:addPoint()
+		--bert:addPoint()
 
-		bert:setFrame(vec3(.6*self.w,-.5*self.t,0),vec3(-1,0,0),vec3(0,0,1))
-		bert:setStiffness(0.3,0.3)
+--		bert:setFrame(vec3(.6*self.w,-.5*self.t,0),vec3(-1,0,0),vec3(0,0,1))
+--		bert:setStiffness(0.3,0.3)
 		local ret = bert:endCrossSection()
 
 		return ret

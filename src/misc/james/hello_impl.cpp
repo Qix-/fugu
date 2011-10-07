@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 
 	bert.setCarrierMode(0);
 	bert.beginCylinder( );
-	bert.move(10.);
+	bert.move(1.);
 	bert.endCylinder();
 
 	double uNorm, u, v = 0.;
@@ -83,6 +83,30 @@ int main(int argc, char *argv[])
 	uNorm = 1.;
 	u = bert.mCylinders[0]->unNormalise( uNorm, v );
 	std::cout << "uNorm = " << uNorm << ", u = " << u << ", pos = " << bert.mCylinders[0]->getPosition( u, 0. ) << "\n";
+	uNorm = .5;
+	u = bert.mCylinders[0]->unNormalise( uNorm, v );
+	std::cout << "uNorm = " << uNorm << ", u = " << u << ", pos = " << bert.mCylinders[0]->getPosition( u, 0. ) << "\n";
+
+	u = 0.;
+	v = .1;
+	Vec3 norm = bert.mCylinders[0]->getNorm( u, v );
+	Vec3 du = bert.mCylinders[0]->getDerivativeU( u, v );
+	Vec3 dv = bert.mCylinders[0]->getDerivativeV( u, v ); 
+	Vec3 normu = bert.mCylinders[0]->getNormU( u, v );
+	Vec3 normv = bert.mCylinders[0]->getNormV( u, v );
+	std::cout << "(" << u << ", " << v << ") -> " << "du = " << du << ", dv = " << dv << ", norm = " << norm << ", nu = " << normu << ", nv = " << normv << "\n";
+
+	u = 1.;
+	v = 0.;
+	norm = bert.mCylinders[0]->getNorm( u, v );
+	std::cout << "(" << u << ", " << v << ") -> " << norm << "\n\n\n";
+
+	u = 0.0;
+	v = 0.5;
+	double f = 0.;
+	Vec3 grad;
+	bert.mCylinders[0]->impl( Vec3(1., 0., 0.5 ), u, v, f, grad );
+	cout << "imp(1.1, 0.1, 0.1) = " << f << ", " << grad << ", u = " << u << ", v = " << v << endl;
 
 	// ** Create new mesh here 
 	GeneralisedCylinderImpl gc;
