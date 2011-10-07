@@ -4,12 +4,14 @@
 #include <QVBoxLayout>
 
 #include <iostream>
+#include "redirect.h"
 
 void outcallback( const char* ptr, std::streamsize count, void* console )
 {
   (void) count;
   QsciScintilla* p = static_cast< QsciScintilla* >( console );
   p->append( ptr );
+  p->setCursorPosition(p->lines()-1,0);
 }
 
 void errcallback( const char* ptr, std::streamsize count, void* console )
@@ -17,6 +19,7 @@ void errcallback( const char* ptr, std::streamsize count, void* console )
   (void) count;
   QsciScintilla* p = static_cast< QsciScintilla* >( console );
   p->append( ptr );
+  p->setCursorPosition(p->lines()-1,0);
 }
 
 ConsoleWidget::ConsoleWidget(QWidget *parent)
@@ -26,6 +29,7 @@ ConsoleWidget::ConsoleWidget(QWidget *parent)
 
     mConsole = new QsciScintilla();
     mConsole->setLexer(new FGLexer());
+    mConsole->setObjectName("console");
     mConsole->setTabWidth(2);
     mConsole->setWrapMode(QsciScintilla::WrapCharacter);
     mConsole->setCaretForegroundColor(QColor("#959595"));
@@ -35,28 +39,19 @@ ConsoleWidget::ConsoleWidget(QWidget *parent)
 	mConsole->setReadOnly(true);
 
     mCommandLine = new CommandLineWidget();
-    mCommandLine->setLexer(new FGLexer(QColor("#101010")));
-    mCommandLine->setTabWidth(2);
-    mCommandLine->setMarginWidth(1,0); // disable line number margin
-    mCommandLine->setCaretForegroundColor(QColor("#959595"));
-    mCommandLine->setMarginsBackgroundColor(QColor("#272727"));
-    mCommandLine->setMarginsForegroundColor(QColor("#959595"));
-
-    QFontMetrics fm(mCommandLine->lexer()->defaultFont());
-    int textHeightInPixels = fm.height();
-    mCommandLine->setMaximumSize(mCommandLine->maximumWidth(), textHeightInPixels);
-    mCommandLine->setMinimumSize(0, textHeightInPixels);
-    mCommandLine->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 
     // hook up command line signals...
     connect(mCommandLine, SIGNAL(emitCommand(QString)), this, SLOT(processCommand(QString)));
 
-    QVBoxLayout* qvb = new QVBoxLayout(this);
+    QVBoxLayout* qvb = new QVBoxLayout();
     qvb->addWidget(mConsole);
     qvb->addWidget(mCommandLine);
+    qvb->setContentsMargins(0,0,0,0);
+    setLayout(qvb);
 
     mStdOutRedirector = new StdRedirector<>( std::cout, outcallback, mConsole );
     mStdErrRedirector = new StdRedirector<>( std::cerr, errcallback, mConsole );
+
 }
 
 ConsoleWidget::~ConsoleWidget()
@@ -210,6 +205,12 @@ void ConsoleWidget::linesChanged(){
 // void ConsoleWidget::keyPressEvent (QKeyEvent *event){}
 
 CommandLineWidget::CommandLineWidget(QWidget* parent):QsciScintilla(parent){
+	setObjectName("commandline");
+
+	FGLexer* lex = new FGLexer();
+	// lex->inheritColoursFrom(this);
+	setLexer(lex);
+
 	setText(">> ");
 	fixedPosition = 3;
 	setCursorPosition(0,fixedPosition);
@@ -217,7 +218,15 @@ CommandLineWidget::CommandLineWidget(QWidget* parent):QsciScintilla(parent){
 	connect(this,SIGNAL(selectionChanged()),this, SLOT(selectionChanged()));
 	connect(this,SIGNAL(cursorPositionChanged(int,int)),this, SLOT(cursorPositionChanged(int,int)));
 
+    setTabWidth(2);
+    setMarginWidth(1,0); // disable line number margin
+    setCaretForegroundColor(QColor("#959595"));
 
+    QFontMetrics fm(lexer()->defaultFont());
+    int textHeightInPixels = fm.height();
+    setMaximumSize(maximumWidth(), textHeightInPixels);
+    setMinimumSize(0, textHeightInPixels);
+    setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 }
 
 void CommandLineWidget::keyPressEvent(QKeyEvent* event){

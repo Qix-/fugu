@@ -15,12 +15,6 @@ QWidget {
 	border: 0;	
 }
 
-QFrame {
-	margin: 0;
-	padding: 0;
-}
-
-
 QTabBar {
 	background-color: #272727;
 	border: 0;
@@ -56,7 +50,9 @@ QTabWidget::pane {
 
 
 
-
+#commandline {
+	background-color: #FF0000;
+}
 
 
 

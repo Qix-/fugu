@@ -27,9 +27,12 @@ public:
 public slots:
 	void about();
 	void newFile();
-	void openFile(const QString &path = QString());
+	void open();
 	void save();
 	void saveAs();
+	void closeFile();
+	void quit();
+
 
 	void load(); // load the current script
 	void unload(); // unload the current universe
@@ -46,7 +49,14 @@ public slots:
 	void redo();
 
 	void runScript(QString code);
+	void redirectStreams();
+	void makeCurrentScriptActive();
+
+	void showLineNumbers(bool);
+
 private:
+
+	void openFile(const QString &path = QString());
 
 	// Save the the editor's contents to the file fileName
 	bool saveFile(QsciScintilla* editor, QString fileName);
@@ -64,6 +74,7 @@ private:
 	// text editors
 	QTabWidget* mEditors;
 	QHash<QWidget*,QString> mFileNames; // map: texteditor -> filename
+	QWidget* mActiveScript; // the script that is executed when play/restart is pressed...
 
 	// 3d view
 	FGView* mFGView;

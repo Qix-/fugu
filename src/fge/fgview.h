@@ -30,8 +30,13 @@ public slots:
 	void toggleOrigin(bool show);
 	void toggleGround(bool show);
 	void toggleShowNodeAxes(bool show);
+	void toggleShowOverWire(bool show);
 	void toggleLighting(bool on);
 	void setNumberOfSubdivs(int num);
+	void setSubdivs0();
+	void setSubdivs1();
+	void setSubdivs2();
+	void setSubdivs3();
 
 	void setDrawSmooth();
 	void setDrawFlat();
@@ -39,6 +44,9 @@ public slots:
 	void setDrawPoints();
 	void setDrawTextured();
 	void setDrawPhong();
+
+	void setColourModeNone();
+	void setColourModeVertex();
 
 signals:
 	void xRotationChanged(int angle);
@@ -89,12 +97,16 @@ private:
 	bool mGround;
 	bool mShowNodeAxes; // show node axes
 	bool mEnableLighting;
+	bool mShowOverWire;
 	int mNumberSubdivs;
 	enum MeshMode { MM_SMOOTH, MM_FLAT, MM_WIRE, MM_POINTS, MM_TEXTURED, MM_PHONG };
 	MeshMode mMeshMode;
 	fg::GLRenderer::ColourMode mColourMode;
 
 	QGLShaderProgram* mPhongShader;
+	QGLShaderProgram* mOverWireShader;
+
+	// QGLShaderProgram* mSubdivisionShader;
 };
 
 #endif

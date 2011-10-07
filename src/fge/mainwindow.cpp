@@ -7,98 +7,56 @@
 
 #include "fglexer.h"
 #include "consolewidget.h"
+#include "redirect.h"
+
+#include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
 ,mUniverse(NULL)
 ,mSimulationTimer(NULL)
+,mSimulationMode(SM_PAUSED)
+,mPreviousMode(SM_PAUSED)
+,mTimeMultiplier(1)
+,mTime(0)
+,mActiveScript(NULL)
 {
-	QApplication::setStyle(new QCleanlooksStyle);
+	Ui::MainWindow ui;
+	ui.setupUi(this);
 
-	setWindowTitle(tr("fugu"));
+	mConsoleWidget = findChild<ConsoleWidget*>("consolewidget");
+	mFGView = findChild<FGView*>("fgview");
+	mEditors = findChild<QTabWidget*>("editors");
 
-	setupConsoleWidget();
+	// XXX: disable redirect for now
+	QTimer::singleShot(1, this, SLOT(redirectStreams()));
 
-	mFGView = new FGView(this);
+	// create action groups..
 
-	setupFileMenu();
-	setupEditMenu();
-	setupSimulationControls();
-	setupViewMenu();
-	setupHelpMenu();
+	QActionGroup* drawModeGroup = new QActionGroup(this);
+	drawModeGroup->addAction(ui.actionSetDrawSmooth);
+	drawModeGroup->addAction(ui.actionSetDrawFlat);
+	drawModeGroup->addAction(ui.actionSetDrawWire);
+	drawModeGroup->addAction(ui.actionSetDrawPoints);
+	drawModeGroup->addAction(ui.actionSetDrawTextured);
+	drawModeGroup->addAction(ui.actionSetDrawPhong);
+	ui.actionSetDrawPhong->setChecked(true);
 
-	QWidget *container = new QWidget;
-	// container->setStyleSheet("background: #101010;");
-	// qlineargradient( x1: 0, y1: 0, x2: 1, y2"	": 0, stop: 0 black, stop: 1 white);");
+	QActionGroup* subdivModeGroup = new QActionGroup(this);
+	subdivModeGroup->addAction(ui.actionSetSubdivs0);
+	subdivModeGroup->addAction(ui.actionSetSubdivs1);
+	subdivModeGroup->addAction(ui.actionSetSubdivs2);
+	subdivModeGroup->addAction(ui.actionSetSubdivs3);
+	ui.actionSetSubdivs1->setChecked(true);
 
-	QHBoxLayout *layout = new QHBoxLayout(container);
-	layout->setContentsMargins(0, 0, 0, 0);
-
-	mEditors = new QTabWidget(container);
-	mEditors->setMinimumSize(100,100);
-	layout->addWidget(mEditors);
-	// mEditors->setTabsClosable(true);
-	mEditors->setDocumentMode(false);
-	mEditors->setMovable(true);
-	mEditors->setUsesScrollButtons(true);
-
-	//mEditors->
-	/*
-	setStyleSheet(
-	      "QTabBar::tab { background: gray; color: white; padding: 10px; } "
-	      "QTabBar::tab:selected { background: lightgray; } "
-	      "QTabWidget::pane { border: 0; } "
-	      "QWidget { background: lightgray; } ");
-	      */
-
-
-
-	/*
-	layout()->addWidget(mFGView, BorderLayout::Center);
-	layout()->addWidget(mEditors, BorderLayout::West);
-	*/
-
-	QSplitter* subframe = new QSplitter(Qt::Vertical);
-	subframe->addWidget(container);
-	subframe->addWidget(mConsoleWidget);
-
-
-	QSplitter* frame = new QSplitter();
-	frame->addWidget(subframe);
-	frame->addWidget(mFGView);
-
-
-	setCentralWidget(frame);
-
-	QFile stylesheet("../assets/fgestyle.css");
-	if (stylesheet.open(QFile::ReadOnly | QFile::Text)){
-		setStyleSheet(stylesheet.readAll());
-	}
-
-	/*
-	QDockWidget *dock = new QDockWidget(tr("Editors"), this);
-	dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	dock->setWidget(mEditors);
-	addDockWidget(Qt::LeftDockWidgetArea, dock);
-
-	dock = new QDockWidget(tr("FG View"), this);
-	dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	dock->setWidget(mFGView);
-	addDockWidget(Qt::RightDockWidgetArea, dock);
-	*/
-
-	// setCentralWidget(mEditors);
-
-	mSimulationMode = SM_PAUSED;
-	mPreviousMode =SM_PAUSED;
-	mTimeMultiplier = 1;
-	mTime = 0;
-
-	mSimulationTimer = new QTimer(this);
-	connect(mSimulationTimer, SIGNAL(timeout()), this, SLOT(simulateOneStep()));
+	QActionGroup* colourModeGroup = new QActionGroup(this);
+	colourModeGroup->addAction(ui.actionSetColourNone);
+	colourModeGroup->addAction(ui.actionSetColourVertex);
+	ui.actionSetColourVertex->setChecked(true);
 
 	newEditor(new QFile("../scripts/ben/aorta.lua"));
-
+	makeCurrentScriptActive();
+	newEditor(new QFile("../scripts/ben/blue.lua"));
 	load();
 }
 
@@ -114,26 +72,9 @@ void MainWindow::newFile()
 	newEditor();
 }
 
-void MainWindow::openFile(const QString &path)
+void MainWindow::open()
 {
-	QString fileName = path;
-	if (fileName.isNull())
-		fileName = QFileDialog::getOpenFileName(this,
-				tr("Open File"), "", "fugu script (*.lua)");
-
-	if (!fileName.isEmpty()) {
-
-		// check if its already open...
-		// if so, just switch to that file
-		for(int i=0;i<mEditors->count();i++){
-			if (mFileNames[mEditors->widget(i)]==fileName){
-				mEditors->setCurrentIndex(i);
-				return;
-			}
-		}
-		// if not, open a new editor
-		newEditor(new QFile(fileName));
-	}
+	openFile();
 }
 
 void MainWindow::save(){
@@ -173,34 +114,85 @@ void MainWindow::saveAs(){
 	}
 }
 
+void MainWindow::closeFile(){
+	QWidget* qw = mEditors->currentWidget();
+	if (qw==NULL){
+		QMessageBox::critical(this, tr("Application"), tr("No selected file to close!"));
+		return;
+	}
+	else {
+		// TODO: check if we want to save...
+
+		// Close file and remove active
+		if (mFileNames.contains(qw)){
+			mFileNames.remove(qw);
+		}
+
+		if (qw==mActiveScript)
+		{
+			unload();
+			mActiveScript = NULL;
+		}
+
+		mEditors->removeTab(mEditors->currentIndex());
+		delete qw;
+	}
+}
+
+void MainWindow::quit(){
+	QApplication::exit();
+}
+
 void MainWindow::load(){
-	std::cout << "Loading universe\n";
-
-	if (mUniverse!=NULL){
-		// Clean up the old universe
-		mFGView->unsetUniverse();
-		delete mUniverse;
-		mUniverse = NULL;
-		// TODO: make sure old slider values carry over into new state
-
-		// mFGView->repaint();
+	if (mActiveScript==NULL){
+		QMessageBox::warning(this, tr("No Active Script"), tr("There must be an active script in order to run a simulation."));
+		return;
 	}
-
-	try {
-		// Create a new universe
-		mUniverse = new fg::Universe();
-		mUniverse->addScriptDirectory("../scripts/?.lua");
-		mUniverse->loadScript("ben/aorta");
-
-		mFGView->setUniverse(mUniverse);
-		// mFGView->repaint();
-	}
-	catch (std::runtime_error& e){
-		mSimulationMode = SM_ERROR;
-		std::cerr << "ERROR: " << e.what() << "\n";
+	else {
+		std::cout << "Loading universe\n";
 		if (mUniverse!=NULL){
+			// Clean up the old universe
+			mFGView->unsetUniverse();
 			delete mUniverse;
 			mUniverse = NULL;
+			// TODO: make sure old slider values carry over into new state
+
+			// mFGView->repaint();
+		}
+
+		try {
+			// Create a new universe
+			mUniverse = new fg::Universe();
+
+			// add the search paths
+			QString filename = mFileNames[mActiveScript];
+			QFileInfo info = QFileInfo(filename);
+
+			// QFile file(filename);
+			QDir dir = info.dir();
+			// dir.makeAbsolute();
+			mUniverse->addScriptDirectory((dir.absolutePath() + "/?.lua").toStdString());
+			mUniverse->addScriptDirectory("../scripts/?.lua");
+			// mUniverse->addScriptDirectory("./?.lua");
+			// mUniverse->loadScript("ben/aorta");
+			// chop off .lua suffix
+
+			QString filebase = info.completeBaseName();
+			if (filebase.endsWith(".lua")){
+				filebase.truncate(filebase.length()-4);
+			}
+			mUniverse->loadScript(filebase.toStdString());
+
+			mFGView->setUniverse(mUniverse);
+			// mFGView->repaint();
+		}
+		catch (std::runtime_error& e){
+			mSimulationMode = SM_ERROR;
+			std::cerr << "ERROR: " << e.what() << "\n";
+			if (mUniverse!=NULL){
+				delete mUniverse;
+				mUniverse = NULL;
+			}
 		}
 	}
 }
@@ -277,7 +269,6 @@ void MainWindow::reload(){
 
 void MainWindow::simulateOneStep(){
 	if (mUniverse!=NULL){
-
 		try {
 			mUniverse->update(0.01);
 		}
@@ -322,6 +313,63 @@ void MainWindow::runScript(QString code){
 
 }
 
+void MainWindow::redirectStreams(){
+	redirectConsoleOutput();
+}
+
+void MainWindow::makeCurrentScriptActive(){
+	if (mActiveScript){
+		int ind = mEditors->indexOf(mActiveScript);
+		if (ind!=-1){
+			// remove the '[' and ']'
+			QFileInfo fi(mFileNames[mActiveScript]);
+			mEditors->setTabText(ind,fi.fileName());
+		}
+	}
+
+	mActiveScript = mEditors->currentWidget();
+	if (mActiveScript){
+		QFileInfo fi(mFileNames[mActiveScript]);
+		// add '[' and ']' to the tab text
+		mEditors->setTabText(mEditors->currentIndex(),QString("[") + fi.fileName() + "]");
+		reload();
+	}
+}
+
+void MainWindow::showLineNumbers(bool b){
+	for(int i=0;i<mEditors->count();i++){
+		QsciScintilla* editor = static_cast<QsciScintilla*>(mEditors->widget(i));
+		if (!b){
+			editor->setMarginWidth(1,0);
+		}
+		else {
+			editor->setMarginWidth(1,QString("9999"));
+		}
+	}
+}
+
+void MainWindow::openFile(const QString &path)
+{
+	QString fileName = path;
+	if (fileName.isNull())
+		fileName = QFileDialog::getOpenFileName(this,
+				tr("Open File"), "", "fugu script (*.lua)");
+
+	if (!fileName.isEmpty()) {
+
+		// check if its already open...
+		// if so, just switch to that file
+		for(int i=0;i<mEditors->count();i++){
+			if (mFileNames[mEditors->widget(i)]==fileName){
+				mEditors->setCurrentIndex(i);
+				return;
+			}
+		}
+		// if not, open a new editor
+		newEditor(new QFile(fileName));
+	}
+}
+
 // Save the the editor's contents to the file fileName
 bool MainWindow::saveFile(QsciScintilla* editor, QString fileName){
 	// Save the currently active script
@@ -342,35 +390,24 @@ bool MainWindow::saveFile(QsciScintilla* editor, QString fileName){
 
 	// rename tab label ...
 	QFileInfo fi(file);
-	mEditors->setTabText(mEditors->indexOf(editor),fi.fileName());
+	if (mActiveScript==editor){
+		mEditors->setTabText(mEditors->indexOf(editor),QString("[") + fi.fileName() + "]");
+	}
+	else {
+		mEditors->setTabText(mEditors->indexOf(editor),fi.fileName());
+	}
 	return true;
 }
 
 
 void MainWindow::newEditor(QFile* file)
 {
-	/*
-	QFont font;
-	font.setFamily("Courier");
-	font.setFixedPitch(true);
-	font.setPointSize(10);
-	*/
-
-	// text editor
-	// see the Qt CodeEditor example for line numbers, and line highlighting
-	/*
-	QTextEdit* editor = new QTextEdit;
-	editor->setFont(font);
-	editor->setTabStopWidth(20);
-	Highlighter* highlighter = new Highlighter(editor->document());
-	*/
-
 	QsciScintilla* editor = new QsciScintilla();
 	editor->setLexer(new FGLexer());
 	editor->setTabWidth(2);
 	editor->setAutoIndent(true);
 
-	editor->setMarginWidth(1,QString("999"));
+	editor->setMarginWidth(1,QString("9999"));
 	editor->setMarginLineNumbers(1,true);
 
 	editor->setWrapMode(QsciScintilla::WrapCharacter);
@@ -387,22 +424,18 @@ void MainWindow::newEditor(QFile* file)
 	else {
 		if (file->open(QFile::ReadOnly | QFile::Text)){
 			QFileInfo fi(*file);
-			// TODO: Store the file pointer with the editor (or somewhere..)
-			// Open an editor with the contents of fileName
 			int t = mEditors->addTab(editor, fi.fileName());
-			// editor->setPlainText(file->readAll());
 			editor->setText(file->readAll());
 			mFileNames.insert(editor,file->fileName());
 		}
 		delete file;
 	}
 	mEditors->setCurrentWidget(editor);
-
-	// setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("Application")));
 }
 
 void MainWindow::setupFileMenu()
 {
+	/*
 	QMenu *fileMenu = new QMenu(tr("&File"), this);
 	menuBar()->addMenu(fileMenu);
 
@@ -420,9 +453,11 @@ void MainWindow::setupFileMenu()
 
 	fileMenu->addAction(tr("E&xit"), qApp, SLOT(quit()),
 			QKeySequence::Quit);
+			*/
 }
 
 void MainWindow::setupEditMenu(){
+	/*
 	QMenu *editMenu = new QMenu(tr("&Edit"), this);
 	menuBar()->addMenu(editMenu);
 
@@ -430,19 +465,23 @@ void MainWindow::setupEditMenu(){
 			QKeySequence::Undo);
 	editMenu->addAction(tr("Redo"), this, SLOT(redo()),
 				QKeySequence::Redo);
+	*/
 }
 
 void MainWindow::setupHelpMenu()
 {
+	/*
 	QMenu *helpMenu = new QMenu(tr("&Help"), this);
 	menuBar()->addMenu(helpMenu);
 
 	helpMenu->addAction(tr("&Reference"), this, SLOT(about()));
 	helpMenu->addAction(tr("&About"), this, SLOT(about()));
+	*/
 	// helpMenu->addAction(tr("About &Qt"), qApp, SLOT(aboutQt()));
 }
 
 void MainWindow::setupSimulationControls() {
+	/*
 	QMenu* simulationMenu = new QMenu(tr("&Simulation"), this);
 	menuBar()->addMenu(simulationMenu);
 
@@ -475,6 +514,7 @@ void MainWindow::setupSimulationControls() {
 	simulationMenu->addAction(simulate);
 	simulationMenu->addAction(restart);
 	simulationMenu->addAction(stepAction);
+	*/
 }
 
 void MainWindow::setupViewMenu(){
@@ -546,7 +586,7 @@ void MainWindow::setupViewMenu(){
 	drawModeGroup->addAction(setPoints);
 	drawModeGroup->addAction(setTextured);
 	drawModeGroup->addAction(setPhong);
-	setSmooth->setChecked(true);
+	setPhong->setChecked(true);
 
 	viewMenu->addSeparator()->setText(tr("Draw Mode"));
 	viewMenu->addAction(setSmooth);

@@ -12,6 +12,9 @@ require 'fgx.nloop'
 require 'fgx.math'
 require 'fgx.transform'
 require 'fgx.util' -- table.find
+
+someGlobalVar = 1
+
 local meshops = require 'fgx.meshops'
 
 local smoothGrowth -- object which performs the smooth growth
@@ -170,14 +173,14 @@ newSmoothGrowth = function(m,v)
 					local cr = distance(ov.p,center)
 					local sr = self.capRadii[i]
 					local t
-					if (self.capAvgRadius-sr==0) then
+					if (self.capAvgRadius*someGlobalVar-sr==0) then
 						t = 1
 					else
-						t = (cr - sr) / (self.capAvgRadius - sr)
+						t = (cr - sr) / (self.capAvgRadius*someGlobalVar - sr)
 					end
 					local tr = math.max(1, t + self.CIRC_SPEED*dt) 
 					local d = normalise(ov.p-center)
-					ov.p = center + d*lerp(sr,self.capAvgRadius,tr)
+					ov.p = center + d*lerp(sr,self.capAvgRadius*someGlobalVar,tr)
 				end
 			end			
 

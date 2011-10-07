@@ -198,6 +198,9 @@ namespace fg {
 	 * @param script A string containing the lua code to execute.
 	 */
 	void Universe::runScript(std::string script){
+		// Make sure the code can access this universe
+		luabind::globals(L)["fgu"] = this;
+
 		const char* buff = script.c_str();
 		luaL_loadbuffer(L, buff, script.length(), "line");
 		if (lua_pcall(L, 0, 0, 0)){
@@ -206,7 +209,7 @@ namespace fg {
 				error(lua_tostring(L, -1));
 			}
 			catch (std::runtime_error& e){
-				std::cerr << e.what();
+				std::cerr << e.what() << "\n";
 			}
 			lua_pop(L,1);
 		}

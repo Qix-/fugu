@@ -19,8 +19,10 @@
 #endif
 
 FGView::FGView(QWidget *parent)
-: QGLWidget(QGLFormat(QGL::DepthBuffer), parent)
+: QGLWidget(parent) // NOTE: GLformat set in main.cpp
+, mUniverse(NULL) // Very important to intialise as null
 {
+
 	//logo = 0;
 	xRot = 0;
 	yRot = 0;
@@ -28,12 +30,7 @@ FGView::FGView(QWidget *parent)
 
 	// set camera defaults
 	mZoom = 0;
-	float rotq[4] = {0,0,0,1};
-	float rotmat[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
-	float camtr[3] = {0,0,0};
-	memcpy(mRotationQuat,rotq,sizeof rotq);
-	memcpy(mRotationMatrix,rotmat,sizeof rotmat);
-	memcpy(mCameraTranslation,camtr,sizeof camtr);
+	resetCamera();
 
 	// mouse state
 	mMouseState.lastX = 0;
@@ -48,8 +45,9 @@ FGView::FGView(QWidget *parent)
 	mShowNodeAxes = true;
 	mEnableLighting = true;
 	mNumberSubdivs = 1;
-	mMeshMode = MM_SMOOTH;
-	mColourMode = fg::GLRenderer::COLOUR_NONE;
+	mMeshMode = MM_PHONG;
+	mColourMode = fg::GLRenderer::COLOUR_VERTEX;
+	mShowOverWire = true;
 
 	// theme...
 	// mBackgroundColor = QColor("#272727");
@@ -130,6 +128,11 @@ void FGView::toggleShowNodeAxes(bool show){
 	update();
 }
 
+void FGView::toggleShowOverWire(bool show){
+	mShowOverWire = show;
+	update();
+}
+
 void FGView::toggleLighting(bool on){
 	mEnableLighting = on;
 	update();
@@ -139,6 +142,20 @@ void FGView::setNumberOfSubdivs(int num){
 	mNumberSubdivs = num;
 	update();
 }
+
+void FGView::setSubdivs0(){
+	setNumberOfSubdivs(0);
+}
+void FGView::setSubdivs1(){
+	setNumberOfSubdivs(1);
+}
+void FGView::setSubdivs2(){
+	setNumberOfSubdivs(2);
+}
+void FGView::setSubdivs3(){
+	setNumberOfSubdivs(3);
+}
+
 
 void FGView::setDrawSmooth(){
 	mMeshMode = MM_SMOOTH;
@@ -164,6 +181,16 @@ void FGView::setDrawTextured(){
 }
 void FGView::setDrawPhong(){
 	mMeshMode = MM_PHONG;
+	update();
+}
+
+void FGView::setColourModeNone(){
+	mColourMode = fg::GLRenderer::COLOUR_NONE;
+	update();
+}
+
+void FGView::setColourModeVertex(){
+	mColourMode = fg::GLRenderer::COLOUR_VERTEX;
 	update();
 }
 
@@ -209,6 +236,43 @@ void FGView::initializeGL()
 	else {
 		std::cerr << "Couldn't load ../assets/shaders/phong.vert or phong.frag\n";
 	}
+
+	mOverWireShader = new QGLShaderProgram(context());
+	QFile wireV("../assets/shaders/overwire.vert");
+	QFile wireF("../assets/shaders/passthru.frag");
+	if (wireV.open(QFile::ReadOnly | QFile::Text)
+			and
+			wireF.open(QFile::ReadOnly | QFile::Text))
+	{
+		mOverWireShader->addShaderFromSourceCode(QGLShader::Vertex, wireV.readAll());
+		mOverWireShader->addShaderFromSourceCode(QGLShader::Fragment, wireF.readAll());
+		mOverWireShader->link();
+		// mPhongShader->bind();
+	}
+	else {
+		std::cerr << "Couldn't load ../assets/shaders/overwire.vert or passthru.frag\n";
+	}
+
+	/*
+	mSubdivisionShader = new QGLShaderProgram(context());
+	QFile subdivV("../assets/shaders/subdivision_vs.glsl");
+	QFile subdivG("../assets/shaders/subdivision_gs.glsl");
+	QFile subdivF("../assets/shaders/subdivision_fs.glsl");
+	if (subdivV.open(QFile::ReadOnly | QFile::Text)
+		and subdivG.open(QFile::ReadOnly | QFile::Text)
+		and subdivF.open(QFile::ReadOnly | QFile::Text))
+	{
+		mSubdivisionShader->addShaderFromSourceCode(QGLShader::Vertex, subdivV.readAll());
+		mSubdivisionShader->addShaderFromSourceCode(QGLShader::Geometry, subdivG.readAll());
+		mSubdivisionShader->addShaderFromSourceCode(QGLShader::Fragment, subdivF.readAll());
+		mSubdivisionShader->setGeometryInputType ( GL_TRIANGLES );
+		mSubdivisionShader->setGeometryOutputType ( GL_TRIANGLE_STRIP );
+		mSubdivisionShader->link();
+	}
+	else {
+		std::cerr << "Couldn't load subdivision shader\n";
+	}
+	*/
 }
 
 void FGView::paintGL()
@@ -236,11 +300,8 @@ void FGView::paintGL()
 		glDepthMask(GL_FALSE);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_CULL_FACE);
-		// glColor3f(1,0,1);
-		// fg::GLRenderer::glutSolidSphere(20,64,64);
 		fg::Vec3 hc = fg::Vec3(79./255,79./255,79./255);
 		fg::Vec3 tc = fg::Vec3(16./255,16./255,16./255);
-
 		fg::GLRenderer::renderSkySphere(20,64,64,hc,tc,tc);
 		glPopAttrib(); // GL_LIGHTING_BIT
 		glPopAttrib(); // GL_DEPTH_BUFFER_BIT
@@ -264,11 +325,6 @@ void FGView::paintGL()
 
 		if (mUniverse!=NULL){
 
-			if (mPhongShader!=NULL and mMeshMode==MM_PHONG){
-				mPhongShader->bind();
-				mPhongShader->setUniformValue("shininess",(GLfloat)15);
-			}
-
 			glColor3f(1,1,1);
 			foreach(shared_ptr<fg::MeshNode> m, mUniverse->meshNodes()){
 				// std::cout << m << "\n" << *m << "\n\n";
@@ -285,6 +341,15 @@ void FGView::paintGL()
 					m->setMesh(clone);
 				}
 
+				if (mPhongShader!=NULL and mMeshMode==MM_PHONG){
+					mPhongShader->bind();
+					mPhongShader->setUniformValue("shininess",(GLfloat)25);
+					mPhongShader->setUniformValue("useVertexColour",false);
+					if (mColourMode==fg::GLRenderer::COLOUR_VERTEX){
+						mPhongShader->setUniformValue("useVertexColour",true);
+					}
+				}
+
 				fg::GLRenderer::RenderMeshMode rmm;
 				switch (mMeshMode){
 					case MM_SMOOTH: case MM_PHONG: rmm = fg::GLRenderer::RENDER_SMOOTH; break;
@@ -293,7 +358,16 @@ void FGView::paintGL()
 					case MM_POINTS: rmm = fg::GLRenderer::RENDER_VERTICES; break;
 					case MM_TEXTURED: rmm = fg::GLRenderer::RENDER_TEXTURED; break;
 				}
+
 				fg::GLRenderer::renderMeshNode(m,rmm,mColourMode); // fg::GLRenderer::RenderMeshMode(DRAW_MODE));
+
+				if (mShowOverWire){
+					if (mMeshMode==MM_FLAT or mMeshMode==MM_PHONG or mMeshMode==MM_SMOOTH or mMeshMode==MM_TEXTURED){
+						mOverWireShader->bind();
+						glColor3f(0,0,0);
+						fg::GLRenderer::renderMeshNode(m,fg::GLRenderer::RENDER_WIRE,fg::GLRenderer::COLOUR_NONE); // fg::GLRenderer::RenderMeshMode(DRAW_MODE));
+					}
+				}
 
 				if (mNumberSubdivs>0){
 					m->setMesh(old);
@@ -301,6 +375,8 @@ void FGView::paintGL()
 
 				// clone should get garbage collected...
 			}
+
+
 
 			if (mPhongShader!=NULL){
 				mPhongShader->release();
@@ -369,20 +445,6 @@ void FGView::mouseMoveEvent(QMouseEvent *event)
 {
 	int x = event->x();
 	int y = event->y();
-
-	/*
-	int dx = event->x() - lastPos.x();
-	int dy = event->y() - lastPos.y();
-
-	if (event->buttons() & Qt::LeftButton) {
-		setXRotation(xRot + 8 * dy);
-		setYRotation(yRot + 8 * dx);
-	} else if (event->buttons() & Qt::RightButton) {
-		setXRotation(xRot + 8 * dy);
-		setZRotation(zRot + 8 * dx);
-	}
-	lastPos = event->pos();
-	*/
 
 	if (mMouseState.isRotating){
 		float q[4];
