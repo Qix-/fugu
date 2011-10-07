@@ -131,10 +131,7 @@ namespace fg {
 		template< class T >
 		double Interpolator<T>::unNormalise( double t ) const
 		{
-			std::cout << "Here\n";
-			std::cout << "t = " << t << "\n";
-			std::cout << "cps = " << getNumControlPoints() << "\n";
-			return t * (getNumControlPoints() - 1);
+			return t * (getNumControlPoints());
 		}
 
         template< class T >

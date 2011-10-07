@@ -12,9 +12,9 @@
 #include "fg/functions.h"
 #include "fgv/trackball.h"
 
-#include "fg/interpolator.h"
-#include "fg/bezinterp.h"
-#include "fg/recsubdiv.h"
+#include "fg/gc/interpolator.h"
+#include "fg/gc/bezinterp.h"
+#include "fg/gc/recsubdiv.h"
 
 #include "fg/glrenderer.h"
 
@@ -71,8 +71,8 @@ int main(int argc, char *argv[])
     arr.push_back(Vec3(.02,.5,0.));
     arr.push_back(Vec3(.08,-.5,0.));
     arr.push_back(Vec3(.1,0.,0.));
-    fg::spline::RecSubDiv subdiv;
-	subdiv.approximation_scale(150.);
+    fg::gc::RecSubDiv subdiv;
+	subdiv.approximation_scale(90.);
 	subdiv.angle_tolerance(0.05);
 	subdiv.init( arr );
 	std::vector<Vec3> subdivdata = subdiv.get_data();
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
     arr[1] = arr[1] + Vec3( 0.2, 0., 0. );
     arr[2] = arr[2] + Vec3( 0.2, 0., 0. );
     arr[3] = arr[3] + Vec3( 0.2, 0., 0. );
-	fg::spline::BezInterp<Vec3> spline(arr);
+	fg::gc::BezInterp<Vec3> spline(arr);
 	int size = subdivdata.size() - 1;
 	std::vector<Vec3> incdata = spline.getApproxVector(size);
 	std::cout << incdata.size() << std::endl;

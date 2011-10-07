@@ -12,12 +12,12 @@
 #include "fg/functions.h"
 #include "fgv/trackball.h"
 
-#include "fg/lincarrier.h"
-#include "fg/pbezcarrier.h"
-#include "fg/interpcrosssec.h"
-#include "fg/morphcrosssec.h"
-#include "fg/scaleinterpcrosssec.h"
-#include "fg/generalisedcylinder.h"
+#include "fg/gc/lincarrier.h"
+#include "fg/gc/pbezcarrier.h"
+#include "fg/gc/interpcrosssec.h"
+#include "fg/gc/morphcrosssec.h"
+#include "fg/gc/scaleinterpcrosssec.h"
+#include "fg/gc/generalisedcylinder.h"
 #include "fg/glrenderer.h"
 
 // opengl viz, hack
@@ -25,9 +25,10 @@
 #include <wrap/gl/trimesh.h>
 using vcg::GlTrimesh;
 
-int gWidth = 800;
+int gWidth = 600;
 int gHeight = 600;
 
+double v = 0.;
 float gZoom = 0;
 float gRotationQuat[4] = {0,0,0,1};
 float gRotationMatrix[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
@@ -38,14 +39,22 @@ struct MouseState {
 	int lastY;
 } gMouseState = {false,0,0};
 
-/*
 void GLFWCALL keyCallback(int key, int action)
 {
-	if (key==GLFW_KEY_TAB and action==GLFW_PRESS){
-		DRAW_MODE = (DRAW_MODE + 1)%NUM_DRAW_MODES;
+	if( action != GLFW_PRESS )
+	{
+		return;
+	}
+
+	if (key==GLFW_KEY_RIGHT){
+		v = v > 1.5 ? 2. : v + 0.33333333333333333;
+		std::cout << "v = " << v << "\n";
+	}
+	if (key==GLFW_KEY_LEFT){
+		v = v < 0.4 ? 0. : v - 0.33333333333333333;
+		std::cout << "v = " << v << "\n";
 	}
 }
-*/
 
 void GLFWCALL resizeWindow(int width, int height);
 void setupWindowAndGL();
@@ -105,6 +114,69 @@ int main(int argc, char *argv[])
 	grad2.push_back( std::pair<Vec3,Vec3> ( Vec3(0.,-0.0,0.),Vec3(0.,-0.0,0.)));
 	*/
 
+	arr4.push_back( Vec3( cos( 0.*M_PI/6 ), sin( 0.*M_PI/6), 0. ) * .2 );
+	arr4.push_back( Vec3( cos( 1.*M_PI/6 ), sin( 1.*M_PI/6), 0. ) * .05 );
+
+	arr4.push_back( Vec3( cos( 2.*M_PI/6 ), sin( 2.*M_PI/6), 0. ) * .2 );
+	arr4.push_back( Vec3( cos( 3.*M_PI/6 ), sin( 3.*M_PI/6), 0. ) * .05 );
+
+	arr4.push_back( Vec3( cos( 4.*M_PI/6 ), sin( 4.*M_PI/6), 0. ) * .2 );
+	arr4.push_back( Vec3( cos( 5.*M_PI/6 ), sin( 5.*M_PI/6), 0. ) * .05 );
+
+	arr4.push_back( Vec3( cos( 6.*M_PI/6 ), sin( 6.*M_PI/6), 0. ) * .2 );
+	arr4.push_back( Vec3( cos( 7.*M_PI/6 ), sin( 7.*M_PI/6), 0. ) * .05 );
+
+	arr4.push_back( Vec3( cos( 8.*M_PI/6 ), sin( 8.*M_PI/6), 0. ) * .2 );
+	arr4.push_back( Vec3( cos( 9.*M_PI/6 ), sin( 9.*M_PI/6), 0. ) * .05 );
+
+	arr4.push_back( Vec3( cos( 10.*M_PI/6 ), sin( 10.*M_PI/6), 0. ) * .2 );
+	arr4.push_back( Vec3( cos( 11.*M_PI/6 ), sin( 11.*M_PI/6), 0. ) * .05 );
+
+	Vec3 gradT;
+	double t;
+
+	t = 0.;
+	gradT = Vec3( -M_PI/6*sin( t*M_PI/6 ), M_PI/6*cos(t*M_PI/6), 0. ) * .15;
+	grad3.push_back( std::pair<Vec3,Vec3> ( gradT,gradT ) );
+	t = 1.;
+	gradT = Vec3( -M_PI/6*sin( t*M_PI/6 ), M_PI/6*cos(t*M_PI/6), 0. ) * .05;
+	grad3.push_back( std::pair<Vec3,Vec3> ( gradT,gradT ) );
+
+	t = 2.;
+	gradT = Vec3( -M_PI/6*sin( t*M_PI/6 ), M_PI/6*cos(t*M_PI/6), 0. ) * .15;
+	grad3.push_back( std::pair<Vec3,Vec3> ( gradT,gradT ) );
+	t = 3.;
+	gradT = Vec3( -M_PI/6*sin( t*M_PI/6 ), M_PI/6*cos(t*M_PI/6), 0. ) * .05;
+	grad3.push_back( std::pair<Vec3,Vec3> ( gradT,gradT ) );
+
+	t = 4.;
+	gradT = Vec3( -M_PI/6*sin( t*M_PI/6 ), M_PI/6*cos(t*M_PI/6), 0. ) * .15;
+	grad3.push_back( std::pair<Vec3,Vec3> ( gradT,gradT ) );
+	t = 5.;
+	gradT = Vec3( -M_PI/6*sin( t*M_PI/6 ), M_PI/6*cos(t*M_PI/6), 0. ) * .05;
+	grad3.push_back( std::pair<Vec3,Vec3> ( gradT,gradT ) );
+
+	t = 6.;
+	gradT = Vec3( -M_PI/6*sin( t*M_PI/6 ), M_PI/6*cos(t*M_PI/6), 0. ) * .15;
+	grad3.push_back( std::pair<Vec3,Vec3> ( gradT,gradT ) );
+	t = 7.;
+	gradT = Vec3( -M_PI/6*sin( t*M_PI/6 ), M_PI/6*cos(t*M_PI/6), 0. ) * .05;
+	grad3.push_back( std::pair<Vec3,Vec3> ( gradT,gradT ) );
+
+	t = 8.;
+	gradT = Vec3( -M_PI/6*sin( t*M_PI/6 ), M_PI/6*cos(t*M_PI/6), 0. ) * .15;
+	grad3.push_back( std::pair<Vec3,Vec3> ( gradT,gradT ) );
+	t = 9.;
+	gradT = Vec3( -M_PI/6*sin( t*M_PI/6 ), M_PI/6*cos(t*M_PI/6), 0. ) * .05;
+	grad3.push_back( std::pair<Vec3,Vec3> ( gradT,gradT ) );
+
+	t = 10.;
+	gradT = Vec3( -M_PI/6*sin( t*M_PI/6 ), M_PI/6*cos(t*M_PI/6), 0. ) * .15;
+	grad3.push_back( std::pair<Vec3,Vec3> ( gradT,gradT ) );
+	t = 11.;
+	gradT = Vec3( -M_PI/6*sin( t*M_PI/6 ), M_PI/6*cos(t*M_PI/6), 0. ) * .05;
+	grad3.push_back( std::pair<Vec3,Vec3> ( gradT,gradT ) );
+/*
     arr4.push_back( Vec3(.4, 0., 0.) );
     arr4.push_back( Vec3(.02, 0.02, 0.) );
     arr4.push_back( Vec3(.0, 0.4, 0.) );
@@ -122,6 +194,7 @@ int main(int argc, char *argv[])
 	grad3.push_back( std::pair<Vec3,Vec3> ( Vec3(.0,0.,0.),Vec3(.0,0.,0.)));
 	grad3.push_back( std::pair<Vec3,Vec3> ( Vec3(.0,0.,0.),Vec3(.0,0.,0.)));
 	grad3.push_back( std::pair<Vec3,Vec3> ( Vec3(.0,0.,0.),Vec3(.0,0.,0.)));
+*/
 
 //	arr.push_back( Mat4() );
 //	arr[2].SetTranslate(0.,1.,2.);
@@ -134,13 +207,13 @@ int main(int argc, char *argv[])
 
 	const fg::gc::CarrierCurve& carrier = gc::PBezCarrier(arr);
 
-    std::vector< fg::spline::PBezInterpDiv > interps;
-	fg::spline::PBezInterpDiv interp;
-    interp = fg::spline::PBezInterpDiv (arr2, grad);
+    std::vector< fg::gc::PBezInterpDiv > interps;
+	fg::gc::PBezInterpDiv interp;
+    interp = fg::gc::PBezInterpDiv (arr2, grad);
 
 	interps.push_back( interp );
-	interps.push_back( fg::spline::PBezInterpDiv (arr3, grad2) );
-	interps.push_back( fg::spline::PBezInterpDiv (arr4, grad3) );
+	interps.push_back( fg::gc::PBezInterpDiv (arr3, grad2) );
+	interps.push_back( fg::gc::PBezInterpDiv (arr4, grad3) );
 
 	interps[0].setOpen( false );
 	interps[1].setOpen( false );
@@ -159,7 +232,6 @@ int main(int argc, char *argv[])
 	double time = glfwGetTime();
 	double dt = 0.01;
 
-    float v = 0.;
 	while(running){
 		// Recompute delta t
 		double now = glfwGetTime();
@@ -167,12 +239,12 @@ int main(int argc, char *argv[])
 		time = now;
 
 		// Draw all the meshes in the universe
+		glClearColor(1,1,1,1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glColor3f(1,1,1);
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		gluLookAt(0,0,2,   0,0,0,   0,1,0);
+		gluLookAt(0,0,.35,   0,0,0,   0,1,0);
 
 		GLfloat lp[] = {.1, 1, .1, 0};
 		glLightfv(GL_LIGHT0,GL_POSITION,lp);
@@ -185,8 +257,6 @@ int main(int argc, char *argv[])
 
 		// Draw stuff here
 		fg::GLRenderer::renderInterpolator(cs.getCrossSectionInterp( v ), 20);
-		if( time > 1. && v < interps.size() - 1 )
-			v += 0.0007;
 
 		glPopMatrix();
 
@@ -217,7 +287,7 @@ void setupWindowAndGL(){
 	}
 
 	glfwSetWindowTitle("hello morph!");
-	//glfwSetKeyCallback(keyCallback);
+	glfwSetKeyCallback(keyCallback);
 	glfwSetWindowSizeCallback(resizeWindow);
 	glfwSetMousePosCallback(mouseMoved);
 	glfwSetMouseButtonCallback(mouseButtoned);
@@ -228,6 +298,12 @@ void setupWindowAndGL(){
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glEnable (GL_BLEND);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_LINE_SMOOTH);
+	glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
+
+	glLineWidth(6.);
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
