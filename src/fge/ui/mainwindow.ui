@@ -521,6 +521,7 @@ QToolBar::separator:vertical {
     <addaction name="action_Open"/>
     <addaction name="action_Save"/>
     <addaction name="actionSave_As"/>
+    <addaction name="actionExport"/>
     <addaction name="actionClose"/>
     <addaction name="actionExit"/>
    </widget>
@@ -948,6 +949,21 @@ QToolBar::separator:vertical {
    </property>
    <property name="shortcut">
     <string>Ctrl+F4</string>
+   </property>
+  </action>
+  <action name="actionExportFrameToObj">
+   <property name="text">
+    <string>exportFrameToObj</string>
+   </property>
+  </action>
+  <action name="actionExportAnimToObj">
+   <property name="text">
+    <string>exportAnimToObj</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>Export...</string>
    </property>
   </action>
  </widget>
@@ -1500,6 +1516,22 @@ QToolBar::separator:vertical {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionExport</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportSimulation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>438</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>about()</slot>
@@ -1523,5 +1555,6 @@ QToolBar::separator:vertical {
   <slot>showLineNumbers(bool)</slot>
   <slot>makeCurrentScriptActive()</slot>
   <slot>closeFile()</slot>
+  <slot>exportSimulation()</slot>
  </slots>
 </ui>

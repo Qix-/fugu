@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ExportDialog</class>
+ <widget class="QDialog" name="ExportDialog">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>357</width>
+    <height>129</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Export</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">/*
+	zbrush-like palette
+	darkerbg: #101010
+	background: #272727	
+	lighterbg: #3f3f3f
+	inactive font: #959595
+	active font: #c8c8c8	
+	orange: #f27000
+	yellow: #FFDE00
+*/
+
+QWidget {
+	background: #272727;
+	background-color: #272727;
+	color: #c8c8c8;
+	border: 0;	
+}
+
+QTabBar {
+	background-color: #272727;
+	border: 0;
+}
+
+QTabBar::tab { 
+	background-color: #272727;
+	color: #959595;	 
+	padding: 6px;
+	/* border: 1px solid black; */ 
+	
+	border: 0; /* px solid #C4C4C3; */
+	 
+	border-bottom: 2px solid #272727; /* same as the pane color */
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	min-width: 8ex;
+}
+
+/* doesnt work..
+*[activeScript=&quot;true&quot;]{ 
+	background-color: #FFDE00;
+}
+
+QTabBar::tab[activeScript=&quot;true&quot;]{
+	background-color: #FFDE00;
+}
+*/
+
+QTabBar::tab:selected, QTabBar::tab:hover {
+	background-color: #3f3f3f;
+	color: #c8c8c8;	
+}
+
+QTabBar::tab:hover {
+	background-color: #f27000;
+}
+
+QTabWidget::pane { 
+	border: 0; 
+	border-top: 2px solid #272727;
+}
+
+
+
+#commandline {
+	background-color: #FF0000;
+}
+
+
+
+
+
+
+QMenu {
+     background-color: #272727; /* sets background of the menu */
+     color: #c8c8c8;
+     border: 1px solid black;     
+ }
+
+ QMenu::item {
+     /* sets background of menu item. set this to something non-transparent
+         if you want menu color and menu item color to be different */
+      background-color: #272727; 
+      /* background-color: black; */
+     
+     /* padding: 2px 25px 2px 20px; */
+     padding: 2px 25px 2px 20px;
+    /*  border: 1px solid transparent; reserve space for selection border */
+ }
+
+ QMenu::item:selected { /* when user selects item using mouse or keyboard */
+     background-color: #f27000;
+ }
+ 
+  QMenu::item:checked {
+     background: #3f3f3f;
+ }
+ 
+  QMenu::item:checked:selected {
+     background-color: #f27000;
+ }
+ 
+ QMenu::icon:checked { /* appearance of a 'checked' icon */
+     background: transparent; /*#272727; */
+     border: 0; /* 1px inset gray; */
+     position: absolute;
+     top: 1px;
+     right: 1px;
+     bottom: 1px;
+     left: 1px;
+ }
+  
+ QMenu::indicator {
+     width: 13px;
+     height: 13px;
+     background-color: transparent; /* #272727; */
+     border: 0;
+     padding: 0;
+     margin: 0;
+ }
+ 
+ /* non-exclusive indicator = check box style indicator (see QActionGroup::setExclusive) */
+  QMenu::indicator:non-exclusive {
+ 	image: none;
+ 	 border: 0;
+     padding: 0;
+     margin: 0;
+ }
+ 
+ QMenu::indicator:non-exclusive:unchecked {
+ }
+
+ QMenu::indicator:non-exclusive:unchecked:selected {
+ 	background-color: #f27000;
+ }
+
+ QMenu::indicator:non-exclusive:checked {
+     /* image: url(&quot;../assets/icons/tick.png&quot;); */     
+     background: #3f3f3f;
+ }
+
+ QMenu::indicator:non-exclusive:checked:selected {
+ 	background-color: #f27000;
+ }
+
+QMenu::separator {
+	background: transparent; /* #3f3f3f; */
+}
+
+ /* exclusive indicator = radio button style indicator (see QActionGroup::setExclusive) */
+ QMenu::indicator:exclusive {
+ image: none;
+ 	 border: 0;
+     padding: 0;
+     margin: 0;
+ }
+ 
+ QMenu::indicator:exclusive:unchecked {
+ }
+
+ QMenu::indicator:exclusive:unchecked:selected {
+ 	background-color: #f27000; 	
+ }
+
+ QMenu::indicator:exclusive:checked {
+ 	background: #3f3f3f;
+ }
+
+ QMenu::indicator:exclusive:checked:selected {
+ 	background-color: #f27000;
+ }
+ 
+/* Customize the menu bar. */
+QMenuBar {
+	background-color: #272727;
+	color: #c8c8c8;
+	
+    border-image: none;
+    border-style: none;
+    padding: 2px;
+    border-bottom: 1px solid black;
+}
+
+QMenuBar::item {
+    background-color: transparent;
+    
+    /* border: 1px solid black; */
+    /* padding: 4px; */
+}
+
+QMenuBar::item:selected {
+    background-color: #3f3f3f;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+QPushButton {
+     border-style: outset;
+     border-width: 1px;
+     border-radius: 6px;
+     border-color: black;
+     font: bold;
+     min-width: 10em;
+     padding: 3px;
+ }
+ 
+ QPushButton:pressed {
+     background-color: #3f3f3f;
+     border-style: inset;
+ }
+ 
+ QScrollBar {
+ 	background: #272727;
+ }
+ 
+ QScrollBar:horizontal {
+ 	height: 10px;
+    margin: 0 10px 0 10px;
+ }
+ 
+  QScrollBar::handle:horizontal {
+      background: #3f3f3f; 
+      min-width: 5px;
+  }
+  
+  QScrollBar::handle:horizontal:pressed {
+      background: #959595;
+  }
+  
+  QScrollBar::add-line:horizontal {      
+      background: black;
+      border: 2px solid #3f3f3f;
+      width: 6px;
+      subcontrol-position: right;
+      subcontrol-origin: margin;
+  }
+
+  QScrollBar::sub-line:horizontal {      
+      background: black;
+      border: 2px solid #3f3f3f;
+      width: 6px;
+      subcontrol-position: left;
+      subcontrol-origin: margin;
+  }
+  
+  QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {  	 
+      width: 0px;
+      height: 0px;
+      background: none;
+  }
+
+  QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+      background: none;
+  }
+  
+  
+ QScrollBar:vertical {
+      /* background: #272727; */      
+      width: 10px;
+      margin: 10px 0 10px 0;
+  }
+  
+  QScrollBar::handle:vertical {
+      background: #3f3f3f; 
+      min-height: 5px;
+  }
+  
+  QScrollBar::handle:vertical:pressed {
+      background: #959595;
+  }
+  
+  QScrollBar::add-line:vertical {      
+      background: black;
+      border: 2px solid #3f3f3f;
+      height: 6px;
+      subcontrol-position: bottom;
+      subcontrol-origin: margin;
+  }
+
+  QScrollBar::sub-line:vertical {      
+      background: black;
+      border: 2px solid #3f3f3f;
+      height: 6px;
+      subcontrol-position: top;
+      subcontrol-origin: margin;
+  }
+  
+  QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {  	 
+      width: 0px;
+      height: 0px;
+      background: none;
+  }
+
+  QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+      background: none;
+  }
+  
+  
+  
+  
+  
+  
+QSplitter::handle {
+	image: none; /* url(images/splitter.png); */
+	background: transparent;	
+}
+
+ QSplitter::handle:horizontal {
+     width: 8px;
+     /* border-right: 2px dotted #3f3f3f; */
+     
+    /* 
+     background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+		stop: 0 #101010, stop: 1.0 #272727 ); */
+	background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+		stop: 0 #181818, 
+		stop: 1 #272727 );
+     
+     
+ }
+
+ QSplitter::handle:vertical {
+     height: 6px;
+     /* border-bottom: 2px dotted #3f3f3f; */
+     
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+		stop: 0 #181818, stop: 1.0 #272727 );
+ }
+
+ QSplitter::handle:pressed, QSplitter::handle:hover {
+     image: none; /* url(images/splitter_pressed.png); */
+     /* background: #3f3f3f; */
+     border-color: #f27000;
+ }
+ 
+ 
+ 
+  QToolBar {     
+     spacing: 0px; /* spacing between items in the tool bar */
+     background: #272727;
+ }
+
+QToolBar::separator:horizontal {
+	width: 8px;
+	 background: transparent; /* #3f3f3f; */
+}
+
+ QToolBar::handle:horizontal {
+     /* image: url(handle.png); */
+     image: none;
+     width: 8px;
+     background: #3f3f3f;
+ }
+
+QToolBar::separator:vertical {
+	height: 8px;
+	 background: transparent; /* #3f3f3f; */
+}
+
+ QToolBar::handle:vertical {
+     /* image: url(handle.png); */
+     image: none;
+     height: 8px;
+     background: #3f3f3f;
+ }
+ 
+ QToolBar::handle:hover {
+     /* image: url(handle.png); */
+     image: none;
+ 	background: #f27000;         
+ } 
+ 
+ QToolButton { /* all types of tool button */
+	background-color: #272727;
+	margin: 0px;
+ }
+
+ QToolButton[popupMode=&quot;1&quot;] { /* only for MenuButtonPopup */
+     padding-right: 10px; /* make way for the popup button */
+ }
+
+ QToolButton:checked {
+	 background: #3f3f3f;
+}
+
+ QToolButton:pressed, QToolButton:hover {
+ 	background-color: #f27000;
+ }
+  
+ 
+QLineEdit {
+	background: #101010;
+}</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>327</width>
+     <height>92</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Directory: </string>
+        </property>
+        <property name="buddy">
+         <cstring>dirLineEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="dirLineEdit"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>16</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Frames</string>
+        </property>
+        <property name="buddy">
+         <cstring>lineEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>32</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="inputMask">
+         <string>00009; </string>
+        </property>
+        <property name="text">
+         <string>0</string>
+        </property>
+        <property name="maxLength">
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>to</string>
+        </property>
+        <property name="buddy">
+         <cstring>lineEdit_2</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>32</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="inputMask">
+         <string>00009; </string>
+        </property>
+        <property name="text">
+         <string>0</string>
+        </property>
+        <property name="maxLength">
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QDialogButtonBox" name="buttonBox">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="standardButtons">
+       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ExportDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ExportDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

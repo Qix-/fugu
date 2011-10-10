@@ -20,12 +20,14 @@ set(SRC main.cpp
 	fglexer.cpp
 	consolewidget.cpp
 	redirect.cpp
+	exporter.cpp
 	)
 
 set(SRCS ${SRC})
 
 set(UIS
 	ui/mainwindow.ui
+	ui/exportdialog.ui
 )
 QT4_WRAP_UI(UIS_H ${UIS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}) # required to be able to include the generated ui headers

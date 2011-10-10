@@ -8,8 +8,11 @@
 #include "fglexer.h"
 #include "consolewidget.h"
 #include "redirect.h"
+#include "exporter.h"
 
 #include "ui_mainwindow.h"
+#include "ui_exportdialog.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
@@ -27,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
 	mConsoleWidget = findChild<ConsoleWidget*>("consolewidget");
 	mFGView = findChild<FGView*>("fgview");
 	mEditors = findChild<QTabWidget*>("editors");
+	connect(mConsoleWidget, SIGNAL(emitCommand(QString)), this, SLOT(runScript(QString)));
 
 	// XXX: disable redirect for now
 	QTimer::singleShot(1, this, SLOT(redirectStreams()));
@@ -348,6 +352,37 @@ void MainWindow::showLineNumbers(bool b){
 	}
 }
 
+void MainWindow::exportSimulation(){
+	if (mUniverse==NULL){
+		QMessageBox::critical(this, tr("Export"), tr("There is no simulation to export!"));
+	}
+	else {
+		QDialog* exportDialog = new QDialog(this);
+		Ui::ExportDialog ui;
+		ui.setupUi(exportDialog);
+
+		QLineEdit* qe = exportDialog->findChild<QLineEdit*>("dirLineEdit");
+		qe->setText(QDir().absolutePath());
+
+		if (exportDialog->exec()){
+			// do the export...
+			// std::cout << "Exporting to \"" << qe->text().toStdString() << "\"...\n";
+			Exporter e = Exporter::ExportFrameToObj(mUniverse).dir(QDir(qe->text()));
+			if (not e.run()){
+				QMessageBox::critical(this, tr("Export"), e.error());
+			}
+		}
+	}
+}
+
+void MainWindow::exportFrameToObj(){
+
+}
+
+void MainWindow::exportAnimToObj(){
+
+}
+
 void MainWindow::openFile(const QString &path)
 {
 	QString fileName = path;
@@ -431,173 +466,4 @@ void MainWindow::newEditor(QFile* file)
 		delete file;
 	}
 	mEditors->setCurrentWidget(editor);
-}
-
-void MainWindow::setupFileMenu()
-{
-	/*
-	QMenu *fileMenu = new QMenu(tr("&File"), this);
-	menuBar()->addMenu(fileMenu);
-
-	fileMenu->addAction(tr("&New"), this, SLOT(newFile()),
-			QKeySequence::New);
-
-	fileMenu->addAction(tr("&Open..."), this, SLOT(openFile()),
-			QKeySequence::Open);
-
-	fileMenu->addAction(tr("&Save"), this, SLOT(save()),
-			QKeySequence::Save);
-
-	fileMenu->addAction(tr("&Save As..."), this, SLOT(saveAs()),
-			QKeySequence::SaveAs);
-
-	fileMenu->addAction(tr("E&xit"), qApp, SLOT(quit()),
-			QKeySequence::Quit);
-			*/
-}
-
-void MainWindow::setupEditMenu(){
-	/*
-	QMenu *editMenu = new QMenu(tr("&Edit"), this);
-	menuBar()->addMenu(editMenu);
-
-	editMenu->addAction(tr("Undo"), this, SLOT(undo()),
-			QKeySequence::Undo);
-	editMenu->addAction(tr("Redo"), this, SLOT(redo()),
-				QKeySequence::Redo);
-	*/
-}
-
-void MainWindow::setupHelpMenu()
-{
-	/*
-	QMenu *helpMenu = new QMenu(tr("&Help"), this);
-	menuBar()->addMenu(helpMenu);
-
-	helpMenu->addAction(tr("&Reference"), this, SLOT(about()));
-	helpMenu->addAction(tr("&About"), this, SLOT(about()));
-	*/
-	// helpMenu->addAction(tr("About &Qt"), qApp, SLOT(aboutQt()));
-}
-
-void MainWindow::setupSimulationControls() {
-	/*
-	QMenu* simulationMenu = new QMenu(tr("&Simulation"), this);
-	menuBar()->addMenu(simulationMenu);
-
-	QToolBar* simulationToolbar = new QToolBar(tr("&Simulation"), this);
-	addToolBar(simulationToolbar);
-	simulationToolbar->setMovable(false);
-
-	QIcon playIcon("../assets/icons/control_play.png");
-	playIcon.addPixmap(QPixmap("../assets/icons/control_pause.png"),QIcon::Normal,QIcon::On);
-	playIcon.addPixmap(QPixmap("../assets/icons/control_play.png"),QIcon::Normal,QIcon::Off);
-
-	QAction* simulate = new QAction(playIcon, tr("&Play/Pause"), this);
-	simulate->setCheckable(true);
-	simulate->setStatusTip(tr("Start/Stop the simulation"));
-	connect(simulate, SIGNAL(toggled(bool)), this, SLOT(togglePlay(bool)));
-
-	QAction* restart = new QAction(QIcon("../assets/icons/control_start.png"), tr("&Reload"), this);
-	restart->setStatusTip(tr("Reload the simulation"));
-	connect(restart, SIGNAL(triggered()), this, SLOT(reload()));
-
-
-	QAction* stepAction = new QAction(QIcon("../assets/icons/control_step.png"), tr("&Step"), this);
-	stepAction->setStatusTip(tr("Perform one simulation step"));
-	connect(stepAction, SIGNAL(triggered()), this, SLOT(step()));
-
-	simulationToolbar->addAction(restart);
-	simulationToolbar->addAction(simulate);
-	simulationToolbar->addAction(stepAction);
-
-	simulationMenu->addAction(simulate);
-	simulationMenu->addAction(restart);
-	simulationMenu->addAction(stepAction);
-	*/
-}
-
-void MainWindow::setupViewMenu(){
-	QMenu *viewMenu = new QMenu(tr("&View"), this);
-	menuBar()->addMenu(viewMenu);
-
-	//QToolBar* viewToolbar = new QToolBar(tr("&View"), this);
-	//addToolBar(viewToolbar);
-
-
-
-	QAction* action = new QAction(tr("&Origin"),this);
-	action->setCheckable(true);
-	action->setChecked(true);
-	action->setStatusTip(tr("Show the universe origin"));
-	connect(action, SIGNAL(toggled(bool)), mFGView, SLOT(toggleOrigin(bool)));
-	viewMenu->addAction(action);
-	//viewToolbar->addAction(action);
-
-	action = new QAction(tr("&Ground"),this);
-	action->setCheckable(true);
-	action->setChecked(true);
-	action->setStatusTip(tr("Show the ground plane"));
-	connect(action, SIGNAL(toggled(bool)), mFGView, SLOT(toggleGround(bool)));
-	viewMenu->addAction(action);
-	//viewToolbar->addAction(action);
-
-	action = new QAction(tr("&NodeAxes"),this);
-	action->setCheckable(true);
-	action->setChecked(true);
-	action->setStatusTip(tr("Show node axes"));
-	connect(action, SIGNAL(toggled(bool)), mFGView, SLOT(toggleShowNodeAxes(bool)));
-	viewMenu->addAction(action);
-	//viewToolbar->addAction(action);
-
-	action = new QAction(tr("&Lighting"),this);
-	action->setCheckable(true);
-	action->setChecked(true);
-	action->setStatusTip(tr("Enable lighting"));
-	connect(action, SIGNAL(toggled(bool)), mFGView, SLOT(toggleLighting(bool)));
-	viewMenu->addAction(action);
-	//viewToolbar->addAction(action);
-
-	// Rendering mode..
-	QAction* setSmooth = new QAction(tr("&Smooth"),this);
-	QAction* setFlat = new QAction(tr("&Flat"),this);
-	QAction* setWire = new QAction(tr("&Wire"),this);
-	QAction* setPoints = new QAction(tr("&Points"),this);
-	QAction* setTextured = new QAction(tr("&Textured"),this);
-	QAction* setPhong = new QAction(tr("P&hong"),this);
-	connect(setSmooth, SIGNAL(triggered()), mFGView, SLOT(setDrawSmooth()));
-	connect(setFlat, SIGNAL(triggered()), mFGView, SLOT(setDrawFlat()));
-	connect(setWire, SIGNAL(triggered()), mFGView, SLOT(setDrawWire()));
-	connect(setPoints, SIGNAL(triggered()), mFGView, SLOT(setDrawPoints()));
-	connect(setTextured, SIGNAL(triggered()), mFGView, SLOT(setDrawTextured()));
-	connect(setPhong, SIGNAL(triggered()), mFGView, SLOT(setDrawPhong()));
-
-	setSmooth->setCheckable(true);
-	setFlat->setCheckable(true);
-	setWire->setCheckable(true);
-	setPoints->setCheckable(true);
-	setTextured->setCheckable(true);
-	setPhong->setCheckable(true);
-
-	QActionGroup* drawModeGroup = new QActionGroup(this);
-	drawModeGroup->addAction(setSmooth);
-	drawModeGroup->addAction(setFlat);
-	drawModeGroup->addAction(setWire);
-	drawModeGroup->addAction(setPoints);
-	drawModeGroup->addAction(setTextured);
-	drawModeGroup->addAction(setPhong);
-	setPhong->setChecked(true);
-
-	viewMenu->addSeparator()->setText(tr("Draw Mode"));
-	viewMenu->addAction(setSmooth);
-	viewMenu->addAction(setFlat);
-	viewMenu->addAction(setWire);
-	viewMenu->addAction(setPoints);
-	viewMenu->addAction(setTextured);
-	viewMenu->addAction(setPhong);
-}
-
-void MainWindow::setupConsoleWidget(){
-	mConsoleWidget = new ConsoleWidget();
-	connect(mConsoleWidget, SIGNAL(emitCommand(QString)), this, SLOT(runScript(QString)));
 }
