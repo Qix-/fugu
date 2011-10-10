@@ -54,6 +54,10 @@ public slots:
 
 	void showLineNumbers(bool);
 
+	void exportSimulation();
+	void exportFrameToObj();
+	void exportAnimToObj();
+
 private:
 
 	void openFile(const QString &path = QString());
@@ -63,13 +67,6 @@ private:
 
 	/// Open a new editor of file (or a blank editor if file==NULL)
 	void newEditor(QFile* file=NULL);
-
-	void setupFileMenu();
-	void setupEditMenu();
-	void setupHelpMenu();
-	void setupViewMenu();
-	void setupSimulationControls();
-	void setupConsoleWidget();
 
 	// text editors
 	QTabWidget* mEditors;
