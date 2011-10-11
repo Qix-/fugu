@@ -47,6 +47,7 @@ SET(MOC_HDR
   highlighter.h
   fgview.h
   consolewidget.h
+  redirect.h
 )
 
 QT4_WRAP_CPP(MOC_SRC ${MOC_HDR})

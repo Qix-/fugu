@@ -18,7 +18,7 @@ public:
 	bool run();
 
 	/// \brief return a string describing the error that occurred when running..
-	QString error() const {return QString("Unknown error");}
+	QString error() const {return mErrorString;}
 protected:
 	Exporter(fg::Universe*);
 	void exportFrameToObj(QFile);
@@ -26,6 +26,8 @@ protected:
 	fg::Universe* mUniverse;
 	enum Type {OBJ} mType;
 	QDir mDirectory;
+
+	QString mErrorString;
 };
 
 

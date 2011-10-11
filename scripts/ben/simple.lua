@@ -1,17 +1,5 @@
 --[[
-	A simple demo -BP
-	
-	Click the 'tick' to activate the script. This runs the "setup" function below.
-	
-	Then click play to run the simulation...
-	
-	The model viewer has a number of view modes..
-	
-	The script can be editted and reloaded to see the changes instantaneously..
-	
-	That's it for now!
-	- BP
-	
+	A simple demo -BP	
 --]]
 module(...,package.seeall)
 
@@ -67,7 +55,7 @@ function update(dt)
 			local shift = pulser(3*fgu.t+(1+sin(pi*v.p.x))*ph)*1.5*(th-pi/2)/(pi/2)
 			v.p = op[i] + vec3(0,0,shift)			
 			v:setColour(lerp(vec3(1,1,1),vec3(0,abs(cos(ph)),1),abs(shift/1.5)))			
-			v.p.x = v.p.x + sin(5*(v.p.x*v.p.x + v.p.z*v.p.z))
+			-- v.p.x = v.p.x + sin(5*(v.p.x*v.p.x + v.p.z*v.p.z))
 		end		
 	end
 end

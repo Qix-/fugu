@@ -32,7 +32,6 @@ MainWindow::MainWindow(QWidget *parent)
 	mEditors = findChild<QTabWidget*>("editors");
 	connect(mConsoleWidget, SIGNAL(emitCommand(QString)), this, SLOT(runScript(QString)));
 
-	// XXX: disable redirect for now
 	QTimer::singleShot(1, this, SLOT(redirectStreams()));
 
 	// create action groups..
@@ -57,11 +56,6 @@ MainWindow::MainWindow(QWidget *parent)
 	colourModeGroup->addAction(ui.actionSetColourNone);
 	colourModeGroup->addAction(ui.actionSetColourVertex);
 	ui.actionSetColourVertex->setChecked(true);
-
-	newEditor(new QFile("../scripts/ben/aorta.lua"));
-	makeCurrentScriptActive();
-	newEditor(new QFile("../scripts/ben/blue.lua"));
-	load();
 }
 
 void MainWindow::about()
@@ -301,24 +295,29 @@ void MainWindow::redo(){
 }
 
 void MainWindow::runScript(QString code){
-	// TODO: pause the update timer, run the script, the re-run the update timer
-	if (mSimulationTimer->isActive()){
+	// std::cout << "Command: \"" << code.toStdString() << "\"\n";
+
+	if (mSimulationTimer!=NULL and mSimulationTimer->isActive()){
 		mSimulationTimer->stop();
-		if (mUniverse){
-			mUniverse->runScript(code.toStdString());
-		}
+		assert(mUniverse!=NULL);
+		mUniverse->runScript(code.toStdString());
 		mSimulationTimer->start(mSimulationTimer->interval());
 	}
-	else {
-		if (mUniverse){
-			mUniverse->runScript(code.toStdString());
-		}
+	else if (mUniverse){
+		mUniverse->runScript(code.toStdString());
 	}
-
+	else {
+		std::cerr << "Can't run a command unless a script is active.\n";
+	}
 }
 
 void MainWindow::redirectStreams(){
-	redirectConsoleOutput();
+	StdOutRedirector* s = redirectConsoleOutput(this);
+	if (s){
+		(void)connect( s, SIGNAL( caughtString( QString ) ),
+				mConsoleWidget, SLOT( print( QString ) ));
+		s->start();
+	}
 }
 
 void MainWindow::makeCurrentScriptActive(){
@@ -357,30 +356,52 @@ void MainWindow::exportSimulation(){
 		QMessageBox::critical(this, tr("Export"), tr("There is no simulation to export!"));
 	}
 	else {
-		QDialog* exportDialog = new QDialog(this);
+		mExportDialog = new QDialog(this);
 		Ui::ExportDialog ui;
-		ui.setupUi(exportDialog);
+		ui.setupUi(mExportDialog);
 
-		QLineEdit* qe = exportDialog->findChild<QLineEdit*>("dirLineEdit");
-		qe->setText(QDir().absolutePath());
+		QLineEdit* qe = mExportDialog->findChild<QLineEdit*>("dirLineEdit");
+		qe->setText(QDir("export").absolutePath());
 
-		if (exportDialog->exec()){
+		QPushButton* chooseDir = mExportDialog->findChild<QPushButton*>("chooseDirectoryPushButton");
+		connect(chooseDir, SIGNAL(pressed()), this, SLOT(exportSimulationChooseDir()));
+
+		QLineEdit* numFramesLE = mExportDialog->findChild<QLineEdit*>("numFramesLineEdit");
+
+		if (mExportDialog->exec()){
+
+			bool convert = false;
+			int numFrames = numFramesLE->text().toInt(&convert);
+			if (not convert or numFrames<=0){
+				QMessageBox::critical(this, tr("Export"), tr("Number of frames is invalid or less than 1!"));
+				return;
+			}
+			// else ...
+
+			std::cout << "[" << 1 << 2 << 3 << 4 << 5 << "]\n";
+			std::cout << numFrames;
+			std::cout << "Exporting " << numFrames << " frames.\n";
+			/*
 			// do the export...
 			// std::cout << "Exporting to \"" << qe->text().toStdString() << "\"...\n";
 			Exporter e = Exporter::ExportFrameToObj(mUniverse).dir(QDir(qe->text()));
 			if (not e.run()){
 				QMessageBox::critical(this, tr("Export"), e.error());
 			}
+			*/
 		}
 	}
 }
 
-void MainWindow::exportFrameToObj(){
+void MainWindow::exportSimulationChooseDir(){
+	// QMessageBox::information(mExportDialog, tr("Choose Dir"), tr("You pressed choose dir dawg!"));
+	QString dir = QFileDialog::getExistingDirectory(this, tr("Choose Export Directory"),
+			mExportDialog->findChild<QLineEdit*>("dirLineEdit")->text(),
+            QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
-}
-
-void MainWindow::exportAnimToObj(){
-
+	if (not dir.isEmpty()){
+		mExportDialog->findChild<QLineEdit*>("dirLineEdit")->setText(QDir(dir).absolutePath());
+	}
 }
 
 void MainWindow::openFile(const QString &path)
@@ -442,8 +463,14 @@ void MainWindow::newEditor(QFile* file)
 	editor->setTabWidth(2);
 	editor->setAutoIndent(true);
 
-	editor->setMarginWidth(1,QString("9999"));
 	editor->setMarginLineNumbers(1,true);
+	bool b = findChild<QAction*>("actionShowLineNumbers")->isChecked();
+	if (!b){
+		editor->setMarginWidth(1,0);
+	}
+	else {
+		editor->setMarginWidth(1,QString("9999"));
+	}
 
 	editor->setWrapMode(QsciScintilla::WrapCharacter);
 
@@ -453,8 +480,8 @@ void MainWindow::newEditor(QFile* file)
 
 	if (file==NULL){
 		// Open a blank editor
-		int t = mEditors->addTab(editor, "unnamed");
-		mFileNames.insert(editor,QString()); // add empty filename
+		int t = mEditors->addTab(editor, "unnamed.lua");
+		mFileNames.insert(editor,QString("unnamed.lua")); // add empty filename
 	}
 	else {
 		if (file->open(QFile::ReadOnly | QFile::Text)){
@@ -466,4 +493,6 @@ void MainWindow::newEditor(QFile* file)
 		delete file;
 	}
 	mEditors->setCurrentWidget(editor);
+
+	if (!mActiveScript) makeCurrentScriptActive();
 }

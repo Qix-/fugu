@@ -91,6 +91,8 @@ public:
 	ConsoleWidget(QWidget* parent = 0);
 	~ConsoleWidget();
 
+	virtual QSize sizeHint(){return QSize(5,5);}
+
 private:
     int fixedPosition;
 
@@ -103,6 +105,7 @@ private:
 
 public slots:
 	void processCommand(QString cmd);
+	void print(QString p);
 
     void textChanged();
     void cursorPositionChanged(int line, int index);
