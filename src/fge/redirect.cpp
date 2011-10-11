@@ -28,22 +28,18 @@ void RedirectConsole(HANDLE hPipe){
 	setvbuf(stdout, NULL, _IONBF, 0);
 }
 
-class MyThread : public QThread
- {
- public:
-     void run();
- };
 
- void MyThread::run()
+
+ void StdOutRedirector::run()
  {
 	HANDLE rd,wr;
 	if (!CreatePipe(&rd,&wr,NULL,0))
-		std::cout << "Error creating pipe.\n";
+		std::cerr << "Error creating std out redirection pipe.\n";
 	RedirectConsole(wr);
 	//std::cout << "cout\n";
 	//printf("printf\n");
 	char buf[100];
-	while (true)	{
+	while (true) {
 		DWORD readBytes=0;
 		if (!ReadFile(rd, buf, 99, &readBytes, 0))
 			break;
@@ -53,26 +49,24 @@ class MyThread : public QThread
 			std::string str;
 			for (DWORD i=0;i<readBytes;i++)
 				str+=buf[i];
-			std::cout << str.c_str();
-			// MessageBoxA(0,str.c_str(),"",0);
+			emit (caughtString(QString::fromStdString(str)));
 		}
 		else
 			break;
 	}
  }
 
-void redirectConsoleOutput(){
-	MyThread* th = new MyThread;
-	th->start();
-
-	// the thread object remains in memory...
+ StdOutRedirector* redirectConsoleOutput(QObject* p){
+	StdOutRedirector* th = new StdOutRedirector(p);
+	return th;
 }
 
 #else // end _WIN32
 
 #include <stdexcept>
-void redirectConsoleOutput(){
-	//throw(std::runtime_error("Sorry, not yet implemented!"));
+ StdOutRedirector* redirectConsoleOutput(){
+	std::cerr << "Sorry std out redirect not fully implemented on this platform!\n";
+	return NULL;
 }
 
 

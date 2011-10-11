@@ -2,33 +2,58 @@
 
 #include <QKeyEvent>
 #include <QVBoxLayout>
+#include <Qsci/qscilexer.h>
 
 #include <iostream>
 #include "redirect.h"
 
 void outcallback( const char* ptr, std::streamsize count, void* console )
 {
-  (void) count;
+  // (void) count;
   QsciScintilla* p = static_cast< QsciScintilla* >( console );
-  p->append( ptr );
+  QString str = QString::fromAscii(ptr,count);
+  p->append( str );
   p->setCursorPosition(p->lines()-1,0);
 }
 
 void errcallback( const char* ptr, std::streamsize count, void* console )
 {
-  (void) count;
   QsciScintilla* p = static_cast< QsciScintilla* >( console );
-  p->append( ptr );
+  int linesbefore = p->lines();
+  QString str = QString("!") + QString::fromAscii(ptr,count);
+  p->append( str );
+  int linesafter = p->lines();
+  //p->setSelection(linesbefore,0,linesafter-1,p->lineLength(linesafter-1));
+  //p->selectAll(false);
   p->setCursorPosition(p->lines()-1,0);
 }
+
+
+class ConsoleLexer: public QsciLexer {
+public:
+	ConsoleLexer(const FGLexer& f):QsciLexer(NULL){
+		mFont = f.defaultFont(FGLexer::Default);
+		mBackgroundColor = f.defaultPaper(FGLexer::Default);
+	}
+
+	QColor defaultColor (int style) const {return QColor("#c8c8c8");}
+	bool defaultEolFill (int style) const {return false;}
+	QFont defaultFont (int style) const {return mFont; }
+	QColor defaultPaper (int style) const {return mBackgroundColor; }
+	virtual const char* language() const {return "fgconsole";}
+	virtual QString description(int) const {return "fgconsole term";}
+protected:
+	QFont mFont;
+	QColor mBackgroundColor;
+};
+
 
 ConsoleWidget::ConsoleWidget(QWidget *parent)
 : QWidget(parent)
 {
-    // setUndoRedoEnabled(false);
-
     mConsole = new QsciScintilla();
-    mConsole->setLexer(new FGLexer());
+    FGLexer fg;
+    mConsole->setLexer(new ConsoleLexer(fg));
     mConsole->setObjectName("console");
     mConsole->setTabWidth(2);
     mConsole->setWrapMode(QsciScintilla::WrapCharacter);
@@ -71,6 +96,13 @@ void ConsoleWidget::processCommand(QString cmd){
 	// send the command out
 	emit emitCommand(cmd);
 }
+
+void ConsoleWidget::print(QString p){
+	mConsole->append(p);
+	// Scroll to bottom
+	mConsole->setCursorPosition(mConsole->lines()-1,0);
+}
+
 /*
 void ConsoleWidget::OnChildStarted()
 {

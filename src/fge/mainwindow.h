@@ -55,8 +55,7 @@ public slots:
 	void showLineNumbers(bool);
 
 	void exportSimulation();
-	void exportFrameToObj();
-	void exportAnimToObj();
+	void exportSimulationChooseDir(); // called by exportSimulation only
 
 private:
 
@@ -78,6 +77,9 @@ private:
 
 	// console
 	ConsoleWidget* mConsoleWidget;
+
+	// export dialog
+	QDialog* mExportDialog;
 
 	// Current simulation state ...
 	enum SimulationMode {SM_PLAYING, SM_PAUSED, SM_STEPPING, SM_RELOADING, SM_ERROR};

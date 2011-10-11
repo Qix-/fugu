@@ -8,6 +8,8 @@
 #include <iomanip>
 #include <ctime>
 
+#include <QObject>
+
 #include "fg/fg.h"
 #include "fg/functions.h"
 #include "fg/glrenderer.h"
@@ -26,9 +28,15 @@ Exporter Exporter::ExportFrameToObj(fg::Universe* u){
 
 bool Exporter::run(){
 	assert(mType==OBJ);
+	mErrorString = QString("Unknown Error");
 
 	if (mUniverse){
 		int nodeCount = 0;
+
+		// make directory if it doesnt exist
+		if (not mDirectory.exists()){
+			mDirectory.mkpath(".");
+		}
 
 		// get time
 		time_t seconds;
@@ -49,7 +57,8 @@ bool Exporter::run(){
 			QString absolutePath = mDirectory.absoluteFilePath(QString::fromStdString(oss.str()));
 
 			std::cout << "Saving as: \"" << absolutePath.toStdString() << "\"\n";
-			vcg::tri::io::ExporterOBJ_Point3d<fg::MeshImpl>::Save(
+
+			int err = vcg::tri::io::ExporterOBJ_Point3d<fg::MeshImpl>::Save(
 				*m->mesh()->_impl(),
 				absolutePath.toStdString().c_str(),
 				vcg::tri::io::Mask::IOM_VERTNORMAL |
@@ -58,6 +67,12 @@ bool Exporter::run(){
 				,
 				m->getCompoundTransform()
 			);
+			if (err>0){
+				mErrorString = QString(vcg::tri::io::ExporterOBJ_Point3d<fg::MeshImpl>::ErrorMsg(err));
+				return false;
+			}
+
+
 			nodeCount++;
 		}
 
