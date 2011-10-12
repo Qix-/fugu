@@ -280,6 +280,19 @@ void MainWindow::simulateOneStep(){
 	}
 }
 
+void MainWindow::simulateOneStepNoViewUpdate(){
+	if (mUniverse!=NULL){
+		try {
+			mUniverse->update(0.01);
+		}
+		catch (std::runtime_error& e){
+			std::cerr << "ERROR: " << e.what() << "\n";
+			unload();
+			mSimulationMode = SM_ERROR;
+		}
+	}
+}
+
 void MainWindow::undo(){
 	QWidget* qw = mEditors->currentWidget();
 	if (qw!=NULL){
@@ -356,6 +369,10 @@ void MainWindow::exportSimulation(){
 		QMessageBox::critical(this, tr("Export"), tr("There is no simulation to export!"));
 	}
 	else {
+		// stop the simulation
+		// pause();
+		findChild<QAction*>("actionPlay")->setChecked(false);
+
 		mExportDialog = new QDialog(this);
 		Ui::ExportDialog ui;
 		ui.setupUi(mExportDialog);
@@ -378,17 +395,32 @@ void MainWindow::exportSimulation(){
 			}
 			// else ...
 
-			std::cout << "[" << 1 << 2 << 3 << 4 << 5 << "]\n";
-			std::cout << numFrames;
-			std::cout << "Exporting " << numFrames << " frames.\n";
-			/*
-			// do the export...
-			// std::cout << "Exporting to \"" << qe->text().toStdString() << "\"...\n";
+			std::cout << "Saving to: " << QDir(qe->text()).absolutePath().toStdString() << "\n";
+
+			QProgressDialog progress("Exporting...", "Abort", 0, numFrames, mExportDialog);
+			progress.setWindowModality(Qt::WindowModal);
+			progress.setAutoClose(true);
+			progress.setMinimumDuration(1000); // 1 second..
 			Exporter e = Exporter::ExportFrameToObj(mUniverse).dir(QDir(qe->text()));
-			if (not e.run()){
-				QMessageBox::critical(this, tr("Export"), e.error());
+
+			for (int i = 0; i < numFrames; i++) {
+				progress.setValue(i);
+
+				if (progress.wasCanceled())
+					break;
+				if (not e.run(i,numFrames)){
+					QMessageBox::critical(this, tr("Export"), e.error());
+					break;
+				}
+				simulateOneStepNoViewUpdate();
+				if (mUniverse==NULL){
+					QMessageBox::critical(this, tr("Export"), tr("The universe imploded, sorry."));
+					break;
+				}
+
 			}
-			*/
+			progress.setValue(numFrames);
+
 		}
 	}
 }

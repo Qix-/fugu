@@ -15,7 +15,7 @@ public:
 	Exporter& dir(QDir directory){mDirectory = directory; return *this;}
 
 	/// \brief run the exporter, returns false if an error occurs
-	bool run();
+	bool run(int frame, int maxframes);
 
 	/// \brief return a string describing the error that occurred when running..
 	QString error() const {return mErrorString;}

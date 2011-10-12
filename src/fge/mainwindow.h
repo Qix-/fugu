@@ -44,6 +44,7 @@ public slots:
 	void reload();
 
 	void simulateOneStep();
+	void simulateOneStepNoViewUpdate();
 
 	void undo();
 	void redo();

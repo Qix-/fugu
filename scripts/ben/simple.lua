@@ -39,6 +39,7 @@ function setup()
 	m = fg.mesh.primitives.icosahedron()
 	m:smoothSubdivide(2)
 	local n = fg.meshnode(m)
+	n:setTransform(mat4():setRotateRad(pi/2,vec3(1,0,0)))
 	fgu:add(n)	
 	
 	op = {}
