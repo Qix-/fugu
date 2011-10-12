@@ -26,7 +26,7 @@ Exporter Exporter::ExportFrameToObj(fg::Universe* u){
 	return ex;
 }
 
-bool Exporter::run(){
+bool Exporter::run(int frameNo, int maxFrames){
 	assert(mType==OBJ);
 	mErrorString = QString("Unknown Error");
 
@@ -52,11 +52,13 @@ bool Exporter::run(){
 				<< timeinfo->tm_hour
 				<< timeinfo->tm_min
 				<< timeinfo->tm_sec;
-			oss << "_" << nodeCount << ".obj";
+			oss << "_" << nodeCount;
+			int maxFrameDigits = QString::number(maxFrames).length();
+			oss << "_" << std::setfill('0') << std::setw(maxFrameDigits) << frameNo << ".obj";
 
 			QString absolutePath = mDirectory.absoluteFilePath(QString::fromStdString(oss.str()));
 
-			std::cout << "Saving as: \"" << absolutePath.toStdString() << "\"\n";
+			// std::cout << "Saving as: \"" << absolutePath.toStdString() << "\"\n";
 
 			int err = vcg::tri::io::ExporterOBJ_Point3d<fg::MeshImpl>::Save(
 				*m->mesh()->_impl(),
