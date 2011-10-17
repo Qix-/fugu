@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1364</width>
-    <height>937</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -55,7 +55,7 @@ QTabBar::tab {
 	
 	border: 0; /* px solid #C4C4C3; */
 	 
-	border-bottom: 2px solid #272727; /* same as the pane color */
+	/*border-bottom: 2px solid #272727; /* same as the pane color * / */
 	border-top-left-radius: 0px;
 	border-top-right-radius: 0px;
 	min-width: 8ex;
@@ -82,10 +82,17 @@ QTabBar::tab:hover {
 
 QTabWidget::pane { 
 	border: 0; 
-	border-top: 2px solid #272727;
+  /* padding: 8px;*/
+	/* border-top: 2px solid #272727; */   
 }
 
+#consolewidget {
+	background: #101010;
+}
 
+#consolewidget QWidget {
+	background: #101010;
+}
 
 #commandline {
 	background-color: #FF0000;
@@ -340,33 +347,36 @@ QSplitter::handle {
 }
 
  QSplitter::handle:horizontal {
-     width: 8px;
+     width: 1px;
+	background: #101010;
      /* border-right: 2px dotted #3f3f3f; */
      
     /* 
      background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
 		stop: 0 #101010, stop: 1.0 #272727 ); */
-	background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+	/*background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
 		stop: 0 #181818, 
-		stop: 1 #272727 );
-     
-     
+		stop: 1 #272727 );     */
  }
 
  QSplitter::handle:vertical {
-     height: 6px;
+     height: 1px;
+	background: #101010;
      /* border-bottom: 2px dotted #3f3f3f; */
-     
+     /*
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
 		stop: 0 #181818, stop: 1.0 #272727 );
+*/
  }
 
+/*
  QSplitter::handle:pressed, QSplitter::handle:hover {
-     image: none; /* url(images/splitter_pressed.png); */
-     /* background: #3f3f3f; */
+     image: none; /* url(images/splitter_pressed.png); * /
+     /* background: #3f3f3f; * /
      border-color: #f27000;
  }
  
+*/
  
  
   QToolBar {     
@@ -428,6 +438,9 @@ QToolBar::separator:vertical {
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="margin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
@@ -525,7 +538,7 @@ QToolBar::separator:vertical {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1364</width>
+     <width>800</width>
      <height>25</height>
     </rect>
    </property>

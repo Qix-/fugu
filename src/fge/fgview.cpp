@@ -344,10 +344,14 @@ void FGView::paintGL()
 				if (mPhongShader!=NULL and mMeshMode==MM_PHONG){
 					mPhongShader->bind();
 					mPhongShader->setUniformValue("shininess",(GLfloat)25);
-					// mPhongShader->setUniformValue("useVertexColour",(GLint)GL_FALSE);
+
+#ifdef _WIN32
+					mPhongShader->setUniformValue("useVertexColour",(GLint)GL_FALSE);
 					if (mColourMode==fg::GLRenderer::COLOUR_VERTEX){
-					// 	mPhongShader->setUniformValue("useVertexColour",(GLint)GL_TRUE);
+					 	mPhongShader->setUniformValue("useVertexColour",(GLint)GL_TRUE);
 					}
+#endif
+
 				}
 
 				fg::GLRenderer::RenderMeshMode rmm;
@@ -364,7 +368,7 @@ void FGView::paintGL()
 				if (mShowOverWire){
 					if (mMeshMode==MM_FLAT or mMeshMode==MM_PHONG or mMeshMode==MM_SMOOTH or mMeshMode==MM_TEXTURED){
 						mOverWireShader->bind();
-						glColor3f(0,0,0);
+						glColor3f(.2,.2,.2);
 						fg::GLRenderer::renderMeshNode(m,fg::GLRenderer::RENDER_WIRE,fg::GLRenderer::COLOUR_NONE); // fg::GLRenderer::RenderMeshMode(DRAW_MODE));
 					}
 				}

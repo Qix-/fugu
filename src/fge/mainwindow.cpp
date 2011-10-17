@@ -503,6 +503,7 @@ void MainWindow::newEditor(QFile* file)
 	else {
 		editor->setMarginWidth(1,QString("9999"));
 	}
+	editor->setMarginWidth(2,8); // a little margin
 
 	editor->setWrapMode(QsciScintilla::WrapCharacter);
 
