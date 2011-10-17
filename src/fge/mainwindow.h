@@ -92,6 +92,7 @@ private:
 	double mTime;
 
 	QTimer* mSimulationTimer;
+
 };
 
 #endif

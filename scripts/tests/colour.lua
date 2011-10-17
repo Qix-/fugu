@@ -15,7 +15,7 @@ end
 
 function update(dt)		
 	local col = function(x,y,z) 
-		return vec3(noise(x+sin(fgu.t),y,z),
+		return vec3(noise(x+math.sin(fgu.t),y,z),
 			noise(x,y+fgu.t,z),
 			noise(x,y,z+fgu.t)) 
 	end

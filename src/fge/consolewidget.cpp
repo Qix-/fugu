@@ -52,15 +52,16 @@ ConsoleWidget::ConsoleWidget(QWidget *parent)
 : QWidget(parent)
 {
     mConsole = new QsciScintilla();
-    FGLexer fg;
+    FGLexer fg(QColor("#101010"));
     mConsole->setLexer(new ConsoleLexer(fg));
     mConsole->setObjectName("console");
     mConsole->setTabWidth(2);
     mConsole->setWrapMode(QsciScintilla::WrapCharacter);
     mConsole->setCaretForegroundColor(QColor("#959595"));
-	mConsole->setMarginsBackgroundColor(QColor("#272727"));
+	mConsole->setMarginsBackgroundColor(QColor("#101010"));
 	mConsole->setMarginsForegroundColor(QColor("#959595"));
 	mConsole->setMarginWidth(1,0); // disable line number margin
+	mConsole->setMarginWidth(2,8); // a little margin
 	mConsole->setReadOnly(true);
 
     mCommandLine = new CommandLineWidget();
@@ -239,12 +240,12 @@ void ConsoleWidget::linesChanged(){
 CommandLineWidget::CommandLineWidget(QWidget* parent):QsciScintilla(parent){
 	setObjectName("commandline");
 
-	FGLexer* lex = new FGLexer();
+	FGLexer* lex = new FGLexer(QColor("#101010"));
 	// lex->inheritColoursFrom(this);
 	setLexer(lex);
 
-	setText(">> ");
-	fixedPosition = 3;
+	setText("> ");
+	fixedPosition = 2;
 	setCursorPosition(0,fixedPosition);
 
 	connect(this,SIGNAL(selectionChanged()),this, SLOT(selectionChanged()));
@@ -252,7 +253,10 @@ CommandLineWidget::CommandLineWidget(QWidget* parent):QsciScintilla(parent){
 
     setTabWidth(2);
     setMarginWidth(1,0); // disable line number margin
+    setMarginWidth(2,8); // a little margin
     setCaretForegroundColor(QColor("#959595"));
+    setMarginsBackgroundColor(QColor("#101010"));
+    setMarginsForegroundColor(QColor("#959595"));
 
     QFontMetrics fm(lexer()->defaultFont());
     int textHeightInPixels = fm.height();
