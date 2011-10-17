@@ -64,12 +64,15 @@ void RedirectConsole(HANDLE hPipe){
 #else // end _WIN32
 
 #include <stdexcept>
- StdOutRedirector* redirectConsoleOutput(){
+#include <iostream>
+
+ StdOutRedirector* redirectConsoleOutput(QObject * p){
 	std::cerr << "Sorry std out redirect not fully implemented on this platform!\n";
 	return NULL;
 }
 
 
+ void StdOutRedirector::run(){}
 
 
 

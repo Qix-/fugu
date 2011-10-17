@@ -66,6 +66,7 @@ include_directories(${BASE_DIR}/include/lua)
 include_directories(${BASE_DIR}/src)
 
 add_subdirectory(src/fg)
+	add_subdirectory(src/fge)
 #add_subdirectory(src/fgv)
 #add_subdirectory(src/fgo)
 #add_subdirectory(src/misc/basics)
