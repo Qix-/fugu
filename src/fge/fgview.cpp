@@ -344,9 +344,9 @@ void FGView::paintGL()
 				if (mPhongShader!=NULL and mMeshMode==MM_PHONG){
 					mPhongShader->bind();
 					mPhongShader->setUniformValue("shininess",(GLfloat)25);
-					mPhongShader->setUniformValue("useVertexColour",false);
+					// mPhongShader->setUniformValue("useVertexColour",(GLint)GL_FALSE);
 					if (mColourMode==fg::GLRenderer::COLOUR_VERTEX){
-						mPhongShader->setUniformValue("useVertexColour",true);
+					// 	mPhongShader->setUniformValue("useVertexColour",(GLint)GL_TRUE);
 					}
 				}
 

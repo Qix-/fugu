@@ -49,6 +49,7 @@ function new_root(length,width,meander)
 		-- First the turn
 		bert:setScale(self.rootWidth)
 		bert:setStiffness(0.3,0.3)
+		bert:setCarrierMode(0)
 		bert:beginCylinder()
 		--[[
 		bert:move(self.rootWidth)
