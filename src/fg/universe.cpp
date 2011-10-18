@@ -104,6 +104,14 @@ namespace fg {
 
 		// setup a debugging error function
 		lua_register(L, "fgerrorfunc", debugFileAndLine);
+
+		// and finally load the core library..
+		setLuaPath("../?.lua");  // assume this is run from inside the bin/
+		lua_getglobal(L, "require");
+		lua_pushstring(L, "core.main");
+		if (lua_pcall(L, 1, 1, 0)){
+			error(lua_tostring(L, -1));
+		}
 	}
 
 	Universe::~Universe() {
@@ -129,7 +137,6 @@ namespace fg {
 	void Universe::loadScript(std::string scriptFileName){
 		// Load the script, and give it access to this universe
 		// which is called "fgu"
-
 
 		// // Adapted from lua.c:  static int dolibrary (lua_State *L, const char *name) {
 		lua_getglobal(L, "require");
@@ -288,18 +295,74 @@ namespace fg {
 		return mTime;
 	}
 
+	std::list<tuple<std::string,std::string,std::string> > Universe::commandListByCategory() const {
+		std::list<tuple<std::string,std::string,std::string> > l;
+		// std::cout << "doing a thing..\n";
+		// run command_list_by_category()
+		// and parse the result
+		// TODO: this..
+		/*
+		const char* command = "command_list_by_category()";
+		if (luaL_dostring(L, command)){
+			// an error has occurred
+			try {
+				error(lua_tostring(L, -1));
+			}
+			catch (std::runtime_error& e){
+				std::cerr << e.what() << "\n";
+			}
+			lua_pop(L,1);
+		}
+		else {
+			// extract result
+			std::cerr << "1...";
+			luabind::object o(luabind::from_stack(L, -1));
+			std::cerr << "2...";
+			if (o.is_valid() and luabind::type(o)==LUA_TTABLE){
+				std::cerr << "looks like a table...";
+				for (luabind::iterator i(o), end; i != end; ++i)
+				{
+					std::cerr << "can iterate like a table...";
+					if (luabind::type(*i)==LUA_TTABLE){
+						luabind::object cat = (*i)["category"];
+						l.push_back(make_tuple(
+								luabind::object_cast<std::string>((*i)["category"]),
+								((*i)["name"].is_valid())?(luabind::object_cast<std::string>((*i)["name"])):std::string(),
+								((*i)["docstring"].is_valid())?(luabind::object_cast<std::string>((*i)["docstring"])):std::string()
+						));
+
+						std::cout << "category:" << luabind::object_cast<std::string>(cat) << "\n";
+					}
+					else {
+						// std::cerr << *i << "\n";
+					}
+				}
+			}
+			else {
+				std::cerr << "Can't execute command_list_by_category() for some reason...";
+			}
+			lua_pop(L,1);
+		}
+		 */
+		return l;
+	}
+
 	// from http://stackoverflow.com/questions/4125971/setting-the-global-lua-path-variable-from-c-c
 	int Universe::setLuaPath( std::string path )
 	{
-		std::cout << "Adding script path: \"" << path << "\"\n";
+		// std::cout << "Adding script path: \"" << path << "\"\n";
 
 	    lua_getglobal( L, "package" );
 	    lua_getfield( L, -1, "path" ); // get field "path" from table at top of stack (-1)
 	    std::string cur_path = lua_tostring( L, -1 ); // grab path string from top of stack
-	    cur_path.append( ";" ); // do your path magic here
-	    cur_path.append( path );
+
+	    std::string new_path(path);
+	    new_path.append(";");
+	    new_path.append(cur_path);
+	    // cur_path.append( ";" ); // do your path magic here
+	    // cur_path.append( path );
 	    lua_pop( L, 1 ); // get rid of the string on the stack we just pushed on line 5
-	    lua_pushstring( L, cur_path.c_str() ); // push the new one
+	    lua_pushstring( L, new_path.c_str() ); // push the new one
 	    lua_setfield( L, -2, "path" ); // set the field "path" in table at -2 with value at top of stack
 	    lua_pop( L, 1 ); // get rid of package table from top of stack
 	    return 0; // all done!

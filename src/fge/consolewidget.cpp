@@ -89,7 +89,7 @@ ConsoleWidget::~ConsoleWidget()
 void ConsoleWidget::processCommand(QString cmd){
 
 	// Echo command
-	mConsole->append(QString(">> ") + cmd + "\n");
+	mConsole->append(QString("> ") + cmd + "\n");
 	// Scroll to bottom
 	mConsole->setCursorPosition(mConsole->lines()-1,0);
 	// mConsole->ensureLineVisible(mConsole->lines()-1);
@@ -279,7 +279,7 @@ void CommandLineWidget::keyPressEvent(QKeyEvent* event){
 		if (not cmd.isEmpty()){
 			emit emitCommand(cmd);
 		}
-		setText(">> ");
+		setText("> ");
 		setCursorPosition(0,fixedPosition);
 		// redirect->WriteChildStdIn(cmd + "\n");
 	} else if (key == Qt::Key_Up) {

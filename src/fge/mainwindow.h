@@ -58,6 +58,8 @@ public slots:
 	void exportSimulation();
 	void exportSimulationChooseDir(); // called by exportSimulation only
 
+	void buildReference(); // build the html reference
+
 private:
 
 	void openFile(const QString &path = QString());

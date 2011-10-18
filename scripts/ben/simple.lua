@@ -4,16 +4,6 @@
 module(...,package.seeall)
 
 mesh = require "fgx.mesh"
-require "table"
--- TODO: put these into global namespace automatically
-abs = math.abs
-sin = math.sin
-cos = math.cos
-tan = math.tan
-asin = math.asin
-acos = math.acos
-atan2 = math.atan2
-pi = math.pi
 
 function vnoise(v)
 	-- return a vec3 of noise
@@ -53,10 +43,8 @@ function update(dt)
 		local th = sph[i][2]
 		local ph = sph[i][3]
 		if (th > pi/2) then
-			local shift = pulser(3*fgu.t+(1+sin(pi*v.p.x))*ph)*1.5*(th-pi/2)/(pi/2)
+			local shift = pulser(6*fgu.t+(1+sin(pi*v.p.x))*ph)*1.5*(th-pi/2)/(pi/2)
 			v.p = op[i] + vec3(0,0,shift)			
-			v:setColour(lerp(vec3(1,1,1),vec3(0,abs(cos(ph)),1),abs(shift/1.5)))			
-			-- v.p.x = v.p.x + sin(5*(v.p.x*v.p.x + v.p.z*v.p.z))
-		end		
+			v:setColour(lerp(vec3(1,1,1),vec3(0,abs(cos(ph)),1),abs(shift/1.5)))			end		
 	end
 end
