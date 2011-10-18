@@ -56,6 +56,9 @@ MainWindow::MainWindow(QWidget *parent)
 	colourModeGroup->addAction(ui.actionSetColourNone);
 	colourModeGroup->addAction(ui.actionSetColourVertex);
 	ui.actionSetColourVertex->setChecked(true);
+
+	// load a script
+	newEditor(new QFile("../scripts/ben/simple.lua"));
 }
 
 void MainWindow::about()
@@ -197,6 +200,8 @@ void MainWindow::load(){
 
 void MainWindow::unload(){
 	if (mUniverse!=NULL){
+		if (mSimulationTimer) mSimulationTimer->stop();
+		findChild<QAction*>("actionPlay")->setChecked(false);
 		mFGView->unsetUniverse();
 		delete mUniverse;
 		mUniverse = NULL;
@@ -234,6 +239,7 @@ void MainWindow::pause(){
 			mSimulationTimer->stop();
 		}
 		mSimulationMode = SM_PAUSED;
+		findChild<QAction*>("actionPlay")->setChecked(false);
 	}
 
 }
@@ -249,6 +255,7 @@ void MainWindow::step(){
 		mSimulationMode = SM_STEPPING;
 		simulateOneStep();
 		mSimulationMode = SM_PAUSED;
+		findChild<QAction*>("actionPlay")->setChecked(false);
 	}
 }
 
@@ -310,17 +317,16 @@ void MainWindow::redo(){
 void MainWindow::runScript(QString code){
 	// std::cout << "Command: \"" << code.toStdString() << "\"\n";
 
-	if (mSimulationTimer!=NULL and mSimulationTimer->isActive()){
+	if (mUniverse and mSimulationTimer!=NULL and mSimulationTimer->isActive()){
 		mSimulationTimer->stop();
-		assert(mUniverse!=NULL);
 		mUniverse->runScript(code.toStdString());
 		mSimulationTimer->start(mSimulationTimer->interval());
 	}
-	else if (mUniverse){
+	else if (mSimulationMode!=SM_ERROR and mUniverse!=NULL){
 		mUniverse->runScript(code.toStdString());
 	}
 	else {
-		std::cerr << "Can't run a command unless a script is active.\n";
+		std::cerr << "Script must be active and universe successfully loaded to run a command.\n";
 	}
 }
 
@@ -433,6 +439,45 @@ void MainWindow::exportSimulationChooseDir(){
 
 	if (not dir.isEmpty()){
 		mExportDialog->findChild<QLineEdit*>("dirLineEdit")->setText(QDir(dir).absolutePath());
+	}
+}
+
+void MainWindow::buildReference() // build the html reference
+{
+	// if universe doesn't exist, make one temporarily...
+	bool tmpuni = false;
+	if (mUniverse==NULL){
+		tmpuni = true;
+		try {
+			mUniverse = new fg::Universe();
+		}
+		catch (std::runtime_error& e){
+			mSimulationMode = SM_ERROR;
+			std::cerr << "ERROR: " << e.what() << "\n";
+			if (mUniverse!=NULL){
+				delete mUniverse;
+				mUniverse = NULL;
+				return;
+			}
+		}
+	}
+
+	QFile file("reference.html");
+	if (file.open(QIODevice::WriteOnly)){
+		QTextStream out(&file);
+		out << "<html><body>\n";
+		typedef tuple<std::string,std::string,std::string> string3;
+		std::list<string3> commandList = mUniverse->commandListByCategory();
+
+		out << "</body></html>\n";
+	}
+	else {
+		std::cerr << "Whoops, can't open reference.html.";
+	}
+
+	if (tmpuni){
+		delete mUniverse;
+		mUniverse = NULL;
 	}
 }
 

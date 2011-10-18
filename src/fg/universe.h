@@ -111,8 +111,11 @@ namespace fg {
 		 */
 		void update(double dt);
 
+		// helpers
 		double time() const; ///< Returns the current time in the universe
 
+		/// \brief Return a list of all categorised commands in tuple(category,name,docstring)
+		std::list<tuple<std::string,std::string,std::string> > commandListByCategory() const;
 	private:
 		lua_State *L;
 		std::list<std::string> mLoadedScripts;

@@ -324,9 +324,8 @@ void FGView::paintGL()
 		if (mGround) drawGroundPlane();
 
 		if (mUniverse!=NULL){
-
-			glColor3f(1,1,1);
 			foreach(shared_ptr<fg::MeshNode> m, mUniverse->meshNodes()){
+				glColor3f(1,1,1);
 				// std::cout << m << "\n" << *m << "\n\n";
 
 				m->mesh()->sync(); // make sure normals are okay
@@ -365,11 +364,17 @@ void FGView::paintGL()
 
 				fg::GLRenderer::renderMeshNode(m,rmm,mColourMode); // fg::GLRenderer::RenderMeshMode(DRAW_MODE));
 
+				if (mPhongShader!=NULL and mMeshMode==MM_PHONG){
+					mPhongShader->release();
+				}
+
 				if (mShowOverWire){
 					if (mMeshMode==MM_FLAT or mMeshMode==MM_PHONG or mMeshMode==MM_SMOOTH or mMeshMode==MM_TEXTURED){
+
 						mOverWireShader->bind();
-						glColor3f(.2,.2,.2);
+						glColor3f(.1,.1,.1);
 						fg::GLRenderer::renderMeshNode(m,fg::GLRenderer::RENDER_WIRE,fg::GLRenderer::COLOUR_NONE); // fg::GLRenderer::RenderMeshMode(DRAW_MODE));
+						mOverWireShader->release();
 					}
 				}
 

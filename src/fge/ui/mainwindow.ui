@@ -90,7 +90,7 @@ QTabWidget::pane {
 	background: #101010;
 }
 
-#consolewidget QWidget {
+#consolewidget &gt; QWidget {
 	background: #101010;
 }
 
@@ -725,7 +725,7 @@ QToolBar::separator:vertical {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Reference</string>
+    <string>Build HTML Reference</string>
    </property>
   </action>
   <action name="actionToggleLighting">
@@ -1180,22 +1180,6 @@ QToolBar::separator:vertical {
    </hints>
   </connection>
   <connection>
-   <sender>action_Reference</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>about()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>action_Save</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -1563,6 +1547,22 @@ QToolBar::separator:vertical {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_Reference</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>buildReference()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>about()</slot>
@@ -1587,5 +1587,6 @@ QToolBar::separator:vertical {
   <slot>makeCurrentScriptActive()</slot>
   <slot>closeFile()</slot>
   <slot>exportSimulation()</slot>
+  <slot>buildReference()</slot>
  </slots>
 </ui>
