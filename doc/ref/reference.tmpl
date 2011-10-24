@@ -22,56 +22,101 @@
 <div class="grid_4">
     <tmpl_loop CATEGORIES1>
     <div class="category_list">
-	<h1><tmpl_var name="CATEGORY"></h1>
-	<p>
-	<tmpl_loop FUNCTIONS>
-	<a id=<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_NAME"></a>
-	<div class=func_doc id=doc_<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_DOC"></div>
-	&nbsp; 
-	</tmpl_loop>
-	</p>
+		<h1><tmpl_var name="CATEGORY"></h1>
+		<tmpl_loop FUNCTIONS>
+		<a href="#" id=<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_NAME"></a>
+		<div style="display: none;" class=func_doc id=doc_<tmpl_var name="FUNCTION_NAME">>
+			<pre><tmpl_var name="FUNCTION_DOC"></pre>
+		</div> 
+		</tmpl_loop>
 	</div>
 	</tmpl_loop>	
 </div>
 
-<div class="grid_4">    
+<div class="grid_4">
     <tmpl_loop CATEGORIES2>
     <div class="category_list">
-	<h1><tmpl_var name="CATEGORY"></h1>
-	<p>
-	<tmpl_loop FUNCTIONS>
-	<tmpl_var name="FUNCTION_NAME">&nbsp;
-	</tmpl_loop>
-	</p>
+		<h1><tmpl_var name="CATEGORY"></h1>
+		<tmpl_loop FUNCTIONS>
+		<a href="#" id=<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_NAME"></a>
+		<div style="display: none;" class=func_doc id=doc_<tmpl_var name="FUNCTION_NAME">>
+			<pre><tmpl_var name="FUNCTION_DOC"></pre>
+		</div>
+		</tmpl_loop>
 	</div>
 	</tmpl_loop>	
 </div>
 
-<div class="grid_4">    
+<div class="grid_4">
     <tmpl_loop CATEGORIES3>
     <div class="category_list">
-	<h1><tmpl_var name="CATEGORY"></h1>
-	<p>
-	<tmpl_loop FUNCTIONS>
-	<tmpl_var name="FUNCTION_NAME">&nbsp;
-	</tmpl_loop>
-	</p>
+		<h1><tmpl_var name="CATEGORY"></h1>
+		<tmpl_loop FUNCTIONS>
+		<a href="#" id=<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_NAME"></a>
+		<div style="display: none;" class=func_doc id=doc_<tmpl_var name="FUNCTION_NAME">>
+			<pre><tmpl_var name="FUNCTION_DOC"></pre>
+		</div>
+		</tmpl_loop>
 	</div>
 	</tmpl_loop>	
 </div>
+
 <div class="clear"></div>
+
+<div class="grid_12"><br/></div>
+<div class="clear"></div>
+
+<div style="display:none" id="doc" class="grid_12">
+
+</div>
+<div class="clear"></div>
+
+
 <div id="footer" class="grid_12">
 Built on <tmpl_var name="DATE">
 </div>
+<div class="clear"></div>
 
 </div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script>
 $(document).ready(function(){
+	var currentDocName = null;
+	var currentDocString = null;
+	var slideSpeed = 200; 
+	
 	$(".category_list a").click(function () { 
-		/* console.log($(this)[0].id); */ 	
-		$("#doc_" + $(this)[0].id).toggleClass("show_doc");	 
+		/* console.log($(this)[0].id); */ 
+		
+		if (currentDocName==$(this)[0].id) {
+			currentDocString.hide(slideSpeed, function() {
+					$("#doc").empty();
+					currentDocString = null;
+					currentDocName = null;
+					$("#doc").hide();
+			});
+		}
+		else {		
+			$("#doc").show();
+			currentDocName = $(this)[0].id;
+			var el = $("#doc_" + currentDocName);
+			if (currentDocString) {
+				currentDocString.hide(slideSpeed, function() {
+					$("#doc").empty();
+					currentDocString = el.clone();		
+					$("#doc").append(currentDocString);
+					currentDocString.show(slideSpeed);		
+				});
+			}
+			else {
+				$("#doc").empty();
+				currentDocString = el.clone();		
+				$("#doc").append(currentDocString);
+				currentDocString.show(slideSpeed);		
+			}
+			
+		}			 
 	});
 });    
     
