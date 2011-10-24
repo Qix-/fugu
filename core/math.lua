@@ -6,9 +6,12 @@ require 'core.util'
 
 -- put the standard math library into the global namespace
 require "math"
-for k,v in pairs(math) do 
-	_G[k]=v
-	categorise(_G[k],"math") 
+dontimport = set {"random", "randomseed", "sqrt", "min"}
+for k,v in pairs(math) do	 
+	if not dontimport[k] then
+		_G[k]=v
+		categorise(_G[k],"math")
+	end 
 end
 
 -- general maths functions
@@ -65,7 +68,9 @@ document[[mat4 represents a 4d matrix. Example usage:
 		m:set_rotate_rad(angle,axis)
 		m:set_translate(x,y,z)
 		also see global functions R,Rv,T,S for shorthand]](mat4)
-	
+
+categorise(mat4,"math")
+
 -- extra maths/geometric functions
 
 function perp(v)
@@ -74,6 +79,7 @@ function perp(v)
 	else return normalise(cross(v,vec3(0,0,1))) end
 end
 document[[perp(v:vec3) returns a normalised vector perpendicular to vec3 v]](perp)
+categorise(perp,"geometric")
 
 function distribute_points_sphere(N)
 	local points = {}
@@ -97,6 +103,7 @@ document[[
  "Distributing many points on a sphere" by E.B. Saff and A.B.J. Kuijlaars,
   Mathematical Intelligencer 19.1 (1997) 5--11
 ]](distribute_points_sphere)
+categorise(distribute_points_sphere,"geometric")
 
 function project(a,b)
 	local bn = normalise(b)
@@ -104,6 +111,7 @@ function project(a,b)
 	return bn*ab
 end
 document[[project(a,b) projects vec3 a onto vec3 b]](project)
+categorise(project, "geometric")
 
 function centroid(poly)
 	local cx = 0
@@ -124,6 +132,7 @@ function centroid(poly)
 	return vec3(cx,cy,0)			
 end
 document[[centroid(poly) computes the centroid of a 2d polygon defined by a list of vec3 (with z = 0)]](centroid)
+categorise(centroid, "geometric")
 
 function acentroidvl(vl,n)
 	-- new basis
@@ -149,4 +158,4 @@ end
 document[[acentroidvl(vl,n) computes the approximate centroid of a list of 
 vertices defining a closed polygon (not necessarily planar).
 The normalised vector, n, defines the plane on which the polygon approximately lies]](acentroidvl)
- 
+categorise(acentroidvl,"geometric")

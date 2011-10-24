@@ -11,6 +11,8 @@ end
 -- documentation is combined with the overloaded version
 -- document[[extrude(m:mesh,v:vertex,magnitude) extrudes all faces neighbouring v in the direction of the vertex normal]](extrude)
 
+
+
 function extrude(mesh,vertex,direction,magnitude)
 	local ddotd = dot(direction,direction)
 	local vdotd = dot(vertex.p,direction)
@@ -46,6 +48,8 @@ document[[extrude(m:mesh,v:vertex,[dir:vec3],magnitude)
 	faces to align perpendicularly along the extrusion axis, and scales the faces 
 	Note: Assumes direction is normalised. 
 	Returns the pos loop at the end of the extrusion]](extrude)
+
+categorise(extrude,"mesh")
 	
 function extrudeAndScale(mesh,vertex,direction,magnitude,scale)
 	local ddotd = dot(direction,direction)	
@@ -71,3 +75,4 @@ function extrudeAndScale(mesh,vertex,direction,magnitude,scale)
 end
 extrude_and_scale = extrudeAndScale
 document[[extrude_and_scale(m:mesh,v:vertex,dir:vec3,magnitude,scale) extrudes and scales the faces adjacent to v]](extrude_and_scale)
+categorise(extrude_and_scale,"mesh")

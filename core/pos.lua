@@ -10,7 +10,7 @@ pos = fg.pos
 -- help
 
 document[[a pos is a (vertex,edge,face) triple that uniquely identifies a position on a mesh]](pos)
-
+categorise(pos,"mesh")
 
 
 
@@ -29,6 +29,7 @@ function capov(cap)
 	return verts
 end
 document[[capov(cap:poslist) returns the outermost vertices of a cap (a fan of pos'es)]](capov)
+categorise(capov,"mesh")
 
 -- get an iterator over all the faces in this poslist 
 function ifaces(poslist)
@@ -36,6 +37,7 @@ function ifaces(poslist)
 	return faces_iter, state
 end
 document[[ifaces(faces:poslist) returns an iterator over the faces in this poslist]](ifaces)
+categorise(ifaces,"mesh")
 
 function faces_iter (state) -- local
 	if (state.index==1) then 

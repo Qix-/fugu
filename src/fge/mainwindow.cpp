@@ -13,6 +13,7 @@
 #include "ui_mainwindow.h"
 #include "ui_exportdialog.h"
 
+#include "html_template.h"
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
@@ -442,6 +443,9 @@ void MainWindow::exportSimulationChooseDir(){
 	}
 }
 
+typedef pair<std::string,std::string> string2;
+bool sortByName (const string2& a, const string2& b) { return (a.first < b.first); }
+
 void MainWindow::buildReference() // build the html reference
 {
 	// if universe doesn't exist, make one temporarily...
@@ -462,14 +466,94 @@ void MainWindow::buildReference() // build the html reference
 		}
 	}
 
-	QFile file("reference.html");
+	QFile file("../doc/ref/reference.html");
 	if (file.open(QIODevice::WriteOnly)){
 		QTextStream out(&file);
-		out << "<html><body>\n";
+
+		tmpl::html_template templ("../doc/ref/reference.tmpl");
+		templ("DATE") = QDate::currentDate().toString("dd/MM/yyyy").toStdString();
+
 		typedef tuple<std::string,std::string,std::string> string3;
 		std::list<string3> commandList = mUniverse->commandListByCategory();
+		tmpl::loop_t category[3];
+		std::string currentCategoryName;
+		tmpl::row_t categoryRow;
+		tmpl::loop_t functionLoop;
 
-		out << "</body></html>\n";
+		// divide the commands up equally into the three columns
+		int numCPerCol = (commandList.size()+2)/3;
+		int currentCol = 0;
+		int currentCCount = 0;
+
+		std::vector<string2> currentCategoryFunctions;
+
+		foreach(const string3& s3, commandList){
+			std::string categoryName = s3.get<0>();
+			std::string functionName = s3.get<1>();
+			std::string docString = s3.get<2>();
+
+			if (categoryName!=currentCategoryName){
+				// end old category
+				if (not currentCategoryName.empty()){
+					// sort functions
+					std::sort(currentCategoryFunctions.begin(),currentCategoryFunctions.end(),sortByName);
+					// currentCategoryFunctions.sort
+
+					foreach(string2 p, currentCategoryFunctions){
+						tmpl::row_t fr;
+						fr("FUNCTION_NAME") = p.first;
+						fr("FUNCTION_DOC") = p.second;
+						functionLoop += fr;
+					}
+
+					categoryRow("FUNCTIONS") = functionLoop;
+					category[currentCol] += categoryRow;
+				}
+
+				// start a new category
+				currentCategoryFunctions.clear();
+				currentCategoryName = categoryName;
+				categoryRow = tmpl::row_t();
+				categoryRow("CATEGORY") = categoryName;
+				functionLoop = tmpl::loop_t();
+
+				if (currentCCount > numCPerCol){
+					currentCCount = 0;
+					currentCol++;
+				}
+			}
+
+			// add function to category
+			currentCategoryFunctions.push_back(make_pair(functionName,docString));
+			currentCCount++;
+		}
+
+		//
+		// sort functions
+		std::sort(currentCategoryFunctions.begin(),currentCategoryFunctions.end(),sortByName);
+		// currentCategoryFunctions.sort
+
+		foreach(string2 p, currentCategoryFunctions){
+			tmpl::row_t fr;
+			fr("FUNCTION_NAME") = p.first;
+			fr("FUNCTION_DOC") = p.second;
+			functionLoop += fr;
+		}
+
+		categoryRow("FUNCTIONS") = functionLoop;
+		category[currentCol] += categoryRow;
+
+		// add the final bunch of functions
+		//categoryRow("FUNCTIONS") = functionLoop;
+		//category[currentCol] += categoryRow;
+		// add the categories
+		templ("CATEGORIES1") = category[0];
+		templ("CATEGORIES2") = category[1];
+		templ("CATEGORIES3") = category[2];
+
+		std::ostringstream str;
+		str << templ;
+		out << QString::fromStdString(str.str());
 	}
 	else {
 		std::cerr << "Whoops, can't open reference.html.";
