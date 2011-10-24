@@ -301,8 +301,7 @@ namespace fg {
 		// run command_list_by_category()
 		// and parse the result
 		// TODO: this..
-		/*
-		const char* command = "command_list_by_category()";
+		const char* command = "return command_list_by_category()";
 		if (luaL_dostring(L, command)){
 			// an error has occurred
 			try {
@@ -315,26 +314,24 @@ namespace fg {
 		}
 		else {
 			// extract result
-			std::cerr << "1...";
 			luabind::object o(luabind::from_stack(L, -1));
-			std::cerr << "2...";
 			if (o.is_valid() and luabind::type(o)==LUA_TTABLE){
-				std::cerr << "looks like a table...";
+				// std::cerr << "looks like a table...\n";
 				for (luabind::iterator i(o), end; i != end; ++i)
 				{
-					std::cerr << "can iterate like a table...";
+					// std::cerr << "can iterate like a table...\n";
 					if (luabind::type(*i)==LUA_TTABLE){
 						luabind::object cat = (*i)["category"];
-						l.push_back(make_tuple(
-								luabind::object_cast<std::string>((*i)["category"]),
-								((*i)["name"].is_valid())?(luabind::object_cast<std::string>((*i)["name"])):std::string(),
-								((*i)["docstring"].is_valid())?(luabind::object_cast<std::string>((*i)["docstring"])):std::string()
-						));
+						luabind::object name = (*i)["name"];
+						luabind::object docstring = (*i)["docstring"];
 
-						std::cout << "category:" << luabind::object_cast<std::string>(cat) << "\n";
-					}
-					else {
-						// std::cerr << *i << "\n";
+						if (not cat.is_valid() or not luabind::type(cat)==LUA_TSTRING) continue;
+
+						l.push_back(make_tuple(
+								luabind::object_cast<std::string>(cat),
+								(name.is_valid() and luabind::type(name)==LUA_TSTRING)?luabind::object_cast<std::string>(name):std::string(),
+								(docstring.is_valid() and luabind::type(docstring)==LUA_TSTRING)?luabind::object_cast<std::string>(docstring):std::string()
+						));
 					}
 				}
 			}
@@ -343,7 +340,6 @@ namespace fg {
 			}
 			lua_pop(L,1);
 		}
-		 */
 		return l;
 	}
 

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>fugu reference</title>
+<link rel="stylesheet" href="css/reset.css" />
+<link rel="stylesheet" href="css/text.css" />
+<link rel="stylesheet" href="css/960.css" />
+<link rel="stylesheet" href="css/fugu.css" />
+</head>
+<body>
+
+<h1>fugu reference</h1>
+
+<div class="container_12">
+
+<div class="grid_12">
+
+</div>
+<div class="clear"></div>
+
+<div class="grid_4">
+    <tmpl_loop CATEGORIES1>
+    <div class="category_list">
+	<h1><tmpl_var name="CATEGORY"></h1>
+	<p>
+	<tmpl_loop FUNCTIONS>
+	<a id=<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_NAME"></a>
+	<div class=func_doc id=doc_<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_DOC"></div>
+	&nbsp; 
+	</tmpl_loop>
+	</p>
+	</div>
+	</tmpl_loop>	
+</div>
+
+<div class="grid_4">    
+    <tmpl_loop CATEGORIES2>
+    <div class="category_list">
+	<h1><tmpl_var name="CATEGORY"></h1>
+	<p>
+	<tmpl_loop FUNCTIONS>
+	<tmpl_var name="FUNCTION_NAME">&nbsp;
+	</tmpl_loop>
+	</p>
+	</div>
+	</tmpl_loop>	
+</div>
+
+<div class="grid_4">    
+    <tmpl_loop CATEGORIES3>
+    <div class="category_list">
+	<h1><tmpl_var name="CATEGORY"></h1>
+	<p>
+	<tmpl_loop FUNCTIONS>
+	<tmpl_var name="FUNCTION_NAME">&nbsp;
+	</tmpl_loop>
+	</p>
+	</div>
+	</tmpl_loop>	
+</div>
+<div class="clear"></div>
+<div id="footer" class="grid_12">
+Built on <tmpl_var name="DATE">
+</div>
+
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+	$(".category_list a").click(function () { 
+		/* console.log($(this)[0].id); */ 	
+		$("#doc_" + $(this)[0].id).toggleClass("show_doc");	 
+	});
+});    
+    
+</script>
+   
+</body>
+</html>

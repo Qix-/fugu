@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>fugu reference</title>
+<link rel="stylesheet" href="css/reset.css" />
+<link rel="stylesheet" href="css/text.css" />
+<link rel="stylesheet" href="css/960.css" />
+<link rel="stylesheet" href="css/fugu.css" />
+</head>
+<body>
+
+<h1>fugu reference</h1>
+
+<div class="container_12">
+
+<div class="grid_12">
+
+</div>
+<div class="clear"></div>
+
+<div class="grid_4">
+    
+    <div class="category_list">
+	<h1>transform</h1>
+	<p>
+	
+	<a id=R>R</a>
+	<div class=func_doc id=doc_R>R(radians:number,axis:vec3) generates a matrix that will rotate a point a number of radians around the specified axis</div>
+	&nbsp; 
+	
+
+	<a id=Rv>Rv</a>
+	<div class=func_doc id=doc_Rv>Rv(a:vec3,b:vec3) generates a matrix that will rotate vector a to align with vector b</div>
+	&nbsp; 
+	
+
+	<a id=S>S</a>
+	<div class=func_doc id=doc_S>S(s:vec3) generates a matrix that scales a point by the vector s</div>
+	&nbsp; 
+	
+
+	<a id=T>T</a>
+	<div class=func_doc id=doc_T>T(t:vec3) generates a matrix that translates a point by the vector t</div>
+	&nbsp; 
+	
+
+	<a id=scalef>scalef</a>
+	<div class=func_doc id=doc_scalef>scalef(poslist,center,amount): scales a list of faces around a specified point
+	amount 	= 0 -> all vertices will be moved to the center point
+   			= 1 -> all vertices will remain in place
+   			in (0,1) -> faces will shrink
+   			>1 -> faces will grow</div>
+	&nbsp; 
+	
+
+	<a id=transformf>transformf</a>
+	<div class=func_doc id=doc_transformf>transformf(poslist,T) applies transform T to each vertex in poslist</div>
+	&nbsp; 
+	
+
+	</p>
+	</div>
+	
+
+    <div class="category_list">
+	<h1>help</h1>
+	<p>
+	
+	<a id=help>help</a>
+	<div class=func_doc id=doc_help>Print the documentation for a given object. Assign documentation with the document function.</div>
+	&nbsp; 
+	
+
+	<a id=show_commands>show_commands</a>
+	<div class=func_doc id=doc_show_commands>Show all documented commands</div>
+	&nbsp; 
+	
+
+	</p>
+	</div>
+	
+
+    <div class="category_list">
+	<h1>math</h1>
+	<p>
+	
+	<a id=abs>abs</a>
+	<div class=func_doc id=doc_abs></div>
+	&nbsp; 
+	
+
+	<a id=acos>acos</a>
+	<div class=func_doc id=doc_acos></div>
+	&nbsp; 
+	
+
+	<a id=asin>asin</a>
+	<div class=func_doc id=doc_asin></div>
+	&nbsp; 
+	
+
+	<a id=atan>atan</a>
+	<div class=func_doc id=doc_atan></div>
+	&nbsp; 
+	
+
+	<a id=atan2>atan2</a>
+	<div class=func_doc id=doc_atan2></div>
+	&nbsp; 
+	
+
+	<a id=bias>bias</a>
+	<div class=func_doc id=doc_bias>bias(a,x) 1D bias function</div>
+	&nbsp; 
+	
+
+	<a id=ceil>ceil</a>
+	<div class=func_doc id=doc_ceil></div>
+	&nbsp; 
+	
+
+	<a id=clamp>clamp</a>
+	<div class=func_doc id=doc_clamp>clamp(x,a,b) clamps x between a and b</div>
+	&nbsp; 
+	
+
+	<a id=cos>cos</a>
+	<div class=func_doc id=doc_cos></div>
+	&nbsp; 
+	
+
+	<a id=cosh>cosh</a>
+	<div class=func_doc id=doc_cosh></div>
+	&nbsp; 
+	
+
+	<a id=cross>cross</a>
+	<div class=func_doc id=doc_cross>cross(a,b) computes the cross product of vec3 a and b</div>
+	&nbsp; 
+	
+
+	<a id=deg>deg</a>
+	<div class=func_doc id=doc_deg></div>
+	&nbsp; 
+	
+
+	<a id=distance>distance</a>
+	<div class=func_doc id=doc_distance>distance(a,b) computes the distance between points (vec3) a and b</div>
+	&nbsp; 
+	
+
+	<a id=dot>dot</a>
+	<div class=func_doc id=doc_dot>dot(a,b) computes the inner product of vec3 a and b</div>
+	&nbsp; 
+	
+
+	<a id=exp>exp</a>
+	<div class=func_doc id=doc_exp></div>
+	&nbsp; 
+	
+
+	<a id=floor>floor</a>
+	<div class=func_doc id=doc_floor></div>
+	&nbsp; 
+	
+
+	<a id=fmod>fmod</a>
+	<div class=func_doc id=doc_fmod></div>
+	&nbsp; 
+	
+
+	<a id=fmod>fmod</a>
+	<div class=func_doc id=doc_fmod></div>
+	&nbsp; 
+	
+
+	<a id=frac_sum>frac_sum</a>
+	<div class=func_doc id=doc_frac_sum>frac_sum(x,y,z,n,falloff) computes n octaves of summed fractal noise</div>
+	&nbsp; 
+	
+
+	<a id=frexp>frexp</a>
+	<div class=func_doc id=doc_frexp></div>
+	&nbsp; 
+	
+
+	<a id=gain>gain</a>
+	<div class=func_doc id=doc_gain>gain(g,x) gain control</div>
+	&nbsp; 
+	
+
+	<a id=gamma>gamma</a>
+	<div class=func_doc id=doc_gamma>gamma(g,x) standard gamma correct function</div>
+	&nbsp; 
+	
+
+	<a id=gauss>gauss</a>
+	<div class=func_doc id=doc_gauss>gauss(mean,var) returns a gaussian distributed random number</div>
+	&nbsp; 
+	
+
+	<a id=huge>huge</a>
+	<div class=func_doc id=doc_huge></div>
+	&nbsp; 
+	
+
+	<a id=inv_sqrt>inv_sqrt</a>
+	<div class=func_doc id=doc_inv_sqrt>inv_sqrt(x) inverse square root</div>
+	&nbsp; 
+	
+
+	<a id=ldexp>ldexp</a>
+	<div class=func_doc id=doc_ldexp></div>
+	&nbsp; 
+	
+
+	<a id=length>length</a>
+	<div class=func_doc id=doc_length>length(v) computes the length of vec3 v</div>
+	&nbsp; 
+	
+
+	<a id=lerp>lerp</a>
+	<div class=func_doc id=doc_lerp>lerp(a,b,t) interpolates between a and b</div>
+	&nbsp; 
+	
+
+	<a id=log>log</a>
+	<div class=func_doc id=doc_log></div>
+	&nbsp; 
+	
+
+	<a id=log10>log10</a>
+	<div class=func_doc id=doc_log10></div>
+	&nbsp; 
+	
+
+	<a id=mat4>mat4</a>
+	<div class=func_doc id=doc_mat4>mat4 represents a 4d matrix. Example usage:
+	creation: m = mat4()
+	set to identity: m:set_basis(vec3(1,0,0),vec3(0,1,0),vec3(0,0,1))
+	element access: m:get(row,col) row=0..3,col=0..3
+	operators: m*2, m/3, m+n, m*n, m-n, -m
+	make transformation matrix: 
+		m:set_rotate_rad(angle,x,y,z)
+		m:set_rotate_rad(angle,axis)
+		m:set_translate(x,y,z)
+		also see global functions R,Rv,T,S for shorthand</div>
+	&nbsp; 
+	
+
+	<a id=max>max</a>
+	<div class=func_doc id=doc_max></div>
+	&nbsp; 
+	
+
+	<a id=min>min</a>
+	<div class=func_doc id=doc_min>min(a,b) = the lesser of a and b</div>
+	&nbsp; 
+	
+
+	<a id=mix>mix</a>
+	<div class=func_doc id=doc_mix>mix(a,b,t) mixes values a and b by amount t</div>
+	&nbsp; 
+	
+
+	<a id=modf>modf</a>
+	<div class=func_doc id=doc_modf></div>
+	&nbsp; 
+	
+
+	<a id=noise>noise</a>
+	<div class=func_doc id=doc_noise>noise(x), noise(x,y), noise(x,y,z) computes 1D, 2D or 3D Perlin noise</div>
+	&nbsp; 
+	
+
+	<a id=normalise>normalise</a>
+	<div class=func_doc id=doc_normalise>normalise(v) returns vec3 v normlised</div>
+	&nbsp; 
+	
+
+	<a id=pi>pi</a>
+	<div class=func_doc id=doc_pi></div>
+	&nbsp; 
+	
+
+	<a id=pow>pow</a>
+	<div class=func_doc id=doc_pow></div>
+	&nbsp; 
+	
+
+	<a id=pulse>pulse</a>
+	<div class=func_doc id=doc_pulse>pulse(a,b,x) combines 2 steps: returns 1 if x is between a and b</div>
+	&nbsp; 
+	
+
+	<a id=rad>rad</a>
+	<div class=func_doc id=doc_rad></div>
+	&nbsp; 
+	
+
+	<a id=random>random</a>
+	<div class=func_doc id=doc_random>random(low=0,high=1) returns a random number between low and high inclusive </div>
+	&nbsp; 
+	
+
+	<a id=sign>sign</a>
+	<div class=func_doc id=doc_sign>sign(f) = the sign of f</div>
+	&nbsp; 
+	
+
+	<a id=sin>sin</a>
+	<div class=func_doc id=doc_sin></div>
+	&nbsp; 
+	
+
+	<a id=sinh>sinh</a>
+	<div class=func_doc id=doc_sinh></div>
+	&nbsp; 
+	
+
+	<a id=slerp>slerp</a>
+	<div class=func_doc id=doc_slerp>slerp(a,b,t) spherically interpolates vec3 a and vec3 b</div>
+	&nbsp; 
+	
+
+	<a id=smoothstep>smoothstep</a>
+	<div class=func_doc id=doc_smoothstep>smoothstep(a,b,x) smooth interpolation using Horner's rule</div>
+	&nbsp; 
+	
+
+	<a id=sqr>sqr</a>
+	<div class=func_doc id=doc_sqr>sqr(x) = the square of x</div>
+	&nbsp; 
+	
+
+	<a id=sqrt>sqrt</a>
+	<div class=func_doc id=doc_sqrt>sqrt(x) = the square root of x</div>
+	&nbsp; 
+	
+
+	<a id=step>step</a>
+	<div class=func_doc id=doc_step>step(a,x) = 0 when x < a, 1 otherwise</div>
+	&nbsp; 
+	
+
+	<a id=tan>tan</a>
+	<div class=func_doc id=doc_tan></div>
+	&nbsp; 
+	
+
+	<a id=tanh>tanh</a>
+	<div class=func_doc id=doc_tanh></div>
+	&nbsp; 
+	
+
+	<a id=turbulence>turbulence</a>
+	<div class=func_doc id=doc_turbulence>turbulence(x,y,z,n,falloff) computes n octaves of Perlin's turbulence function</div>
+	&nbsp; 
+	
+
+	<a id=vec3>vec3</a>
+	<div class=func_doc id=doc_vec3>vec3 represents a 3d vector. Example usage:
+	creation: v = vec3(1.5,0,4)
+	element access: v.x, v.y, v.z (or alternatively v.r, v.g, v.b)
+	operators: v*2, v/3, v+w, v-w, -v</div>
+	&nbsp; 
+	
+
+	</p>
+	</div>
+	
+	
+</div>
+
+<div class="grid_4">    
+    
+    <div class="category_list">
+	<h1>mesh</h1>
+	<p>
+	
+	capov&nbsp;
+	
+
+	cone&nbsp;
+	
+
+	cube&nbsp;
+	
+
+	cylinder&nbsp;
+	
+
+	dodecahedron&nbsp;
+	
+
+	extrude&nbsp;
+	
+
+	extrude_and_scale&nbsp;
+	
+
+	face&nbsp;
+	
+
+	flattenvl&nbsp;
+	
+
+	foreachv&nbsp;
+	
+
+	icosahedron&nbsp;
+	
+
+	ifaces&nbsp;
+	
+
+	inset&nbsp;
+	
+
+	mesh&nbsp;
+	
+
+	nearbyv&nbsp;
+	
+
+	octahedron&nbsp;
+	
+
+	pos&nbsp;
+	
+
+	sphere&nbsp;
+	
+
+	tetrahedron&nbsp;
+	
+
+	tofaces&nbsp;
+	
+
+	vertex&nbsp;
+	
+
+	vertexlist&nbsp;
+	
+
+	</p>
+	</div>
+	
+
+    <div class="category_list">
+	<h1>util</h1>
+	<p>
+	
+	find&nbsp;
+	
+
+	foreach&nbsp;
+	
+
+	set&nbsp;
+	
+
+	</p>
+	</div>
+	
+
+    <div class="category_list">
+	<h1>geometric</h1>
+	<p>
+	
+	acentroidvl&nbsp;
+	
+
+	centroid&nbsp;
+	
+
+	distribute_points_sphere&nbsp;
+	
+
+	perp&nbsp;
+	
+
+	project&nbsp;
+	
+
+	</p>
+	</div>
+	
+	
+</div>
+
+<div class="grid_4">    
+    	
+</div>
+<div class="clear"></div>
+<div id="footer" class="grid_12">
+Built on 24/10/2011
+</div>
+
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+	$(".category_list a").click(function () { 
+		/* console.log($(this)[0].id); */ 	
+		$("#doc_" + $(this)[0].id).toggleClass("show_doc");	 
+	});
+});    
+    
+</script>
+   
+</body>
+</html>

@@ -11,28 +11,28 @@ function R(radian,axis)
 	return mat4():set_rotate_rad(radian,axis)
 end
 document[[R(radians:number,axis:vec3) generates a matrix that will rotate a point a number of radians around the specified axis]](R)
-categorise(R,"math")
+categorise(R,"transform")
 
 -- Rotates vec from to vec to
 function Rv(from,to)
 	return mat4():set_rotate(from,to)
 end
 document[[Rv(a:vec3,b:vec3) generates a matrix that will rotate vector a to align with vector b]](Rv)
-categorise(Rv,"math")
+categorise(Rv,"transform")
 
 -- Translate by some amount
 function T(translation)
 	return mat4():set_translate(translation)
 end
 document[[T(t:vec3) generates a matrix that translates a point by the vector t]](T)
-categorise(T,"math")
+categorise(T,"transform")
 
 -- Scale by some amount
 function S(vec)
 	return mat4():set_scale(vec) 
 end
 document[[S(s:vec3) generates a matrix that scales a point by the vector s]](S)
-categorise(S,"math")
+categorise(S,"transform")
 
 function scalef(poslist,center,amount)
 	-- first we build a list of all unique vertices

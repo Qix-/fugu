@@ -21,6 +21,7 @@ set(SRC main.cpp
 	consolewidget.cpp
 	redirect.cpp
 	exporter.cpp
+	html_template.cpp
 	)
 
 set(SRCS ${SRC})

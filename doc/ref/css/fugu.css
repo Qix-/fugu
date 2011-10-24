@@ -1,0 +1,30 @@
+body {
+	font: helvetica;
+}
+
+h1 {
+	text-align: center;
+}
+
+.category_list h1 {
+	font-size: 100%;
+	font-weight: bold;
+	margin-bottom: 0px;
+	text-align: left;
+}
+
+.category_list a {
+
+}
+
+.category_list .func_doc {
+	visibility: hidden;
+}
+
+.category_list .func_doc .show_doc {
+	visibility: visible;
+}
+
+#footer {
+	text-align: right;
+}
