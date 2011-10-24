@@ -42,11 +42,6 @@ document[[extrude(m:mesh,v:vertex,[dir:vec3],magnitude)
 	Extrudes all neighbouring faces in the direction given (or the normal if dir is omitted), and re-orients the
 	faces to align perpendicularly along the extrusion axis
 	Note: Assumes direction is normalised. 
-	Returns the pos loop at the end of the extrusion
-
-	Extrudes all neighbouring faces in the direction given, re-orients the
-	faces to align perpendicularly along the extrusion axis, and scales the faces 
-	Note: Assumes direction is normalised. 
 	Returns the pos loop at the end of the extrusion]](extrude)
 
 categorise(extrude,"mesh")

@@ -1,9 +1,30 @@
 body {
-	font: helvetica;
+	font-family: Helvetica, Arial;
 }
 
 h1 {
 	text-align: center;
+}
+
+.category_list {
+	 
+}
+
+#doc {
+	background: #DDF;
+	color: #559;
+	margin: 4px;
+	padding: 4px;
+}
+
+#doc pre {
+	font-family: Helvetica, Arial;	
+}
+
+
+.func_doc {
+	margin: 0;
+	padding: 0;	
 }
 
 .category_list h1 {
@@ -14,15 +35,8 @@ h1 {
 }
 
 .category_list a {
-
-}
-
-.category_list .func_doc {
-	visibility: hidden;
-}
-
-.category_list .func_doc .show_doc {
-	visibility: visible;
+	color: #559;
+	text-decoration: none;
 }
 
 #footer {
