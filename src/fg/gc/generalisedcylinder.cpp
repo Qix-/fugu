@@ -184,7 +184,7 @@ namespace fg {
 				/* reversing texture */
 				if( pLength / pTLength > 0.5 )
 				{
-					mb.addVertexUV( 2 * (1. - pLength / pTLength), v / vrange );
+					mb.addVertexUV( 2. * (1. - pLength / pTLength), v / vrange );
 				}
 				else
 				{
@@ -258,7 +258,16 @@ namespace fg {
 
 						// They are almost the same, add both triangles
 						//std::cout << "p = " << pLength + pRTLength << ", n = " << nLength + nRTLength << "\n";
-						if( fabs(nLength + nRTLength - pLength - pRTLength) < 1E-9 ) {
+                        double thresh = 0;
+                        if( nRTLength > pRTLength )
+                        {
+                            thresh = .5 * pLength;
+                        } else
+                        {
+                            thresh = .5 * nLength;
+                        }
+
+						if( fabs(nLength + nRTLength - pLength - pRTLength) < thresh ) {
             	            mb.addFace( pCsIndex + i, nCsIndex + ( ( j + 1 ) % s2 ), nCsIndex + j );
             	            ++j;
 							nRTLength += nLength;
@@ -327,11 +336,11 @@ namespace fg {
             	}
 			}
 
-			mb.addVertex( cCpos.getX(), cCpos.getY(), cCpos.getZ() );
-			for( int i = 0; i < pCs.size(); ++i )
-			{
-				mb.addFace( pCsIndex + i, pCsIndex + ((1 + i) % pCs.size()), nCsIndex );
-			}
+//			mb.addVertex( cCpos.getX(), cCpos.getY(), cCpos.getZ() );
+//			for( int i = 0; i < pCs.size(); ++i )
+//			{
+//				mb.addFace( pCsIndex + i, pCsIndex + ((1 + i) % pCs.size()), nCsIndex );
+//			}
 
 			return nCsIndex;
         }
