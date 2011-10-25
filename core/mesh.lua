@@ -31,7 +31,8 @@ document[[tetrahedron() makes a tetrahedron mesh]](tetrahedron)
 document[[dodecahedron() makes a dodecahedron mesh]](dodecahedron)
 document[[octahedron() makes a octahedron mesh]](octahedron)
 document[[cone(outer_radius,inner_radius,resolution) makes a cone mesh]](cone)
-document[[cylinder(resolution) makes a cylinder mesh]](cylinder)
+document[[cylinder(res) makes a cylinder mesh]](cylinder)
+document[[iso(res,f) creates an isosurface from function f(x,y,z) within a 2x2x2 space]](cylinder)
 
 foreach({cube,sphere,icosahedron,tetrahedron,dodecahedron,octahedron,cone,cylinder}, function(_,f) categorise(f,"mesh") end)
 

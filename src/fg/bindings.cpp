@@ -226,6 +226,9 @@ namespace fg {
 		  .def("getTransform", &fg::Node::getRelativeTransform)
 		  .def("setTransform", &fg::Node::setRelativeTransform)
 
+		  .def("get_transform", &fg::Node::getRelativeTransform)
+		  .def("set_transform", &fg::Node::setRelativeTransform)
+
 		  // .property("transform", &fg::Node::getRelativeTransform, &fg::Node::setRelativeTransform)
 		];
 
@@ -236,6 +239,7 @@ namespace fg {
 		   .def(tostring(const_self))
 
 		   .def("setMesh", &fg::MeshNode::setMesh)
+		   .def("set_mesh", &fg::MeshNode::setMesh)
 		];
 
 		// fg/vertex.h
@@ -386,7 +390,8 @@ namespace fg {
 			def("dodecahedron", &fg::Mesh::Primitives::Dodecahedron),
 			def("octahedron", &fg::Mesh::Primitives::Octahedron),
 			def("cone", &fg::Mesh::Primitives::Cone), // (r1,r2,subdiv=36)
-			def("cylinder", &fg::Mesh::Primitives::Cylinder) // (slices) // ,stacks)
+			def("cylinder", &fg::Mesh::Primitives::Cylinder), // (slices) // ,stacks)
+			def("iso", (shared_ptr<fg::Mesh>(*)(int,luabind::object)) &fg::Mesh::Primitives::Iso)
 		];
 
 		// fg/meshoperators.h
