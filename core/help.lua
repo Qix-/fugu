@@ -28,7 +28,7 @@ function help(obj)
 	end
 end
 
-document[[Print the documentation for a given object. Assign documentation with the document function.]](help)
+document[=[help(func) prints the documentation for a given object. Assign documentation with the document function.]=](help)
 document[=[Add a string as documentation for an object. For example:
 	document[[foo does something awesome.]](foo), 
 	or during function specification with
@@ -44,7 +44,7 @@ function show_commands()
 		if docstrings[v] then print(k,docstrings[v]) end
 		end)
 end
-document[[Show all documented commands]](show_commands)
+document[[show_commands() prints all documented commands]](show_commands)
 
 function categorise(f,cat)
 	if (categories[cat]==nil) then

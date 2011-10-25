@@ -443,8 +443,34 @@ void MainWindow::exportSimulationChooseDir(){
 	}
 }
 
+// helpers for the reference building routine
 typedef pair<std::string,std::string> string2;
 bool sortByName (const string2& a, const string2& b) { return (a.first < b.first); }
+
+
+// html replace snippet from
+// http://www.daniweb.com/software-development/cpp/threads/66386
+struct HTMLReplace {
+	std::string match, replace;
+} codes[] = {
+		{"&","&amp;"},
+		{"<","&lt;"},
+		{">","&gt;"},
+};
+std::string HTMLEncode(const std::string& s){
+	std::string rs = s;
+	for(size_t i = 0; i<3 /* num codes*/; i++){
+		const std::string& match = codes[i].match;
+		const std::string& repl = codes[i].replace;
+		std::string::size_type start = rs.find_first_of(match);
+		while(start!=std::string::npos){
+			rs.replace(start,match.size(),repl);
+			start = rs.find_first_of(match,start+repl.size());
+		}
+	}
+	return rs;
+}
+
 
 void MainWindow::buildReference() // build the html reference
 {
@@ -502,7 +528,10 @@ void MainWindow::buildReference() // build the html reference
 					foreach(string2 p, currentCategoryFunctions){
 						tmpl::row_t fr;
 						fr("FUNCTION_NAME") = p.first;
-						fr("FUNCTION_DOC") = p.second;
+
+						/* encode the document in html */
+						fr("FUNCTION_DOC") = HTMLEncode(p.second);
+						fr("HAS_DOC") = p.second.empty()?"has_no_doc":"has_doc";
 						functionLoop += fr;
 					}
 
@@ -536,7 +565,8 @@ void MainWindow::buildReference() // build the html reference
 		foreach(string2 p, currentCategoryFunctions){
 			tmpl::row_t fr;
 			fr("FUNCTION_NAME") = p.first;
-			fr("FUNCTION_DOC") = p.second;
+			fr("FUNCTION_DOC") = HTMLEncode(p.second);
+			fr("HAS_DOC") = p.second.empty()?"has_no_doc":"has_doc";
 			functionLoop += fr;
 		}
 

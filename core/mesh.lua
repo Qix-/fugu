@@ -17,12 +17,8 @@ vertex = fg.vertex
 -- help
 
 -- types
-document[[mesh is a triangular 2-manifold mesh]](mesh)
-
-
+document[[mesh is a 2-manifold triangular mesh]](mesh)
 document[[vertex is a mesh vertex]](vertex)
-
-
 document[[face is a triangle in a mesh]](face)
 
 foreach({mesh,vertex,face}, function(_,f) categorise(f,"mesh") end)
@@ -33,7 +29,7 @@ document[[sphere() makes a spherical mesh]](sphere)
 document[[icosahedron() makes an icosahedron mesh]](icosahedron)
 document[[tetrahedron() makes a tetrahedron mesh]](tetrahedron)
 document[[dodecahedron() makes a dodecahedron mesh]](dodecahedron)
-document[[octahedron makes a octahedron mesh]](octahedron)
+document[[octahedron() makes a octahedron mesh]](octahedron)
 document[[cone(outer_radius,inner_radius,resolution) makes a cone mesh]](cone)
 document[[cylinder(resolution) makes a cylinder mesh]](cylinder)
 

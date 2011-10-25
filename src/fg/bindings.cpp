@@ -71,7 +71,7 @@ namespace fg {
 
 		// fg/functions.h
 		module(L)[
-		   def("min", &min<double>),
+		   // def("min", &min<double>), // use lua's standard min
 
 		   def("lerp", &lerp<double, double>),
 		   def("lerp", &lerp<Vec3, double>),
@@ -87,7 +87,7 @@ namespace fg {
            def("gain", &fg::gain<double>),
            def("gamma", &gammaCorrect<double>),
            def("inv_sqrt", &invSqrt<double>),
-           def("sqrt", (double(*)(double)) &std::sqrt),
+           // def("sqrt", (double(*)(double)) &std::sqrt), // use luas std sqrt
            def("sqr", &sqr<double>),
            def("sign", &sign<double>),
 

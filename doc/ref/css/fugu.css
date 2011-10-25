@@ -19,6 +19,7 @@ h1 {
 
 #doc pre {
 	font-family: Helvetica, Arial;	
+	margin: 0;
 }
 
 
@@ -34,9 +35,18 @@ h1 {
 	text-align: left;
 }
 
-.category_list a {
-	color: #559;
+.category_list a.has_no_doc {
+	color: black;
 	text-decoration: none;
+}
+
+.category_list a.has_no_doc:hover {
+	cursor: default; 
+}
+
+.category_list a.has_doc {
+	color: #559;
+	text-decoration: underline;
 }
 
 #footer {
