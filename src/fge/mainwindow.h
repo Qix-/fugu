@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QHash>
+#include <QSet>
 
 // #include "highlighter.h"
 #include "fgview.h"
@@ -60,6 +61,8 @@ public slots:
 
 	void buildReference(); // build the html reference
 
+	void textChanged();
+
 private:
 
 	void openFile(const QString &path = QString());
@@ -74,6 +77,7 @@ private:
 	QTabWidget* mEditors;
 	QHash<QWidget*,QString> mFileNames; // map: texteditor -> filename
 	QWidget* mActiveScript; // the script that is executed when play/restart is pressed...
+	QSet<QWidget*> mUnsavedEditors; // the unsaved editors
 
 	// 3d view
 	FGView* mFGView;

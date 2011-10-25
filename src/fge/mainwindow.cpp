@@ -95,6 +95,10 @@ void MainWindow::save(){
 			else {
 				saveFile(static_cast<QsciScintilla*>(qw),fileName);
 			}
+
+			if (mUnsavedEditors.contains(qw)){
+				mUnsavedEditors.remove(qw);
+			}
 		}
 	}
 }
@@ -113,17 +117,27 @@ void MainWindow::saveAs(){
 		saveFile(static_cast<QsciScintilla*>(qw),fileName);
 		// reset filename
 		mFileNames[qw] = fileName;
+
+		if (mUnsavedEditors.contains(qw)){
+			mUnsavedEditors.remove(qw);
+		}
 	}
+
+
 }
 
 void MainWindow::closeFile(){
 	QWidget* qw = mEditors->currentWidget();
 	if (qw==NULL){
-		QMessageBox::critical(this, tr("Application"), tr("No selected file to close!"));
+		QMessageBox::critical(this, tr("Close"), tr("No selected file to close!"));
 		return;
 	}
 	else {
 		// TODO: check if we want to save...
+		if (mUnsavedEditors.contains(qw)){
+			QMessageBox::StandardButton result = QMessageBox::question(this, tr("Close"), tr("Script hasn't been saved, are you sure you want to close it?"), QMessageBox::Yes | QMessageBox::No );
+			if (result==QMessageBox::No) return;
+		}
 
 		// Close file and remove active
 		if (mFileNames.contains(qw)){
@@ -137,6 +151,10 @@ void MainWindow::closeFile(){
 		}
 
 		mEditors->removeTab(mEditors->currentIndex());
+		if (mUnsavedEditors.contains(qw)){
+			mUnsavedEditors.remove(qw);
+		}
+
 		delete qw;
 	}
 }
@@ -151,7 +169,24 @@ void MainWindow::load(){
 		return;
 	}
 	else {
-		std::cout << "Loading universe\n";
+
+		if (mUnsavedEditors.contains(mActiveScript)){
+			QMessageBox::StandardButton result = QMessageBox::question(this,
+					tr("Loading unsaved script"),
+					tr("The active script is not saved, save it now? (If not then the last saved version will be reloaded instead.)"),
+					QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel
+			);
+
+			if (result==QMessageBox::Cancel){
+				mSimulationMode = mPreviousMode;
+				return;
+			}
+			else if (result==QMessageBox::Yes){
+				save();
+			}
+			else {} // continue on...
+		}
+
 		if (mUniverse!=NULL){
 			// Clean up the old universe
 			mFGView->unsetUniverse();
@@ -595,6 +630,31 @@ void MainWindow::buildReference() // build the html reference
 	}
 }
 
+void MainWindow::textChanged(){
+	// the text of the current editor has changed...
+	// so mark it as unsaved...
+	QWidget* qw = mEditors->currentWidget();
+	if (qw==NULL){
+		// not possible, ignore..
+	}
+	else {
+		if (not mUnsavedEditors.contains(qw)){
+			// mark it as unsaved...
+			mUnsavedEditors.insert(qw);
+
+			QString filename = mFileNames[qw];
+			QFileInfo info = QFileInfo(filename);
+
+			if (qw==mActiveScript){
+				mEditors->setTabText(mEditors->currentIndex(), QString("[") + info.fileName() + "]*");
+			}
+			else {
+				mEditors->setTabText(mEditors->currentIndex(), info.fileName() + "*");
+			}
+		}
+	}
+}
+
 void MainWindow::openFile(const QString &path)
 {
 	QString fileName = path;
@@ -685,6 +745,7 @@ void MainWindow::newEditor(QFile* file)
 		delete file;
 	}
 	mEditors->setCurrentWidget(editor);
+	connect(editor,SIGNAL(textChanged()),this,SLOT(textChanged()));
 
 	if (!mActiveScript) makeCurrentScriptActive();
 }
