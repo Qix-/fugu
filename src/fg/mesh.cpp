@@ -28,6 +28,9 @@
 #include "fg/functions.h"
 #include "fg/util.h"
 
+// luabind
+#include <luabind/function.hpp>
+
 // VCG
 #include <vcg/space/point3.h>
 #include <vcg/space/box3.h>
@@ -43,6 +46,9 @@
 #include <vcg/complex/algorithms/smooth.h>
 #include <vcg/complex/algorithms/refine.h>
 
+#include <vcg/complex/algorithms/create/marching_cubes.h>
+#include <vcg/complex/algorithms/create/extended_marching_cubes.h>
+#include <vcg/complex/algorithms/create/mc_trivial_walker.h>
 #include <vcg/complex/algorithms/create/platonic.h>
 
 #include <vcg/complex/algorithms/update/bounding.h>
@@ -296,6 +302,36 @@ namespace fg {
 		Mesh* m = new Mesh();
 		vcg::tri::Cone<MeshImpl>(*(m->mpMesh), 1, 1, 2, slices);
 		//vcg::tri::Cylinder<MeshImpl>(slices,stacks,*(m->mpMesh));
+		return sync(m);
+	}
+
+	boost::shared_ptr<Mesh> Mesh::Primitives::Iso(int resolution, luabind::object& function){
+		typedef vcg::SimpleVolume<vcg::SimpleVoxel> MyVolume;
+		typedef vcg::tri::TrivialWalker<MeshImpl,MyVolume> MyWalker;
+		typedef vcg::tri::MarchingCubes<MeshImpl,MyWalker> MyMarchingCubes;
+
+		MyVolume volume;
+		MyWalker walker;
+		Mesh* m = new Mesh();
+
+		volume.Init(Point3i(resolution,resolution,resolution));
+		double invres = 1./(resolution-1);
+		double twoinvres = 2./(resolution-1);
+		for(int i=0;i<resolution;i++){
+			double di = twoinvres*i - 1;
+			for(int j=0;j<resolution;j++){
+				double dj = twoinvres*j - 1;
+				for(int k=0;k<resolution;k++){
+					double dk = twoinvres*k - 1;
+					volume.Val(i,j,k) = luabind::call_function<float>(function,di,dj,dk);
+				}
+			}
+		}
+		MyMarchingCubes	mc(*(m->mpMesh), walker);
+		walker.BuildMesh<MyMarchingCubes>(*(m->mpMesh), volume, mc, 0); //20*20);
+
+		m->applyTransform(Mat4().setTranslate(-1,-1,-1)*Mat4().setScale(2*invres));
+
 		return sync(m);
 	}
 

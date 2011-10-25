@@ -6,7 +6,7 @@ require 'core.util'
 
 -- put the standard math library into the global namespace
 require "math"
-dontimport = set {"random", "randomseed", "sqrt", "min"}
+dontimport = set {"random", "randomseed"}
 mathdocs = {
 	abs = "abs(x) absolute",
 	acos = "acos(x) arc cosine",
@@ -102,6 +102,35 @@ document[[mat4 represents a 4d matrix. Example usage:
 categorise(mat4,"math")
 
 -- extra maths/geometric functions
+
+-- returns (r,theta,phi) of (x,y,y,z)
+function polar(x,y,z)
+	local r = sqrt(sqr(x)+sqr(y)+sqr(z))
+	local theta = acos(z/r)
+	local phi = atan2(y,x)
+	return r,theta,phi
+end
+document[[polar(x,y,z) cartesian to polar coordinates]](polar)
+categorise(polar,"math")
+
+function random_vec3()
+	return vec3(random(),random(),random())
+end
+
+function random_vec3(sc)
+	return vec3(sc*random(),sc*random(),sc*random())
+end
+
+function random_vec3(low,high)
+	return vec3(random(low,high),random(low,high),random(low,high))
+end
+document[[random_vec3() is equivalent to vec3(random(),random(),random())
+random_vec3(sc) is equivalent to vec3(sc*random(),sc*random(),sc*random())
+random_vec3(low,high) is equivalent to vec3(random(low,high),random(low,high),random(low,high))]](random_vec3)
+categorise(random_vec3,"math")
+
+
+
 
 function perp(v)
 	if (v.x<v.y and v.x<v.z) then return normalise(cross(v,vec3(1,0,0)))
