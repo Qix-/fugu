@@ -10,7 +10,7 @@ require 'core.pos'
 function R(radian,axis)
 	return mat4():set_rotate_rad(radian,axis)
 end
-document[[R(radians:number,axis:vec3) generates a matrix that will rotate a point a number of radians around the specified axis]](R)
+document[[R(rad,axis) generates a matrix that will rotate a point a number of radians around the specified axis (vec3)]](R)
 categorise(R,"transform")
 
 -- Rotates vec from to vec to

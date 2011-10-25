@@ -7,15 +7,46 @@ require 'core.util'
 -- put the standard math library into the global namespace
 require "math"
 dontimport = set {"random", "randomseed", "sqrt", "min"}
+mathdocs = {
+	abs = "abs(x) absolute",
+	acos = "acos(x) arc cosine",
+	asin = "asin(x) arc sine",
+	atan = "atan(x) arc tangent",
+	atan2 = "atan2(v1,v2) arc tan v1/v2",
+	ceil = "ceil(x) smallest int >= x",
+	cos = "cos(rad) cosine",
+	cosh = "cosh(rad) hyperbolic cosine",
+	deg = "deg(rad) rad to deg",
+	exp = "exp(v) e^v",
+	floor = "floor(v) largest int <= v",
+	fmod = "fmod(x,y) remainder of x/y",
+	frexp = "frexp(v) mantissa, exp",
+	huge = "huge is a constant larger than any numerical value",
+	ldexp = "ldexp(v1,v2) v1*2^v2",
+	log = "log(x) natural log",
+	log10 = "log10(x) log 10",
+	max = "max(x,...) max of one or more values",
+	min = "min(x,...) min of one or more values",
+	mod = "mod(v1,v2) modulus v1/v2",
+	modf = "modf(x) return ix,dx where x=ix+dx and ix is an integer",
+	pi = "pi constant",
+	pow = "pow(v1,v2) v1^v2",
+	rad = "rad(deg) deg to rad",
+	sin = "sin(rad) sine",
+	sinh = "sinh(rad) hyperbolic sine",
+	sqrt = "sqrt(x) square root",
+	tan = "tan(rad) tangent",
+	tanh = "tanh(rad) hyperbolic tangent",	
+}
 for k,v in pairs(math) do	 
 	if not dontimport[k] then
 		_G[k]=v
+		document(mathdocs[k])(v)
 		categorise(_G[k],"math")
 	end 
 end
 
--- general maths functions
-document[[min(a,b) = the lesser of a and b]](min) 
+-- general maths functions 
 document[[lerp(a,b,t) interpolates between a and b]](lerp) 
 document[[mix(a,b,t) mixes values a and b by amount t]](mix) 
 document[[clamp(x,a,b) clamps x between a and b]](clamp) 
@@ -27,7 +58,6 @@ document[[bias(a,x) 1D bias function]](bias)
 document[[gain(g,x) gain control]](gain)
 document[[gamma(g,x) standard gamma correct function]](gamma)
 document[[inv_sqrt(x) inverse square root]](inv_sqrt)
-document[[sqrt(x) = the square root of x]](sqrt)
 document[[sqr(x) = the square of x]](sqr)
 document[[sign(f) = the sign of f]](sign)
 document[[noise(x), noise(x,y), noise(x,y,z) computes 1D, 2D or 3D Perlin noise]](noise)
@@ -37,7 +67,7 @@ document[[random(low=0,high=1) returns a random number between low and high incl
 document[[gauss(mean,var) returns a gaussian distributed random number]](gauss)
 
 -- put them in math category
-foreach({min,lerp,mix,clamp,slerp,step,pulse,smoothstep,bias,gain,gamma,inv_sqrt,sqrt,sqr,sign,noise,frac_sum,turbulence,random,gauss}, function(_,f) categorise(f,"math") end)
+foreach({lerp,mix,clamp,slerp,step,pulse,smoothstep,bias,gain,gamma,inv_sqrt,sqr,sign,noise,frac_sum,turbulence,random,gauss}, function(_,f) categorise(f,"math") end)
 
 -- phyllotaxis functions
 document[[helper function for calculating phyllotaxis on oblate and prolate spheroids]](get_ellipse_area)
@@ -78,7 +108,7 @@ function perp(v)
 	elseif (v.y<v.x and v.y<v.z) then return normalise(cross(v,vec3(0,1,0)))
 	else return normalise(cross(v,vec3(0,0,1))) end
 end
-document[[perp(v:vec3) returns a normalised vector perpendicular to vec3 v]](perp)
+document[[perp(v) returns a normalised vector perpendicular to vec3 v]](perp)
 categorise(perp,"geometric")
 
 function distribute_points_sphere(N)
@@ -110,7 +140,7 @@ function project(a,b)
 	local ab = dot(a,b)/length(b)
 	return bn*ab
 end
-document[[project(a,b) projects vec3 a onto vec3 b]](project)
+document[[project(a,b) projects vec3 a onto vec3 b and returns the result]](project)
 categorise(project, "geometric")
 
 function centroid(poly)
@@ -131,7 +161,7 @@ function centroid(poly)
 	cy = cy / (6*signedArea)
 	return vec3(cx,cy,0)			
 end
-document[[centroid(poly) computes the centroid of a 2d polygon defined by a list of vec3 (with z = 0)]](centroid)
+document[[centroid(point_list) computes the centroid of a 2d polygon defined by a list of vec3 (with z = 0)]](centroid)
 categorise(centroid, "geometric")
 
 function acentroidvl(vl,n)
@@ -155,7 +185,7 @@ function acentroidvl(vl,n)
 	
 	return x*guess.x + y*guess.y + z*zAvg
 end
-document[[acentroidvl(vl,n) computes the approximate centroid of a list of 
+document[[acentroidvl(vertex_list,n) computes the approximate centroid of a list of 
 vertices defining a closed polygon (not necessarily planar).
 The normalised vector, n, defines the plane on which the polygon approximately lies]](acentroidvl)
 categorise(acentroidvl,"geometric")

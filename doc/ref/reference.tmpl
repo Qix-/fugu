@@ -24,7 +24,7 @@
     <div class="category_list">
 		<h1><tmpl_var name="CATEGORY"></h1>
 		<tmpl_loop FUNCTIONS>
-		<a href="#" id=<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_NAME"></a>
+		<a href="#" class=<tmpl_var name="HAS_DOC"> id=<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_NAME"></a>
 		<div style="display: none;" class=func_doc id=doc_<tmpl_var name="FUNCTION_NAME">>
 			<pre><tmpl_var name="FUNCTION_DOC"></pre>
 		</div> 
@@ -38,10 +38,10 @@
     <div class="category_list">
 		<h1><tmpl_var name="CATEGORY"></h1>
 		<tmpl_loop FUNCTIONS>
-		<a href="#" id=<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_NAME"></a>
+		<a href="#" class=<tmpl_var name="HAS_DOC"> id=<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_NAME"></a>
 		<div style="display: none;" class=func_doc id=doc_<tmpl_var name="FUNCTION_NAME">>
 			<pre><tmpl_var name="FUNCTION_DOC"></pre>
-		</div>
+		</div> 
 		</tmpl_loop>
 	</div>
 	</tmpl_loop>	
@@ -52,10 +52,10 @@
     <div class="category_list">
 		<h1><tmpl_var name="CATEGORY"></h1>
 		<tmpl_loop FUNCTIONS>
-		<a href="#" id=<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_NAME"></a>
+		<a href="#" class=<tmpl_var name="HAS_DOC"> id=<tmpl_var name="FUNCTION_NAME">><tmpl_var name="FUNCTION_NAME"></a>
 		<div style="display: none;" class=func_doc id=doc_<tmpl_var name="FUNCTION_NAME">>
 			<pre><tmpl_var name="FUNCTION_DOC"></pre>
-		</div>
+		</div> 
 		</tmpl_loop>
 	</div>
 	</tmpl_loop>	
@@ -66,11 +66,8 @@
 <div class="grid_12"><br/></div>
 <div class="clear"></div>
 
-<div style="display:none" id="doc" class="grid_12">
-
-</div>
+<div style="display:none" id="doc" class="grid_12"></div>
 <div class="clear"></div>
-
 
 <div id="footer" class="grid_12">
 Built on <tmpl_var name="DATE">
@@ -86,8 +83,12 @@ $(document).ready(function(){
 	var currentDocString = null;
 	var slideSpeed = 200; 
 	
-	$(".category_list a").click(function () { 
-		/* console.log($(this)[0].id); */ 
+	$(".category_list a.has_no_doc").click(function () {
+		return false;
+	});
+	
+	$(".category_list a.has_doc").click(function () { 
+		/* console.log($(this)[0].id); */
 		
 		if (currentDocName==$(this)[0].id) {
 			currentDocString.hide(slideSpeed, function() {
@@ -116,7 +117,9 @@ $(document).ready(function(){
 				currentDocString.show(slideSpeed);		
 			}
 			
-		}			 
+		}		
+		
+		return true;	 
 	});
 });    
     

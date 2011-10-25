@@ -6,8 +6,30 @@ require "table"
 require "core.help"
 
 -- put foreach into the global namespace
+concat = table.concat
 foreach = table.foreach
+insert = table.insert
+maxn = table.maxn
+remove = table.remove
+sort = table.sort
+
+document"concat(table [,sep [,i [,j]]]) returns table[i]..sep..table[i+1].. ..sep..table[j]"(concat)
+document"foreach(table, f) executes f on each element of table"(foreach)
+document"insert(table, [pos,] value) inserts value at position pos in table"(insert)
+document"maxn(table) returns the largest positive numerical index of table"(maxn)
+document[[remove(table [,pos]) 
+	removes the element at position pos from table, shifting down other elements to 
+	close the space. returns the removed element. pos defaults to #table.]](remove)
+document[[sort(table [,comp])
+	sorts table elements in a given order, in-place, from table[1] to table[n]
+	comp is an optional comparison function s.t., comp(a,b) = true if a<b.]](sort)
+
+categorise(concat,"util")
 categorise(foreach,"util")
+categorise(insert,"util")
+categorise(maxn,"util")
+categorise(remove,"util")
+categorise(sort,"util")
 
 -- the following two functions are from:
 -- http://stackoverflow.com/questions/656199/search-for-an-item-in-a-lua-list

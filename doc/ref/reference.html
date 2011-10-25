@@ -24,41 +24,41 @@
     <div class="category_list">
 		<h1>transform</h1>
 		
-		<a href="#" id=R>R</a>
+		<a href="#" class=has_doc id=R>R</a>
 		<div style="display: none;" class=func_doc id=doc_R>
-			<pre>R(radians:number,axis:vec3) generates a matrix that will rotate a point a number of radians around the specified axis</pre>
+			<pre>R(rad,axis) generates a matrix that will rotate a point a number of radians around the specified axis (vec3)</pre>
 		</div> 
 		
 
-		<a href="#" id=Rv>Rv</a>
+		<a href="#" class=has_doc id=Rv>Rv</a>
 		<div style="display: none;" class=func_doc id=doc_Rv>
 			<pre>Rv(a:vec3,b:vec3) generates a matrix that will rotate vector a to align with vector b</pre>
 		</div> 
 		
 
-		<a href="#" id=S>S</a>
+		<a href="#" class=has_doc id=S>S</a>
 		<div style="display: none;" class=func_doc id=doc_S>
 			<pre>S(s:vec3) generates a matrix that scales a point by the vector s</pre>
 		</div> 
 		
 
-		<a href="#" id=T>T</a>
+		<a href="#" class=has_doc id=T>T</a>
 		<div style="display: none;" class=func_doc id=doc_T>
 			<pre>T(t:vec3) generates a matrix that translates a point by the vector t</pre>
 		</div> 
 		
 
-		<a href="#" id=scalef>scalef</a>
+		<a href="#" class=has_doc id=scalef>scalef</a>
 		<div style="display: none;" class=func_doc id=doc_scalef>
 			<pre>scalef(poslist,center,amount): scales a list of faces around a specified point
-	amount 	= 0 -> all vertices will be moved to the center point
-   			= 1 -> all vertices will remain in place
-   			in (0,1) -> faces will shrink
-   			>1 -> faces will grow</pre>
+	amount 	= 0 -&gt; all vertices will be moved to the center point
+   			= 1 -&gt; all vertices will remain in place
+   			in (0,1) -&gt; faces will shrink
+   			&gt;1 -&gt; faces will grow</pre>
 		</div> 
 		
 
-		<a href="#" id=transformf>transformf</a>
+		<a href="#" class=has_doc id=transformf>transformf</a>
 		<div style="display: none;" class=func_doc id=doc_transformf>
 			<pre>transformf(poslist,T) applies transform T to each vertex in poslist</pre>
 		</div> 
@@ -70,15 +70,15 @@
     <div class="category_list">
 		<h1>help</h1>
 		
-		<a href="#" id=help>help</a>
+		<a href="#" class=has_doc id=help>help</a>
 		<div style="display: none;" class=func_doc id=doc_help>
-			<pre>Print the documentation for a given object. Assign documentation with the document function.</pre>
+			<pre>help(func) prints the documentation for a given object. Assign documentation with the document function.</pre>
 		</div> 
 		
 
-		<a href="#" id=show_commands>show_commands</a>
+		<a href="#" class=has_doc id=show_commands>show_commands</a>
 		<div style="display: none;" class=func_doc id=doc_show_commands>
-			<pre>Show all documented commands</pre>
+			<pre>show_commands() prints all documented commands</pre>
 		</div> 
 		
 
@@ -88,187 +88,187 @@
     <div class="category_list">
 		<h1>math</h1>
 		
-		<a href="#" id=abs>abs</a>
+		<a href="#" class=has_doc id=abs>abs</a>
 		<div style="display: none;" class=func_doc id=doc_abs>
-			<pre></pre>
+			<pre>abs(x) absolute</pre>
 		</div> 
 		
 
-		<a href="#" id=acos>acos</a>
+		<a href="#" class=has_doc id=acos>acos</a>
 		<div style="display: none;" class=func_doc id=doc_acos>
-			<pre></pre>
+			<pre>acos(x) arc cosine</pre>
 		</div> 
 		
 
-		<a href="#" id=asin>asin</a>
+		<a href="#" class=has_doc id=asin>asin</a>
 		<div style="display: none;" class=func_doc id=doc_asin>
-			<pre></pre>
+			<pre>asin(x) arc sine</pre>
 		</div> 
 		
 
-		<a href="#" id=atan>atan</a>
+		<a href="#" class=has_doc id=atan>atan</a>
 		<div style="display: none;" class=func_doc id=doc_atan>
-			<pre></pre>
+			<pre>atan(x) arc tangent</pre>
 		</div> 
 		
 
-		<a href="#" id=atan2>atan2</a>
+		<a href="#" class=has_doc id=atan2>atan2</a>
 		<div style="display: none;" class=func_doc id=doc_atan2>
-			<pre></pre>
+			<pre>atan2(v1,v2) arc tan v1/v2</pre>
 		</div> 
 		
 
-		<a href="#" id=bias>bias</a>
+		<a href="#" class=has_doc id=bias>bias</a>
 		<div style="display: none;" class=func_doc id=doc_bias>
 			<pre>bias(a,x) 1D bias function</pre>
 		</div> 
 		
 
-		<a href="#" id=ceil>ceil</a>
+		<a href="#" class=has_doc id=ceil>ceil</a>
 		<div style="display: none;" class=func_doc id=doc_ceil>
-			<pre></pre>
+			<pre>ceil(x) smallest int &gt;= x</pre>
 		</div> 
 		
 
-		<a href="#" id=clamp>clamp</a>
+		<a href="#" class=has_doc id=clamp>clamp</a>
 		<div style="display: none;" class=func_doc id=doc_clamp>
 			<pre>clamp(x,a,b) clamps x between a and b</pre>
 		</div> 
 		
 
-		<a href="#" id=cos>cos</a>
+		<a href="#" class=has_doc id=cos>cos</a>
 		<div style="display: none;" class=func_doc id=doc_cos>
-			<pre></pre>
+			<pre>cos(rad) cosine</pre>
 		</div> 
 		
 
-		<a href="#" id=cosh>cosh</a>
+		<a href="#" class=has_doc id=cosh>cosh</a>
 		<div style="display: none;" class=func_doc id=doc_cosh>
-			<pre></pre>
+			<pre>cosh(rad) hyperbolic cosine</pre>
 		</div> 
 		
 
-		<a href="#" id=cross>cross</a>
+		<a href="#" class=has_doc id=cross>cross</a>
 		<div style="display: none;" class=func_doc id=doc_cross>
 			<pre>cross(a,b) computes the cross product of vec3 a and b</pre>
 		</div> 
 		
 
-		<a href="#" id=deg>deg</a>
+		<a href="#" class=has_doc id=deg>deg</a>
 		<div style="display: none;" class=func_doc id=doc_deg>
-			<pre></pre>
+			<pre>deg(rad) rad to deg</pre>
 		</div> 
 		
 
-		<a href="#" id=distance>distance</a>
+		<a href="#" class=has_doc id=distance>distance</a>
 		<div style="display: none;" class=func_doc id=doc_distance>
 			<pre>distance(a,b) computes the distance between points (vec3) a and b</pre>
 		</div> 
 		
 
-		<a href="#" id=dot>dot</a>
+		<a href="#" class=has_doc id=dot>dot</a>
 		<div style="display: none;" class=func_doc id=doc_dot>
 			<pre>dot(a,b) computes the inner product of vec3 a and b</pre>
 		</div> 
 		
 
-		<a href="#" id=exp>exp</a>
+		<a href="#" class=has_doc id=exp>exp</a>
 		<div style="display: none;" class=func_doc id=doc_exp>
-			<pre></pre>
+			<pre>exp(v) e^v</pre>
 		</div> 
 		
 
-		<a href="#" id=floor>floor</a>
+		<a href="#" class=has_doc id=floor>floor</a>
 		<div style="display: none;" class=func_doc id=doc_floor>
-			<pre></pre>
+			<pre>floor(v) largest int &lt;= v</pre>
 		</div> 
 		
 
-		<a href="#" id=fmod>fmod</a>
+		<a href="#" class=has_doc id=fmod>fmod</a>
 		<div style="display: none;" class=func_doc id=doc_fmod>
-			<pre></pre>
+			<pre>fmod(x,y) remainder of x/y</pre>
 		</div> 
 		
 
-		<a href="#" id=fmod>fmod</a>
+		<a href="#" class=has_doc id=fmod>fmod</a>
 		<div style="display: none;" class=func_doc id=doc_fmod>
-			<pre></pre>
+			<pre>fmod(x,y) remainder of x/y</pre>
 		</div> 
 		
 
-		<a href="#" id=frac_sum>frac_sum</a>
+		<a href="#" class=has_doc id=frac_sum>frac_sum</a>
 		<div style="display: none;" class=func_doc id=doc_frac_sum>
 			<pre>frac_sum(x,y,z,n,falloff) computes n octaves of summed fractal noise</pre>
 		</div> 
 		
 
-		<a href="#" id=frexp>frexp</a>
+		<a href="#" class=has_doc id=frexp>frexp</a>
 		<div style="display: none;" class=func_doc id=doc_frexp>
-			<pre></pre>
+			<pre>frexp(v) mantissa, exp</pre>
 		</div> 
 		
 
-		<a href="#" id=gain>gain</a>
+		<a href="#" class=has_doc id=gain>gain</a>
 		<div style="display: none;" class=func_doc id=doc_gain>
 			<pre>gain(g,x) gain control</pre>
 		</div> 
 		
 
-		<a href="#" id=gamma>gamma</a>
+		<a href="#" class=has_doc id=gamma>gamma</a>
 		<div style="display: none;" class=func_doc id=doc_gamma>
 			<pre>gamma(g,x) standard gamma correct function</pre>
 		</div> 
 		
 
-		<a href="#" id=gauss>gauss</a>
+		<a href="#" class=has_doc id=gauss>gauss</a>
 		<div style="display: none;" class=func_doc id=doc_gauss>
 			<pre>gauss(mean,var) returns a gaussian distributed random number</pre>
 		</div> 
 		
 
-		<a href="#" id=huge>huge</a>
+		<a href="#" class=has_doc id=huge>huge</a>
 		<div style="display: none;" class=func_doc id=doc_huge>
-			<pre></pre>
+			<pre>huge is a constant larger than any numerical value</pre>
 		</div> 
 		
 
-		<a href="#" id=inv_sqrt>inv_sqrt</a>
+		<a href="#" class=has_doc id=inv_sqrt>inv_sqrt</a>
 		<div style="display: none;" class=func_doc id=doc_inv_sqrt>
 			<pre>inv_sqrt(x) inverse square root</pre>
 		</div> 
 		
 
-		<a href="#" id=ldexp>ldexp</a>
+		<a href="#" class=has_doc id=ldexp>ldexp</a>
 		<div style="display: none;" class=func_doc id=doc_ldexp>
-			<pre></pre>
+			<pre>ldexp(v1,v2) v1*2^v2</pre>
 		</div> 
 		
 
-		<a href="#" id=length>length</a>
+		<a href="#" class=has_doc id=length>length</a>
 		<div style="display: none;" class=func_doc id=doc_length>
 			<pre>length(v) computes the length of vec3 v</pre>
 		</div> 
 		
 
-		<a href="#" id=lerp>lerp</a>
+		<a href="#" class=has_doc id=lerp>lerp</a>
 		<div style="display: none;" class=func_doc id=doc_lerp>
 			<pre>lerp(a,b,t) interpolates between a and b</pre>
 		</div> 
 		
 
-		<a href="#" id=log>log</a>
+		<a href="#" class=has_doc id=log>log</a>
 		<div style="display: none;" class=func_doc id=doc_log>
-			<pre></pre>
+			<pre>log(x) natural log</pre>
 		</div> 
 		
 
-		<a href="#" id=log10>log10</a>
+		<a href="#" class=has_doc id=log10>log10</a>
 		<div style="display: none;" class=func_doc id=doc_log10>
-			<pre></pre>
+			<pre>log10(x) log 10</pre>
 		</div> 
 		
 
-		<a href="#" id=mat4>mat4</a>
+		<a href="#" class=has_doc id=mat4>mat4</a>
 		<div style="display: none;" class=func_doc id=doc_mat4>
 			<pre>mat4 represents a 4d matrix. Example usage:
 	creation: m = mat4()
@@ -283,139 +283,127 @@
 		</div> 
 		
 
-		<a href="#" id=max>max</a>
+		<a href="#" class=has_doc id=max>max</a>
 		<div style="display: none;" class=func_doc id=doc_max>
-			<pre></pre>
+			<pre>max(x,...) max of one or more values</pre>
 		</div> 
 		
 
-		<a href="#" id=min>min</a>
-		<div style="display: none;" class=func_doc id=doc_min>
-			<pre>min(a,b) = the lesser of a and b</pre>
-		</div> 
-		
-
-		<a href="#" id=mix>mix</a>
+		<a href="#" class=has_doc id=mix>mix</a>
 		<div style="display: none;" class=func_doc id=doc_mix>
 			<pre>mix(a,b,t) mixes values a and b by amount t</pre>
 		</div> 
 		
 
-		<a href="#" id=modf>modf</a>
+		<a href="#" class=has_doc id=modf>modf</a>
 		<div style="display: none;" class=func_doc id=doc_modf>
-			<pre></pre>
+			<pre>modf(x) return ix,dx where x=ix+dx and ix is an integer</pre>
 		</div> 
 		
 
-		<a href="#" id=noise>noise</a>
+		<a href="#" class=has_doc id=noise>noise</a>
 		<div style="display: none;" class=func_doc id=doc_noise>
 			<pre>noise(x), noise(x,y), noise(x,y,z) computes 1D, 2D or 3D Perlin noise</pre>
 		</div> 
 		
 
-		<a href="#" id=normalise>normalise</a>
+		<a href="#" class=has_doc id=normalise>normalise</a>
 		<div style="display: none;" class=func_doc id=doc_normalise>
 			<pre>normalise(v) returns vec3 v normlised</pre>
 		</div> 
 		
 
-		<a href="#" id=pi>pi</a>
+		<a href="#" class=has_doc id=pi>pi</a>
 		<div style="display: none;" class=func_doc id=doc_pi>
-			<pre></pre>
+			<pre>pi constant</pre>
 		</div> 
 		
 
-		<a href="#" id=pow>pow</a>
+		<a href="#" class=has_doc id=pow>pow</a>
 		<div style="display: none;" class=func_doc id=doc_pow>
-			<pre></pre>
+			<pre>pow(v1,v2) v1^v2</pre>
 		</div> 
 		
 
-		<a href="#" id=pulse>pulse</a>
+		<a href="#" class=has_doc id=pulse>pulse</a>
 		<div style="display: none;" class=func_doc id=doc_pulse>
 			<pre>pulse(a,b,x) combines 2 steps: returns 1 if x is between a and b</pre>
 		</div> 
 		
 
-		<a href="#" id=rad>rad</a>
+		<a href="#" class=has_doc id=rad>rad</a>
 		<div style="display: none;" class=func_doc id=doc_rad>
-			<pre></pre>
+			<pre>rad(deg) deg to rad</pre>
 		</div> 
 		
 
-		<a href="#" id=random>random</a>
+		<a href="#" class=has_doc id=random>random</a>
 		<div style="display: none;" class=func_doc id=doc_random>
 			<pre>random(low=0,high=1) returns a random number between low and high inclusive </pre>
 		</div> 
 		
 
-		<a href="#" id=sign>sign</a>
+		<a href="#" class=has_doc id=sign>sign</a>
 		<div style="display: none;" class=func_doc id=doc_sign>
 			<pre>sign(f) = the sign of f</pre>
 		</div> 
 		
 
-		<a href="#" id=sin>sin</a>
+		<a href="#" class=has_doc id=sin>sin</a>
 		<div style="display: none;" class=func_doc id=doc_sin>
-			<pre></pre>
+			<pre>sin(rad) sine</pre>
 		</div> 
 		
 
-		<a href="#" id=sinh>sinh</a>
+		<a href="#" class=has_doc id=sinh>sinh</a>
 		<div style="display: none;" class=func_doc id=doc_sinh>
-			<pre></pre>
+			<pre>sinh(rad) hyperbolic sine</pre>
 		</div> 
 		
 
-		<a href="#" id=slerp>slerp</a>
+		<a href="#" class=has_doc id=slerp>slerp</a>
 		<div style="display: none;" class=func_doc id=doc_slerp>
 			<pre>slerp(a,b,t) spherically interpolates vec3 a and vec3 b</pre>
 		</div> 
 		
 
-		<a href="#" id=smoothstep>smoothstep</a>
+		<a href="#" class=has_doc id=smoothstep>smoothstep</a>
 		<div style="display: none;" class=func_doc id=doc_smoothstep>
 			<pre>smoothstep(a,b,x) smooth interpolation using Horner's rule</pre>
 		</div> 
 		
 
-		<a href="#" id=sqr>sqr</a>
+		<a href="#" class=has_doc id=sqr>sqr</a>
 		<div style="display: none;" class=func_doc id=doc_sqr>
 			<pre>sqr(x) = the square of x</pre>
 		</div> 
 		
 
-		<a href="#" id=sqrt>sqrt</a>
-		<div style="display: none;" class=func_doc id=doc_sqrt>
-			<pre>sqrt(x) = the square root of x</pre>
-		</div> 
-		
-
-		<a href="#" id=step>step</a>
+		<a href="#" class=has_doc id=step>step</a>
 		<div style="display: none;" class=func_doc id=doc_step>
-			<pre>step(a,x) = 0 when x < a, 1 otherwise</pre>
+			<pre>step(a,x) = 0 when x &lt; a, 1 otherwise</pre>
 		</div> 
 		
 
-		<a href="#" id=tan>tan</a>
+		<a href="#" class=has_doc id=tan>tan</a>
 		<div style="display: none;" class=func_doc id=doc_tan>
-			<pre></pre>
+			<pre>tan(rad) tangent</pre>
 		</div> 
 		
 
-		<a href="#" id=tanh>tanh</a>
+		<a href="#" class=has_doc id=tanh>tanh</a>
 		<div style="display: none;" class=func_doc id=doc_tanh>
-			<pre></pre>
+			<pre>tanh(rad) hyperbolic tangent</pre>
 		</div> 
 		
 
-		<a href="#" id=turbulence>turbulence</a>
+		<a href="#" class=has_doc id=turbulence>turbulence</a>
 		<div style="display: none;" class=func_doc id=doc_turbulence>
 			<pre>turbulence(x,y,z,n,falloff) computes n octaves of Perlin's turbulence function</pre>
 		</div> 
 		
 
-		<a href="#" id=vec3>vec3</a>
+		<a href="#" class=has_doc id=vec3>vec3</a>
 		<div style="display: none;" class=func_doc id=doc_vec3>
 			<pre>vec3 represents a 3d vector. Example usage:
 	creation: v = vec3(1.5,0,4)
@@ -434,140 +422,140 @@
     <div class="category_list">
 		<h1>mesh</h1>
 		
-		<a href="#" id=capov>capov</a>
+		<a href="#" class=has_doc id=capov>capov</a>
 		<div style="display: none;" class=func_doc id=doc_capov>
 			<pre>capov(cap:poslist) returns the outermost vertices of a cap (a fan of pos'es)</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=cone>cone</a>
+		<a href="#" class=has_doc id=cone>cone</a>
 		<div style="display: none;" class=func_doc id=doc_cone>
 			<pre>cone(outer_radius,inner_radius,resolution) makes a cone mesh</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=cube>cube</a>
+		<a href="#" class=has_doc id=cube>cube</a>
 		<div style="display: none;" class=func_doc id=doc_cube>
 			<pre>cube() makes a cube mesh</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=cylinder>cylinder</a>
+		<a href="#" class=has_doc id=cylinder>cylinder</a>
 		<div style="display: none;" class=func_doc id=doc_cylinder>
 			<pre>cylinder(resolution) makes a cylinder mesh</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=dodecahedron>dodecahedron</a>
+		<a href="#" class=has_doc id=dodecahedron>dodecahedron</a>
 		<div style="display: none;" class=func_doc id=doc_dodecahedron>
 			<pre>dodecahedron() makes a dodecahedron mesh</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=extrude>extrude</a>
+		<a href="#" class=has_doc id=extrude>extrude</a>
 		<div style="display: none;" class=func_doc id=doc_extrude>
 			<pre>extrude(m:mesh,v:vertex,[dir:vec3],magnitude)
 	Extrudes all neighbouring faces in the direction given (or the normal if dir is omitted), and re-orients the
 	faces to align perpendicularly along the extrusion axis
 	Note: Assumes direction is normalised. 
 	Returns the pos loop at the end of the extrusion</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=extrude_and_scale>extrude_and_scale</a>
+		<a href="#" class=has_doc id=extrude_and_scale>extrude_and_scale</a>
 		<div style="display: none;" class=func_doc id=doc_extrude_and_scale>
 			<pre>extrude_and_scale(m:mesh,v:vertex,dir:vec3,magnitude,scale) extrudes and scales the faces adjacent to v</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=face>face</a>
+		<a href="#" class=has_doc id=face>face</a>
 		<div style="display: none;" class=func_doc id=doc_face>
 			<pre>face is a triangle in a mesh</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=flattenvl>flattenvl</a>
+		<a href="#" class=has_doc id=flattenvl>flattenvl</a>
 		<div style="display: none;" class=func_doc id=doc_flattenvl>
 			<pre>flattenvl(m:mesh,vl:list,p:vec3,n:vec3) flattens a list of vertices, vl, so they align on the plane specified by p and n</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=foreachv>foreachv</a>
+		<a href="#" class=has_doc id=foreachv>foreachv</a>
 		<div style="display: none;" class=func_doc id=doc_foreachv>
 			<pre>foreachv(m:mesh,f:function) applies f to each vertex in m</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=icosahedron>icosahedron</a>
+		<a href="#" class=has_doc id=icosahedron>icosahedron</a>
 		<div style="display: none;" class=func_doc id=doc_icosahedron>
 			<pre>icosahedron() makes an icosahedron mesh</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=ifaces>ifaces</a>
+		<a href="#" class=has_doc id=ifaces>ifaces</a>
 		<div style="display: none;" class=func_doc id=doc_ifaces>
 			<pre>ifaces(faces:poslist) returns an iterator over the faces in this poslist</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=inset>inset</a>
+		<a href="#" class=has_doc id=inset>inset</a>
 		<div style="display: none;" class=func_doc id=doc_inset>
 			<pre>inset(m:mesh,v:vertex,s:number) insets all the faces surrounding vertex v and scales them by s</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=mesh>mesh</a>
+		<a href="#" class=has_doc id=mesh>mesh</a>
 		<div style="display: none;" class=func_doc id=doc_mesh>
-			<pre>mesh is a triangular 2-manifold mesh</pre>
-		</div>
+			<pre>mesh is a 2-manifold triangular mesh</pre>
+		</div> 
 		
 
-		<a href="#" id=nearbyv>nearbyv</a>
+		<a href="#" class=has_doc id=nearbyv>nearbyv</a>
 		<div style="display: none;" class=func_doc id=doc_nearbyv>
 			<pre>nearbyv(m:mesh,v:vertex,n:integer) returns a list of vertices with edge distance n of v</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=octahedron>octahedron</a>
+		<a href="#" class=has_doc id=octahedron>octahedron</a>
 		<div style="display: none;" class=func_doc id=doc_octahedron>
-			<pre>octahedron makes a octahedron mesh</pre>
-		</div>
+			<pre>octahedron() makes a octahedron mesh</pre>
+		</div> 
 		
 
-		<a href="#" id=pos>pos</a>
+		<a href="#" class=has_doc id=pos>pos</a>
 		<div style="display: none;" class=func_doc id=doc_pos>
 			<pre>a pos is a (vertex,edge,face) triple that uniquely identifies a position on a mesh</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=sphere>sphere</a>
+		<a href="#" class=has_doc id=sphere>sphere</a>
 		<div style="display: none;" class=func_doc id=doc_sphere>
 			<pre>sphere() makes a spherical mesh</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=tetrahedron>tetrahedron</a>
+		<a href="#" class=has_doc id=tetrahedron>tetrahedron</a>
 		<div style="display: none;" class=func_doc id=doc_tetrahedron>
 			<pre>tetrahedron() makes a tetrahedron mesh</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=tofaces>tofaces</a>
+		<a href="#" class=has_doc id=tofaces>tofaces</a>
 		<div style="display: none;" class=func_doc id=doc_tofaces>
 			<pre>tofaces(vl:list) returns a list of those faces adjacent to the vertices in vl</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=vertex>vertex</a>
+		<a href="#" class=has_doc id=vertex>vertex</a>
 		<div style="display: none;" class=func_doc id=doc_vertex>
 			<pre>vertex is a mesh vertex</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=vertexlist>vertexlist</a>
+		<a href="#" class=has_doc id=vertexlist>vertexlist</a>
 		<div style="display: none;" class=func_doc id=doc_vertexlist>
 			<pre>vertexlist(m:mesh) returns a list of all vertices in the mesh m</pre>
-		</div>
+		</div> 
 		
 
 	</div>
@@ -576,22 +564,56 @@
     <div class="category_list">
 		<h1>util</h1>
 		
-		<a href="#" id=find>find</a>
+		<a href="#" class=has_doc id=concat>concat</a>
+		<div style="display: none;" class=func_doc id=doc_concat>
+			<pre>concat(table [,sep [,i [,j]]]) returns table[i]..sep..table[i+1].. ..sep..table[j]</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=find>find</a>
 		<div style="display: none;" class=func_doc id=doc_find>
 			<pre>find(l,f) finds element v of l satisfying f(v)</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=foreach>foreach</a>
+		<a href="#" class=has_doc id=foreach>foreach</a>
 		<div style="display: none;" class=func_doc id=doc_foreach>
-			<pre></pre>
-		</div>
+			<pre>foreach(table, f) executes f on each element of table</pre>
+		</div> 
 		
 
-		<a href="#" id=set>set</a>
+		<a href="#" class=has_doc id=insert>insert</a>
+		<div style="display: none;" class=func_doc id=doc_insert>
+			<pre>insert(table, [pos,] value) inserts value at position pos in table</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=maxn>maxn</a>
+		<div style="display: none;" class=func_doc id=doc_maxn>
+			<pre>maxn(table) returns the largest positive numerical index of table</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=remove>remove</a>
+		<div style="display: none;" class=func_doc id=doc_remove>
+			<pre>remove(table [,pos]) 
+	removes the element at position pos from table, shifting down other elements to 
+	close the space. returns the removed element. pos defaults to #table.</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=set>set</a>
 		<div style="display: none;" class=func_doc id=doc_set>
 			<pre>set(l) converts list l to a set</pre>
-		</div>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=sort>sort</a>
+		<div style="display: none;" class=func_doc id=doc_sort>
+			<pre>sort(table [,comp])
+	sorts table elements in a given order, in-place, from table[1] to table[n]
+	comp is an optional comparison function s.t., comp(a,b) = true if a&lt;b.</pre>
+		</div> 
 		
 
 	</div>
@@ -600,40 +622,40 @@
     <div class="category_list">
 		<h1>geometric</h1>
 		
-		<a href="#" id=acentroidvl>acentroidvl</a>
+		<a href="#" class=has_doc id=acentroidvl>acentroidvl</a>
 		<div style="display: none;" class=func_doc id=doc_acentroidvl>
-			<pre>acentroidvl(vl,n) computes the approximate centroid of a list of 
+			<pre>acentroidvl(vertex_list,n) computes the approximate centroid of a list of 
 vertices defining a closed polygon (not necessarily planar).
 The normalised vector, n, defines the plane on which the polygon approximately lies</pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=centroid>centroid</a>
+		<a href="#" class=has_doc id=centroid>centroid</a>
 		<div style="display: none;" class=func_doc id=doc_centroid>
-			<pre>centroid(poly) computes the centroid of a 2d polygon defined by a list of vec3 (with z = 0)</pre>
-		</div>
+			<pre>centroid(point_list) computes the centroid of a 2d polygon defined by a list of vec3 (with z = 0)</pre>
+		</div> 
 		
 
-		<a href="#" id=distribute_points_sphere>distribute_points_sphere</a>
+		<a href="#" class=has_doc id=distribute_points_sphere>distribute_points_sphere</a>
 		<div style="display: none;" class=func_doc id=doc_distribute_points_sphere>
 			<pre>  distribute_points_sphere(n) returns n equally distributed points on a sphere.
 
  "Distributing many points on a sphere" by E.B. Saff and A.B.J. Kuijlaars,
   Mathematical Intelligencer 19.1 (1997) 5--11
 </pre>
-		</div>
+		</div> 
 		
 
-		<a href="#" id=perp>perp</a>
+		<a href="#" class=has_doc id=perp>perp</a>
 		<div style="display: none;" class=func_doc id=doc_perp>
-			<pre>perp(v:vec3) returns a normalised vector perpendicular to vec3 v</pre>
-		</div>
+			<pre>perp(v) returns a normalised vector perpendicular to vec3 v</pre>
+		</div> 
 		
 
-		<a href="#" id=project>project</a>
+		<a href="#" class=has_doc id=project>project</a>
 		<div style="display: none;" class=func_doc id=doc_project>
-			<pre>project(a,b) projects vec3 a onto vec3 b</pre>
-		</div>
+			<pre>project(a,b) projects vec3 a onto vec3 b and returns the result</pre>
+		</div> 
 		
 
 	</div>
@@ -650,11 +672,8 @@ The normalised vector, n, defines the plane on which the polygon approximately l
 <div class="grid_12"><br/></div>
 <div class="clear"></div>
 
-<div style="display:none" id="doc" class="grid_12">
-
-</div>
+<div style="display:none" id="doc" class="grid_12"></div>
 <div class="clear"></div>
-
 
 <div id="footer" class="grid_12">
 Built on 25/10/2011
@@ -670,8 +689,12 @@ $(document).ready(function(){
 	var currentDocString = null;
 	var slideSpeed = 200; 
 	
-	$(".category_list a").click(function () { 
-		/* console.log($(this)[0].id); */ 
+	$(".category_list a.has_no_doc").click(function () {
+		return false;
+	});
+	
+	$(".category_list a.has_doc").click(function () { 
+		/* console.log($(this)[0].id); */
 		
 		if (currentDocName==$(this)[0].id) {
 			currentDocString.hide(slideSpeed, function() {
@@ -700,7 +723,9 @@ $(document).ready(function(){
 				currentDocString.show(slideSpeed);		
 			}
 			
-		}			 
+		}		
+		
+		return true;	 
 	});
 });    
     
