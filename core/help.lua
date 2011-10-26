@@ -10,6 +10,7 @@ require "table"
 local docstrings = setmetatable({}, {__mode="kv"})
 local categories = {}
 local reverse_category_lookup = {}
+local function_names = {}
 
 function document(str)
 	return function(obj)		
@@ -28,8 +29,12 @@ function help(obj)
 	end
 end
 
+function set_function_name(f,name)
+	function_names[f] = name
+end
+
 document[=[help(func) prints the documentation for a given object. Assign documentation with the document function.]=](help)
-document[=[Add a string as documentation for an object. For example:
+document[=[Internal: Add a string as documentation for an object. For example:
 	document[[foo does something awesome.]](foo), 
 	or during function specification with
 	f = document[[Print a hello message]](
@@ -37,7 +42,8 @@ document[=[Add a string as documentation for an object. For example:
 			print("hello")
 		end
 	)]=](document)
-	
+document[=[Internal: Set the name of a function]=](set_function_name)
+
 function show_commands()
 	print("All documented commands")
 	foreach(_G, function(k,v) 
@@ -68,9 +74,15 @@ end
 document[[category_list(cat) returns a list of all functions in the specified category]](category_list)
 
 function function_name(f)
+	-- first check if the names been registered
+	for g,n in pairs(function_names) do
+		if (g==f) then return n end 
+	end	
+	-- else look in the global namespace
 	for k,v in pairs(_G) do
 		if (f==v) then return k end
-	end
+	end	
+	-- else return nil
 end
 
 function command_list_by_category()

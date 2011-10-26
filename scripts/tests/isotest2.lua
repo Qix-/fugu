@@ -3,28 +3,22 @@ module(...,package.seeall)
 local points
 
 local function floob(x,y,z)
-	local m = {huge,huge}
+	local m = huge
 	local v = vec3(x,y,z)	
-	foreach(points, function(_,p)
-		local d = sqr(p.x-v.x) + sqr(p.y-v.y) + sqr(p.z-v.z)
-		if (d < m[1]) then
-			m[2] = m[1]
-			m[1] = d
-		elseif (d < m[2]) then 
-			m[2] = d
-		end
-	end)
-	if m[1]==huge then m[1] = 0 end
-	if m[2]==huge then m[2] = 0 end
-	return .6*m[1] + .3*m[2] - .1
+	for i=1,#points do
+		local d = segment_point_dist(points[i],vec3(0,0,0),v)
+		if (d < m) then m=d end
+	end
+	local sqd = sqr(x)+sqr(y)+sqr(z)
+	return m - .1*(2-sqd)
 end
 
-local res = 30
+local res = 24
 local m, n
 function setup()
-	points = distribute_points_sphere(30)
+	points = distribute_points_sphere(16)
 	for i=1,#points do
-		points[i] = points[i]*.5
+		points[i] = points[i]*.7
 	end
 	m = iso(res, floob)	
 	n = meshnode(m)

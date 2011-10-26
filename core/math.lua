@@ -103,14 +103,35 @@ categorise(mat4,"math")
 
 -- extra maths/geometric functions
 
+half_pi = pi/2
+two_pi = pi*2
+document[[half_pi = 0.5*pi]](half_pi)
+document[[two_pi = 2*pi]](two_pi)
+categorise(half_pi,"math")
+categorise(two_pi,"math")
+
 -- returns (r,theta,phi) of (x,y,y,z)
-function polar(x,y,z)
+function polar_xyz(x,y,z)
 	local r = sqrt(sqr(x)+sqr(y)+sqr(z))
-	local theta = acos(z/r)
-	local phi = atan2(y,x)
+	if (r==0) then return 0,0,0 end
+	local theta = atan2(y,x)
+	local phi = acos(z/r)
 	return r,theta,phi
 end
-document[[polar(x,y,z) cartesian to polar coordinates]](polar)
+
+function polar_vec3(v)
+	return polar(v.x,v.y,v.z)
+end
+
+function polar(v,y,z)
+	if (y and z) then 
+		return polar_xyz(v,y,z)
+	else 
+		return polar_vec3(v) 
+	end
+end
+
+document[[polar(vec3), polar(x,y,z) convert cartesian to polar coordinates: r,theta,phi]](polar)
 categorise(polar,"math")
 
 function random_vec3()

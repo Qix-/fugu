@@ -210,7 +210,8 @@ namespace fg {
 
 		const char* buff = script.c_str();
 		luaL_loadbuffer(L, buff, script.length(), "line");
-		if (lua_pcall(L, 0, 0, 0)){
+		int top = lua_gettop(L);
+		if (lua_pcall(L, 0, LUA_MULTRET, 0)){
 			// an error has occurred
 			try {
 				error(lua_tostring(L, -1));
@@ -218,7 +219,15 @@ namespace fg {
 			catch (std::runtime_error& e){
 				std::cerr << e.what() << "\n";
 			}
-			lua_pop(L,1);
+			int newtop = lua_gettop(L);
+			// print out each returned value
+			for(int i=0;i<(newtop-top);i++){
+				luabind::object o = luabind::object(luabind::from_stack(L, -1));
+				std::cout << o << "\n";
+				lua_pop(L,1);
+			}
+
+			lua_pop(L,1); // pop name
 		}
 	}
 

@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
 	subdivModeGroup->addAction(ui.actionSetSubdivs1);
 	subdivModeGroup->addAction(ui.actionSetSubdivs2);
 	subdivModeGroup->addAction(ui.actionSetSubdivs3);
-	ui.actionSetSubdivs1->setChecked(true);
+	ui.actionSetSubdivs0->setChecked(true);
 
 	QActionGroup* colourModeGroup = new QActionGroup(this);
 	colourModeGroup->addAction(ui.actionSetColourNone);
@@ -506,6 +506,26 @@ std::string HTMLEncode(const std::string& s){
 	return rs;
 }
 
+// Encode a function name to a proper id
+struct IdReplace {
+	std::string match, replace;
+} idcodes[] = {
+		{".","dot"},
+};
+std::string IDEncode(const std::string& s){
+	std::string rs = s;
+	for(size_t i = 0; i<1 /* num codes*/; i++){
+		const std::string& match = idcodes[i].match;
+		const std::string& repl = idcodes[i].replace;
+		std::string::size_type start = rs.find_first_of(match);
+		while(start!=std::string::npos){
+			rs.replace(start,match.size(),repl);
+			start = rs.find_first_of(match,start+repl.size());
+		}
+	}
+	return rs;
+}
+
 
 void MainWindow::buildReference() // build the html reference
 {
@@ -563,6 +583,7 @@ void MainWindow::buildReference() // build the html reference
 					foreach(string2 p, currentCategoryFunctions){
 						tmpl::row_t fr;
 						fr("FUNCTION_NAME") = p.first;
+						fr("FUNCTION_ID") = IDEncode(p.first);
 
 						/* encode the document in html */
 						fr("FUNCTION_DOC") = HTMLEncode(p.second);
@@ -600,6 +621,7 @@ void MainWindow::buildReference() // build the html reference
 		foreach(string2 p, currentCategoryFunctions){
 			tmpl::row_t fr;
 			fr("FUNCTION_NAME") = p.first;
+			fr("FUNCTION_ID") = IDEncode(p.first);
 			fr("FUNCTION_DOC") = HTMLEncode(p.second);
 			fr("HAS_DOC") = p.second.empty()?"has_no_doc":"has_doc";
 			functionLoop += fr;

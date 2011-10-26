@@ -44,7 +44,7 @@ FGView::FGView(QWidget *parent)
 	mGround = true;
 	mShowNodeAxes = true;
 	mEnableLighting = true;
-	mNumberSubdivs = 1;
+	mNumberSubdivs = 0;
 	mMeshMode = MM_PHONG;
 	mColourMode = fg::GLRenderer::COLOUR_VERTEX;
 	mShowOverWire = true;
@@ -198,7 +198,7 @@ void FGView::initializeGL()
 {
 	qglClearColor(mBackgroundColor);
 
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_COLOR_MATERIAL);
