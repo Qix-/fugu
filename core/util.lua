@@ -71,4 +71,4 @@ function deepcopy(object)
     return _copy(object)
 end
 document[[deepcopy(table) returns a deep copy of a table]](deepcopy)
-categorise(deepcopy,"deepcopy")
+categorise(deepcopy,"util")
