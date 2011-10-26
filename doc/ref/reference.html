@@ -22,6 +22,24 @@
 <div class="grid_4">
     
     <div class="category_list">
+		<h1>geometry</h1>
+		
+		<a href="#" class=has_doc id=line_exp_point_dist>line_exp_point_dist</a>
+		<div style="display: none;" class=func_doc id=doc_line_exp_point_dist>
+			<pre>line_exp_point_dist(p1,p2,q) calculates the distance from q to the explicit line (p1,p2)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=segment_point_dist>segment_point_dist</a>
+		<div style="display: none;" class=func_doc id=doc_segment_point_dist>
+			<pre>segment_point_dist(p1,p2,q) calculates the distance from q to the explicit line segment (p1,p2)</pre>
+		</div> 
+		
+
+	</div>
+	
+
+    <div class="category_list">
 		<h1>transform</h1>
 		
 		<a href="#" class=has_doc id=R>R</a>
@@ -86,8 +104,41 @@
 	
 
     <div class="category_list">
+		<h1>universe</h1>
+		
+		<a href="#" class=has_doc id=meshnode>meshnode</a>
+		<div style="display: none;" class=func_doc id=doc_meshnode>
+			<pre>A meshnode is a node that references a mesh. 
+When placed in a universe it transforms that mesh. 
+Multiple meshnodes can reference the same mesh.</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=node>node</a>
+		<div style="display: none;" class=func_doc id=doc_node>
+			<pre>A node is a positionable and orientable object. 
+Every object in a universe is a node.</pre>
+		</div> 
+		
+
+	</div>
+	
+
+    <div class="category_list">
 		<h1>math</h1>
 		
+		<a href="#" class=has_doc id=></a>
+		<div style="display: none;" class=func_doc id=doc_>
+			<pre>max(x,...) max of one or more values</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=></a>
+		<div style="display: none;" class=func_doc id=doc_>
+			<pre>min(x,...) min of one or more values</pre>
+		</div> 
+		
+
 		<a href="#" class=has_doc id=abs>abs</a>
 		<div style="display: none;" class=func_doc id=doc_abs>
 			<pre>abs(x) absolute</pre>
@@ -283,12 +334,6 @@
 		</div> 
 		
 
-		<a href="#" class=has_doc id=max>max</a>
-		<div style="display: none;" class=func_doc id=doc_max>
-			<pre>max(x,...) max of one or more values</pre>
-		</div> 
-		
-
 		<a href="#" class=has_doc id=mix>mix</a>
 		<div style="display: none;" class=func_doc id=doc_mix>
 			<pre>mix(a,b,t) mixes values a and b by amount t</pre>
@@ -319,6 +364,12 @@
 		</div> 
 		
 
+		<a href="#" class=has_doc id=polar>polar</a>
+		<div style="display: none;" class=func_doc id=doc_polar>
+			<pre>polar(vec3), polar(x,y,z) convert cartesian to polar coordinates: r,theta,phi</pre>
+		</div> 
+		
+
 		<a href="#" class=has_doc id=pow>pow</a>
 		<div style="display: none;" class=func_doc id=doc_pow>
 			<pre>pow(v1,v2) v1^v2</pre>
@@ -340,6 +391,14 @@
 		<a href="#" class=has_doc id=random>random</a>
 		<div style="display: none;" class=func_doc id=doc_random>
 			<pre>random(low=0,high=1) returns a random number between low and high inclusive </pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=random_vec3>random_vec3</a>
+		<div style="display: none;" class=func_doc id=doc_random_vec3>
+			<pre>random_vec3() is equivalent to vec3(random(),random(),random())
+random_vec3(sc) is equivalent to vec3(sc*random(),sc*random(),sc*random())
+random_vec3(low,high) is equivalent to vec3(random(low,high),random(low,high),random(low,high))</pre>
 		</div> 
 		
 
@@ -376,6 +435,12 @@
 		<a href="#" class=has_doc id=sqr>sqr</a>
 		<div style="display: none;" class=func_doc id=doc_sqr>
 			<pre>sqr(x) = the square of x</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=sqrt>sqrt</a>
+		<div style="display: none;" class=func_doc id=doc_sqrt>
+			<pre>sqrt(x) square root</pre>
 		</div> 
 		
 
@@ -442,7 +507,7 @@
 
 		<a href="#" class=has_doc id=cylinder>cylinder</a>
 		<div style="display: none;" class=func_doc id=doc_cylinder>
-			<pre>cylinder(resolution) makes a cylinder mesh</pre>
+			<pre>cylinder(res) makes a cylinder mesh</pre>
 		</div> 
 		
 
@@ -501,6 +566,12 @@
 		<a href="#" class=has_doc id=inset>inset</a>
 		<div style="display: none;" class=func_doc id=doc_inset>
 			<pre>inset(m:mesh,v:vertex,s:number) insets all the faces surrounding vertex v and scales them by s</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=iso>iso</a>
+		<div style="display: none;" class=func_doc id=doc_iso>
+			<pre>iso(res,f) creates an isosurface from function f(x,y,z) within a 2x2x2 space</pre>
 		</div> 
 		
 
@@ -564,9 +635,77 @@
     <div class="category_list">
 		<h1>util</h1>
 		
+		<a href="#" class=has_doc id=></a>
+		<div style="display: none;" class=func_doc id=doc_>
+			<pre>sort(table [,comp])
+	sorts table elements in a given order, in-place, from table[1] to table[n]
+	comp is an optional comparison function s.t., comp(a,b) = true if a&lt;b.</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=all>all</a>
+		<div style="display: none;" class=func_doc id=doc_all>
+			<pre>all (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=any>any</a>
+		<div style="display: none;" class=func_doc id=doc_any>
+			<pre>any (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=collect>collect</a>
+		<div style="display: none;" class=func_doc id=doc_collect>
+			<pre>collect (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=compose>compose</a>
+		<div style="display: none;" class=func_doc id=doc_compose>
+			<pre>compose (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
 		<a href="#" class=has_doc id=concat>concat</a>
 		<div style="display: none;" class=func_doc id=doc_concat>
 			<pre>concat(table [,sep [,i [,j]]]) returns table[i]..sep..table[i+1].. ..sep..table[j]</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=curry>curry</a>
+		<div style="display: none;" class=func_doc id=doc_curry>
+			<pre>curry (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=detect>detect</a>
+		<div style="display: none;" class=func_doc id=doc_detect>
+			<pre>detect (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=each>each</a>
+		<div style="display: none;" class=func_doc id=doc_each>
+			<pre>each (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=every>every</a>
+		<div style="display: none;" class=func_doc id=doc_every>
+			<pre>every (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=extend>extend</a>
+		<div style="display: none;" class=func_doc id=doc_extend>
+			<pre>extend (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=filter>filter</a>
+		<div style="display: none;" class=func_doc id=doc_filter>
+			<pre>filter (see http://mirven.github.com/underscore.lua/)</pre>
 		</div> 
 		
 
@@ -576,9 +715,51 @@
 		</div> 
 		
 
+		<a href="#" class=has_doc id=first>first</a>
+		<div style="display: none;" class=func_doc id=doc_first>
+			<pre>first (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=flatten>flatten</a>
+		<div style="display: none;" class=func_doc id=doc_flatten>
+			<pre>flatten (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=foldl>foldl</a>
+		<div style="display: none;" class=func_doc id=doc_foldl>
+			<pre>foldl (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=for_each>for_each</a>
+		<div style="display: none;" class=func_doc id=doc_for_each>
+			<pre>for_each (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
 		<a href="#" class=has_doc id=foreach>foreach</a>
 		<div style="display: none;" class=func_doc id=doc_foreach>
 			<pre>foreach(table, f) executes f on each element of table</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=head>head</a>
+		<div style="display: none;" class=func_doc id=doc_head>
+			<pre>head (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=include>include</a>
+		<div style="display: none;" class=func_doc id=doc_include>
+			<pre>include (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=inject>inject</a>
+		<div style="display: none;" class=func_doc id=doc_inject>
+			<pre>inject (see http://mirven.github.com/underscore.lua/)</pre>
 		</div> 
 		
 
@@ -588,9 +769,87 @@
 		</div> 
 		
 
+		<a href="#" class=has_doc id=invoke>invoke</a>
+		<div style="display: none;" class=func_doc id=doc_invoke>
+			<pre>invoke (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=is_empty>is_empty</a>
+		<div style="display: none;" class=func_doc id=doc_is_empty>
+			<pre>is_empty (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=is_equal>is_equal</a>
+		<div style="display: none;" class=func_doc id=doc_is_equal>
+			<pre>is_equal (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=join>join</a>
+		<div style="display: none;" class=func_doc id=doc_join>
+			<pre>join (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=keys>keys</a>
+		<div style="display: none;" class=func_doc id=doc_keys>
+			<pre>keys (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=map>map</a>
+		<div style="display: none;" class=func_doc id=doc_map>
+			<pre>map (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=max>max</a>
+		<div style="display: none;" class=func_doc id=doc_max>
+			<pre>max (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
 		<a href="#" class=has_doc id=maxn>maxn</a>
 		<div style="display: none;" class=func_doc id=doc_maxn>
 			<pre>maxn(table) returns the largest positive numerical index of table</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=min>min</a>
+		<div style="display: none;" class=func_doc id=doc_min>
+			<pre>min (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=pluck>pluck</a>
+		<div style="display: none;" class=func_doc id=doc_pluck>
+			<pre>pluck (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=pop>pop</a>
+		<div style="display: none;" class=func_doc id=doc_pop>
+			<pre>pop (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=push>push</a>
+		<div style="display: none;" class=func_doc id=doc_push>
+			<pre>push (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=reduce>reduce</a>
+		<div style="display: none;" class=func_doc id=doc_reduce>
+			<pre>reduce (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=reject>reject</a>
+		<div style="display: none;" class=func_doc id=doc_reject>
+			<pre>reject (see http://mirven.github.com/underscore.lua/)</pre>
 		</div> 
 		
 
@@ -602,23 +861,91 @@
 		</div> 
 		
 
+		<a href="#" class=has_doc id=rest>rest</a>
+		<div style="display: none;" class=func_doc id=doc_rest>
+			<pre>rest (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=reverse>reverse</a>
+		<div style="display: none;" class=func_doc id=doc_reverse>
+			<pre>reverse (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=select>select</a>
+		<div style="display: none;" class=func_doc id=doc_select>
+			<pre>select (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
 		<a href="#" class=has_doc id=set>set</a>
 		<div style="display: none;" class=func_doc id=doc_set>
 			<pre>set(l) converts list l to a set</pre>
 		</div> 
 		
 
+		<a href="#" class=has_doc id=shift>shift</a>
+		<div style="display: none;" class=func_doc id=doc_shift>
+			<pre>shift (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=slice>slice</a>
+		<div style="display: none;" class=func_doc id=doc_slice>
+			<pre>slice (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=some>some</a>
+		<div style="display: none;" class=func_doc id=doc_some>
+			<pre>some (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
 		<a href="#" class=has_doc id=sort>sort</a>
 		<div style="display: none;" class=func_doc id=doc_sort>
-			<pre>sort(table [,comp])
-	sorts table elements in a given order, in-place, from table[1] to table[n]
-	comp is an optional comparison function s.t., comp(a,b) = true if a&lt;b.</pre>
+			<pre>sort (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=tail>tail</a>
+		<div style="display: none;" class=func_doc id=doc_tail>
+			<pre>tail (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=to_array>to_array</a>
+		<div style="display: none;" class=func_doc id=doc_to_array>
+			<pre>to_array (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=unshift>unshift</a>
+		<div style="display: none;" class=func_doc id=doc_unshift>
+			<pre>unshift (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=values>values</a>
+		<div style="display: none;" class=func_doc id=doc_values>
+			<pre>values (see http://mirven.github.com/underscore.lua/)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=wrap>wrap</a>
+		<div style="display: none;" class=func_doc id=doc_wrap>
+			<pre>wrap (see http://mirven.github.com/underscore.lua/)</pre>
 		</div> 
 		
 
 	</div>
 	
+	
+</div>
 
+<div class="grid_4">
+    
     <div class="category_list">
 		<h1>geometric</h1>
 		
@@ -663,10 +990,6 @@ The normalised vector, n, defines the plane on which the polygon approximately l
 	
 </div>
 
-<div class="grid_4">
-    	
-</div>
-
 <div class="clear"></div>
 
 <div class="grid_12"><br/></div>
@@ -676,7 +999,7 @@ The normalised vector, n, defines the plane on which the polygon approximately l
 <div class="clear"></div>
 
 <div id="footer" class="grid_12">
-Built on 25/10/2011
+Built on 26/10/2011
 </div>
 <div class="clear"></div>
 

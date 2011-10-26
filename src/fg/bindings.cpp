@@ -49,6 +49,7 @@
 #include "fg/meshoperators.h"
 #include "fg/pos.h"
 #include "fg/phyllo.h"
+#include "fg/geometry_wrapper.h"
 
 #include "fg/gc/turtle.h"
 
@@ -274,6 +275,8 @@ namespace fg {
 		   .def("set_colour", (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setColour))
 		   .def("set_colour", (void(fg::VertexProxy::*)(double,double,double)) (&fg::VertexProxy::setColour))
 
+		   .property("c", &fg::VertexProxy::getColour, (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setColour))
+
 		   .def("setUV", &fg::VertexProxy::setUV)
 		   .def("set_uv", &fg::VertexProxy::setUV)
 
@@ -442,6 +445,12 @@ namespace fg {
 
 		   .def("getNumGC",&fg::gc::Turtle::getNumGC)
 		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(int))&fg::gc::Turtle::getMesh)
+		];
+
+		// fg/geometry_wrapper.h
+		module(L)[
+		    def("line_exp_point_dist",line_exp_point_dist_3d),
+		    def("segment_point_dist",segment_point_dist_3d)
 		];
 
 		return 0;

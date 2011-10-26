@@ -10,3 +10,12 @@ require "core.nloop"
 require "core.mesh"
 require "core.pos"
 require "core.node"
+require "core.geometry"
+-- include underscore into global namespace
+__ = require "core.underscore"
+__.each(__.functions(), 
+	function(f) 
+		_G[f] = __[f]
+	end
+)
+require "core.underscore_docs"
