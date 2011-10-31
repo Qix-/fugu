@@ -1,5 +1,9 @@
 <RCC>
   <qresource>
+    <file>res/fg_logo.ico</file>
+    <file>res/fg_logo_16.png</file>
+    <file>res/fg_logo_32.png</file>
+    <file>res/fg_logo_64.png</file>
     <file>res/overwire.png</file>
     <file>res/colour_none.png</file>
     <file>res/colour_vertex.png</file>
