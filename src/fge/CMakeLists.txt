@@ -35,7 +35,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}) # required to be able to includ
 
 SET(RCS
 	ui/resources.qrc
-)
+)	
 QT4_ADD_RESOURCES( RC_SRC ${RCS} )
   
 INCLUDE_DIRECTORIES(
@@ -58,12 +58,12 @@ FILE(GLOB HEADER_INC "*.inc")
 
 SET(EVERYTHING ${SRC} ${MOC_SRC} ${HEADERS} ${HEADER_INC} ${UIS_H} ${RC_SRC})
 
-#IF(MINGW)
-	#add_executable(fugu WIN32 ${EVERYTHING})
-#ELSE(MINGW)
+IF(MINGW)
+	add_executable(fugu WIN32 ${EVERYTHING} ui/icon.rc)
+ELSE(MINGW)
 	add_executable(fugu ${EVERYTHING})
-#ENDIF(MINGW)
-target_link_libraries(fugu ${ALL_LIBS}) 
+ENDIF(MINGW)
+target_link_libraries(fugu ${ALL_LIBS} ${ALL_LIBS} ) 
 
 # install fgv into bin
 install(TARGETS fugu DESTINATION .)

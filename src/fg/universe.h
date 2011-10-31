@@ -114,6 +114,8 @@ namespace fg {
 		// helpers
 		double time() const; ///< Returns the current time in the universe
 
+		inline lua_State* getLuaState(){return L;}
+
 		/// \brief Return a list of all categorised commands in tuple(category,name,docstring)
 		std::list<tuple<std::string,std::string,std::string> > commandListByCategory() const;
 	private:

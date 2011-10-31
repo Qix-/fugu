@@ -17,6 +17,8 @@ class QFile;
 class QString;
 class QsciScintilla;
 class ConsoleWidget;
+struct lua_State;
+namespace luabind {class object;}
 
 class MainWindow : public QMainWindow
 {
@@ -24,6 +26,7 @@ class MainWindow : public QMainWindow
 
 public:
 	MainWindow(QWidget *parent = 0);
+	static inline MainWindow* instance(){return sInstance;}
 
 public slots:
 	void about();
@@ -63,6 +66,7 @@ public slots:
 
 	void textChanged();
 
+
 private:
 
 	void openFile(const QString &path = QString());
@@ -72,6 +76,11 @@ private:
 
 	/// Open a new editor of file (or a blank editor if file==NULL)
 	void newEditor(QFile* file=NULL);
+
+	// sets up the slider sheet and add_slider callback
+	void setupAddSliderCallback(lua_State*);
+
+	static void lua_add_slider(const luabind::object& o);
 
 	// text editors
 	QTabWidget* mEditors;
@@ -84,6 +93,9 @@ private:
 
 	// console
 	ConsoleWidget* mConsoleWidget;
+
+	// controls
+	QDockWidget* mControlWidget;
 
 	// export dialog
 	QDialog* mExportDialog;
@@ -98,6 +110,8 @@ private:
 	double mTime;
 
 	QTimer* mSimulationTimer;
+
+	static MainWindow* sInstance;
 
 };
 

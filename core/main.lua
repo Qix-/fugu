@@ -19,3 +19,4 @@ __.each(__.functions(),
 	end
 )
 require "core.underscore_docs"
+require "core.ui"

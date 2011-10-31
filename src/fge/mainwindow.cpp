@@ -5,6 +5,9 @@
 #include <QtGui>
 #include <Qsci/qsciscintilla.h>
 
+#include "luabind/luabind.hpp"
+#include "luabind/object.hpp"
+
 #include "fglexer.h"
 #include "consolewidget.h"
 #include "redirect.h"
@@ -14,6 +17,8 @@
 #include "ui_exportdialog.h"
 
 #include "html_template.h"
+
+MainWindow* MainWindow::sInstance = NULL;
 
 MainWindow::MainWindow(QWidget *parent)
 : QMainWindow(parent)
@@ -25,8 +30,17 @@ MainWindow::MainWindow(QWidget *parent)
 ,mTime(0)
 ,mActiveScript(NULL)
 {
+	sInstance = this;
+
 	Ui::MainWindow ui;
 	ui.setupUi(this);
+
+	// set the icon
+	QIcon icon;
+	icon.addFile(":/res/fg_logo_16.png",QSize(16,16));
+	icon.addFile(":/res/fg_logo_32.png",QSize(32,32));
+	icon.addFile(":/res/fg_logo_64.png",QSize(64,64));
+	setWindowIcon(icon);
 
 	mConsoleWidget = findChild<ConsoleWidget*>("consolewidget");
 	mFGView = findChild<FGView*>("fgview");
@@ -34,6 +48,16 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(mConsoleWidget, SIGNAL(emitCommand(QString)), this, SLOT(runScript(QString)));
 
 	QTimer::singleShot(1, this, SLOT(redirectStreams()));
+
+	// create the slider dialog
+	mControlWidget = new QDockWidget(tr("Control"),this);
+	mControlWidget->setAllowedAreas(Qt::NoDockWidgetArea); // Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	QWidget* controlList = new QWidget(mControlWidget);
+	controlList->setLayout(new QVBoxLayout());
+	mControlWidget->setWidget(controlList);
+	addDockWidget(Qt::RightDockWidgetArea, mControlWidget);
+	mControlWidget->setFloating(true);
+	findChild<QMenu*>("menuView")->addAction(mControlWidget->toggleViewAction());
 
 	// create action groups..
 
@@ -210,9 +234,9 @@ void MainWindow::load(){
 			// dir.makeAbsolute();
 			mUniverse->addScriptDirectory((dir.absolutePath() + "/?.lua").toStdString());
 			mUniverse->addScriptDirectory("../scripts/?.lua");
-			// mUniverse->addScriptDirectory("./?.lua");
-			// mUniverse->loadScript("ben/aorta");
-			// chop off .lua suffix
+
+			// load the add_slider callbacks
+			setupAddSliderCallback(mUniverse->getLuaState());
 
 			QString filebase = info.completeBaseName();
 			if (filebase.endsWith(".lua")){
@@ -770,4 +794,54 @@ void MainWindow::newEditor(QFile* file)
 	connect(editor,SIGNAL(textChanged()),this,SLOT(textChanged()));
 
 	if (!mActiveScript) makeCurrentScriptActive();
+}
+
+void MainWindow::setupAddSliderCallback(lua_State* L){
+	// setup function
+	luabind::module(L)[
+	   luabind::def("add_slider", &MainWindow::lua_add_slider)
+	];
+}
+
+void MainWindow::lua_add_slider(const luabind::object& o){
+	MainWindow* win = MainWindow::instance();
+	// parse the contents
+	if (o["var"] and o["low"] and o["high"] and o["value"]){
+		std::string var = luabind::object_cast<std::string>(o["var"]);
+		double value = luabind::object_cast<double>(o["value"]);
+		double low = luabind::object_cast<double>(o["low"]);
+		double high = luabind::object_cast<double>(o["high"]);
+		// std::cout << "Binding var \"" << var << "\" with {" << value << "," << low << "," << high <<"}\n";
+
+		// as a qslider operates on integers, figure out the multiplier to get from int_val->double_val
+		double range = high - low;
+		if (range < 0){
+			std::cerr << "add_slider parameter error (high < low)";
+			return;
+		}
+
+		double multiplier = 1;
+		// for low,high = (-100,100) no need for a multiplier
+		// for low,high = (0,1) the multiplier should be 100
+		if (range < 1){
+			multiplier = 100;
+		}
+		else if (range < 10){
+			multiplier = 10;
+		}
+		else if (range < 100){
+			multiplier = 100;
+		}
+		else multiplier = 1000;
+
+		QSlider* qs = new QSlider(Qt::Horizontal);
+		qs->setMinimum(low*multiplier);
+		qs->setMaximum(high*multiplier);
+		qs->setValue(value*multiplier);
+
+		win->mControlWidget->widget()->layout()->addWidget(qs);
+	}
+	else {
+		std::cerr << "add_slider needs the following params: \"var\", \"value\", \"low\", \"high\"\n";
+	}
 }
