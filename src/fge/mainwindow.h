@@ -15,6 +15,7 @@ class QMdiArea;
 class QTabWidget;
 class QFile;
 class QString;
+class QSlider;
 class QsciScintilla;
 class ConsoleWidget;
 struct lua_State;
@@ -65,7 +66,7 @@ public slots:
 	void buildReference(); // build the html reference
 
 	void textChanged();
-
+	void paramSliderValueChanged(int val);
 
 private:
 
@@ -95,7 +96,13 @@ private:
 	ConsoleWidget* mConsoleWidget;
 
 	// controls
+	struct BoundVariable {
+		std::string var; // lua variable name
+		double multiplier; // applied to the slider's value to get the real value
+	};
+
 	QDockWidget* mControlWidget;
+	QHash<QSlider*, BoundVariable> mBoundVariableMap;
 
 	// export dialog
 	QDialog* mExportDialog;

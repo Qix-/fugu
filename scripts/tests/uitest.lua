@@ -13,8 +13,12 @@ local sf -- superformula function (defined below)
 -- superformula parameters
 local s1 = {a=1,b=1,m=7,n1=0.2,n2=1.7,n3=1.7}
 local s2 = {a=1,b=1,m=7,n1=0.2,n2=1.7,n3=1.7}
-local s1c, s2c -- copies of superformulas for animation
+-- global instances of superformulae
+s1c = nil
+s2c = nil
 local wave, awave -- wavy functions with params (period,offset)
+
+
 
 function setup()
 	m = icosahedron()
@@ -36,6 +40,9 @@ function setup()
 	add_slider {var="s1c.a", value=s1.a, low=0, high=5}
 	add_slider {var="s1c.b", value=s1.b, low=0, high=5}
 	add_slider {var="s1c.m", value=s1.m, low=0, high=14}
+	add_slider {var="s1c.n1", value=s1.n1, low=0, high=2}
+	add_slider {var="s1c.n2", value=s1.n2, low=0, high=2}
+	add_slider {var="s1c.n3", value=s1.n3, low=0, high=2}
 end
 
 function update(dt)
