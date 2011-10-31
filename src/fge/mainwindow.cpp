@@ -701,6 +701,18 @@ void MainWindow::textChanged(){
 	}
 }
 
+void MainWindow::paramSliderValueChanged(int val){
+	QSlider* qs = static_cast<QSlider*>(QObject::sender());
+	BoundVariable bv = mBoundVariableMap[qs];
+
+	int index = mEditors->indexOf(mActiveScript);
+	QString str = mEditors->tabText(index);
+	str = str.mid(1,str.length()-6);
+	str += QString(".") + QString::fromStdString(bv.var) + QString("=") + QString::number(val/bv.multiplier);
+	std::cout << "Run: \"" << str.toStdString() << "\"\n";
+	runScript(str);
+}
+
 void MainWindow::openFile(const QString &path)
 {
 	QString fileName = path;
@@ -840,6 +852,13 @@ void MainWindow::lua_add_slider(const luabind::object& o){
 		qs->setValue(value*multiplier);
 
 		win->mControlWidget->widget()->layout()->addWidget(qs);
+
+		BoundVariable bv;
+		bv.var = var;
+		bv.multiplier = multiplier;
+		win->mBoundVariableMap.insert(qs,bv);
+
+		connect(qs,SIGNAL(valueChanged(int)),win,SLOT(paramSliderValueChanged(int)));
 	}
 	else {
 		std::cerr << "add_slider needs the following params: \"var\", \"value\", \"low\", \"high\"\n";

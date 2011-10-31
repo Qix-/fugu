@@ -14,7 +14,8 @@ local sf -- superformula function (defined below)
 -- superformula parameters
 local s1 = {a=1,b=1,m=7,n1=0.2,n2=1.7,n3=1.7}
 local s2 = {a=1,b=1,m=7,n1=0.2,n2=1.7,n3=1.7}
-local s1c, s2c -- copies of superformulas for animation
+s1c = nil
+s2c = nil -- copies of superformulas for animation
 local wave, awave -- wavy functions with params (period,offset)
 
 function setup()
