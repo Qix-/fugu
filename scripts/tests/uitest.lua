@@ -43,12 +43,18 @@ function setup()
 	add_slider {var="s1c.n1", value=s1.n1, low=0, high=2}
 	add_slider {var="s1c.n2", value=s1.n2, low=0, high=2}
 	add_slider {var="s1c.n3", value=s1.n3, low=0, high=2}
+	add_slider {var="s2c.a", value=s2.a, low=0, high=5}
+	add_slider {var="s2c.b", value=s2.b, low=0, high=5}
+	add_slider {var="s2c.m", value=s2.m, low=0, high=14}
+	add_slider {var="s2c.n1", value=s2.n1, low=0, high=2}
+	add_slider {var="s2c.n2", value=s2.n2, low=0, high=2}
+	add_slider {var="s2c.n3", value=s2.n3, low=0, high=2}
 end
 
 function update(dt)
 	for i,v in ipairs(verts) do		
 		local r,th,ph = opp[i][1],opp[i][2],opp[i][3]		
-		v.p = sf(s1c,s2,-th,ph) -- negating theta helps..
+		v.p = sf(s1c,s2c,-th,ph) -- negating theta helps..
 		v.c = vec3(awave(1.2,ph),awave(1,th),awave(1,0))
 	end
 end
