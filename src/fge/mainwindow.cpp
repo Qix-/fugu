@@ -5,6 +5,8 @@
 #include <QtGui>
 #include <Qsci/qsciscintilla.h>
 
+#include <QProcess>
+
 #include "luabind/luabind.hpp"
 #include "luabind/object.hpp"
 
@@ -42,7 +44,20 @@ MainWindow::MainWindow(QWidget *parent)
 	icon.addFile(":/res/fg_logo_64.png",QSize(64,64));
 	setWindowIcon(icon);
 
-	mConsoleWidget = findChild<ConsoleWidget*>("consolewidget");
+	// create console widget
+	mConsoleDockWidget = new QDockWidget(tr("Console"), this);
+	mConsoleWidget = new ConsoleWidget(mConsoleDockWidget);
+	mConsoleDockWidget->setAllowedAreas(Qt::NoDockWidgetArea); // Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+	mConsoleDockWidget->setWidget(mConsoleWidget);
+	addDockWidget(Qt::BottomDockWidgetArea, mConsoleDockWidget);
+	mConsoleDockWidget->setFloating(true);
+	mConsoleDockWidget->show();
+	findChild<QMenu*>("menuView")->addAction(mConsoleDockWidget->toggleViewAction());
+
+	// mConsoleWidget = findChild<ConsoleWidget*>("consolewidget");
+
+	// grab references to child widgets
 	mFGView = findChild<FGView*>("fgview");
 	mEditors = findChild<QTabWidget*>("editors");
 	connect(mConsoleWidget, SIGNAL(emitCommand(QString)), this, SLOT(runScript(QString)));
@@ -57,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent)
 	mControlWidget->setWidget(controlList);
 	addDockWidget(Qt::RightDockWidgetArea, mControlWidget);
 	mControlWidget->setFloating(true);
+	mControlWidget->hide();
 	findChild<QMenu*>("menuView")->addAction(mControlWidget->toggleViewAction());
 
 	// create action groups..
@@ -82,6 +98,11 @@ MainWindow::MainWindow(QWidget *parent)
 	colourModeGroup->addAction(ui.actionSetColourVertex);
 	ui.actionSetColourVertex->setChecked(true);
 
+	// add some actions to mainwindow too (so they don't disable when the menu bar is hidden)
+	this->addAction(ui.actionToolBar);
+	this->addAction(ui.actionMenuBar);
+	this->addAction(ui.actionFull_Screen);
+
 	// load a script
 	newEditor(new QFile("../scripts/ben/simple.lua"));
 }
@@ -90,6 +111,36 @@ void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About fugu"),
 			tr("<p><b>fugu</b> is a code-oriented form generation tool.</p>"));
+}
+
+void MainWindow::newProject(){
+	// ...
+	QProcess p;
+	p.startDetached("fugu");
+
+}
+
+void MainWindow::openProject(){
+	/*
+	QString fileName = path;
+	if (fileName.isNull())
+		fileName = QFileDialog::getOpenFileName(this,
+				tr("Open File"), "", "fugu script (*.lua)");
+
+	if (!fileName.isEmpty()) {
+
+		// check if its already open...
+		// if so, just switch to that file
+		for(int i=0;i<mEditors->count();i++){
+			if (mFileNames[mEditors->widget(i)]==fileName){
+				mEditors->setCurrentIndex(i);
+				return;
+			}
+		}
+		// if not, open a new editor
+		newEditor(new QFile(fileName));
+	}
+	*/
 }
 
 void MainWindow::newFile()
@@ -101,6 +152,28 @@ void MainWindow::newFile()
 void MainWindow::open()
 {
 	openFile();
+}
+
+void MainWindow::openFile(const QString &path)
+{
+	QString fileName = path;
+	if (fileName.isNull())
+		fileName = QFileDialog::getOpenFileName(this,
+				tr("Open File"), "", "fugu script (*.lua)");
+
+	if (!fileName.isEmpty()) {
+
+		// check if its already open...
+		// if so, just switch to that file
+		for(int i=0;i<mEditors->count();i++){
+			if (mFileNames[mEditors->widget(i)]==fileName){
+				mEditors->setCurrentIndex(i);
+				return;
+			}
+		}
+		// if not, open a new editor
+		newEditor(new QFile(fileName));
+	}
 }
 
 void MainWindow::save(){
@@ -430,6 +503,16 @@ void MainWindow::showLineNumbers(bool b){
 	}
 }
 
+void MainWindow::toggleFullScreen(bool b){
+	if (b){
+		showFullScreen();
+	}
+	else {
+		showNormal();
+	}
+
+}
+
 void MainWindow::exportSimulation(){
 	if (mUniverse==NULL){
 		QMessageBox::critical(this, tr("Export"), tr("There is no simulation to export!"));
@@ -713,28 +796,6 @@ void MainWindow::paramSliderValueChanged(int val){
 	runScript(str);
 }
 
-void MainWindow::openFile(const QString &path)
-{
-	QString fileName = path;
-	if (fileName.isNull())
-		fileName = QFileDialog::getOpenFileName(this,
-				tr("Open File"), "", "fugu script (*.lua)");
-
-	if (!fileName.isEmpty()) {
-
-		// check if its already open...
-		// if so, just switch to that file
-		for(int i=0;i<mEditors->count();i++){
-			if (mFileNames[mEditors->widget(i)]==fileName){
-				mEditors->setCurrentIndex(i);
-				return;
-			}
-		}
-		// if not, open a new editor
-		newEditor(new QFile(fileName));
-	}
-}
-
 // Save the the editor's contents to the file fileName
 bool MainWindow::saveFile(QsciScintilla* editor, QString fileName){
 	// Save the currently active script
@@ -862,5 +923,23 @@ void MainWindow::lua_add_slider(const luabind::object& o){
 	}
 	else {
 		std::cerr << "add_slider needs the following params: \"var\", \"value\", \"low\", \"high\"\n";
+	}
+}
+
+void MainWindow::chooseDrawMode(QString mode){
+	if (mode=="points"){
+		mFGView->setDrawPoints();
+	}
+	else if (mode=="wireframe"){
+		mFGView->setDrawWire();
+	}
+	else if (mode=="flat shaded"){
+		mFGView->setDrawFlat();
+	}
+	else if (mode=="phong shaded"){
+		mFGView->setDrawPhong();
+	}
+	else if (mode=="textured"){
+		mFGView->setDrawTextured();
 	}
 }

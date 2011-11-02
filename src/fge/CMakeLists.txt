@@ -59,7 +59,7 @@ FILE(GLOB HEADER_INC "*.inc")
 SET(EVERYTHING ${SRC} ${MOC_SRC} ${HEADERS} ${HEADER_INC} ${UIS_H} ${RC_SRC})
 
 IF(MINGW)
-	add_executable(fugu WIN32 ${EVERYTHING} ui/icon.rc)
+	add_executable(fugu ${EVERYTHING} ui/icon.rc) #add WIN32 to remove cmd window 
 ELSE(MINGW)
 	add_executable(fugu ${EVERYTHING})
 ENDIF(MINGW)
