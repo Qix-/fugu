@@ -31,13 +31,20 @@ public:
 
 public slots:
 	void about();
+
+	void newProject();
+	void openProject(); // opens a new project in a new fugu instance
+	//void saveProject(); // saves all open files
+	//void saveProjectAs(); // saves project under new name
+	// void closeProject(); // equivalent to quit
+
 	void newFile();
 	void open();
 	void save();
 	void saveAs();
 	void closeFile();
-	void quit();
 
+	void quit();
 
 	void load(); // load the current script
 	void unload(); // unload the current universe
@@ -59,6 +66,7 @@ public slots:
 	void makeCurrentScriptActive();
 
 	void showLineNumbers(bool);
+	void toggleFullScreen(bool);
 
 	void exportSimulation();
 	void exportSimulationChooseDir(); // called by exportSimulation only
@@ -67,6 +75,8 @@ public slots:
 
 	void textChanged();
 	void paramSliderValueChanged(int val);
+
+	void chooseDrawMode(QString);
 
 private:
 
@@ -94,6 +104,7 @@ private:
 
 	// console
 	ConsoleWidget* mConsoleWidget;
+	QDockWidget* mConsoleDockWidget;
 
 	// controls
 	struct BoundVariable {

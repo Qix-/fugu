@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>842</width>
+    <width>819</width>
     <height>600</height>
    </rect>
   </property>
@@ -322,12 +322,37 @@ QPushButton {
       subcontrol-origin: margin;
   }
   
+/*
+  QScrollBar::up-arrow:vertical: {
+    image: url(&quot;:/res/arrow_up.png&quot;);
+  }
+
+QScrollBar::down-arrow:vertical: {
+    image: url(&quot;:/res/arrow_down.png&quot;);
+  }
+*/
+
+/*
   QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {  	 
       width: 0px;
       height: 0px;
       background: none;
   }
+*/
 
+QScrollBar::up-arrow:vertical {
+	image: url(&quot;:/res/arrow_up.png&quot;);
+    width: 16px;
+    height: 16px;
+   background: transparent;
+}
+
+QScrollBar::down-arrow:vertical {
+	image: url(&quot;:/res/arrow_down.png&quot;);
+    width: 16px;
+    height: 16px;
+   background: transparent;
+}
   QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
       background: none;
   }
@@ -398,7 +423,7 @@ QToolBar::separator:vertical {
 }
 
  QToolBar::handle:vertical {
-     /* image: url(handle.png); */
+     /*image: url(handle.png); */
      image: none;
      height: 8px;
      background: #3f3f3f;
@@ -427,6 +452,27 @@ QToolBar::separator:vertical {
  	background-color: #f27000;
  }
   
+
+QComboBox::drop-down {
+     subcontrol-origin: padding;
+     subcontrol-position: top right;
+     width: 15px;
+
+     border: 0px;
+/*
+     border-left-width: 1px;
+     border-left-color: darkgray;
+     border-left-style: solid; 
+     border-top-right-radius: 3px;
+     border-bottom-right-radius: 3px;
+*/
+}
+
+QComboBox::down-arrow {
+	image: url(&quot;:/res/arrow_down.png&quot;);
+}
+
+
  </string>
   </property>
   <property name="iconSize">
@@ -440,6 +486,9 @@ QToolBar::separator:vertical {
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <property name="margin">
      <number>0</number>
     </property>
@@ -461,75 +510,71 @@ QToolBar::separator:vertical {
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <property name="margin">
          <number>0</number>
         </property>
         <item>
-         <widget class="QSplitter" name="splitter_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <widget class="QWidget" name="editorscontainer" native="true">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="margin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QTabWidget" name="editors">
-              <property name="currentIndex">
-               <number>-1</number>
-              </property>
-              <property name="documentMode">
-               <bool>false</bool>
-              </property>
-              <property name="movable">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="ConsoleWidget" name="consolewidget" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+         <widget class="QWidget" name="editorscontainer" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="spacing">
+            <number>0</number>
            </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>300</height>
-            </size>
+           <property name="margin">
+            <number>0</number>
            </property>
-          </widget>
+           <item>
+            <widget class="QTabWidget" name="editors">
+             <property name="currentIndex">
+              <number>-1</number>
+             </property>
+             <property name="documentMode">
+              <bool>false</bool>
+             </property>
+             <property name="movable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="FGView" name="fgview" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="baseSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
+      <widget class="QWidget" name="widget" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="FGView" name="fgview" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -540,7 +585,7 @@ QToolBar::separator:vertical {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>842</width>
+     <width>819</width>
      <height>25</height>
     </rect>
    </property>
@@ -549,6 +594,7 @@ QToolBar::separator:vertical {
      <string>File</string>
     </property>
     <addaction name="actionNew"/>
+    <addaction name="actionNew_2"/>
     <addaction name="action_Open"/>
     <addaction name="action_Save"/>
     <addaction name="actionSave_As"/>
@@ -584,6 +630,9 @@ QToolBar::separator:vertical {
     <property name="title">
      <string>View</string>
     </property>
+    <addaction name="actionFull_Screen"/>
+    <addaction name="actionToolBar"/>
+    <addaction name="actionMenuBar"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -594,6 +643,9 @@ QToolBar::separator:vertical {
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -606,11 +658,13 @@ QToolBar::separator:vertical {
    <addaction name="actionReload"/>
    <addaction name="actionPlay"/>
    <addaction name="actionStep"/>
-   <addaction name="separator"/>
   </widget>
   <widget class="QToolBar" name="toolBar_2">
    <property name="windowTitle">
     <string>toolBar_2</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -618,6 +672,7 @@ QToolBar::separator:vertical {
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="separator"/>
    <addaction name="actionToggleLighting"/>
    <addaction name="actionToggleOrigin"/>
    <addaction name="actionToggleGround"/>
@@ -629,19 +684,19 @@ QToolBar::separator:vertical {
    <addaction name="actionSetDrawPhong"/>
    <addaction name="actionSetDrawTextured"/>
    <addaction name="separator"/>
-   <addaction name="actionSetSubdivs0"/>
-   <addaction name="actionSetSubdivs1"/>
-   <addaction name="actionSetSubdivs2"/>
-   <addaction name="actionSetSubdivs3"/>
+   <addaction name="actionToggleShowOverWire"/>
    <addaction name="separator"/>
    <addaction name="actionSetColourNone"/>
    <addaction name="actionSetColourVertex"/>
    <addaction name="separator"/>
-   <addaction name="actionToggleShowOverWire"/>
+   <addaction name="actionSetSubdivs0"/>
+   <addaction name="actionSetSubdivs1"/>
+   <addaction name="actionSetSubdivs2"/>
+   <addaction name="actionSetSubdivs3"/>
   </widget>
   <action name="actionNew">
    <property name="text">
-    <string>&amp;New</string>
+    <string>&amp;New Project</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -764,7 +819,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/wire.png</normaloff>:/res/wire.png</iconset>
    </property>
    <property name="text">
-    <string>setDrawWire</string>
+    <string>Wireframe</string>
    </property>
   </action>
   <action name="actionSetDrawFlat">
@@ -776,7 +831,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/flat.png</normaloff>:/res/flat.png</iconset>
    </property>
    <property name="text">
-    <string>setDrawFlat</string>
+    <string>Flat Shaded</string>
    </property>
   </action>
   <action name="actionSetDrawSmooth">
@@ -788,7 +843,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/smooth.png</normaloff>:/res/smooth.png</iconset>
    </property>
    <property name="text">
-    <string>setDrawSmooth</string>
+    <string>Smooth Shaded</string>
    </property>
   </action>
   <action name="actionSetDrawPhong">
@@ -800,7 +855,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/phong.png</normaloff>:/res/phong.png</iconset>
    </property>
    <property name="text">
-    <string>setDrawPhong</string>
+    <string>Phong Shaded</string>
    </property>
   </action>
   <action name="actionSetDrawPoints">
@@ -812,7 +867,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/points.png</normaloff>:/res/points.png</iconset>
    </property>
    <property name="text">
-    <string>setDrawPoints</string>
+    <string>Points</string>
    </property>
   </action>
   <action name="actionSetDrawTextured">
@@ -824,7 +879,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/textured.png</normaloff>:/res/textured.png</iconset>
    </property>
    <property name="text">
-    <string>setDrawTextured</string>
+    <string>Textured</string>
    </property>
   </action>
   <action name="actionSetSubdivs0">
@@ -836,7 +891,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/subdiv0.png</normaloff>:/res/subdiv0.png</iconset>
    </property>
    <property name="text">
-    <string>setSubdivs0</string>
+    <string>No Subdivision</string>
    </property>
   </action>
   <action name="actionSetSubdivs1">
@@ -848,7 +903,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/subdiv1.png</normaloff>:/res/subdiv1.png</iconset>
    </property>
    <property name="text">
-    <string>setSubdivs1</string>
+    <string>Subdivided Once</string>
    </property>
   </action>
   <action name="actionSetSubdivs2">
@@ -860,7 +915,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/subdiv2.png</normaloff>:/res/subdiv2.png</iconset>
    </property>
    <property name="text">
-    <string>setSubdivs2</string>
+    <string>Subdivided Twice</string>
    </property>
   </action>
   <action name="actionSetSubdivs3">
@@ -872,7 +927,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/subdiv3.png</normaloff>:/res/subdiv3.png</iconset>
    </property>
    <property name="text">
-    <string>setSubdivs3</string>
+    <string>Subdivided Thrice</string>
    </property>
   </action>
   <action name="actionToggleOrigin">
@@ -887,7 +942,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/axes.png</normaloff>:/res/axes.png</iconset>
    </property>
    <property name="text">
-    <string>toggleOrigin</string>
+    <string>Show Origin</string>
    </property>
   </action>
   <action name="actionToggleGround">
@@ -902,7 +957,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/ground.png</normaloff>:/res/ground.png</iconset>
    </property>
    <property name="text">
-    <string>toggleGround</string>
+    <string>Show Ground</string>
    </property>
   </action>
   <action name="actionToggleShowNodeOrigins">
@@ -917,7 +972,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/nodeaxes.png</normaloff>:/res/nodeaxes.png</iconset>
    </property>
    <property name="text">
-    <string>toggleShowNodeOrigins</string>
+    <string>Show Node Origins</string>
    </property>
   </action>
   <action name="actionSetColourNone">
@@ -929,7 +984,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/colour_none.png</normaloff>:/res/colour_none.png</iconset>
    </property>
    <property name="text">
-    <string>setColourNone</string>
+    <string>Don't Colour</string>
    </property>
   </action>
   <action name="actionSetColourVertex">
@@ -941,7 +996,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/colour_vertex.png</normaloff>:/res/colour_vertex.png</iconset>
    </property>
    <property name="text">
-    <string>setColourVertex</string>
+    <string>Colour Vertices</string>
    </property>
   </action>
   <action name="actionShowLineNumbers">
@@ -952,7 +1007,7 @@ QToolBar::separator:vertical {
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>showLineNumbers</string>
+    <string>Show Line Numbers</string>
    </property>
   </action>
   <action name="actionToggleShowOverWire">
@@ -967,7 +1022,7 @@ QToolBar::separator:vertical {
      <normaloff>:/res/overwire.png</normaloff>:/res/overwire.png</iconset>
    </property>
    <property name="text">
-    <string>toggleShowOverWire</string>
+    <string>Show Wire Over Mesh</string>
    </property>
   </action>
   <action name="actionMakeCurrentScriptActive">
@@ -1005,14 +1060,55 @@ QToolBar::separator:vertical {
     <string>Export...</string>
    </property>
   </action>
+  <action name="actionNew_2">
+   <property name="text">
+    <string>New File</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new script in this project</string>
+   </property>
+  </action>
+  <action name="actionFull_Screen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Full Screen</string>
+   </property>
+   <property name="shortcut">
+    <string>F11</string>
+   </property>
+  </action>
+  <action name="actionToolBar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>ToolBar</string>
+   </property>
+   <property name="shortcut">
+    <string>F8</string>
+   </property>
+  </action>
+  <action name="actionMenuBar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>MenuBar</string>
+   </property>
+   <property name="shortcut">
+    <string>F9</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ConsoleWidget</class>
-   <extends>QWidget</extends>
-   <header>fge/consolewidget.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>FGView</class>
    <extends>QWidget</extends>
@@ -1047,7 +1143,7 @@ QToolBar::separator:vertical {
    <sender>actionNew</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>newFile()</slot>
+   <slot>newProject()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -1204,22 +1300,6 @@ QToolBar::separator:vertical {
    </hints>
   </connection>
   <connection>
-   <sender>actionToggleLighting</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>fgview</receiver>
-   <slot>toggleLighting(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>765</x>
-     <y>319</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionPlay</sender>
    <signal>toggled(bool)</signal>
    <receiver>MainWindow</receiver>
@@ -1232,6 +1312,118 @@ QToolBar::separator:vertical {
     <hint type="destinationlabel">
      <x>399</x>
      <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShowLineNumbers</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showLineNumbers(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionMakeCurrentScriptActive</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>makeCurrentScriptActive()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>438</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionClose</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>closeFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>438</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExport</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportSimulation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>438</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_Reference</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>buildReference()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew_2</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>newFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionToggleLighting</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>fgview</receiver>
+   <slot>toggleLighting(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>765</x>
+     <y>319</y>
     </hint>
    </hints>
   </connection>
@@ -1454,8 +1646,8 @@ QToolBar::separator:vertical {
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1327</x>
-     <y>376</y>
+     <x>809</x>
+     <y>437</y>
     </hint>
    </hints>
   </connection>
@@ -1470,24 +1662,8 @@ QToolBar::separator:vertical {
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1327</x>
-     <y>376</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShowLineNumbers</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>showLineNumbers(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
+     <x>809</x>
+     <y>437</y>
     </hint>
    </hints>
   </connection>
@@ -1502,72 +1678,72 @@ QToolBar::separator:vertical {
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1327</x>
-     <y>376</y>
+     <x>809</x>
+     <y>437</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>actionMakeCurrentScriptActive</sender>
-   <signal>triggered()</signal>
+   <sender>actionFull_Screen</sender>
+   <signal>toggled(bool)</signal>
    <receiver>MainWindow</receiver>
-   <slot>makeCurrentScriptActive()</slot>
+   <slot>toggleFullScreen(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>438</x>
+     <x>409</x>
      <y>299</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>actionClose</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>closeFile()</slot>
+   <sender>actionToolBar</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toolBar_2</receiver>
+   <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>438</x>
-     <y>299</y>
+     <x>467</x>
+     <y>38</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>actionExport</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>exportSimulation()</slot>
+   <sender>actionToolBar</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>toolBar</receiver>
+   <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>438</x>
-     <y>299</y>
+     <x>57</x>
+     <y>38</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>action_Reference</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>buildReference()</slot>
+   <sender>actionMenuBar</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>menubar</receiver>
+   <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
+     <x>409</x>
+     <y>12</y>
     </hint>
    </hints>
   </connection>
@@ -1596,5 +1772,8 @@ QToolBar::separator:vertical {
   <slot>closeFile()</slot>
   <slot>exportSimulation()</slot>
   <slot>buildReference()</slot>
+  <slot>newProject()</slot>
+  <slot>chooseDrawMode(QString)</slot>
+  <slot>toggleFullScreen(bool)</slot>
  </slots>
 </ui>
