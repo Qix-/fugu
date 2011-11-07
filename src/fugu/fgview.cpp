@@ -11,7 +11,7 @@
 
 #include "fg/glrenderer.h"
 
-#include "fge/trackball.h"
+#include "trackball.h"
 
 
 #ifndef GL_MULTISAMPLE

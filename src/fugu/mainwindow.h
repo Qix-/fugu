@@ -71,6 +71,7 @@ public slots:
 	void exportSimulation();
 	void exportSimulationChooseDir(); // called by exportSimulation only
 
+	void buildFuguKeywordSet();
 	void buildReference(); // build the html reference
 
 	void textChanged();
@@ -99,8 +100,12 @@ private:
 	QWidget* mActiveScript; // the script that is executed when play/restart is pressed...
 	QSet<QWidget*> mUnsavedEditors; // the unsaved editors
 
+	const char* mFuguKeywords; // fugu keywords that get syntax highlighting
+
 	// 3d view
 	FGView* mFGView;
+
+
 
 	// console
 	ConsoleWidget* mConsoleWidget;

@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
 ,mTimeMultiplier(1)
 ,mTime(0)
 ,mActiveScript(NULL)
+,mFuguKeywords(NULL)
 {
 	sInstance = this;
 
@@ -102,6 +103,9 @@ MainWindow::MainWindow(QWidget *parent)
 	this->addAction(ui.actionToolBar);
 	this->addAction(ui.actionMenuBar);
 	this->addAction(ui.actionFull_Screen);
+
+	// build the set of fugu keywords
+	buildFuguKeywordSet();
 
 	// load a script
 	newEditor(new QFile("../scripts/ben/simple.lua"));
@@ -634,6 +638,51 @@ std::string IDEncode(const std::string& s){
 }
 
 
+void MainWindow::buildFuguKeywordSet(){
+	// mFuguKeywords
+	if (mFuguKeywords!=NULL){
+		std::cerr << "The fugu keyword set is trying to be built more than once!";
+		return;
+	}
+
+	// if universe doesn't exist, make one temporarily...
+	bool tmpuni = false;
+	if (mUniverse==NULL){
+		tmpuni = true;
+		try {
+			mUniverse = new fg::Universe();
+		}
+		catch (std::runtime_error& e){
+			mSimulationMode = SM_ERROR;
+			std::cerr << "ERROR: " << e.what() << "\n";
+			if (mUniverse!=NULL){
+				delete mUniverse;
+				mUniverse = NULL;
+				return;
+			}
+		}
+	}
+
+	typedef tuple<std::string,std::string,std::string> string3;
+	std::list<string3> commandList = mUniverse->commandListByCategory();
+
+	std::ostringstream oss;
+	foreach(const string3& s3, commandList){
+		std::string categoryName = s3.get<0>();
+		std::string functionName = s3.get<1>();
+		std::string docString = s3.get<2>();
+		oss << functionName << " ";
+	}
+
+	mFuguKeywords = strdup(oss.str().c_str());
+
+	if (tmpuni){
+		delete mUniverse;
+		mUniverse = NULL;
+	}
+
+}
+
 void MainWindow::buildReference() // build the html reference
 {
 	// if universe doesn't exist, make one temporarily...
@@ -829,7 +878,9 @@ bool MainWindow::saveFile(QsciScintilla* editor, QString fileName){
 void MainWindow::newEditor(QFile* file)
 {
 	QsciScintilla* editor = new QsciScintilla();
-	editor->setLexer(new FGLexer());
+	FGLexer* fgLexer = new FGLexer(editor);
+	fgLexer->registerFuguKeywords(mFuguKeywords);
+	editor->setLexer(fgLexer);
 	editor->setTabWidth(2);
 	editor->setAutoIndent(true);
 

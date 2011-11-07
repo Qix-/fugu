@@ -1112,7 +1112,7 @@ QComboBox::down-arrow {
   <customwidget>
    <class>FGView</class>
    <extends>QWidget</extends>
-   <header>fge/fgview.h</header>
+   <header>fugu/fgview.h</header>
    <container>1</container>
    <slots>
     <slot>toggleLighting(bool)</slot>

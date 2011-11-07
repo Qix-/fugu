@@ -20,7 +20,7 @@ void errcallback( const char* ptr, std::streamsize count, void* console )
 {
   QsciScintilla* p = static_cast< QsciScintilla* >( console );
   int linesbefore = p->lines();
-  QString str = QString("!") + QString::fromAscii(ptr,count);
+  QString str = QString::fromAscii(ptr,count);
   p->append( str );
   int linesafter = p->lines();
   //p->setSelection(linesbefore,0,linesafter-1,p->lineLength(linesafter-1));
@@ -52,7 +52,7 @@ ConsoleWidget::ConsoleWidget(QWidget *parent)
 : QWidget(parent)
 {
     mConsole = new QsciScintilla();
-    FGLexer fg(QColor("#101010"));
+    FGLexer fg(mConsole); // ,QColor("#101010"));
     mConsole->setLexer(new ConsoleLexer(fg));
     mConsole->setObjectName("console");
     mConsole->setTabWidth(2);
@@ -240,7 +240,7 @@ void ConsoleWidget::linesChanged(){
 CommandLineWidget::CommandLineWidget(QWidget* parent):QsciScintilla(parent){
 	setObjectName("commandline");
 
-	FGLexer* lex = new FGLexer(QColor("#101010"));
+	FGLexer* lex = new FGLexer(this); // , QColor("#101010"));
 	// lex->inheritColoursFrom(this);
 	setLexer(lex);
 
