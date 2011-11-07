@@ -18,8 +18,6 @@ s1c = nil
 s2c = nil
 local wave, awave -- wavy functions with params (period,offset)
 
-
-
 function setup()
 	m = icosahedron()
 	m:subdivide(3)

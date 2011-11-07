@@ -14,7 +14,7 @@ set(ALL_LIBS fg
 set(SRC main.cpp 
 	trackball.cpp 
 	shader.cpp
-	highlighter.cpp
+	#highlighter.cpp
 	mainwindow.cpp
 	fgview.cpp
 	fglexer.cpp
@@ -45,8 +45,9 @@ INCLUDE_DIRECTORIES(
 
 SET(MOC_HDR
   mainwindow.h
-  highlighter.h
+  #highlighter.h
   fgview.h
+  fglexer.h
   consolewidget.h
   redirect.h
 )

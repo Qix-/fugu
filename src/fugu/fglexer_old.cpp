@@ -2,10 +2,12 @@
 #include <QApplication>
 #include <QPalette>
 
-FGLexer::FGLexer(QColor bg)
-:QsciLexerLua()
+#include <iostream>
+
+FGLexer::FGLexer(QObject* parent, QColor bg)
+:QsciLexerLua(parent)
 ,mBackgroundColor(bg)
-,mParent(NULL)
+//,mParent(NULL)
 {
 	// QApplication::desktop()->physicalDpiX();
 	// QApplication::desktop()->physicalDpiY();
@@ -13,6 +15,8 @@ FGLexer::FGLexer(QColor bg)
 	mFont.setStyleHint(QFont::TypeWriter);
 	mBoldFont = mFont;
 	mBoldFont.setBold(true);
+
+	setColor(QColor("#ff00ff"), -1);
 }
 
 FGLexer::~FGLexer(){
@@ -20,35 +24,47 @@ FGLexer::~FGLexer(){
 }
 
 void FGLexer::inheritColoursFrom(QWidget* p){
-	mParent = p;
+	//mParent = p;
 }
 
 QColor FGLexer::defaultColor (int style) const {
 
+	if (style==KeywordSet5){
+		std::cout << "keyword set 5: " << ((QsciLexerLua*)(this))->keywords(style) << "\n";
+	}
 	switch (style){
-		case Default:
-		case Identifier:
-			return QColor("#c8c8c8"); break;
-		case Comment:
-		case LineComment:
-			return QColor("#959595"); break;
-		case Number: return QColor("#c8c8c8"); break;
-		case Keyword: return QColor("#f27000"); break;
-		case String:
-		case Character: return QColor("#f27000"); break;
-		case LiteralString: return QColor("#f27000"); break;
-		case Preprocessor: return QColor("#804000"); break;
-		case Operator: return QColor("#c8c8c8"); break;
-		case UnclosedString: return QColor("#fc0000"); break;
-		case BasicFunctions:
-		case StringTableMathsFunctions:
-		case CoroutinesIOSystemFacilities: return QColor("#f27000"); break;
 		case KeywordSet5:
 		case KeywordSet6:
 		case KeywordSet7:
 		case KeywordSet8:
+			return QColor("#ff00ff");
+		case Default:
+		case Identifier:
+			return QColor("#c8c8c8");
+		case Comment:
+		case LineComment:
+			return QColor("#959595");
+		case Number:
+			return QColor("#c8c8c8");
+		case Keyword:
+			return QColor("#f27000");
+		case String:
+		case Character:
+			return QColor("#f27000");
+		case LiteralString:
+			return QColor("#f27000");
+		case Preprocessor:
+			return QColor("#804000");
+		case Operator:
+			return QColor("#c8c8c8");
+		case UnclosedString:
+			return QColor("#fc0000");
+		case BasicFunctions:
+		case StringTableMathsFunctions:
+		case CoroutinesIOSystemFacilities:
+			return QColor("#f27000");
 		default:
-			return QColor("#c8c8c8"); break;
+			return QColor("#c8c8c8");
 	}
 
 
@@ -88,8 +104,9 @@ bool FGLexer::defaultEolFill (int style) const {
 
 QFont FGLexer::defaultFont (int style) const {
 	switch (style){
-		case Keyword: return mBoldFont; break;
-		default: return mFont; break;
+		case Keyword: return mBoldFont;
+		case KeywordSet5: return mBoldFont;
+		default: return mFont;
 	}
 }
 
@@ -100,5 +117,13 @@ QColor FGLexer::defaultPaper (int style) const {
 	}
 	else
 	*/
-		return mBackgroundColor; // QColor("#272727"); // Qt::white;
+	return mBackgroundColor; // QColor("#272727"); // Qt::white;
+}
+
+const char* FGLexer::keywords(int set) const {
+	if (set==KeywordSet5)
+		return "mesh";
+
+	// else
+	return QsciLexerLua::keywords(set);
 }
