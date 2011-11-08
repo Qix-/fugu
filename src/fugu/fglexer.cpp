@@ -256,8 +256,9 @@ QColor FGLexer::defaultColor (int style) const {
 		case CoroutinesIOSystemFacilities:
 			return QColor("#2773e2"); //  QColor("#87ceeb"); // QColor("#ff00ff");
 		case Default:
-		case Identifier:
 			return QColor("#c8c8c8");
+		case Identifier:
+			return QColor("#2773e2");
 		case Comment:
 		case LineComment:
 			return QColor("#959595");

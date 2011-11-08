@@ -5,8 +5,9 @@
 #include <QHash>
 #include <QSet>
 
-// #include "highlighter.h"
 #include "fgview.h"
+#include "project.h"
+
 #include "fg/universe.h"
 
 // forward decl
@@ -101,6 +102,9 @@ private:
 	QSet<QWidget*> mUnsavedEditors; // the unsaved editors
 
 	const char* mFuguKeywords; // fugu keywords that get syntax highlighting
+
+	// the open project
+	Project mProject;
 
 	// 3d view
 	FGView* mFGView;
