@@ -107,8 +107,11 @@ MainWindow::MainWindow(QWidget *parent)
 	// build the set of fugu keywords
 	buildFuguKeywordSet();
 
+	// open an existing project...
+	//QTimer::singleShot(100, this, SLOT(openProject()));
+
 	// load a script
-	newEditor(new QFile("../scripts/ben/simple.lua"));
+	// newEditor(new QFile("../scripts/ben/simple.lua"));
 }
 
 void MainWindow::about()
@@ -125,14 +128,34 @@ void MainWindow::newProject(){
 }
 
 void MainWindow::openProject(){
-	/*
-	QString fileName = path;
-	if (fileName.isNull())
-		fileName = QFileDialog::getOpenFileName(this,
-				tr("Open File"), "", "fugu script (*.lua)");
+	// TODO: Close down and save old project
 
-	if (!fileName.isEmpty()) {
+	// Open new project
+	QString dir = QFileDialog::getExistingDirectory(this, tr("Open fugu project"),
+	                                                 "../scripts/examples",
+	                                                 QFileDialog::ShowDirsOnly
+	                                                 | QFileDialog::DontResolveSymlinks);
+	if (!dir.isEmpty()) {
+/*
+		// TODO: use the .fugu project file to store the list of files,
+		// but for now, open all the .lua scripts in this directory
+		QDir projDir = dir;
+		if (not projDir.exists()){
+			std::cerr << "Project directory doesn't exist!";
+			return;
+		}
 
+		QStringList filters;
+		filters << "*.lua";
+		projDir.setNameFilters(filters);
+
+		foreach(QString file, projDir.entryList()){
+			std::cout << "file: " << file;
+			newEditor(new QFile(file));
+		}
+		*/
+
+		/*
 		// check if its already open...
 		// if so, just switch to that file
 		for(int i=0;i<mEditors->count();i++){
@@ -143,8 +166,8 @@ void MainWindow::openProject(){
 		}
 		// if not, open a new editor
 		newEditor(new QFile(fileName));
+		*/
 	}
-	*/
 }
 
 void MainWindow::newFile()
