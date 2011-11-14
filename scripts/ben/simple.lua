@@ -3,12 +3,12 @@
 --]]
 module(...,package.seeall)
  
-function vnoise(v)
+local function vnoise(v)
 	-- return a vec3 of noise
 	return vec3(noise(v.x),noise(v.y),noise(v.z))
 end
 
-function pulser(t)
+local function pulser(t)
 	return sign(sin(t))*sqr(sin(t))
 end
 
@@ -20,7 +20,7 @@ function setup()
 	m:smooth_subdivide(2) 
 	local n = meshnode(m)
 	n:set_transform(R(pi/2,vec3(1,0,0)))
-	fgu:add(n)	 
+	fgu:add(n)
 	
 	op = {}
 	sph = {}

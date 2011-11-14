@@ -6,7 +6,6 @@
 #include <QSet>
 
 #include "fgview.h"
-#include "project.h"
 
 #include "fg/universe.h"
 
@@ -33,8 +32,8 @@ public:
 public slots:
 	void about();
 
-	void newProject();
-	void openProject(); // opens a new project in a new fugu instance
+	void newWindow();
+	// void openProject(); // opens a new project in a new fugu instance
 	//void saveProject(); // saves all open files
 	//void saveProjectAs(); // saves project under new name
 	// void closeProject(); // equivalent to quit
@@ -103,13 +102,8 @@ private:
 
 	const char* mFuguKeywords; // fugu keywords that get syntax highlighting
 
-	// the open project
-	Project mProject;
-
 	// 3d view
 	FGView* mFGView;
-
-
 
 	// console
 	ConsoleWidget* mConsoleWidget;
