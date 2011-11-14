@@ -16,7 +16,6 @@
      QGLFormat::setDefaultFormat(glFormat);
 
      MainWindow window;
-     window.resize(640, 512);
-     window.show();
+     window.showMaximized();
      return app.exec();
  }

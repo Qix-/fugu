@@ -146,7 +146,11 @@ FGLexer::FGLexer(QObject *parent)
       fold_compact(true),
       mFuguKeywords(NULL)
 {
-	mFont = QFont("Consolas", QApplication::font().pointSize()); // "Courier New"
+	// mFont = QFont("Consolas", QApplication::font().pointSize()); // "Courier New"
+	// QApplication::fontMetrics()
+
+	mFont = QApplication::font();
+	mFont.setFamily("Consolas");
 	mFont.setStyleHint(QFont::TypeWriter);
 	mBoldFont = mFont;
 	mBoldFont.setBold(true);
@@ -256,9 +260,9 @@ QColor FGLexer::defaultColor (int style) const {
 		case CoroutinesIOSystemFacilities:
 			return QColor("#2773e2"); //  QColor("#87ceeb"); // QColor("#ff00ff");
 		case Default:
-			return QColor("#c8c8c8");
 		case Identifier:
-			return QColor("#2773e2");
+			return QColor("#c8c8c8");
+			// return QColor("#2773e2");
 		case Comment:
 		case LineComment:
 			return QColor("#959595");
@@ -368,6 +372,9 @@ const char *FGLexer::keywords(int set) const
     if (set == 5)
     	// FG keywords
     	return mFuguKeywords; // "mesh icosahedron";
+
+    if (set==6)
+    	return "setup update fgu fg";
 
     return 0;
 }

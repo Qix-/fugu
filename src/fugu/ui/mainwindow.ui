@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>819</width>
-    <height>600</height>
+    <width>1024</width>
+    <height>768</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
@@ -46,7 +52,8 @@ QTabBar {
 QTabBar::tab { 
 	background-color: #272727;
 	color: #959595;	 
-	padding: 6px;
+	/*padding: 6px;*/
+	padding: 4px;
 	/* border: 1px solid black; */ 
 	
 	border: 0; /* px solid #C4C4C3; */
@@ -54,16 +61,12 @@ QTabBar::tab {
 	/*border-bottom: 2px solid #272727; /* same as the pane color * / */
 	border-top-left-radius: 0px;
 	border-top-right-radius: 0px;
-	min-width: 8ex;
+	min-width: 6ex;
 }
 
-/* doesnt work..
-*[activeScript=&quot;true&quot;]{ 
-	background-color: #FFDE00;
-}
-
-QTabBar::tab[activeScript=&quot;true&quot;]{
-	background-color: #FFDE00;
+/*
+QTabBar::tab::icon  {
+	padding: 2px;
 }
 */
 
@@ -217,7 +220,7 @@ QMenuBar::item {
 }
 
 QMenuBar::item:selected {
-    background-color: #3f3f3f;
+    background-color: #f27000;
 }
 
 
@@ -265,17 +268,19 @@ QPushButton {
   }
   
   QScrollBar::add-line:horizontal {      
+     /*
       background: black;
       border: 2px solid #3f3f3f;
       width: 6px;
+     */
       subcontrol-position: right;
       subcontrol-origin: margin;
   }
 
   QScrollBar::sub-line:horizontal {      
-      background: black;
+      /*background: black;
       border: 2px solid #3f3f3f;
-      width: 6px;
+      width: 6px;*/
       subcontrol-position: left;
       subcontrol-origin: margin;
   }
@@ -293,8 +298,8 @@ QPushButton {
   
  QScrollBar:vertical {
       /* background: #272727; */      
-      width: 10px;
-      margin: 10px 0 10px 0;
+      width: 16px;
+      margin: 16px 0 16px 0;
   }
   
   QScrollBar::handle:vertical {
@@ -307,18 +312,27 @@ QPushButton {
   }
   
   QScrollBar::add-line:vertical {      
+/*
       background: black;
       border: 2px solid #3f3f3f;
       height: 6px;
+*/
+	background: #3f3f3f;
+    border: 0;
+    height: 16px;
       subcontrol-position: bottom;
       subcontrol-origin: margin;
   }
 
   QScrollBar::sub-line:vertical {      
-      background: black;
+ /*     background: black;
       border: 2px solid #3f3f3f;
       height: 6px;
-      subcontrol-position: top;
+   */  
+background: #3f3f3f;
+    border: 0;
+    height: 16px;
+subcontrol-position: top;
       subcontrol-origin: margin;
   }
   
@@ -452,28 +466,58 @@ QToolBar::separator:vertical {
  	background-color: #f27000;
  }
   
-
 QComboBox::drop-down {
      subcontrol-origin: padding;
      subcontrol-position: top right;
-     width: 15px;
-
+     width: 16px;
      border: 0px;
-/*
-     border-left-width: 1px;
-     border-left-color: darkgray;
-     border-left-style: solid; 
-     border-top-right-radius: 3px;
-     border-bottom-right-radius: 3px;
-*/
 }
 
 QComboBox::down-arrow {
 	image: url(&quot;:/res/arrow_down.png&quot;);
 }
 
+QMainWindow::separator {
+	width: 1px;
+	height: 1px;
+	background: #101010;
+}
 
- </string>
+QMainWindow::separator::handle {
+	image: none; /* url(images/splitter.png); */
+	background:  #101010;
+	height: 1px;	
+} 
+
+QDockWidget {
+     border: none;
+	/*padding-top: 1px;
+	border-top: 1px solid #101010;*/
+     titlebar-close-icon: url(&quot;:/res/cross.png&quot;);
+     titlebar-normal-icon: url(&quot;:/res/float.png&quot;);
+}
+
+ QDockWidget::title {
+     text-align: left; /* align the text to the left */
+     background: #272727;
+     padding-left: 6px;
+	 border: none;
+	
+ }
+
+ QDockWidget::close-button, QDockWidget::float-button {
+     border: none; /* 1px solid transparent; */
+     background: #272727;
+     padding: 0px;
+ }
+
+ QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+     background: #f27000;
+ }
+
+ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
+     /* padding: 1px -1px -1px 1px; */
+ }</string>
   </property>
   <property name="iconSize">
    <size>
@@ -585,7 +629,7 @@ QComboBox::down-arrow {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>819</width>
+     <width>1024</width>
      <height>25</height>
     </rect>
    </property>
@@ -593,13 +637,16 @@ QComboBox::down-arrow {
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew"/>
     <addaction name="actionNew_2"/>
     <addaction name="action_Open"/>
+    <addaction name="actionOpen_Example"/>
     <addaction name="action_Save"/>
     <addaction name="actionSave_As"/>
-    <addaction name="actionExport"/>
     <addaction name="actionClose"/>
+    <addaction name="separator"/>
+    <addaction name="actionExport"/>
+    <addaction name="actionNew"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -633,6 +680,12 @@ QComboBox::down-arrow {
     <addaction name="actionFull_Screen"/>
     <addaction name="actionToolBar"/>
     <addaction name="actionMenuBar"/>
+    <addaction name="separator"/>
+    <addaction name="actionToggleLighting"/>
+    <addaction name="actionToggleGround"/>
+    <addaction name="actionToggleShowNodeOrigins"/>
+    <addaction name="actionToggleOrigin"/>
+    <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -658,6 +711,7 @@ QComboBox::down-arrow {
    <addaction name="actionReload"/>
    <addaction name="actionPlay"/>
    <addaction name="actionStep"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QToolBar" name="toolBar_2">
    <property name="windowTitle">
@@ -672,12 +726,6 @@ QComboBox::down-arrow {
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="separator"/>
-   <addaction name="actionToggleLighting"/>
-   <addaction name="actionToggleOrigin"/>
-   <addaction name="actionToggleGround"/>
-   <addaction name="actionToggleShowNodeOrigins"/>
-   <addaction name="separator"/>
    <addaction name="actionSetDrawPoints"/>
    <addaction name="actionSetDrawWire"/>
    <addaction name="actionSetDrawFlat"/>
@@ -696,7 +744,7 @@ QComboBox::down-arrow {
   </widget>
   <action name="actionNew">
    <property name="text">
-    <string>&amp;New Project</string>
+    <string>&amp;New Window</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -804,7 +852,7 @@ QComboBox::down-arrow {
      <normalon>:/res/lightbulb.png</normalon>:/res/lightbulb_off.png</iconset>
    </property>
    <property name="text">
-    <string>actionToggleLighting</string>
+    <string>Toggle Lighting</string>
    </property>
    <property name="toolTip">
     <string>Enable lighting</string>
@@ -935,7 +983,7 @@ QComboBox::down-arrow {
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
@@ -950,7 +998,7 @@ QComboBox::down-arrow {
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
@@ -965,7 +1013,7 @@ QComboBox::down-arrow {
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
@@ -1028,7 +1076,7 @@ QComboBox::down-arrow {
   <action name="actionMakeCurrentScriptActive">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/res/tick.png</normaloff>:/res/tick.png</iconset>
+     <normaloff>:/res/control_main.png</normaloff>:/res/control_main.png</iconset>
    </property>
    <property name="text">
     <string>makeCurrentScriptActive</string>
@@ -1042,7 +1090,7 @@ QComboBox::down-arrow {
     <string>Close</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+F4</string>
+    <string>Ctrl+W</string>
    </property>
   </action>
   <action name="actionExportFrameToObj">
@@ -1062,7 +1110,7 @@ QComboBox::down-arrow {
   </action>
   <action name="actionNew_2">
    <property name="text">
-    <string>New File</string>
+    <string>New</string>
    </property>
    <property name="toolTip">
     <string>Create a new script in this project</string>
@@ -1107,6 +1155,11 @@ QComboBox::down-arrow {
     <string>F9</string>
    </property>
   </action>
+  <action name="actionOpen_Example">
+   <property name="text">
+    <string>Open Example</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1143,7 +1196,7 @@ QComboBox::down-arrow {
    <sender>actionNew</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>newProject()</slot>
+   <slot>newWindow()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -1772,8 +1825,8 @@ QComboBox::down-arrow {
   <slot>closeFile()</slot>
   <slot>exportSimulation()</slot>
   <slot>buildReference()</slot>
-  <slot>newProject()</slot>
   <slot>chooseDrawMode(QString)</slot>
   <slot>toggleFullScreen(bool)</slot>
+  <slot>newWindow()</slot>
  </slots>
 </ui>

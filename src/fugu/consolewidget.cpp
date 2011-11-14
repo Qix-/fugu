@@ -52,14 +52,19 @@ ConsoleWidget::ConsoleWidget(QWidget *parent)
 : QWidget(parent)
 {
     mConsole = new QsciScintilla();
-    FGLexer fg(mConsole); // ,QColor("#101010"));
-    mConsole->setLexer(new ConsoleLexer(fg));
+    //FGLexer fg(mConsole); // ,QColor("#101010"));
+    // mConsole->setLexer(new ConsoleLexer(fg));
+    mConsole->setLexer(new FGLexer(mConsole));
     mConsole->setObjectName("console");
     mConsole->setTabWidth(2);
     mConsole->setWrapMode(QsciScintilla::WrapCharacter);
     mConsole->setCaretForegroundColor(QColor("#959595"));
-	mConsole->setMarginsBackgroundColor(QColor("#101010"));
-	mConsole->setMarginsForegroundColor(QColor("#959595"));
+	//mConsole->setMarginsBackgroundColor(QColor("#101010"));
+	//mConsole->setMarginsForegroundColor(QColor("#959595"));
+
+    mConsole->setMarginsBackgroundColor(QColor("#272727"));
+    mConsole->setMarginsForegroundColor(QColor("#959595"));
+
 	mConsole->setMarginWidth(1,0); // disable line number margin
 	mConsole->setMarginWidth(2,8); // a little margin
 	mConsole->setReadOnly(true);
@@ -255,7 +260,10 @@ CommandLineWidget::CommandLineWidget(QWidget* parent):QsciScintilla(parent){
     setMarginWidth(1,0); // disable line number margin
     setMarginWidth(2,8); // a little margin
     setCaretForegroundColor(QColor("#959595"));
-    setMarginsBackgroundColor(QColor("#101010"));
+    //setMarginsBackgroundColor(QColor("#101010"));
+    //setMarginsForegroundColor(QColor("#959595"));
+
+    setMarginsBackgroundColor(QColor("#272727"));
     setMarginsForegroundColor(QColor("#959595"));
 
     QFontMetrics fm(lexer()->defaultFont());

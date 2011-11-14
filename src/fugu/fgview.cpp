@@ -40,12 +40,12 @@ FGView::FGView(QWidget *parent)
 	mMouseState.isZooming = false;
 
 	// view mode
-	mOrigin = true;
-	mGround = true;
-	mShowNodeAxes = true;
+	mOrigin = false;
+	mGround = false;
+	mShowNodeAxes = false;
 	mEnableLighting = true;
 	mNumberSubdivs = 0;
-	mMeshMode = MM_PHONG;
+	mMeshMode = MM_FLAT;
 	mColourMode = fg::GLRenderer::COLOUR_VERTEX;
 	mShowOverWire = true;
 

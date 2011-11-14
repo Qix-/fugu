@@ -48,12 +48,12 @@ MainWindow::MainWindow(QWidget *parent)
 	// create console widget
 	mConsoleDockWidget = new QDockWidget(tr("Console"), this);
 	mConsoleWidget = new ConsoleWidget(mConsoleDockWidget);
-	mConsoleDockWidget->setAllowedAreas(Qt::NoDockWidgetArea); // Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	mConsoleDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea); // Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
 	mConsoleDockWidget->setWidget(mConsoleWidget);
 	addDockWidget(Qt::BottomDockWidgetArea, mConsoleDockWidget);
-	mConsoleDockWidget->setFloating(true);
-	mConsoleDockWidget->show();
+	// mConsoleDockWidget->setFloating(true);
+	// mConsoleDockWidget->show();
 	findChild<QMenu*>("menuView")->addAction(mConsoleDockWidget->toggleViewAction());
 
 	// mConsoleWidget = findChild<ConsoleWidget*>("consolewidget");
@@ -85,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent)
 	drawModeGroup->addAction(ui.actionSetDrawPoints);
 	drawModeGroup->addAction(ui.actionSetDrawTextured);
 	drawModeGroup->addAction(ui.actionSetDrawPhong);
-	ui.actionSetDrawPhong->setChecked(true);
+	ui.actionSetDrawFlat->setChecked(true);
 
 	QActionGroup* subdivModeGroup = new QActionGroup(this);
 	subdivModeGroup->addAction(ui.actionSetSubdivs0);
@@ -111,7 +111,7 @@ MainWindow::MainWindow(QWidget *parent)
 	//QTimer::singleShot(100, this, SLOT(openProject()));
 
 	// load a script
-	// newEditor(new QFile("../scripts/ben/simple.lua"));
+	newEditor(new QFile("../scripts/tests/superformula.lua"));
 }
 
 void MainWindow::about()
@@ -120,13 +120,14 @@ void MainWindow::about()
 			tr("<p><b>fugu</b> is a code-oriented form generation tool.</p>"));
 }
 
-void MainWindow::newProject(){
+void MainWindow::newWindow(){
 	// ...
 	QProcess p;
 	p.startDetached("fugu");
 
 }
 
+/*
 void MainWindow::openProject(){
 	// TODO: Close down and save old project
 
@@ -136,7 +137,7 @@ void MainWindow::openProject(){
 	                                                 QFileDialog::ShowDirsOnly
 	                                                 | QFileDialog::DontResolveSymlinks);
 	if (!dir.isEmpty()) {
-/*
+/ *
 		// TODO: use the .fugu project file to store the list of files,
 		// but for now, open all the .lua scripts in this directory
 		QDir projDir = dir;
@@ -166,9 +167,10 @@ void MainWindow::openProject(){
 		}
 		// if not, open a new editor
 		newEditor(new QFile(fileName));
-		*/
+		* /
 	}
 }
+*/
 
 void MainWindow::newFile()
 {
@@ -500,20 +502,27 @@ void MainWindow::redirectStreams(){
 }
 
 void MainWindow::makeCurrentScriptActive(){
+
 	if (mActiveScript){
 		int ind = mEditors->indexOf(mActiveScript);
 		if (ind!=-1){
 			// remove the '[' and ']'
-			QFileInfo fi(mFileNames[mActiveScript]);
-			mEditors->setTabText(ind,fi.fileName());
+			//QFileInfo fi(mFileNames[mActiveScript]);
+			//mEditors->setTabText(ind,fi.fileName());
+
+			mEditors->setTabIcon(ind,QIcon());
 		}
 	}
 
+
 	mActiveScript = mEditors->currentWidget();
 	if (mActiveScript){
-		QFileInfo fi(mFileNames[mActiveScript]);
+		//QFileInfo fi(mFileNames[mActiveScript]);
 		// add '[' and ']' to the tab text
-		mEditors->setTabText(mEditors->currentIndex(),QString("[") + fi.fileName() + "]");
+		//mEditors->setTabText(mEditors->currentIndex(),QString("[") + fi.fileName() + "]");
+		mEditors->setTabIcon(mEditors->currentIndex(), QIcon(":/res/control_main_small.png"));
+
+		// mEditors->tabBar()->setTabTextColor(mEditors->currentIndex(), QColor("#f27000"));
 		reload();
 	}
 }
@@ -846,12 +855,13 @@ void MainWindow::textChanged(){
 			QString filename = mFileNames[qw];
 			QFileInfo info = QFileInfo(filename);
 
+			/*
 			if (qw==mActiveScript){
 				mEditors->setTabText(mEditors->currentIndex(), QString("[") + info.fileName() + "]*");
 			}
-			else {
+			else {*/
 				mEditors->setTabText(mEditors->currentIndex(), info.fileName() + "*");
-			}
+			// }
 		}
 	}
 }
@@ -888,12 +898,13 @@ bool MainWindow::saveFile(QsciScintilla* editor, QString fileName){
 
 	// rename tab label ...
 	QFileInfo fi(file);
+	/*
 	if (mActiveScript==editor){
 		mEditors->setTabText(mEditors->indexOf(editor),QString("[") + fi.fileName() + "]");
 	}
-	else {
+	else {*/
 		mEditors->setTabText(mEditors->indexOf(editor),fi.fileName());
-	}
+	//}
 	return true;
 }
 
