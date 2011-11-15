@@ -3,9 +3,10 @@
 #include <iostream>
 
 #include <QtGui>
-#include <Qsci/qsciscintilla.h>
-
 #include <QProcess>
+#include <QColorDialog>
+
+#include <Qsci/qsciscintilla.h>
 
 #include "luabind/luabind.hpp"
 #include "luabind/object.hpp"
@@ -68,9 +69,9 @@ MainWindow::MainWindow(QWidget *parent)
 	// create the slider dialog
 	mControlWidget = new QDockWidget(tr("Control"),this);
 	mControlWidget->setAllowedAreas(Qt::NoDockWidgetArea); // Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	QWidget* controlList = new QWidget(mControlWidget);
-	controlList->setLayout(new QVBoxLayout());
-	mControlWidget->setWidget(controlList);
+	mControlList = new QWidget(mControlWidget);
+	mControlList->setLayout(new QVBoxLayout());
+	mControlWidget->setWidget(mControlList);
 	addDockWidget(Qt::RightDockWidgetArea, mControlWidget);
 	mControlWidget->setFloating(true);
 	mControlWidget->hide();
@@ -431,7 +432,13 @@ void MainWindow::reload(){
 
 	mSimulationMode = SM_RELOADING;
 	load();
+}
 
+void MainWindow::resetSliders(){
+	if (mControlList) delete 	mControlList;
+	mControlList = new QWidget(mControlWidget);
+	mControlList->setLayout(new QVBoxLayout());
+	mControlWidget->setWidget(mControlList);
 }
 
 void MainWindow::simulateOneStep(){
@@ -502,27 +509,24 @@ void MainWindow::redirectStreams(){
 }
 
 void MainWindow::makeCurrentScriptActive(){
+	// Do nothing if its the same
+	if (mActiveScript==mEditors->currentWidget()){
+		return;
+	}
 
+	// Remove the icon of current active script
 	if (mActiveScript){
 		int ind = mEditors->indexOf(mActiveScript);
 		if (ind!=-1){
-			// remove the '[' and ']'
-			//QFileInfo fi(mFileNames[mActiveScript]);
-			//mEditors->setTabText(ind,fi.fileName());
-
 			mEditors->setTabIcon(ind,QIcon());
 		}
 	}
 
-
+	// Set the active script and its icon
 	mActiveScript = mEditors->currentWidget();
 	if (mActiveScript){
-		//QFileInfo fi(mFileNames[mActiveScript]);
-		// add '[' and ']' to the tab text
-		//mEditors->setTabText(mEditors->currentIndex(),QString("[") + fi.fileName() + "]");
 		mEditors->setTabIcon(mEditors->currentIndex(), QIcon(":/res/control_main_small.png"));
-
-		// mEditors->tabBar()->setTabTextColor(mEditors->currentIndex(), QColor("#f27000"));
+		resetSliders();
 		reload();
 	}
 }
@@ -872,9 +876,9 @@ void MainWindow::paramSliderValueChanged(int val){
 
 	int index = mEditors->indexOf(mActiveScript);
 	QString str = mEditors->tabText(index);
-	str = str.mid(1,str.length()-6);
+	str = str.mid(0,str.length()-4);
 	str += QString(".") + QString::fromStdString(bv.var) + QString("=") + QString::number(val/bv.multiplier);
-	std::cout << "Run: \"" << str.toStdString() << "\"\n";
+	// std::cout << "Run: \"" << str.toStdString() << "\"\n";
 	runScript(str);
 }
 
@@ -963,9 +967,33 @@ void MainWindow::setupAddSliderCallback(lua_State* L){
 
 void MainWindow::lua_add_slider(const luabind::object& o){
 	MainWindow* win = MainWindow::instance();
+
 	// parse the contents
 	if (o["var"] and o["low"] and o["high"] and o["value"]){
 		std::string var = luabind::object_cast<std::string>(o["var"]);
+
+		typedef QHash<QSlider*, BoundVariable> SliderHash;
+
+		SliderHash::iterator it = win->mBoundVariableMap.begin();
+		for(;it!=win->mBoundVariableMap.end();it++){
+			if (it.value().var == var){
+				QSlider* qs = it.key();
+				qs->setValue(qs->value());
+				return;
+			}
+		}
+		/*
+		// only add it if it isn't in the list already...
+		foreach(const BoundVariable& v, mBoundVariableMap.values()){
+			if (v.var == var){
+				// TODO: set the variable to its old value
+
+				return;
+			}
+		}
+		*/
+		// else add it
+
 		double value = luabind::object_cast<double>(o["value"]);
 		double low = luabind::object_cast<double>(o["low"]);
 		double high = luabind::object_cast<double>(o["high"]);
@@ -995,7 +1023,6 @@ void MainWindow::lua_add_slider(const luabind::object& o){
 		QSlider* qs = new QSlider(Qt::Horizontal);
 		qs->setMinimum(low*multiplier);
 		qs->setMaximum(high*multiplier);
-		qs->setValue(value*multiplier);
 
 		win->mControlWidget->widget()->layout()->addWidget(qs);
 
@@ -1005,6 +1032,8 @@ void MainWindow::lua_add_slider(const luabind::object& o){
 		win->mBoundVariableMap.insert(qs,bv);
 
 		connect(qs,SIGNAL(valueChanged(int)),win,SLOT(paramSliderValueChanged(int)));
+
+		qs->setValue(value*multiplier);
 	}
 	else {
 		std::cerr << "add_slider needs the following params: \"var\", \"value\", \"low\", \"high\"\n";
@@ -1026,5 +1055,19 @@ void MainWindow::chooseDrawMode(QString mode){
 	}
 	else if (mode=="textured"){
 		mFGView->setDrawTextured();
+	}
+}
+
+void MainWindow::setBackgroundHorizonColour(){
+	QColor col = QColorDialog::getColor(mFGView->getBackgroundHorizonColour(),this, "Choose Background Horizon Colour");
+	if (col.isValid()){
+		mFGView->setBackgroundHorizonColour(col);
+	}
+}
+
+void MainWindow::setBackgroundSkyColour(){
+	QColor col = QColorDialog::getColor(mFGView->getBackgroundSkyColour(),this, "Choose Background Sky Colour");
+	if (col.isValid()){
+		mFGView->setBackgroundSkyColour(col);
 	}
 }

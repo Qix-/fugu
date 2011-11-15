@@ -50,6 +50,7 @@ public slots:
 	void pause();
 	void step();
 	void reload();
+	void resetSliders();
 
 	void simulateOneStep();
 	void simulateOneStepNoViewUpdate();
@@ -74,6 +75,9 @@ public slots:
 	void paramSliderValueChanged(int val);
 
 	void chooseDrawMode(QString);
+
+	void setBackgroundHorizonColour();
+	void setBackgroundSkyColour();
 
 private:
 
@@ -112,6 +116,7 @@ private:
 	};
 
 	QDockWidget* mControlWidget;
+	QWidget* mControlList;
 	QHash<QSlider*, BoundVariable> mBoundVariableMap;
 
 	// export dialog

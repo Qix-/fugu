@@ -10,8 +10,15 @@
 #include <fcntl.h>
 
 #include <QThread>
+#include <QTextIStream>
+#include <QSocketNotifier>
 
-
+// we don't use the interceptor for win32
+Interceptor::Interceptor(QObject * p):QObject(p){}
+Interceptor::~Interceptor(){}
+void Interceptor::initialize(int outFd){}
+void Interceptor::received(){}
+void Interceptor::finish(){}
 
 // code from: http://www.gamedev.net/topic/532101-redirecting-console-output/
 void RedirectConsole(HANDLE hPipe){
@@ -55,6 +62,9 @@ void RedirectConsole(HANDLE hPipe){
 			break;
 	}
  }
+
+ void StdOutRedirector::displayString(){}
+
 
  StdOutRedirector* redirectConsoleOutput(QObject* p){
 	StdOutRedirector* th = new StdOutRedirector(p);
