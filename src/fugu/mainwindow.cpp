@@ -68,14 +68,28 @@ MainWindow::MainWindow(QWidget *parent)
 
 	// create the slider dialog
 	mControlWidget = new QDockWidget(tr("Control"),this);
-	mControlWidget->setAllowedAreas(Qt::NoDockWidgetArea); // Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	mControlList = new QWidget(mControlWidget);
-	mControlList->setLayout(new QVBoxLayout());
-	mControlWidget->setWidget(mControlList);
+		mControlWidget->setAllowedAreas(Qt::NoDockWidgetArea); // Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+		QWidget* controlContainer = new QWidget();
+		QVBoxLayout* ccvb = new QVBoxLayout();
+
+			QPushButton* ccreset = new QPushButton("Reset",controlContainer);
+			connect(ccreset, SIGNAL(clicked()), this, SLOT(resetSlidersToDefaults()));
+			ccvb->addWidget(ccreset);
+
+			mControlList = new QWidget(controlContainer);
+			mControlList->setLayout(new QGridLayout()); // (new QVBoxLayout());
+
+			ccvb->addWidget(mControlList);
+
+		controlContainer->setLayout(ccvb);
+
+		mControlWidget->setWidget(controlContainer);
 	addDockWidget(Qt::RightDockWidgetArea, mControlWidget);
 	mControlWidget->setFloating(true);
 	mControlWidget->hide();
 	findChild<QMenu*>("menuView")->addAction(mControlWidget->toggleViewAction());
+
 
 	// create action groups..
 
@@ -435,10 +449,15 @@ void MainWindow::reload(){
 }
 
 void MainWindow::resetSliders(){
-	if (mControlList) delete 	mControlList;
-	mControlList = new QWidget(mControlWidget);
-	mControlList->setLayout(new QVBoxLayout());
-	mControlWidget->setWidget(mControlList);
+
+	// if (mControlList) delete 	mControlList;
+	// mControlList = new QWidget(mControlWidget);
+	delete mControlList->layout();
+	mControlList->setLayout(new QGridLayout()); //(new QVBoxLayout());
+	// mControlWidget->setWidget(mControlList);
+
+	mBoundVariableMap.clear();
+	mSliderToLabelMap.clear();
 }
 
 void MainWindow::simulateOneStep(){
@@ -878,8 +897,27 @@ void MainWindow::paramSliderValueChanged(int val){
 	QString str = mEditors->tabText(index);
 	str = str.mid(0,str.length()-4);
 	str += QString(".") + QString::fromStdString(bv.var) + QString("=") + QString::number(val/bv.multiplier);
-	// std::cout << "Run: \"" << str.toStdString() << "\"\n";
+	mSliderToLabelMap[qs]->setNum(val/bv.multiplier);
+
 	runScript(str);
+}
+
+void MainWindow::resetSlidersToDefaults(){
+	typedef QHash<QSlider*, BoundVariable> SliderHash;
+	SliderHash::iterator it = mBoundVariableMap.begin();
+	for(;it!=mBoundVariableMap.end();it++){
+		const BoundVariable& bv = it.value();
+
+		QSlider* qs = it.key();
+		qs->setValue(bv.def*bv.multiplier);
+		mSliderToLabelMap[qs]->setNum(bv.def);
+
+		int index = mEditors->indexOf(mActiveScript);
+		QString str = mEditors->tabText(index);
+		str = str.mid(0,str.length()-4);
+		str += QString(".") + QString::fromStdString(bv.var) + QString("=") + QString::number(bv.def);
+		runScript(str);
+	}
 }
 
 // Save the the editor's contents to the file fileName
@@ -971,17 +1009,40 @@ void MainWindow::lua_add_slider(const luabind::object& o){
 	// parse the contents
 	if (o["var"] and o["low"] and o["high"] and o["value"]){
 		std::string var = luabind::object_cast<std::string>(o["var"]);
+		double value = luabind::object_cast<double>(o["value"]);
+		double low = luabind::object_cast<double>(o["low"]);
+		double high = luabind::object_cast<double>(o["high"]);
 
 		typedef QHash<QSlider*, BoundVariable> SliderHash;
 
 		SliderHash::iterator it = win->mBoundVariableMap.begin();
 		for(;it!=win->mBoundVariableMap.end();it++){
-			if (it.value().var == var){
-				QSlider* qs = it.key();
-				qs->setValue(qs->value());
-				return;
+			const BoundVariable& bv = it.value();
+			if (bv.var == var){
+				if (bv.low == low and bv.high == high and bv.def==value){
+					QSlider* qs = it.key();
+					qs->setValue(qs->value());
+					int index = win->mEditors->indexOf(win->mActiveScript);
+					QString str = win->mEditors->tabText(index);
+					str = str.mid(0,str.length()-4);
+					str += QString(".") + QString::fromStdString(bv.var) + QString("=") + QString::number(qs->value()/bv.multiplier);
+					win->mSliderToLabelMap[qs]->setNum(qs->value()/bv.multiplier);
+					win->runScript(str);
+					return;
+				}
+				else {
+					break;
+				}
 			}
 		}
+
+		// if the iterator hasn't reached the end
+		// then rebuild the slider ..
+		QSlider* qs = NULL;
+		if (it!=win->mBoundVariableMap.end()){
+			qs = it.key();
+		}
+
 		/*
 		// only add it if it isn't in the list already...
 		foreach(const BoundVariable& v, mBoundVariableMap.values()){
@@ -994,9 +1055,7 @@ void MainWindow::lua_add_slider(const luabind::object& o){
 		*/
 		// else add it
 
-		double value = luabind::object_cast<double>(o["value"]);
-		double low = luabind::object_cast<double>(o["low"]);
-		double high = luabind::object_cast<double>(o["high"]);
+
 		// std::cout << "Binding var \"" << var << "\" with {" << value << "," << low << "," << high <<"}\n";
 
 		// as a qslider operates on integers, figure out the multiplier to get from int_val->double_val
@@ -1020,16 +1079,32 @@ void MainWindow::lua_add_slider(const luabind::object& o){
 		}
 		else multiplier = 1000;
 
-		QSlider* qs = new QSlider(Qt::Horizontal);
+		if (!qs){
+			qs = new QSlider(Qt::Horizontal);
+		}
+
 		qs->setMinimum(low*multiplier);
 		qs->setMaximum(high*multiplier);
 
-		win->mControlWidget->widget()->layout()->addWidget(qs);
+		QLabel* ql = new QLabel(QString::fromStdString(var));
+		QLabel* qv = new QLabel("0");
+		qv->setMinimumWidth(qv->fontMetrics().tightBoundingRect("000000").width());
+
+		QGridLayout* qg = static_cast<QGridLayout*>(win->mControlList->layout());
+		int rows = qg->rowCount();
+		qg->addWidget(ql,rows,0);
+		qg->addWidget(qs,rows,1);
+		qg->addWidget(qv,rows,2);
 
 		BoundVariable bv;
 		bv.var = var;
 		bv.multiplier = multiplier;
+		bv.low = low;
+		bv.high = high;
+		bv.def = value;
+
 		win->mBoundVariableMap.insert(qs,bv);
+		win->mSliderToLabelMap.insert(qs,qv);
 
 		connect(qs,SIGNAL(valueChanged(int)),win,SLOT(paramSliderValueChanged(int)));
 

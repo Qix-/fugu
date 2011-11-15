@@ -16,6 +16,7 @@ class QTabWidget;
 class QFile;
 class QString;
 class QSlider;
+class QLabel;
 class QsciScintilla;
 class ConsoleWidget;
 struct lua_State;
@@ -73,6 +74,7 @@ public slots:
 
 	void textChanged();
 	void paramSliderValueChanged(int val);
+	void resetSlidersToDefaults();
 
 	void chooseDrawMode(QString);
 
@@ -94,6 +96,7 @@ private:
 
 	static void lua_add_slider(const luabind::object& o);
 
+
 	// text editors
 	QTabWidget* mEditors;
 	QHash<QWidget*,QString> mFileNames; // map: texteditor -> filename
@@ -113,11 +116,14 @@ private:
 	struct BoundVariable {
 		std::string var; // lua variable name
 		double multiplier; // applied to the slider's value to get the real value
+
+		double low, high, def;
 	};
 
 	QDockWidget* mControlWidget;
 	QWidget* mControlList;
 	QHash<QSlider*, BoundVariable> mBoundVariableMap;
+	QHash<QSlider*, QLabel*> mSliderToLabelMap;
 
 	// export dialog
 	QDialog* mExportDialog;
