@@ -21,6 +21,9 @@ public:
 	void setUniverse(fg::Universe* u);
 	void unsetUniverse();
 
+	QColor getBackgroundHorizonColour() const;
+	QColor getBackgroundSkyColour() const;
+
 public slots:
 	void setXRotation(int angle);
 	void setYRotation(int angle);
@@ -48,6 +51,9 @@ public slots:
 	void setColourModeNone();
 	void setColourModeVertex();
 
+	void setBackgroundHorizonColour(QColor);
+	void setBackgroundSkyColour(QColor);
+
 signals:
 	void xRotationChanged(int angle);
 	void yRotationChanged(int angle);
@@ -74,7 +80,8 @@ private:
 	int zRot;
 	QPoint lastPos;
 
-	QColor mBackgroundColor;
+	QColor mBackgroundHorizon;
+	QColor mBackgroundSky;
 
 	// Camera information
 	float mZoom;

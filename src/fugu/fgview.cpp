@@ -50,12 +50,8 @@ FGView::FGView(QWidget *parent)
 	mShowOverWire = true;
 
 	// theme...
-	// mBackgroundColor = QColor("#272727");
-	mBackgroundColor = QColor("#000000");
-
-	// qtGreen = QColor::fromCmykF(0.40, 0.0, 1.0, 0.0);
-	// qtPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
-
+	mBackgroundHorizon = QColor(79,79,79);
+	mBackgroundSky = QColor(16,16,16);
 }
 
 FGView::~FGView()
@@ -74,6 +70,14 @@ QSize FGView::sizeHint() const
 
 void FGView::setUniverse(fg::Universe* u){mUniverse = u; update();}
 void FGView::unsetUniverse(){mUniverse = NULL; update();}
+
+QColor FGView::getBackgroundHorizonColour() const {
+	return mBackgroundHorizon;
+}
+
+QColor FGView::getBackgroundSkyColour() const {
+	return mBackgroundSky;
+}
 
 static void qNormalizeAngle(int &angle)
 {
@@ -194,9 +198,19 @@ void FGView::setColourModeVertex(){
 	update();
 }
 
+void FGView::setBackgroundHorizonColour(QColor c){
+	mBackgroundHorizon = c;
+	update();
+}
+
+void FGView::setBackgroundSkyColour(QColor c){
+	mBackgroundSky = c;
+	update();
+}
+
 void FGView::initializeGL()
 {
-	qglClearColor(mBackgroundColor);
+	qglClearColor(QColor(0,0,0));
 
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -300,9 +314,19 @@ void FGView::paintGL()
 		glDepthMask(GL_FALSE);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_CULL_FACE);
-		fg::Vec3 hc = fg::Vec3(79./255,79./255,79./255);
-		fg::Vec3 tc = fg::Vec3(16./255,16./255,16./255);
+
+		fg::Vec3 hc = fg::Vec3(mBackgroundHorizon.red()/255.,
+				mBackgroundHorizon.green()/255.,
+				mBackgroundHorizon.blue()/255.);
+
+		fg::Vec3 tc = fg::Vec3(mBackgroundSky.red()/255.,
+						mBackgroundSky.green()/255.,
+						mBackgroundSky.blue()/255.);
+
+		//fg::Vec3 hc = fg::Vec3(79./255,79./255,79./255);
+		//fg::Vec3 tc = fg::Vec3(16./255,16./255,16./255);
 		fg::GLRenderer::renderSkySphere(20,64,64,hc,tc,tc);
+
 		glPopAttrib(); // GL_LIGHTING_BIT
 		glPopAttrib(); // GL_DEPTH_BUFFER_BIT
 		glPopAttrib(); // GL_TEXTURE_BIT

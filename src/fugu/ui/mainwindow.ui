@@ -686,6 +686,8 @@ QDockWidget {
     <addaction name="actionToggleShowNodeOrigins"/>
     <addaction name="actionToggleOrigin"/>
     <addaction name="separator"/>
+    <addaction name="actionSet_Background_Color"/>
+    <addaction name="actionSet_Background_Sky_Color"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -1158,6 +1160,16 @@ QDockWidget {
   <action name="actionOpen_Example">
    <property name="text">
     <string>Open Example</string>
+   </property>
+  </action>
+  <action name="actionSet_Background_Color">
+   <property name="text">
+    <string>Set Background Horizon Color</string>
+   </property>
+  </action>
+  <action name="actionSet_Background_Sky_Color">
+   <property name="text">
+    <string>Set Background Sky Color</string>
    </property>
   </action>
  </widget>
@@ -1800,6 +1812,38 @@ QDockWidget {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSet_Background_Color</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setBackgroundHorizonColour()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>511</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSet_Background_Sky_Color</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setBackgroundSkyColour()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>511</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>about()</slot>
@@ -1828,5 +1872,7 @@ QDockWidget {
   <slot>chooseDrawMode(QString)</slot>
   <slot>toggleFullScreen(bool)</slot>
   <slot>newWindow()</slot>
+  <slot>setBackgroundHorizonColour()</slot>
+  <slot>setBackgroundSkyColour()</slot>
  </slots>
 </ui>

@@ -3,8 +3,11 @@
 
 #include <QThread>
 #include <QString>
+#include <QObject>
 
-#ifndef _WIN32
+#include <QTextIStream>
+#include <QSocketNotifier>
+
 //
 // Author: Kuba Ober <kuba@mareimbrium.org>
 // Downloaded from: http://www.ibib.waw.pl/~winnie
@@ -12,10 +15,6 @@
 // License:  Public domain
 //
 
-#include <QObject>
-
-class QTextIStream;
-class QSocketNotifier;
 
 class Interceptor : public QObject
 {
@@ -38,8 +37,6 @@ class Interceptor : public QObject
     int m_origFdCopy;
 };
 
-#endif
-
 
 class StdOutRedirector : public QThread
 {
@@ -50,16 +47,12 @@ class StdOutRedirector : public QThread
     	void run();
     signals:
     	void caughtString(QString);
-#ifndef _WIN32
     public slots:
 	void displayString();
 
 public:
 	Interceptor* stdoutInterceptor;
 	Interceptor* stderrInterceptor;
-#endif
-
-	
 };
 
 StdOutRedirector* redirectConsoleOutput(QObject* p);
