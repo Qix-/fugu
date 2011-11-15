@@ -20,7 +20,7 @@ local wave, awave -- wavy functions with params (period,offset)
 
 function setup()
 	m = icosahedron()
-	m:subdivide(3)
+	m:subdivide(4)
 	verts = vertexlist(m)
 	for i,v in ipairs(verts) do
 		local r,th,ph = polar(v.p.x,v.p.y,v.p.z)
