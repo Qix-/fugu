@@ -33,10 +33,6 @@ public slots:
 	void about();
 
 	void newWindow();
-	// void openProject(); // opens a new project in a new fugu instance
-	//void saveProject(); // saves all open files
-	//void saveProjectAs(); // saves project under new name
-	// void closeProject(); // equivalent to quit
 
 	void newFile();
 	void open();

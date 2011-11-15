@@ -1,5 +1,6 @@
 find_package(Qt4 REQUIRED)
 set(QT_USE_QTOPENGL)
+SET( QT_USE_QT3SUPPORT TRUE )  
 include(${QT_USE_FILE})
 
 set(ALL_LIBS fg 
