@@ -74,11 +74,11 @@ MainWindow::MainWindow(QWidget *parent)
 		QWidget* controlContainer = new QWidget();
 		QVBoxLayout* ccvb = new QVBoxLayout();
 
-			QPushButton* ccreset = new QPushButton("Reset",controlContainer);
+			QPushButton* ccreset = new QPushButton("Reset");
 			connect(ccreset, SIGNAL(clicked()), this, SLOT(resetSlidersToDefaults()));
 			ccvb->addWidget(ccreset);
 
-			mControlList = new QWidget(controlContainer);
+			mControlList = new QWidget();
 			mControlList->setLayout(new QGridLayout()); // (new QVBoxLayout());
 
 			ccvb->addWidget(mControlList);
@@ -119,17 +119,16 @@ MainWindow::MainWindow(QWidget *parent)
 	this->addAction(ui.actionToolBar);
 	this->addAction(ui.actionMenuBar);
 	this->addAction(ui.actionFull_Screen);
+	this->addAction(ui.actionReload);
 
 	// build the set of fugu keywords
 	buildFuguKeywordSet();
 
+	// build the examples menu
 	buildExamplesMenu();
 
-	// open an existing project...
-	//QTimer::singleShot(100, this, SLOT(openProject()));
-
 	// load a script
-	// newEditor(new QFile("../scripts/tests/superformula.lua"));
+	newEditor(new QFile("../scripts/ex/basic/superformula_ex.lua"));
 }
 
 void MainWindow::about()
@@ -473,10 +472,28 @@ void MainWindow::reload(){
 
 void MainWindow::resetSliders(){
 
+	std::cout << "Resetting sliders\n";
+
 	// if (mControlList) delete 	mControlList;
 	// mControlList = new QWidget(mControlWidget);
+	// mControlList->layout()->deleteAllItems(); // Qt3
+
+	QLayoutItem *child;
+	while ((child = mControlList->layout()->takeAt(0)) != 0) {
+		delete child->widget();
+	  delete child;
+	}
+
+	/*
+	QGridLayout* qgd = static_cast<QGridLayout*>(mControlList->layout());
+	int rows = qgd->rowCount();
+	for(int row=0;row<rows;row++){
+		qgb->
+	}
 	delete mControlList->layout();
 	mControlList->setLayout(new QGridLayout()); //(new QVBoxLayout());
+	mControlList->layout()->update();
+	*/
 	// mControlWidget->setWidget(mControlList);
 
 	mBoundVariableMap.clear();
