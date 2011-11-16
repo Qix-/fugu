@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
 ,mTime(0)
 ,mActiveScript(NULL)
 ,mFuguKeywords(NULL)
+,mHasSeenControlsBefore(false)
 {
 	sInstance = this;
 
@@ -122,11 +123,13 @@ MainWindow::MainWindow(QWidget *parent)
 	// build the set of fugu keywords
 	buildFuguKeywordSet();
 
+	buildExamplesMenu();
+
 	// open an existing project...
 	//QTimer::singleShot(100, this, SLOT(openProject()));
 
 	// load a script
-	newEditor(new QFile("../scripts/tests/superformula.lua"));
+	// newEditor(new QFile("../scripts/tests/superformula.lua"));
 }
 
 void MainWindow::about()
@@ -198,15 +201,35 @@ void MainWindow::open()
 	openFile();
 }
 
+void MainWindow::openExample(){
+	QAction* qa = static_cast<QAction*>(QObject::sender());
+	QString path = qa->data().toString();
+	openFile(path);
+}
+
 void MainWindow::openFile(const QString &path)
 {
 	QString fileName = path;
-	if (fileName.isNull())
-		fileName = QFileDialog::getOpenFileName(this,
-				tr("Open File"), "", "fugu script (*.lua)");
-
-	if (!fileName.isEmpty()) {
-
+	if (fileName.isNull()){
+		QStringList fileNames = QFileDialog::getOpenFileNames(this,
+				tr("Open File"), "../scripts", "fugu scripts (*.lua)");
+		foreach(QString file, fileNames){
+			// check if its already open...
+			// if so, just switch to that file
+			int i = 0;
+			for(;i<mEditors->count();i++){
+				if (mFileNames[mEditors->widget(i)]==file){
+					mEditors->setCurrentIndex(i);
+					break;
+				}
+			}
+			if (i==mEditors->count()){
+				// if not, open a new editor
+				newEditor(new QFile(file));
+			}
+		}
+	}
+	else {
 		// check if its already open...
 		// if so, just switch to that file
 		for(int i=0;i<mEditors->count();i++){
@@ -863,6 +886,30 @@ void MainWindow::buildReference() // build the html reference
 	}
 }
 
+void MainWindow::buildExamplesMenu(){
+	// go through and build the examples menu
+	QMenu* menuExamples = findChild<QMenu*>("menuFile")->findChild<QMenu*>("menuExamples");
+	menuExamples->clear();
+
+	QDir examplesDir = QDir("../scripts/ex");
+
+	foreach(QString subdir, examplesDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot)){
+		QMenu* subMenu = new QMenu(subdir,menuExamples);
+		QDir examplesSubDir = examplesDir.filePath(subdir);
+		foreach(QString file, examplesSubDir.entryList(QStringList("*.lua"))){
+			QString path = examplesSubDir.filePath(file);
+			QAction* qa = new QAction(subMenu);
+			QString name = file;
+			name.chop(4); // remove .lua
+			qa->setText(name);
+			qa->setData(path);
+			subMenu->addAction(qa);
+			connect(qa,SIGNAL(triggered()),this,SLOT(openExample()));
+		}
+		menuExamples->addMenu(subMenu);
+	}
+}
+
 void MainWindow::textChanged(){
 	// the text of the current editor has changed...
 	// so mark it as unsaved...
@@ -1006,6 +1053,11 @@ void MainWindow::setupAddSliderCallback(lua_State* L){
 void MainWindow::lua_add_slider(const luabind::object& o){
 	MainWindow* win = MainWindow::instance();
 
+	if (!win->mHasSeenControlsBefore){
+		win->mHasSeenControlsBefore = true;
+		win->mControlWidget->show();
+	}
+
 	// parse the contents
 	if (o["var"] and o["low"] and o["high"] and o["value"]){
 		std::string var = luabind::object_cast<std::string>(o["var"]);
@@ -1038,8 +1090,10 @@ void MainWindow::lua_add_slider(const luabind::object& o){
 
 		// if the iterator hasn't reached the end
 		// then rebuild the slider ..
+		bool rebuildSlider = false;
 		QSlider* qs = NULL;
 		if (it!=win->mBoundVariableMap.end()){
+			rebuildSlider = true;
 			qs = it.key();
 		}
 
@@ -1086,15 +1140,22 @@ void MainWindow::lua_add_slider(const luabind::object& o){
 		qs->setMinimum(low*multiplier);
 		qs->setMaximum(high*multiplier);
 
-		QLabel* ql = new QLabel(QString::fromStdString(var));
-		QLabel* qv = new QLabel("0");
-		qv->setMinimumWidth(qv->fontMetrics().tightBoundingRect("000000").width());
+		if (!rebuildSlider){
+			QLabel* ql = new QLabel(QString::fromStdString(var));
+			QLabel* qv = new QLabel("0");
+			qv->setMinimumWidth(qv->fontMetrics().tightBoundingRect("000000").width());
 
-		QGridLayout* qg = static_cast<QGridLayout*>(win->mControlList->layout());
-		int rows = qg->rowCount();
-		qg->addWidget(ql,rows,0);
-		qg->addWidget(qs,rows,1);
-		qg->addWidget(qv,rows,2);
+			QGridLayout* qg = static_cast<QGridLayout*>(win->mControlList->layout());
+			int rows = qg->rowCount();
+			qg->addWidget(ql,rows,0);
+			qg->addWidget(qs,rows,1);
+			qg->addWidget(qv,rows,2);
+
+			connect(qs,SIGNAL(valueChanged(int)),win,SLOT(paramSliderValueChanged(int)));
+
+
+			win->mSliderToLabelMap.insert(qs,qv);
+		}
 
 		BoundVariable bv;
 		bv.var = var;
@@ -1102,11 +1163,8 @@ void MainWindow::lua_add_slider(const luabind::object& o){
 		bv.low = low;
 		bv.high = high;
 		bv.def = value;
-
 		win->mBoundVariableMap.insert(qs,bv);
-		win->mSliderToLabelMap.insert(qs,qv);
 
-		connect(qs,SIGNAL(valueChanged(int)),win,SLOT(paramSliderValueChanged(int)));
 
 		qs->setValue(value*multiplier);
 	}

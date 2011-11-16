@@ -7,10 +7,15 @@ require 'core.pos'
 -- Shorthand for common transformations
 
 -- Rotate a number of radians around a specified axis
-function R(radian,axis)
-	return mat4():set_rotate_rad(radian,axis)
+function R(radian,axis_or_x,y,z)
+	if (z==nil) then
+		return mat4():set_rotate_rad(radian,axis_or_x) 
+	else
+		return R(radian,vec3(axis_or_x,y,z))
+	end
 end
-document[[R(rad,axis) generates a matrix that will rotate a point a number of radians around the specified axis (vec3)]](R)
+
+document[[R(rad,axis), R(rad,x,y,z) generates a matrix that will rotate a point a number of radians around the specified axis (vec3)]](R)
 categorise(R,"transform")
 
 -- Rotates vec from to vec to
@@ -21,16 +26,29 @@ document[[Rv(a:vec3,b:vec3) generates a matrix that will rotate vector a to alig
 categorise(Rv,"transform")
 
 -- Translate by some amount
-function T(translation)
-	return mat4():set_translate(translation)
+function T(translation_or_x, y, z)
+	if (z==nil) then
+		return mat4():set_translate(translation_or_x)
+	else
+		return T(vec3(translation_or_x,y,z))
+	end		
 end
-document[[T(t:vec3) generates a matrix that translates a point by the vector t]](T)
+document[[T(vec3), T(x,y,z) generates a matrix that translates a point by the given vector]](T)
 categorise(T,"transform")
 
 -- Scale by some amount
-function S(vec)
-	return mat4():set_scale(vec) 
+function S(v_or_x,y,z)
+	if (z==nil) then
+		if (y==nil) then 
+			return mat4():set_scale(v_or_x)
+		else
+			return mat4():set_scale(v_or_x,y,1)
+		end	
+	else
+		return mat4():set_scale(v_or_x,y,z)	
+	end
 end
+
 document[[S(s:vec3) generates a matrix that scales a point by the vector s]](S)
 categorise(S,"transform")
 

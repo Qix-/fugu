@@ -5,6 +5,9 @@
 #include "fg/glrenderer.h"
 #include <QGLWidget>
 
+// TODO: Use Lua as an effect file format?
+// ref: http://prideout.net/blog/?p=1
+
 class QGLShaderProgram;
 
 class FGView : public QGLWidget

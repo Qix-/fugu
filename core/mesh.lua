@@ -36,7 +36,18 @@ document[[iso(res,f) creates an isosurface from function f(x,y,z) within a 2x2x2
 
 foreach({cube,sphere,icosahedron,tetrahedron,dodecahedron,octahedron,cone,cylinder,iso}, function(_,f) categorise(f,"mesh") end)
 
+load_mesh = fg.mesh.load
+document[[load_mesh(file) loads a mesh from a file. supported formats: obj]](load_mesh)
+categorise(load_mesh,"mesh")
+
+-- operations
+
+split_edge = fg.split_edge
+document[[split_edge(mesh,pos) splits the edge in pos into two and retriangulates the adjacent faces]](split_edge) 
+categorise(split_edge, "mesh")
+
 -- helpers
+
 
 -- return a list of all vertices in a mesh
 function vertexlist(mesh)
@@ -49,6 +60,18 @@ function vertexlist(mesh)
 end
 document[[vertexlist(m:mesh) returns a list of all vertices in the mesh m]](vertexlist)
 categorise(vertexlist,"mesh")
+
+-- return a list of all faces in a mesh
+function facelist(mesh)
+	local fl = {}
+ 	local all = mesh:selectAllFaces()
+	for f in all.faces do
+		table.insert(fl,f)
+	end
+	return fl
+end
+document[[facelist(m:mesh) returns a list of all faces in the mesh m]](facelist)
+categorise(facelist,"mesh")
 
 -- applies f to each vertex in the mesh
 function foreachv(mesh,f)

@@ -102,12 +102,12 @@ function new_holdfast(length,width,n,meander)
 
 			donatello:roll(PHI)
 			donatello:pushState()
-			local elipH = findEllipseH(A, B, SPA * i);
+			local elipH = find_ellipse_h(A, B, SPA * i);
 			donatello:pitch(math.pi)
 			donatello:move(elipH)
 			donatello:pitch(math.pi/4)
 			donatello:move(A * math.sqrt(1 - ((elipH * elipH)/(B * B))))
-			donatello:pitch(getAngleFromH(A, B, elipH))
+			donatello:pitch(get_angle_from_h(A, B, elipH))
 			donatello:pushState()
 			self.roots[i]:build(donatello)
 			donatello:popState()
