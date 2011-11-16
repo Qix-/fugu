@@ -11,6 +11,7 @@ require "core.mesh"
 require "core.pos"
 require "core.node"
 require "core.geometry"
+require "core.turtle"
 -- include underscore into global namespace
 __ = require "core.underscore"
 __.each(__.functions(), 

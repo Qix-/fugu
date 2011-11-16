@@ -37,6 +37,7 @@ public slots:
 
 	void newFile();
 	void open();
+	void openExample();
 	void save();
 	void saveAs();
 	void closeFile();
@@ -71,6 +72,7 @@ public slots:
 
 	void buildFuguKeywordSet();
 	void buildReference(); // build the html reference
+	void buildExamplesMenu();
 
 	void textChanged();
 	void paramSliderValueChanged(int val);
@@ -124,6 +126,8 @@ private:
 	QWidget* mControlList;
 	QHash<QSlider*, BoundVariable> mBoundVariableMap;
 	QHash<QSlider*, QLabel*> mSliderToLabelMap;
+	bool mHasSeenControlsBefore;
+
 
 	// export dialog
 	QDialog* mExportDialog;

@@ -23,7 +23,7 @@ function update(dt)
 	time = time + dt
 	if (time > .1) then
 		-- extrude the same vertex over and over again		
-		fg.extrude(m,v,.2)
+		extrude(m,v,.2)
 		time = 0
 		ex = ex + 1
 		

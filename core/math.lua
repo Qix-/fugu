@@ -134,17 +134,27 @@ end
 document[[polar(vec3), polar(x,y,z) convert cartesian to polar coordinates: r,theta,phi]](polar)
 categorise(polar,"math")
 
+--[[
 function random_vec3()
-	return vec3(random(),random(),random())
+	return vec3(random(0,1),random(0,1),random(0,1))
 end
 
 function random_vec3(sc)
-	return vec3(sc*random(),sc*random(),sc*random())
+	return vec3(random(0,sc),random(0,sc),random(0,sc))
+end
+--]]
+function random_vec3(low,high)
+	if (high==nil) then
+		if (low==nil) then 
+			return vec3(random(0,1),random(0,1),random(0,1))
+		else
+			return vec3(random(0,low),random(0,low),random(0,low))
+		end
+	else 
+		return vec3(random(low,high),random(low,high),random(low,high))
+	end
 end
 
-function random_vec3(low,high)
-	return vec3(random(low,high),random(low,high),random(low,high))
-end
 document[[random_vec3() is equivalent to vec3(random(),random(),random())
 random_vec3(sc) is equivalent to vec3(sc*random(),sc*random(),sc*random())
 random_vec3(low,high) is equivalent to vec3(random(low,high),random(low,high),random(low,high))]](random_vec3)
@@ -239,3 +249,26 @@ document[[acentroidvl(vertex_list,n) computes the approximate centroid of a list
 vertices defining a closed polygon (not necessarily planar).
 The normalised vector, n, defines the plane on which the polygon approximately lies]](acentroidvl)
 categorise(acentroidvl,"geometric")
+
+
+
+function step_function(list)
+	local f = function(x)
+		for i,xt in ipairs(list) do
+			if (x < xt[1]) then return xt[2] end
+		end -- for
+		-- else
+		return list[#list][2]
+	end -- f
+	return f
+end
+document[[step_function(list) converts a list of (x,y) pairs into a step function. Example usage:
+	local f = step_function {{0,0},{.5,1},{1,0}}
+	f(0) -- returns 0
+	f(.2) -- returns 0
+	f(.5) -- returns 1
+	f(.8) -- returns 1
+	f(1.1) -- returns 0
+]](step_function)
+categorise(step_function, "math")
+

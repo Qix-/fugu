@@ -4,6 +4,7 @@
 
 require "table"
 require "core.help"
+require "math"
 
 -- put foreach into the global namespace
 concat = table.concat
@@ -53,7 +54,7 @@ document[[find(l,f) finds element v of l satisfying f(v)]](find)
 categorise(find,"util")
 
 -- deepcopy from http://lua-users.org/wiki/CopyTable
-function deepcopy(object)
+function copy(object)
     local lookup_table = {}
     local function _copy(object)
         if type(object) ~= "table" then
@@ -70,8 +71,10 @@ function deepcopy(object)
     end
     return _copy(object)
 end
-document[[deepcopy(table) returns a deep copy of a table]](deepcopy)
-categorise(deepcopy,"util")
+document[[copy(table) returns a (deep) copy of a table]](copy)
+categorise(copy,"util")
+
+
 
 -- printing functions (http://lua-users.org/wiki/TableSerialization)
 function table_print (tt, indent, done)
@@ -113,3 +116,10 @@ function to_string( tbl )
 end
 document[[to_string(tbl) converts tbl to a human-readable string]](to_string)
 categorise(to_string,"util")
+
+
+function choose(list)
+	return list[math.floor(random(1,1+#list))]
+end
+document[[choose(list) returns a random element from list]](choose)
+categorise(choose, "util")

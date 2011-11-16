@@ -333,6 +333,11 @@ namespace fg {
 			return mState.frame * Vec3(0.,0.,0.);
 		}
 
+        Mat4 Turtle::getFrame()
+        {
+        	return mState.frame;
+        }
+
         boost::shared_ptr< Mesh > Turtle::getMesh( )
         {
 			Mesh::MeshBuilder mb;

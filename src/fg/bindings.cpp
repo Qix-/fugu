@@ -208,12 +208,21 @@ namespace fg {
 		   class_<fg::Universe>("universe")
 		   .def(tostring(const_self))
 		   .def("addMesh", &fg::Universe::addMesh) // deprecated..
+		   .def("add_mesh", &fg::Universe::addMesh) // deprecated..
 		   .def("add", (void(fg::Universe::*) (boost::shared_ptr<MeshNode>)) &fg::Universe::add)
 		   .def("add", (void(fg::Universe::*) (boost::shared_ptr<Node>)) &fg::Universe::add)
+
 		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
 		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
 		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
 		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
+
+		   .def("make_child_of", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
+		   .def("make_child_of", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
+		   .def("make_child_of", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
+		   .def("make_child_of", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
+
+
 		   .property("t", &fg::Universe::time)
 		   .def("time", &fg::Universe::time)
 		];
@@ -357,6 +366,12 @@ namespace fg {
 		   .def("selectRandomVertex", &Mesh::selectRandomVertex)
 		   .def("selectRandomFace", &Mesh::selectRandomFace)
 
+		   .def("select_all_vertices", &Mesh::selectAllVertices)
+		   .def("select_all_faces", &Mesh::selectAllFaces)
+
+		   .def("select_random_vertex", &Mesh::selectRandomVertex)
+		   .def("select_random_face", &Mesh::selectRandomFace)
+
 		   .def("subdivide", &Mesh::subdivide)
 		   .def("smoothSubdivide", &Mesh::smoothSubdivide) // TODO: deprecate
 		   .def("smooth_subdivide", &Mesh::smoothSubdivide)
@@ -404,7 +419,9 @@ namespace fg {
 		   def("getVerticesAtDistance", getVerticesAtDistance),
 		   def("getVerticesWithinDistance", getVerticesWithinDistance),
 		   def("nloop", nloop),
+
 		   def("splitEdge", splitEdge),
+		   def("split_edge", splitEdge),
 
 		   /// \deprecated
 		   def("_extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double,double))&fg::extrude)
@@ -426,6 +443,10 @@ namespace fg {
 		   .def("setCrossSection",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCrossSection)
 		   .def("pushState",&fg::gc::Turtle::pushState)
 		   .def("popState",&fg::gc::Turtle::popState)
+
+		   .def("push",&fg::gc::Turtle::pushState)
+		   .def("pop",&fg::gc::Turtle::popState)
+
 		   .def("setCarrierMode",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCarrierMode)
 
 		   .def("beginCrossSection",&fg::gc::Turtle::beginCrossSection)
@@ -438,6 +459,10 @@ namespace fg {
 		   .def("addPoint",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::addPoint)
 
 		   .def("getPosition",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getPosition)
+		   .def("getFrame",(fg::Mat4(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getFrame)
+
+		   .def("get_frame",(fg::Mat4(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getFrame)
+
 		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getMesh)
 
 		   .def("getNumEndCaps",&fg::gc::Turtle::getNumEndCaps)
@@ -445,6 +470,8 @@ namespace fg {
 
 		   .def("getNumGC",&fg::gc::Turtle::getNumGC)
 		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(int))&fg::gc::Turtle::getMesh)
+
+
 		];
 
 		// fg/geometry_wrapper.h

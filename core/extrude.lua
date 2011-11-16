@@ -3,8 +3,6 @@
 -- @author ben
 --]]
 
-require 'core.nloop'
-
 function extrude(mesh,vertex,magnitude)
 	fg._extrude(mesh,vertex,1,vertex.n,magnitude)
 end
@@ -24,7 +22,7 @@ function extrude(mesh,vertex,direction,magnitude)
 	-- then change the vertex positions, so the faces are oriented correctly
 	vertex.p = vp	
 	
-	local posfan = fgx.nloop.loopp(vertex)
+	local posfan = loopp(vertex)
 	for _,pos in ipairs(posfan) do
 		-- to get the outside vertex we need to flipV the pos
 		pos:flipV()
@@ -56,7 +54,7 @@ function extrudeAndScale(mesh,vertex,direction,magnitude,scale)
 	
 	-- then change the vertex positions, so the faces are oriented correctly
 	vertex.p = vp	
-	local posfan = fgx.nloop.loopp(vertex)
+	local posfan = loopp(vertex)
 	
 	for _,pos in ipairs(posfan) do
 		-- to get the outside vertex we need to flipV the pos

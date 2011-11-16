@@ -637,13 +637,18 @@ QDockWidget {
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuExamples">
+     <property name="title">
+      <string>Examples</string>
+     </property>
+    </widget>
     <addaction name="actionNew_2"/>
     <addaction name="action_Open"/>
-    <addaction name="actionOpen_Example"/>
     <addaction name="action_Save"/>
     <addaction name="actionSave_As"/>
     <addaction name="actionClose"/>
     <addaction name="separator"/>
+    <addaction name="menuExamples"/>
     <addaction name="actionExport"/>
     <addaction name="actionNew"/>
     <addaction name="separator"/>
@@ -1157,11 +1162,6 @@ QDockWidget {
     <string>F9</string>
    </property>
   </action>
-  <action name="actionOpen_Example">
-   <property name="text">
-    <string>Open Example</string>
-   </property>
-  </action>
   <action name="actionSet_Background_Color">
    <property name="text">
     <string>Set Background Horizon Color</string>
@@ -1170,6 +1170,11 @@ QDockWidget {
   <action name="actionSet_Background_Sky_Color">
    <property name="text">
     <string>Set Background Sky Color</string>
+   </property>
+  </action>
+  <action name="actionExample_1">
+   <property name="text">
+    <string>Example 1</string>
    </property>
   </action>
  </widget>
