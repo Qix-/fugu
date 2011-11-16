@@ -32,8 +32,8 @@ function setup()
 	m:sync()
 	fgu:add(meshnode(m))
 	
-	s1c = deepcopy(s1)
-	s2c = deepcopy(s2)
+	s1c = copy(s1)
+	s2c = copy(s2)
 	
 	add_slider {var="s1c.a", value=s1.a, low=0, high=5}
 	add_slider {var="s1c.b", value=s1.b, low=0, high=5}
