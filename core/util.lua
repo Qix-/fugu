@@ -13,6 +13,7 @@ insert = table.insert
 maxn = table.maxn
 remove = table.remove
 sort = table.sort
+-- find = table.find
 
 document"concat(table [,sep [,i [,j]]]) returns table[i]..sep..table[i+1].. ..sep..table[j]"(concat)
 document"foreach(table, f) executes f on each element of table"(foreach)
@@ -24,6 +25,7 @@ document[[remove(table [,pos])
 document[[sort(table [,comp])
 	sorts table elements in a given order, in-place, from table[1] to table[n]
 	comp is an optional comparison function s.t., comp(a,b) = true if a<b.]](sort)
+-- document[[find(table, f) returns an element e in table satisfying f(e)]](find)
 
 categorise(concat,"util")
 categorise(foreach,"util")
@@ -31,6 +33,7 @@ categorise(insert,"util")
 categorise(maxn,"util")
 categorise(remove,"util")
 categorise(sort,"util")
+--categorise(find,"util")
 
 -- the following two functions are from:
 -- http://stackoverflow.com/questions/656199/search-for-an-item-in-a-lua-list

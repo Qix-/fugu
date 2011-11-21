@@ -29,11 +29,6 @@ function setup()
 		ph = ph - pi/2 -- fix the range of ph 
 		opp[i] = {r,th,ph}
 	end
-	--[[
-		v.p = sf(s1,s2,-th,ph) -- negating theta helps..
-		v.c = vec3(awave(1.2,ph),awave(1,th),awave(1,0))
-	end
-	--]]
 	m:sync()
 	fgu:add(meshnode(m))
 	

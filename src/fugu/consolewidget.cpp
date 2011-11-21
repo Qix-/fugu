@@ -83,10 +83,15 @@ ConsoleWidget::ConsoleWidget(QWidget *parent)
     mStdOutRedirector = new StdRedirector<>( std::cout, outcallback, mConsole );
     mStdErrRedirector = new StdRedirector<>( std::cerr, errcallback, mConsole );
 
+    mConsole->resize(mConsole->minimumSize());
 }
 
 ConsoleWidget::~ConsoleWidget()
 {
+
+
+
+
 	delete mStdOutRedirector;
 	delete mStdErrRedirector;
 }

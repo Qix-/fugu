@@ -25,10 +25,10 @@ function extrude(mesh,vertex,direction,magnitude)
 	local posfan = loopp(vertex)
 	for _,pos in ipairs(posfan) do
 		-- to get the outside vertex we need to flipV the pos
-		pos:flipV()
+		pos:flip_v()
 		n = pos.v
 		n.p = n.p + direction*(magnitude + (vdotd-dot(n.p,direction))/ddotd)
-		pos:flipV()	 
+		pos:flip_v()	 
 	end
 	return posfan
 	

@@ -15,8 +15,11 @@ require "core.turtle"
 -- include underscore into global namespace
 __ = require "core.underscore"
 __.each(__.functions(), 
-	function(f) 
-		_G[f] = __[f]
+	function(f)
+		-- only import the functions not in this list 
+		if not set {"max","min"}[f] then
+			_G[f] = __[f]
+		end
 	end
 )
 require "core.underscore_docs"

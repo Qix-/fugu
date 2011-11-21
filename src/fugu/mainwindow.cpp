@@ -5,6 +5,7 @@
 #include <QtGui>
 #include <QProcess>
 #include <QColorDialog>
+#include <QSettings>
 
 #include <Qsci/qsciscintilla.h>
 
@@ -34,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
 ,mActiveScript(NULL)
 ,mFuguKeywords(NULL)
 ,mHasSeenControlsBefore(false)
+,mFGLexer(NULL)
+,mStdOutRedirector(NULL)
 {
 	sInstance = this;
 
@@ -51,9 +54,12 @@ MainWindow::MainWindow(QWidget *parent)
 	mConsoleDockWidget = new QDockWidget(tr("Console"), this);
 	mConsoleWidget = new ConsoleWidget(mConsoleDockWidget);
 	mConsoleDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea); // Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-
 	mConsoleDockWidget->setWidget(mConsoleWidget);
 	addDockWidget(Qt::BottomDockWidgetArea, mConsoleDockWidget);
+	mConsoleDockWidget->resize(mConsoleDockWidget->minimumSize());
+	mConsoleWidget->resize(mConsoleWidget->minimumSize());
+	connect(mConsoleWidget, SIGNAL(emitCommand(QString)), this, SLOT(runScript(QString)));
+
 	// mConsoleDockWidget->setFloating(true);
 	// mConsoleDockWidget->show();
 	findChild<QMenu*>("menuView")->addAction(mConsoleDockWidget->toggleViewAction());
@@ -63,7 +69,6 @@ MainWindow::MainWindow(QWidget *parent)
 	// grab references to child widgets
 	mFGView = findChild<FGView*>("fgview");
 	mEditors = findChild<QTabWidget*>("editors");
-	connect(mConsoleWidget, SIGNAL(emitCommand(QString)), this, SLOT(runScript(QString)));
 
 	QTimer::singleShot(1, this, SLOT(redirectStreams()));
 
@@ -115,6 +120,16 @@ MainWindow::MainWindow(QWidget *parent)
 	colourModeGroup->addAction(ui.actionSetColourVertex);
 	ui.actionSetColourVertex->setChecked(true);
 
+	// load properties
+	ui.actionToggleOrigin->setChecked(mFGView->origin());
+	ui.actionToggleGround->setChecked(mFGView->ground());
+	ui.actionToggleShowNodeOrigins->setChecked(mFGView->showNodeAxes());
+	ui.actionToggleLighting->setChecked(mFGView->lighting());
+	ui.actionToggleShowOverWire->setChecked(mFGView->showOverWire());
+
+	QSettings settings("MonashUniversity", "Fugu");
+	findChild<QAction*>("actionShowLineNumbers")->setChecked(settings.value("editor/showLineNumbers",false).toBool());
+
 	// add some actions to mainwindow too (so they don't disable when the menu bar is hidden)
 	this->addAction(ui.actionToolBar);
 	this->addAction(ui.actionMenuBar);
@@ -129,6 +144,14 @@ MainWindow::MainWindow(QWidget *parent)
 
 	// load a script
 	newEditor(new QFile("../scripts/ex/basic/superformula_ex.lua"));
+}
+
+MainWindow::~MainWindow(){
+	QSettings settings("MonashUniversity", "Fugu");
+	settings.setValue("window/maximised", isMaximized());
+	settings.setValue("editor/showLineNumbers", findChild<QAction*>("actionShowLineNumbers")->isChecked());
+
+	mStdOutRedirector->quit();
 }
 
 void MainWindow::about()
@@ -559,11 +582,11 @@ void MainWindow::runScript(QString code){
 }
 
 void MainWindow::redirectStreams(){
-	StdOutRedirector* s = redirectConsoleOutput(this);
-	if (s){
-		(void)connect( s, SIGNAL( caughtString( QString ) ),
+	mStdOutRedirector = redirectConsoleOutput(this);
+	if (mStdOutRedirector){
+		(void)connect( mStdOutRedirector, SIGNAL( caughtString( QString ) ),
 				mConsoleWidget, SLOT( print( QString ) ));
-		s->start();
+		mStdOutRedirector->start();
 	}
 }
 
@@ -609,6 +632,16 @@ void MainWindow::toggleFullScreen(bool b){
 	else {
 		showNormal();
 	}
+
+}
+
+void MainWindow::tabChanged(int t){
+	// save settings of last tab, and load into new tab
+
+	/*
+	QSettings settings("MonashUniversity", "Fugu");
+	fgLexer->readSettings(settings,"editor");
+	*/
 
 }
 
@@ -1004,13 +1037,7 @@ bool MainWindow::saveFile(QsciScintilla* editor, QString fileName){
 
 	// rename tab label ...
 	QFileInfo fi(file);
-	/*
-	if (mActiveScript==editor){
-		mEditors->setTabText(mEditors->indexOf(editor),QString("[") + fi.fileName() + "]");
-	}
-	else {*/
-		mEditors->setTabText(mEditors->indexOf(editor),fi.fileName());
-	//}
+	mEditors->setTabText(mEditors->indexOf(editor),fi.fileName());
 	return true;
 }
 
@@ -1018,9 +1045,20 @@ bool MainWindow::saveFile(QsciScintilla* editor, QString fileName){
 void MainWindow::newEditor(QFile* file)
 {
 	QsciScintilla* editor = new QsciScintilla();
-	FGLexer* fgLexer = new FGLexer(editor);
-	fgLexer->registerFuguKeywords(mFuguKeywords);
-	editor->setLexer(fgLexer);
+
+	if (mFGLexer==NULL){
+		mFGLexer = new FGLexer(this);
+		mFGLexer->registerFuguKeywords(mFuguKeywords);
+	}
+
+	//FGLexer* fgLexer = new FGLexer(editor);
+
+	//QSettings settings("MonashUniversity", "Fugu");
+	//fgLexer->readSettings(settings,"editor");
+
+	// fgLexer->registerFuguKeywords(mFuguKeywords);
+	// editor->setLexer(fgLexer);
+	editor->setLexer(mFGLexer);
 	editor->setTabWidth(2);
 	editor->setAutoIndent(true);
 
