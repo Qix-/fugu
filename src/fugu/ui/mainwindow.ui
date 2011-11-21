@@ -541,7 +541,13 @@ QDockWidget {
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QFrame" name="frame_2">
+      <property name="opaqueResize">
+       <bool>false</bool>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="QFrame" name="editorsFrame">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -693,6 +699,10 @@ QDockWidget {
     <addaction name="separator"/>
     <addaction name="actionSet_Background_Color"/>
     <addaction name="actionSet_Background_Sky_Color"/>
+    <addaction name="separator"/>
+    <addaction name="actionReset_Camera"/>
+    <addaction name="separator"/>
+    <addaction name="actionCode"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -1177,6 +1187,22 @@ QDockWidget {
     <string>Example 1</string>
    </property>
   </action>
+  <action name="actionReset_Camera">
+   <property name="text">
+    <string>Reset Camera</string>
+   </property>
+  </action>
+  <action name="actionCode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Code</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1202,6 +1228,7 @@ QDockWidget {
     <slot>setColourModeNone()</slot>
     <slot>setColourModeVertex()</slot>
     <slot>toggleShowOverWire(bool)</slot>
+    <slot>resetCamera()</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -1849,6 +1876,38 @@ QDockWidget {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionReset_Camera</sender>
+   <signal>triggered()</signal>
+   <receiver>fgview</receiver>
+   <slot>resetCamera()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>872</x>
+     <y>409</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCode</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editorsFrame</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>359</x>
+     <y>409</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>about()</slot>
@@ -1879,5 +1938,6 @@ QDockWidget {
   <slot>newWindow()</slot>
   <slot>setBackgroundHorizonColour()</slot>
   <slot>setBackgroundSkyColour()</slot>
+  <slot>tabChanged(int)</slot>
  </slots>
 </ui>

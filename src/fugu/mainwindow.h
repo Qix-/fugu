@@ -6,6 +6,7 @@
 #include <QSet>
 
 #include "fgview.h"
+#include "fglexer.h"
 
 #include "fg/universe.h"
 
@@ -22,12 +23,14 @@ class ConsoleWidget;
 struct lua_State;
 namespace luabind {class object;}
 
+class StdOutRedirector;
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 
 public:
 	MainWindow(QWidget *parent = 0);
+	~MainWindow();
 	static inline MainWindow* instance(){return sInstance;}
 
 public slots:
@@ -67,6 +70,8 @@ public slots:
 	void showLineNumbers(bool);
 	void toggleFullScreen(bool);
 
+	void tabChanged(int);
+
 	void exportSimulation();
 	void exportSimulationChooseDir(); // called by exportSimulation only
 
@@ -101,6 +106,7 @@ private:
 
 	// text editors
 	QTabWidget* mEditors;
+	FGLexer* mFGLexer;
 	QHash<QWidget*,QString> mFileNames; // map: texteditor -> filename
 	QWidget* mActiveScript; // the script that is executed when play/restart is pressed...
 	QSet<QWidget*> mUnsavedEditors; // the unsaved editors
@@ -142,7 +148,7 @@ private:
 	double mTime;
 
 	QTimer* mSimulationTimer;
-
+	StdOutRedirector* mStdOutRedirector;
 	static MainWindow* sInstance;
 
 };

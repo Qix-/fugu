@@ -44,10 +44,13 @@ class StdOutRedirector : public QThread
 
     public:
 	StdOutRedirector(QObject* parent):QThread(parent){}
-    	void run();
+	void run();
+
     signals:
-    	void caughtString(QString);
-    public slots:
+    void caughtString(QString);
+
+	public slots:
+	void flush();
 	void displayString();
 
 public:

@@ -27,10 +27,13 @@ public:
 	QColor getBackgroundHorizonColour() const;
 	QColor getBackgroundSkyColour() const;
 
+	inline bool origin(){return mOrigin;}
+	inline bool ground(){return mGround;}
+	inline bool showNodeAxes(){return mShowNodeAxes;}
+	inline bool showOverWire(){return mShowOverWire;}
+	inline bool lighting(){return mLighting;}
+
 public slots:
-	void setXRotation(int angle);
-	void setYRotation(int angle);
-	void setZRotation(int angle);
 	void resetCamera();
 
 	void toggleOrigin(bool show);
@@ -56,7 +59,6 @@ public slots:
 
 	void setBackgroundHorizonColour(QColor);
 	void setBackgroundSkyColour(QColor);
-
 signals:
 	void xRotationChanged(int angle);
 	void yRotationChanged(int angle);
@@ -78,10 +80,12 @@ private:
 	// NULL if none
 	fg::Universe* mUniverse;
 
+	/*
 	int xRot;
 	int yRot;
 	int zRot;
 	QPoint lastPos;
+	*/
 
 	QColor mBackgroundHorizon;
 	QColor mBackgroundSky;
@@ -106,7 +110,7 @@ private:
 	bool mOrigin;
 	bool mGround;
 	bool mShowNodeAxes; // show node axes
-	bool mEnableLighting;
+	bool mLighting;
 	bool mShowOverWire;
 	int mNumberSubdivs;
 	enum MeshMode { MM_SMOOTH, MM_FLAT, MM_WIRE, MM_POINTS, MM_TEXTURED, MM_PHONG };

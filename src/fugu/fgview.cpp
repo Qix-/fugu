@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <QtOpenGL>
 #include <QGLShaderProgram>
+#include <QSettings>
 
 #include <cmath>
 #include <cstring>
@@ -22,12 +23,6 @@ FGView::FGView(QWidget *parent)
 : QGLWidget(parent) // NOTE: GLformat set in main.cpp
 , mUniverse(NULL) // Very important to intialise as null
 {
-
-	//logo = 0;
-	xRot = 0;
-	yRot = 0;
-	zRot = 0;
-
 	// set camera defaults
 	mZoom = 0;
 	resetCamera();
@@ -39,23 +34,37 @@ FGView::FGView(QWidget *parent)
 	mMouseState.isTranslating = false;
 	mMouseState.isZooming = false;
 
+	QSettings settings("MonashUniversity", "Fugu");
+
 	// view mode
-	mOrigin = false;
-	mGround = false;
-	mShowNodeAxes = false;
-	mEnableLighting = true;
+	mOrigin = settings.value("view/origin",false).toBool();
+	mGround = settings.value("view/ground",false).toBool();;
+	mShowNodeAxes = settings.value("view/showNodeAxes",false).toBool();
+	mLighting = settings.value("view/lighting",true).toBool();
+	mShowOverWire = settings.value("view/showOverWire",true).toBool();
+
+	// these are set in mainwindow
 	mNumberSubdivs = 0;
 	mMeshMode = MM_FLAT;
 	mColourMode = fg::GLRenderer::COLOUR_VERTEX;
-	mShowOverWire = true;
 
 	// theme...
-	mBackgroundHorizon = QColor(79,79,79);
-	mBackgroundSky = QColor(16,16,16);
+	mBackgroundHorizon = settings.value("view/bghorizon", QColor(79,79,79)).value<QColor>();
+	mBackgroundSky = settings.value("view/bgsky", QColor(16,16,16)).value<QColor>();
 }
 
 FGView::~FGView()
 {
+	QSettings settings("MonashUniversity", "Fugu");
+
+	settings.setValue("view/origin",mOrigin);
+	settings.setValue("view/ground",mGround);
+	settings.setValue("view/showNodeAxes",mShowNodeAxes);
+	settings.setValue("view/lighting",mLighting);
+	settings.setValue("view/showOverWire",mShowOverWire);
+
+	settings.setValue("view/bghorizon", mBackgroundHorizon);
+	settings.setValue("view/bgsky", mBackgroundSky);
 }
 
 QSize FGView::minimumSizeHint() const
@@ -87,36 +96,6 @@ static void qNormalizeAngle(int &angle)
 		angle -= 360 * 16;
 }
 
-void FGView::setXRotation(int angle)
-{
-	qNormalizeAngle(angle);
-	if (angle != xRot) {
-		xRot = angle;
-		emit xRotationChanged(angle);
-		updateGL();
-	}
-}
-
-void FGView::setYRotation(int angle)
-{
-	qNormalizeAngle(angle);
-	if (angle != yRot) {
-		yRot = angle;
-		emit yRotationChanged(angle);
-		updateGL();
-	}
-}
-
-void FGView::setZRotation(int angle)
-{
-	qNormalizeAngle(angle);
-	if (angle != zRot) {
-		zRot = angle;
-		emit zRotationChanged(angle);
-		updateGL();
-	}
-}
-
 void FGView::toggleOrigin(bool show){
 	mOrigin = show;
 	update();
@@ -138,7 +117,7 @@ void FGView::toggleShowOverWire(bool show){
 }
 
 void FGView::toggleLighting(bool on){
-	mEnableLighting = on;
+	mLighting = on;
 	update();
 }
 
@@ -318,13 +297,9 @@ void FGView::paintGL()
 		fg::Vec3 hc = fg::Vec3(mBackgroundHorizon.red()/255.,
 				mBackgroundHorizon.green()/255.,
 				mBackgroundHorizon.blue()/255.);
-
 		fg::Vec3 tc = fg::Vec3(mBackgroundSky.red()/255.,
 						mBackgroundSky.green()/255.,
 						mBackgroundSky.blue()/255.);
-
-		//fg::Vec3 hc = fg::Vec3(79./255,79./255,79./255);
-		//fg::Vec3 tc = fg::Vec3(16./255,16./255,16./255);
 		fg::GLRenderer::renderSkySphere(20,64,64,hc,tc,tc);
 
 		glPopAttrib(); // GL_LIGHTING_BIT
@@ -332,7 +307,7 @@ void FGView::paintGL()
 		glPopAttrib(); // GL_TEXTURE_BIT
 		glPopAttrib(); // GL_ENABLE_BIT
 
-		if (mEnableLighting){
+		if (mLighting){
 			GLfloat lp[] = {1, 1, 1, 0};
 			glLightfv(GL_LIGHT0,GL_POSITION,lp);
 			glEnable(GL_LIGHTING);
@@ -533,13 +508,6 @@ void FGView::mouseMoveEvent(QMouseEvent *event)
 
 		update();
 	}
-
-	// else
-	/*
-	if (not TwEventMousePosGLFW(x,y)){
-		// ...
-	}
-	*/
 }
 
 void FGView::drawOrigin(){
@@ -578,4 +546,5 @@ void FGView::resetCamera()
             mRotationMatrix[i][j] = (i == j ? 1 : 0);
     }
     mCameraTranslation[0] = mCameraTranslation[1] = mCameraTranslation[2] = 0;
+    update();
 }

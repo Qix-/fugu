@@ -65,7 +65,7 @@ IF(MINGW)
 ELSE(MINGW)
 	add_executable(fugu ${EVERYTHING})
 ENDIF(MINGW)
-target_link_libraries(fugu ${ALL_LIBS} ${ALL_LIBS} ) 
+target_link_libraries(fugu ${ALL_LIBS}) 
 
 # install fgv into bin
 install(TARGETS fugu DESTINATION .)

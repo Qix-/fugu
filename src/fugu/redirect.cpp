@@ -36,7 +36,6 @@ void RedirectConsole(HANDLE hPipe){
 }
 
 
-
  void StdOutRedirector::run()
  {
 	HANDLE rd,wr;
@@ -61,6 +60,24 @@ void RedirectConsole(HANDLE hPipe){
 		else
 			break;
 	}
+ }
+
+ void StdOutRedirector::flush(){
+	 /*
+	 char buf[100];
+	 DWORD readBytes=0;
+		if (!ReadFile(rd, buf, 99, &readBytes, 0))
+			break;
+		buf[99] = 0;
+
+		if (readBytes>0){
+			std::string str;
+			for (DWORD i=0;i<readBytes;i++)
+				str+=buf[i];
+			emit (caughtString(QString::fromStdString(str)));
+		}
+		else
+			break;*/
  }
 
  void StdOutRedirector::displayString(){}
@@ -118,7 +135,9 @@ void StdOutRedirector::run(){
 	stdoutInterceptor->finish();
 	stderrInterceptor->finish();
 }
+void StdOutRedirector::flush(){
 
+}
 void StdOutRedirector::displayString(){
 /* this code adapted from qconsole (wconsole.cpp) (c) Houssem BDIOUI under the GPL */
 

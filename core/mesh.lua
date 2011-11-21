@@ -126,17 +126,17 @@ function inset(mesh,vertex,scale)
 	local vp = vertex.p
 		
 	-- do a basic extrude
-	fg.extrude(mesh,vertex,1,direction,0)
+	extrude(mesh,vertex,direction,0)
 	
 	-- then scale the vertex positions
-	local posfan = fgx.nloop.loopp(vertex)
+	local posfan = loopp(vertex)
 	for _,pos in ipairs(posfan) do
 		-- to get the outside vertex we need to flipV the pos
-		pos:flipV()
+		pos:flip_v()
 		n = pos.v
 		-- n.p = n.p + direction*(magnitude + (vdotd-dot(n.p,direction))/ddotd)		
 		n.p = lerp(vp,n.p,scale)
-		pos:flipV()
+		pos:flip_v()
 	end
 	return posfan		
 end
