@@ -5,29 +5,7 @@
 #include <Qsci/qscilexer.h>
 
 #include <iostream>
-#include "redirect.h"
-
-void outcallback( const char* ptr, std::streamsize count, void* console )
-{
-  // (void) count;
-  QsciScintilla* p = static_cast< QsciScintilla* >( console );
-  QString str = QString::fromAscii(ptr,count);
-  p->append( str );
-  p->setCursorPosition(p->lines()-1,0);
-}
-
-void errcallback( const char* ptr, std::streamsize count, void* console )
-{
-  QsciScintilla* p = static_cast< QsciScintilla* >( console );
-  int linesbefore = p->lines();
-  QString str = QString::fromAscii(ptr,count);
-  p->append( str );
-  int linesafter = p->lines();
-  //p->setSelection(linesbefore,0,linesafter-1,p->lineLength(linesafter-1));
-  //p->selectAll(false);
-  p->setCursorPosition(p->lines()-1,0);
-}
-
+//#include "redirect.h"
 
 class ConsoleLexer: public QsciLexer {
 public:
@@ -80,20 +58,14 @@ ConsoleWidget::ConsoleWidget(QWidget *parent)
     qvb->setContentsMargins(0,0,0,0);
     setLayout(qvb);
 
-    mStdOutRedirector = new StdRedirector<>( std::cout, outcallback, mConsole );
-    mStdErrRedirector = new StdRedirector<>( std::cerr, errcallback, mConsole );
+    // mStdOutRedirector = new StdRedirector<>( std::cout, outcallback, mConsole );
+    // mStdErrRedirector = new StdRedirector<>( std::cerr, errcallback, mConsole );
 
     mConsole->resize(mConsole->minimumSize());
 }
 
 ConsoleWidget::~ConsoleWidget()
 {
-
-
-
-
-	delete mStdOutRedirector;
-	delete mStdErrRedirector;
 }
 
 void ConsoleWidget::processCommand(QString cmd){
@@ -110,6 +82,12 @@ void ConsoleWidget::processCommand(QString cmd){
 
 void ConsoleWidget::print(QString p){
 	mConsole->append(p);
+	// Scroll to bottom
+	mConsole->setCursorPosition(mConsole->lines()-1,0);
+}
+
+void ConsoleWidget::error(QString p){
+	mConsole->append(QString("ERROR: ") + p);
 	// Scroll to bottom
 	mConsole->setCursorPosition(mConsole->lines()-1,0);
 }

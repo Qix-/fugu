@@ -1,5 +1,10 @@
-#ifndef FGE_REDIRECT_H
-#define FGE_REDIRECT_H
+#ifndef FUGU_REDIRECT_H
+#define FUGU_REDIRECT_H
+
+
+
+
+// old
 
 #include <QThread>
 #include <QString>

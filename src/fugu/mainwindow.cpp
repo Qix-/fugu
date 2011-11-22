@@ -14,7 +14,8 @@
 
 #include "fglexer.h"
 #include "consolewidget.h"
-#include "redirect.h"
+// #include "redirect.h"
+#include "qredirector.h"
 #include "exporter.h"
 
 #include "ui_mainwindow.h"
@@ -36,9 +37,11 @@ MainWindow::MainWindow(QWidget *parent)
 ,mFuguKeywords(NULL)
 ,mHasSeenControlsBefore(false)
 ,mFGLexer(NULL)
-,mStdOutRedirector(NULL)
+//,mStdOutRedirector(NULL)
+,mRedirector(NULL)
 {
 	sInstance = this;
+
 
 	Ui::MainWindow ui;
 	ui.setupUi(this);
@@ -70,7 +73,10 @@ MainWindow::MainWindow(QWidget *parent)
 	mFGView = findChild<FGView*>("fgview");
 	mEditors = findChild<QTabWidget*>("editors");
 
-	QTimer::singleShot(1, this, SLOT(redirectStreams()));
+	// connect streams to console widget
+	redirectStreams();
+
+	// QTimer::singleShot(1, this, SLOT(redirectStreams()));
 
 	// create the slider dialog
 	mControlWidget = new QDockWidget(tr("Control"),this);
@@ -151,7 +157,9 @@ MainWindow::~MainWindow(){
 	settings.setValue("window/maximised", isMaximized());
 	settings.setValue("editor/showLineNumbers", findChild<QAction*>("actionShowLineNumbers")->isChecked());
 
-	mStdOutRedirector->quit();
+	mRedirector->quit();
+	delete mRedirector;
+	// mStdOutRedirector->quit();
 }
 
 void MainWindow::about()
@@ -582,12 +590,18 @@ void MainWindow::runScript(QString code){
 }
 
 void MainWindow::redirectStreams(){
+	mRedirector = new QRedirector(this);
+	connect( mRedirector, SIGNAL( out( QString ) ), mConsoleWidget, SLOT( print( QString ) ));
+	mRedirector->start();
+
+	/*
 	mStdOutRedirector = redirectConsoleOutput(this);
 	if (mStdOutRedirector){
 		(void)connect( mStdOutRedirector, SIGNAL( caughtString( QString ) ),
 				mConsoleWidget, SLOT( print( QString ) ));
 		mStdOutRedirector->start();
 	}
+	*/
 }
 
 void MainWindow::makeCurrentScriptActive(){

@@ -23,6 +23,7 @@ set(SRC main.cpp
 	redirect.cpp
 	exporter.cpp
 	html_template.cpp
+	qredirector.cpp
 	)
 
 set(SRCS ${SRC})
@@ -51,7 +52,12 @@ SET(MOC_HDR
   fglexer.h
   consolewidget.h
   redirect.h
+  qredirector.h
 )
+
+IF(UNIX)
+	SET(MOC_HDR ${MOC_HDR} qredirectorimpl_posix.h)
+ENDIF(UNIX)
 
 QT4_WRAP_CPP(MOC_SRC ${MOC_HDR})
 
