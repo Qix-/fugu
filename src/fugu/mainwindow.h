@@ -23,7 +23,8 @@ class ConsoleWidget;
 struct lua_State;
 namespace luabind {class object;}
 
-class StdOutRedirector;
+class QRedirector;
+// class StdOutRedirector;
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -148,7 +149,8 @@ private:
 	double mTime;
 
 	QTimer* mSimulationTimer;
-	StdOutRedirector* mStdOutRedirector;
+	// StdOutRedirector* mStdOutRedirector;
+	QRedirector* mRedirector;
 	static MainWindow* sInstance;
 
 };
