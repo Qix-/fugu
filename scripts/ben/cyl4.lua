@@ -5,7 +5,7 @@ local node = {}
 
 local p1 = 2
 local p2 = .25
-local p3 = 25
+local p3 = 10
 local p4 = 0
 
 function setup()
@@ -40,7 +40,7 @@ function new_root(length,width,meander)
 		rootLength  = length,
 		rootWidth   = width,
 		rootMeander = meander,
-		stepLength  = length / 8
+		stepLength  = length / 4
 	}
 
 	obj.build = function(self,bert)
@@ -86,7 +86,7 @@ function new_root(length,width,meander)
 		end
 		bert:setScale(0.001)
 		bert:yaw(rateCur/2)
-		bert:endCylinder(5)
+		bert:endCylinder(3)
 	end
 
 	return obj
@@ -124,12 +124,6 @@ function new_holdfast(length,width,n,meander)
 	return obj
 end
 
--- returns a normalised vector perpendicular to vec3 v
-function perp(v)
-	if (v.x<v.y and v.x<v.z) then return normalise(cross(v,vec3(1,0,0)))
-	elseif (v.y<v.x and v.y<v.z) then return normalise(cross(v,vec3(0,1,0)))
-	else return normalise(cross(v,vec3(0,0,1))) end
-end
 
 --[[	
  "Distributing many points on a sphere" by E.B. Saff and A.B.J. Kuijlaars,
