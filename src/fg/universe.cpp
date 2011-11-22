@@ -381,7 +381,7 @@ namespace fg {
 	   std::string err = lua_tostring(L, -1);
 	   lua_pop(L, 1);
 	   std::stringstream msg;
-	   msg << d.short_src << ":" << d.currentline;
+	   //msg << d.short_src << ":" << d.currentline;
 
 	   if (d.name != 0)
 	   {

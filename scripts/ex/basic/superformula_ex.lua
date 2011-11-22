@@ -38,7 +38,7 @@ function setup()
 end
 
 function update(dt)
-	-- cycle the parameters of the superformula
+	-- cycle t..he parameters of the superformula
 	s1c.m = awave(1,0)*s1.m
 	s1c.n1 = 1 + .5*awave(2,pi/4)*s1.n1
 	s1c.n2 = 2 + 1.8*awave(2.4,pi/8)*s1.n2	

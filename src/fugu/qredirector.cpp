@@ -11,14 +11,6 @@ void outcallback( const char* ptr, std::streamsize count, void* _qr )
 	QRedirector* qr = static_cast<QRedirector*>(_qr);
 	QString str = QString::fromAscii(ptr,count);
 	qr->_sendOut(str);
-
-	// (void) count;
-	/*
-	QsciScintilla* p = static_cast< QsciScintilla* >( console );
-	QString str = QString::fromAscii(ptr,count);
-	p->append( str );
-	p->setCursorPosition(p->lines()-1,0);
-	 */
 }
 
 void errcallback( const char* ptr, std::streamsize count, void* _qr )
@@ -26,17 +18,6 @@ void errcallback( const char* ptr, std::streamsize count, void* _qr )
 	QRedirector* qr = static_cast<QRedirector*>(_qr);
 	QString str = QString::fromAscii(ptr,count);
 	qr->_sendErr(str);
-
-	/*
-	QsciScintilla* p = static_cast< QsciScintilla* >( console );
-	int linesbefore = p->lines();
-	QString str = QString::fromAscii(ptr,count);
-	p->append( str );
-	int linesafter = p->lines();
-	//p->setSelection(linesbefore,0,linesafter-1,p->lineLength(linesafter-1));
-	//p->selectAll(false);
-	p->setCursorPosition(p->lines()-1,0);
-	 */
 }
 
 QRedirector::QRedirector(QObject* p):QThread(p){
@@ -52,6 +33,7 @@ QRedirector::~QRedirector(){
 void QRedirector::run(){
 	mStdOutRedirector = new StdRedirector<>( std::cout, outcallback, this );
 	mStdErrRedirector = new StdRedirector<>( std::cerr, errcallback, this );
+
 	pImpl = new QRedirectorImpl();
 	_run();
 }
