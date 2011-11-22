@@ -50,10 +50,9 @@ QRedirector::~QRedirector(){
 }
 
 void QRedirector::run(){
-	pImpl = new QRedirectorImpl();
 	mStdOutRedirector = new StdRedirector<>( std::cout, outcallback, this );
 	mStdErrRedirector = new StdRedirector<>( std::cerr, errcallback, this );
-
+	pImpl = new QRedirectorImpl();
 	_run();
 }
 
@@ -85,8 +84,8 @@ void QRedirector::_update(){
 }
 #else
 void QRedirector::_run(){
-	connect(pImpl,SIGNAL(out(QString)),this,SLOT(out(QString)), Qt::DirectConnection);
-	connect(pImpl,SIGNAL(err(QString)),this,SLOT(err(QString)), Qt::DirectConnection);
+	connect(pImpl,SIGNAL(out(QString)),this,SLOT(out(QString)));
+	connect(pImpl,SIGNAL(err(QString)),this,SLOT(err(QString)));
 	exec();
 }
 

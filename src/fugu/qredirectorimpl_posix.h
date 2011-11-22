@@ -28,7 +28,7 @@ class Interceptor : public QObject
 {
 	Q_OBJECT
 public:
-	IInterceptor(QObject * parent = 0) :
+	Interceptor(QObject * parent = 0) :
 		QObject(parent),
 		m_stream(0),
 		m_notifier(0)
@@ -110,7 +110,7 @@ int m_origFd;
 int m_origFdCopy;
 };
 
-class QRedirectorImpl {
+class QRedirectorImpl: public QObject {
 	Q_OBJECT
 
 public:
@@ -143,7 +143,7 @@ public slots:
 			QString line;
 	#if QT_VERSION >= 0x040000
 			line = s->readAll();
-			emit (caughtString(line));
+			emit (out(line));
 	#else
 			while (!s->atEnd())
 			{
@@ -160,7 +160,7 @@ public slots:
 			QString line;
 	#if QT_VERSION >= 0x040000
 			line = s->readAll();
-			emit (caughtString(line));
+			emit (err(line));
 	#else
 			while (!s->atEnd())
 			{
