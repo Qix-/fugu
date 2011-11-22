@@ -47,14 +47,16 @@ ConsoleWidget::ConsoleWidget(QWidget *parent)
 	mConsole->setMarginWidth(2,8); // a little margin
 	mConsole->setReadOnly(true);
 
+	/*
     mCommandLine = new CommandLineWidget();
 
     // hook up command line signals...
     connect(mCommandLine, SIGNAL(emitCommand(QString)), this, SLOT(processCommand(QString)));
+	*/
 
     QVBoxLayout* qvb = new QVBoxLayout();
     qvb->addWidget(mConsole);
-    qvb->addWidget(mCommandLine);
+    // qvb->addWidget(mCommandLine);
     qvb->setContentsMargins(0,0,0,0);
     setLayout(qvb);
 
@@ -87,7 +89,7 @@ void ConsoleWidget::print(QString p){
 }
 
 void ConsoleWidget::error(QString p){
-	mConsole->append(QString("ERROR: ") + p);
+	mConsole->append(p);
 	// Scroll to bottom
 	mConsole->setCursorPosition(mConsole->lines()-1,0);
 }

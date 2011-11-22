@@ -419,7 +419,7 @@ void MainWindow::load(){
 		}
 		catch (std::runtime_error& e){
 			mSimulationMode = SM_ERROR;
-			std::cerr << "ERROR: " << e.what() << "\n";
+			std::cerr << e.what() << "\n";
 			if (mUniverse!=NULL){
 				delete mUniverse;
 				mUniverse = NULL;
@@ -537,7 +537,7 @@ void MainWindow::simulateOneStep(){
 			mUniverse->update(0.01);
 		}
 		catch (std::runtime_error& e){
-			std::cerr << "ERROR: " << e.what() << "\n";
+			std::cerr << e.what() << "\n";
 			unload();
 			mSimulationMode = SM_ERROR;
 		}
@@ -552,7 +552,7 @@ void MainWindow::simulateOneStepNoViewUpdate(){
 			mUniverse->update(0.01);
 		}
 		catch (std::runtime_error& e){
-			std::cerr << "ERROR: " << e.what() << "\n";
+			std::cerr << e.what() << "\n";
 			unload();
 			mSimulationMode = SM_ERROR;
 		}
@@ -592,16 +592,8 @@ void MainWindow::runScript(QString code){
 void MainWindow::redirectStreams(){
 	mRedirector = new QRedirector(this);
 	connect( mRedirector, SIGNAL( out( QString ) ), mConsoleWidget, SLOT( print( QString ) ));
+	connect( mRedirector, SIGNAL( err( QString ) ), mConsoleWidget, SLOT( error( QString ) ));
 	mRedirector->start();
-
-	/*
-	mStdOutRedirector = redirectConsoleOutput(this);
-	if (mStdOutRedirector){
-		(void)connect( mStdOutRedirector, SIGNAL( caughtString( QString ) ),
-				mConsoleWidget, SLOT( print( QString ) ));
-		mStdOutRedirector->start();
-	}
-	*/
 }
 
 void MainWindow::makeCurrentScriptActive(){
@@ -796,7 +788,7 @@ void MainWindow::buildFuguKeywordSet(){
 		}
 		catch (std::runtime_error& e){
 			mSimulationMode = SM_ERROR;
-			std::cerr << "ERROR: " << e.what() << "\n";
+			std::cerr << e.what() << "\n";
 			if (mUniverse!=NULL){
 				delete mUniverse;
 				mUniverse = NULL;
@@ -836,7 +828,7 @@ void MainWindow::buildReference() // build the html reference
 		}
 		catch (std::runtime_error& e){
 			mSimulationMode = SM_ERROR;
-			std::cerr << "ERROR: " << e.what() << "\n";
+			std::cerr << e.what() << "\n";
 			if (mUniverse!=NULL){
 				delete mUniverse;
 				mUniverse = NULL;
