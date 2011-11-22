@@ -20,7 +20,7 @@ set(SRC main.cpp
 	fgview.cpp
 	fglexer.cpp
 	consolewidget.cpp
-	redirect.cpp
+	#redirect.cpp
 	exporter.cpp
 	html_template.cpp
 	qredirector.cpp
@@ -51,7 +51,7 @@ SET(MOC_HDR
   fgview.h
   fglexer.h
   consolewidget.h
-  redirect.h
+  #redirect.h
   qredirector.h
 )
 
