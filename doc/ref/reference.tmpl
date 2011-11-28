@@ -1,28 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<title>fugu reference</title>
-<link rel="stylesheet" href="css/reset.css" />
-<link rel="stylesheet" href="css/text.css" />
-<link rel="stylesheet" href="css/960.css" />
-<link rel="stylesheet" href="css/fugu.css" />
-</head>
-<body>
+  <head>
+    <meta charset="utf-8">
+    <title>Fugu Reference</title>
+    <meta name="description" content="fugu is software for creating 3D geometry from code">
+    <meta name="author" content="Ben Porter">
 
-<h1>fugu reference</h1>
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-<div class="container_12">
+    <!-- Le styles -->
+		<link href="bootstrap.css" rel="stylesheet">
+		<link href="fugu.css" rel="stylesheet">
 
-<div class="grid_12">
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  </head>
 
-</div>
-<div class="clear"></div>
+  <body>
 
-<div class="grid_4">
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <a class="brand" href="#">fugu</a>
+          <ul class="nav">
+						<li><a href="index.html">Home</a></li>
+						<li class="active"><a href="reference.html">Reference</a></li>
+          </ul>
+        </div>
+      </div>
+		</div>
+
+		<div class="container content">
+
+	<div class="page-header">
+    <h1>Fugu Reference <small>built on <tmpl_var name="DATE"></small></h1>
+  </div>
+
+<div class="row">
+<div class="span-one-third">
     <tmpl_loop CATEGORIES1>
+
     <div class="category_list">
-		<h1><tmpl_var name="CATEGORY"></h1>
+		<span class="label success"><tmpl_var name="CATEGORY"></span>
+		<!-- <h1><tmpl_var name="CATEGORY"></h1> -->
 		<tmpl_loop FUNCTIONS>
 		<a href="#" class=<tmpl_var name="HAS_DOC"> id=<tmpl_var name="FUNCTION_ID">><tmpl_var name="FUNCTION_NAME"></a>
 		<div style="display: none;" class=func_doc id=doc_<tmpl_var name="FUNCTION_ID">>
@@ -33,10 +59,11 @@
 	</tmpl_loop>	
 </div>
 
-<div class="grid_4">
+<div class="span-one-third">
     <tmpl_loop CATEGORIES2>
     <div class="category_list">
-		<h1><tmpl_var name="CATEGORY"></h1>
+		<span class="label success"><tmpl_var name="CATEGORY"></span>
+		<!-- <h1><tmpl_var name="CATEGORY"></h1> -->
 		<tmpl_loop FUNCTIONS>
 		<a href="#" class=<tmpl_var name="HAS_DOC"> id=<tmpl_var name="FUNCTION_ID">><tmpl_var name="FUNCTION_NAME"></a>
 		<div style="display: none;" class=func_doc id=doc_<tmpl_var name="FUNCTION_ID">>
@@ -47,10 +74,11 @@
 	</tmpl_loop>	
 </div>
 
-<div class="grid_4">
+<div class="span-one-third">
     <tmpl_loop CATEGORIES3>
     <div class="category_list">
-		<h1><tmpl_var name="CATEGORY"></h1>
+		<span class="label success"><tmpl_var name="CATEGORY"></span>
+		<!-- <h1><tmpl_var name="CATEGORY"></h1> -->
 		<tmpl_loop FUNCTIONS>
 		<a href="#" class=<tmpl_var name="HAS_DOC"> id=<tmpl_var name="FUNCTION_ID">><tmpl_var name="FUNCTION_NAME"></a>
 		<div style="display: none;" class=func_doc id=doc_<tmpl_var name="FUNCTION_ID">>
@@ -60,19 +88,12 @@
 	</div>
 	</tmpl_loop>	
 </div>
-
-<div class="clear"></div>
-
-<div class="grid_12"><br/></div>
-<div class="clear"></div>
-
-<div style="display:none" id="doc" class="grid_12"></div>
-<div class="clear"></div>
-
-<div id="footer" class="grid_12">
-Built on <tmpl_var name="DATE">
 </div>
-<div class="clear"></div>
+
+<div class="row">
+<div style="display:none" id="doc" class="span16"></div>
+</div>
+
 
 </div>
 
@@ -81,7 +102,7 @@ Built on <tmpl_var name="DATE">
 $(document).ready(function(){
 	var currentDocName = null;
 	var currentDocString = null;
-	var slideSpeed = 200; 
+	var slideSpeed = 0; 
 	
 	$(".category_list a.has_no_doc").click(function () {
 		return false;
