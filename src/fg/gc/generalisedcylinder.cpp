@@ -259,12 +259,12 @@ namespace fg {
 						// They are almost the same, add both triangles
 						//std::cout << "p = " << pLength + pRTLength << ", n = " << nLength + nRTLength << "\n";
                         double thresh = 0;
-                        if( nRTLength > pRTLength )
-                        {
-                            thresh = .5 * pLength;
-                        } else
+                        if( nRTLength + nLength > pRTLength + pLength )
                         {
                             thresh = .5 * nLength;
+                        } else
+                        {
+                            thresh = .5 * pLength;
                         }
 
 						if( fabs(nLength + nRTLength - pLength - pRTLength) < thresh ) {
@@ -336,11 +336,11 @@ namespace fg {
             	}
 			}
 
-//			mb.addVertex( cCpos.getX(), cCpos.getY(), cCpos.getZ() );
-//			for( int i = 0; i < pCs.size(); ++i )
-//			{
-//				mb.addFace( pCsIndex + i, pCsIndex + ((1 + i) % pCs.size()), nCsIndex );
-//			}
+			mb.addVertex( cCpos.getX(), cCpos.getY(), cCpos.getZ() );
+			for( int i = 0; i < pCs.size(); ++i )
+			{
+				mb.addFace( pCsIndex + i, pCsIndex + ((1 + i) % pCs.size()), nCsIndex );
+			}
 
 			return nCsIndex;
         }

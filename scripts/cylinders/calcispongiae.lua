@@ -53,7 +53,6 @@ function setup()
 	m = donatello:getMesh()
 	node = fg.meshnode(m)
 	fgu:add(node)
-
 end
 
 local t = 0

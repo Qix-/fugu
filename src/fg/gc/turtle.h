@@ -48,6 +48,8 @@ namespace fg {
 				void beginCrossSection();
 				int endCrossSection();
 				Vec3 getPosition();
+                Vec3 getHeading();
+                Vec3 getUp();
                 boost::shared_ptr<Mesh> getMesh( );
 				boost::shared_ptr<Mesh> getMesh( int gc );
 				int getNumGC( );

@@ -3,7 +3,8 @@ module(...,package.seeall)
 
 local m = {}
 function setup()
-	i = 7
+	i = 10
+
 	bert = fg.turtle()
     bert:pushState()
 
@@ -26,22 +27,27 @@ function setup()
     bert:setCrossSection(1)
 	bert:setCarrierMode(0)
 	bert:beginCylinder()
-	bert:yaw(math.pi/4);
-	bert:move(10.);
-	bert:yaw(math.pi/4);
-	bert:addPoint(i);
-	bert:yaw(math.pi/4);
-	bert:move(10.);
-	bert:yaw(math.pi/4);
-	bert:addPoint(i);
-	bert:yaw(math.pi/4);
-	bert:move(10.);
-	bert:yaw(math.pi/4);
-	bert:addPoint(i);
-    bert:yaw(math.pi/4);
-    bert:move(10.);
-    bert:yaw(math.pi/4);
-    bert:endCylinder(i)
+	bert:move(10.)
+	bert:addPoint(i)
+
+	bert:yaw(math.pi/2)
+    bert:addPoint(1)
+	bert:move(10.)
+	bert:addPoint(i)
+
+	bert:yaw(math.pi/2)
+    bert:addPoint(1)
+	bert:move(10.)
+	bert:addPoint(i)
+
+    bert:yaw(math.pi/2)
+	bert:addPoint(i)
+    bert:move(10.)
+    bert:addPoint(i)
+
+    bert:yaw(math.pi/2)
+    bert:endCylinder(1)
+
 	m = bert:getMesh()
 	fgu:addMesh(m)
 end

@@ -380,6 +380,8 @@ namespace fg {
 		   .def("addPoint",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::addPoint)
 
 		   .def("getPosition",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getPosition)
+		   .def("getHeading",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getHeading)
+		   .def("getUp",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getUp)
 		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getMesh)
 
 		   .def("getNumEndCaps",&fg::gc::Turtle::getNumEndCaps)

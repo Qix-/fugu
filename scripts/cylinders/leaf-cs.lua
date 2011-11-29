@@ -5,7 +5,7 @@ local node = {}
 local cs = {}
 local m = {}
 function setup()
-	local l = new_leaf(1.2, 4., .2, .2, 0.)
+	local l = new_leaf(1.2, 4., .5, .2, 0.)
 
 	donatello = fg.turtle()
 
