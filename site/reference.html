@@ -12,7 +12,7 @@
     <![endif]-->
 
     <!-- Le styles -->
-		<link href="bootstrap.min.css" rel="stylesheet">
+		<link href="bootstrap.css" rel="stylesheet">
 		<link href="fugu.css" rel="stylesheet">
 
     <!-- Le fav and touch icons -->
@@ -39,12 +39,29 @@
 		<div class="container content">
 
 	<div class="page-header">
-    <h1>Fugu Reference <small>built on 28/11/2011</small></h1>
+    <h1>Fugu Reference <small>built on 29/11/2011</small></h1>
   </div>
 
 <div class="row">
 <div class="span-one-third">
     
+
+    <div class="category_list">
+		<span class="label success">ui</span>
+		<!-- <h1>ui</h1> -->
+		
+		<a href="#" class=has_doc id=></a>
+		<div style="display: none;" class=func_doc id=doc_>
+			<pre>add_slider {...} adds a slider to the ui in fugu
+	E.g., add_slider {var="x", value=1, low=0, high=10} creates a slider that 
+	binds to the variable "x" in the active module's namespace.	 
+</pre>
+		</div> 
+		
+
+	</div>
+	
+
 
     <div class="category_list">
 		<span class="label success">transform</span>
@@ -95,71 +112,18 @@
 
 
     <div class="category_list">
-		<span class="label success">ui</span>
-		<!-- <h1>ui</h1> -->
+		<span class="label success">help</span>
+		<!-- <h1>help</h1> -->
 		
-		<a href="#" class=has_doc id=></a>
-		<div style="display: none;" class=func_doc id=doc_>
-			<pre>add_slider {...} adds a slider to the ui in fugu
-	E.g., add_slider {var="x", value=1, low=0, high=10} creates a slider that 
-	binds to the variable "x" in the active module's namespace.	 
-</pre>
+		<a href="#" class=has_doc id=help>help</a>
+		<div style="display: none;" class=func_doc id=doc_help>
+			<pre>help(func) prints the documentation for a given object. Assign documentation with the document function.</pre>
 		</div> 
 		
 
-	</div>
-	
-
-
-    <div class="category_list">
-		<span class="label success">geometric</span>
-		<!-- <h1>geometric</h1> -->
-		
-		<a href="#" class=has_doc id=acentroidvl>acentroidvl</a>
-		<div style="display: none;" class=func_doc id=doc_acentroidvl>
-			<pre>acentroidvl(vertex_list,n) computes the approximate centroid of a list of 
-vertices defining a closed polygon (not necessarily planar).
-The normalised vector, n, defines the plane on which the polygon approximately lies</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=centroid>centroid</a>
-		<div style="display: none;" class=func_doc id=doc_centroid>
-			<pre>centroid(point_list) computes the centroid of a 2d polygon defined by a list of vec3 (with z = 0)</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=distribute_points_sphere>distribute_points_sphere</a>
-		<div style="display: none;" class=func_doc id=doc_distribute_points_sphere>
-			<pre>  distribute_points_sphere(n) returns n equally distributed points on a sphere.
-
- "Distributing many points on a sphere" by E.B. Saff and A.B.J. Kuijlaars,
-  Mathematical Intelligencer 19.1 (1997) 5--11
-</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=line_exp_point_dist>line_exp_point_dist</a>
-		<div style="display: none;" class=func_doc id=doc_line_exp_point_dist>
-			<pre>line_exp_point_dist(p1,p2,q) calculates the distance from q to the explicit line (p1,p2)</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=perp>perp</a>
-		<div style="display: none;" class=func_doc id=doc_perp>
-			<pre>perp(v) returns a normalised vector perpendicular to vec3 v</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=project>project</a>
-		<div style="display: none;" class=func_doc id=doc_project>
-			<pre>project(a,b) projects vec3 a onto vec3 b and returns the result</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=segment_point_dist>segment_point_dist</a>
-		<div style="display: none;" class=func_doc id=doc_segment_point_dist>
-			<pre>segment_point_dist(p1,p2,q) calculates the distance from q to the explicit line segment (p1,p2)</pre>
+		<a href="#" class=has_doc id=show_commands>show_commands</a>
+		<div style="display: none;" class=func_doc id=doc_show_commands>
+			<pre>show_commands() prints all documented commands</pre>
 		</div> 
 		
 
@@ -183,26 +147,6 @@ Multiple meshnodes can reference the same mesh.</pre>
 		<div style="display: none;" class=func_doc id=doc_node>
 			<pre>A node is a positionable and orientable object. 
 Every object in a universe is a node.</pre>
-		</div> 
-		
-
-	</div>
-	
-
-
-    <div class="category_list">
-		<span class="label success">help</span>
-		<!-- <h1>help</h1> -->
-		
-		<a href="#" class=has_doc id=help>help</a>
-		<div style="display: none;" class=func_doc id=doc_help>
-			<pre>help(func) prints the documentation for a given object. Assign documentation with the document function.</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=show_commands>show_commands</a>
-		<div style="display: none;" class=func_doc id=doc_show_commands>
-			<pre>show_commands() prints all documented commands</pre>
 		</div> 
 		
 
@@ -597,330 +541,6 @@ random_vec3(low,high) is equivalent to vec3(random(low,high),random(low,high),ra
 <div class="span-one-third">
     
     <div class="category_list">
-		<span class="label success">utils (underscore)</span>
-		<!-- <h1>utils (underscore)</h1> -->
-		
-		<a href="#" class=has_doc id=all>all</a>
-		<div style="display: none;" class=func_doc id=doc_all>
-			<pre>all The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=any>any</a>
-		<div style="display: none;" class=func_doc id=doc_any>
-			<pre>any The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=collect>collect</a>
-		<div style="display: none;" class=func_doc id=doc_collect>
-			<pre>collect The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=compose>compose</a>
-		<div style="display: none;" class=func_doc id=doc_compose>
-			<pre>compose The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=curry>curry</a>
-		<div style="display: none;" class=func_doc id=doc_curry>
-			<pre>curry The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=detect>detect</a>
-		<div style="display: none;" class=func_doc id=doc_detect>
-			<pre>detect The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=each>each</a>
-		<div style="display: none;" class=func_doc id=doc_each>
-			<pre>each The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=every>every</a>
-		<div style="display: none;" class=func_doc id=doc_every>
-			<pre>every The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=extend>extend</a>
-		<div style="display: none;" class=func_doc id=doc_extend>
-			<pre>extend The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=filter>filter</a>
-		<div style="display: none;" class=func_doc id=doc_filter>
-			<pre>filter The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=first>first</a>
-		<div style="display: none;" class=func_doc id=doc_first>
-			<pre>first The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=flatten>flatten</a>
-		<div style="display: none;" class=func_doc id=doc_flatten>
-			<pre>flatten The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=foldl>foldl</a>
-		<div style="display: none;" class=func_doc id=doc_foldl>
-			<pre>foldl The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=for_each>for_each</a>
-		<div style="display: none;" class=func_doc id=doc_for_each>
-			<pre>for_each The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=head>head</a>
-		<div style="display: none;" class=func_doc id=doc_head>
-			<pre>head The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=include>include</a>
-		<div style="display: none;" class=func_doc id=doc_include>
-			<pre>include The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=inject>inject</a>
-		<div style="display: none;" class=func_doc id=doc_inject>
-			<pre>inject The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=invoke>invoke</a>
-		<div style="display: none;" class=func_doc id=doc_invoke>
-			<pre>invoke The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=is_empty>is_empty</a>
-		<div style="display: none;" class=func_doc id=doc_is_empty>
-			<pre>is_empty The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=is_equal>is_equal</a>
-		<div style="display: none;" class=func_doc id=doc_is_equal>
-			<pre>is_equal The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=join>join</a>
-		<div style="display: none;" class=func_doc id=doc_join>
-			<pre>join The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=keys>keys</a>
-		<div style="display: none;" class=func_doc id=doc_keys>
-			<pre>keys The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=map>map</a>
-		<div style="display: none;" class=func_doc id=doc_map>
-			<pre>map The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=pluck>pluck</a>
-		<div style="display: none;" class=func_doc id=doc_pluck>
-			<pre>pluck The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=pop>pop</a>
-		<div style="display: none;" class=func_doc id=doc_pop>
-			<pre>pop The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=push>push</a>
-		<div style="display: none;" class=func_doc id=doc_push>
-			<pre>push The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=reduce>reduce</a>
-		<div style="display: none;" class=func_doc id=doc_reduce>
-			<pre>reduce The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=reject>reject</a>
-		<div style="display: none;" class=func_doc id=doc_reject>
-			<pre>reject The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=rest>rest</a>
-		<div style="display: none;" class=func_doc id=doc_rest>
-			<pre>rest The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=reverse>reverse</a>
-		<div style="display: none;" class=func_doc id=doc_reverse>
-			<pre>reverse The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=select>select</a>
-		<div style="display: none;" class=func_doc id=doc_select>
-			<pre>select The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=shift>shift</a>
-		<div style="display: none;" class=func_doc id=doc_shift>
-			<pre>shift The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=slice>slice</a>
-		<div style="display: none;" class=func_doc id=doc_slice>
-			<pre>slice The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=some>some</a>
-		<div style="display: none;" class=func_doc id=doc_some>
-			<pre>some The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=sort>sort</a>
-		<div style="display: none;" class=func_doc id=doc_sort>
-			<pre>sort The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=tail>tail</a>
-		<div style="display: none;" class=func_doc id=doc_tail>
-			<pre>tail The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=to_array>to_array</a>
-		<div style="display: none;" class=func_doc id=doc_to_array>
-			<pre>to_array The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=unshift>unshift</a>
-		<div style="display: none;" class=func_doc id=doc_unshift>
-			<pre>unshift The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=values>values</a>
-		<div style="display: none;" class=func_doc id=doc_values>
-			<pre>values The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=wrap>wrap</a>
-		<div style="display: none;" class=func_doc id=doc_wrap>
-			<pre>wrap The underscore functions are documented at http://mirven.github.com/underscore.lua/</pre>
-		</div> 
-		
-
-	</div>
-	
-
-    <div class="category_list">
-		<span class="label success">util</span>
-		<!-- <h1>util</h1> -->
-		
-		<a href="#" class=has_doc id=></a>
-		<div style="display: none;" class=func_doc id=doc_>
-			<pre>sort(table [,comp])
-	sorts table elements in a given order, in-place, from table[1] to table[n]
-	comp is an optional comparison function s.t., comp(a,b) = true if a&lt;b.</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=choose>choose</a>
-		<div style="display: none;" class=func_doc id=doc_choose>
-			<pre>choose(list) returns a random element from list</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=concat>concat</a>
-		<div style="display: none;" class=func_doc id=doc_concat>
-			<pre>concat(table [,sep [,i [,j]]]) returns table[i]..sep..table[i+1].. ..sep..table[j]</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=copy>copy</a>
-		<div style="display: none;" class=func_doc id=doc_copy>
-			<pre>copy(table) returns a (deep) copy of a table</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=find>find</a>
-		<div style="display: none;" class=func_doc id=doc_find>
-			<pre>find(l,f) finds element v of l satisfying f(v)</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=foreach>foreach</a>
-		<div style="display: none;" class=func_doc id=doc_foreach>
-			<pre>foreach(table, f) executes f on each element of table</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=insert>insert</a>
-		<div style="display: none;" class=func_doc id=doc_insert>
-			<pre>insert(table, [pos,] value) inserts value at position pos in table</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=maxn>maxn</a>
-		<div style="display: none;" class=func_doc id=doc_maxn>
-			<pre>maxn(table) returns the largest positive numerical index of table</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=remove>remove</a>
-		<div style="display: none;" class=func_doc id=doc_remove>
-			<pre>remove(table [,pos]) 
-	removes the element at position pos from table, shifting down other elements to 
-	close the space. returns the removed element. pos defaults to #table.</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=set>set</a>
-		<div style="display: none;" class=func_doc id=doc_set>
-			<pre>set(l) converts list l to a set</pre>
-		</div> 
-		
-
-		<a href="#" class=has_doc id=to_string>to_string</a>
-		<div style="display: none;" class=func_doc id=doc_to_string>
-			<pre>to_string(tbl) converts tbl to a human-readable string</pre>
-		</div> 
-		
-
-	</div>
-	
-
-    <div class="category_list">
 		<span class="label success">mesh</span>
 		<!-- <h1>mesh</h1> -->
 		
@@ -1086,11 +706,383 @@ random_vec3(low,high) is equivalent to vec3(random(low,high),random(low,high),ra
 
 	</div>
 	
+
+    <div class="category_list">
+		<span class="label success">util</span>
+		<!-- <h1>util</h1> -->
+		
+		<a href="#" class=has_doc id=></a>
+		<div style="display: none;" class=func_doc id=doc_>
+			<pre>sort(table [,comp])
+	sorts table elements in a given order, in-place, from table[1] to table[n]
+	comp is an optional comparison function s.t., comp(a,b) = true if a&lt;b.</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=all>all</a>
+		<div style="display: none;" class=func_doc id=doc_all>
+			<pre>all(iter, [func]) Returns true if func(item) returns true for all item in items. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=any>any</a>
+		<div style="display: none;" class=func_doc id=doc_any>
+			<pre>any(iter, [func]) Returns true if func(item) returns true for any item in items. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=choose>choose</a>
+		<div style="display: none;" class=func_doc id=doc_choose>
+			<pre>choose(list) returns a random element from list</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=collect>collect</a>
+		<div style="display: none;" class=func_doc id=doc_collect>
+			<pre>collect is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=compose>compose</a>
+		<div style="display: none;" class=func_doc id=doc_compose>
+			<pre>compose(func1, func2, [...]) Returns the composition of a list of functions, where each function consumes the return value of the function that follows. In math terms, composing the functions f(), g(), and h() produces f(g(h())). (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=concat>concat</a>
+		<div style="display: none;" class=func_doc id=doc_concat>
+			<pre>concat(table [,sep [,i [,j]]]) returns table[i]..sep..table[i+1].. ..sep..table[j]</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=copy>copy</a>
+		<div style="display: none;" class=func_doc id=doc_copy>
+			<pre>copy(table) returns a (deep) copy of a table</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=curry>curry</a>
+		<div style="display: none;" class=func_doc id=doc_curry>
+			<pre>curry(func, arg) Creates a wrapper function substituing the supplied arg for the first argument in original function. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=detect>detect</a>
+		<div style="display: none;" class=func_doc id=doc_detect>
+			<pre>detect(iter, func) Looks through a list returning the first element that matches a truth function. The function returns as soon as it finds an acceptable element. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=each>each</a>
+		<div style="display: none;" class=func_doc id=doc_each>
+			<pre>each(iter, func)  Passes each value to function(i) and returns the input. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=every>every</a>
+		<div style="display: none;" class=func_doc id=doc_every>
+			<pre>every is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=extend>extend</a>
+		<div style="display: none;" class=func_doc id=doc_extend>
+			<pre>extend(destination, source) Copy all of the properties in the source object over to the destination object. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=filter>filter</a>
+		<div style="display: none;" class=func_doc id=doc_filter>
+			<pre>filter is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=find>find</a>
+		<div style="display: none;" class=func_doc id=doc_find>
+			<pre>find(l,f) finds element v of l satisfying f(v)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=first>first</a>
+		<div style="display: none;" class=func_doc id=doc_first>
+			<pre>first(array, [length]) Returns the first element of an array. Optionally it will return an array of the first n items. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=flatten>flatten</a>
+		<div style="display: none;" class=func_doc id=doc_flatten>
+			<pre>flatten(array) Flattens a nested array (the nesting can be to any depth). (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=foldl>foldl</a>
+		<div style="display: none;" class=func_doc id=doc_foldl>
+			<pre>foldl is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=for_each>for_each</a>
+		<div style="display: none;" class=func_doc id=doc_for_each>
+			<pre>for_each is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=foreach>foreach</a>
+		<div style="display: none;" class=func_doc id=doc_foreach>
+			<pre>foreach(table, f) executes f on each element of table</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=head>head</a>
+		<div style="display: none;" class=func_doc id=doc_head>
+			<pre>head is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=include>include</a>
+		<div style="display: none;" class=func_doc id=doc_include>
+			<pre>include is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=inject>inject</a>
+		<div style="display: none;" class=func_doc id=doc_inject>
+			<pre>inject is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=insert>insert</a>
+		<div style="display: none;" class=func_doc id=doc_insert>
+			<pre>insert(table, [pos,] value) inserts value at position pos in table</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=invoke>invoke</a>
+		<div style="display: none;" class=func_doc id=doc_invoke>
+			<pre>invoke(list_of_items, function_name) Calls a function with specified name on each item using the colon operator. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=is_empty>is_empty</a>
+		<div style="display: none;" class=func_doc id=doc_is_empty>
+			<pre>is_empty(object) Returns true if object contains no values. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=is_equal>is_equal</a>
+		<div style="display: none;" class=func_doc id=doc_is_equal>
+			<pre>is_equal is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=join>join</a>
+		<div style="display: none;" class=func_doc id=doc_join>
+			<pre>join(array) Returns a string with all items in the array concatenated together with an optional separator. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=keys>keys</a>
+		<div style="display: none;" class=func_doc id=doc_keys>
+			<pre>keys(object) Returns an array of all the property names in a table. (Note: order is not defined) (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=map>map</a>
+		<div style="display: none;" class=func_doc id=doc_map>
+			<pre>map(iter, func) Produces a new array by mapping each value in iter through a transformation function. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=maxn>maxn</a>
+		<div style="display: none;" class=func_doc id=doc_maxn>
+			<pre>maxn(table) returns the largest positive numerical index of table</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=pluck>pluck</a>
+		<div style="display: none;" class=func_doc id=doc_pluck>
+			<pre>pluck(iter, property_name) An convenient version of the common use-case of mapextracting a list of properties. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=pop>pop</a>
+		<div style="display: none;" class=func_doc id=doc_pop>
+			<pre>pop(array) Removes and returns the last item in an array (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=push>push</a>
+		<div style="display: none;" class=func_doc id=doc_push>
+			<pre>push(array, item) Inserts item at the end of an array (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=reduce>reduce</a>
+		<div style="display: none;" class=func_doc id=doc_reduce>
+			<pre>reduce(iter, memo, func) Boils down a list of values into a single value. Memo is the initial state of the reduction, and each successive step of it should be returned by func. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=reject>reject</a>
+		<div style="display: none;" class=func_doc id=doc_reject>
+			<pre>reject(iter, func) Removes items that match the provided criteria. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=remove>remove</a>
+		<div style="display: none;" class=func_doc id=doc_remove>
+			<pre>remove(table [,pos]) 
+	removes the element at position pos from table, shifting down other elements to 
+	close the space. returns the removed element. pos defaults to #table.</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=rest>rest</a>
+		<div style="display: none;" class=func_doc id=doc_rest>
+			<pre>rest(array, [start_index]) Returns an array of all items except the first. Optionally it will start at start_index. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=reverse>reverse</a>
+		<div style="display: none;" class=func_doc id=doc_reverse>
+			<pre>reverse(iter, [comparison_func]) Iterates over all the items and returns a new array with the items in reverse order. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=select>select</a>
+		<div style="display: none;" class=func_doc id=doc_select>
+			<pre>select(iter, func) Removes items that do not match the provided criteria. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=set>set</a>
+		<div style="display: none;" class=func_doc id=doc_set>
+			<pre>set(l) converts list l to a set</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=shift>shift</a>
+		<div style="display: none;" class=func_doc id=doc_shift>
+			<pre>shift(array) Removes and returns the first item in an array (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=slice>slice</a>
+		<div style="display: none;" class=func_doc id=doc_slice>
+			<pre>slice(array, start_index, length) Returns a section of an array starting with start_index of length items length. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=some>some</a>
+		<div style="display: none;" class=func_doc id=doc_some>
+			<pre>some is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=sort>sort</a>
+		<div style="display: none;" class=func_doc id=doc_sort>
+			<pre>sort(iter, [comparison_func]), Returns an array with all elements sorted by the comparison function, by default it uses the &lt; operator. If an array is passed in it will sort the elements in place and not create a new array. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=tail>tail</a>
+		<div style="display: none;" class=func_doc id=doc_tail>
+			<pre>tail is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=to_array>to_array</a>
+		<div style="display: none;" class=func_doc id=doc_to_array>
+			<pre>to_array(iter) Collects all values into a new array. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=to_string>to_string</a>
+		<div style="display: none;" class=func_doc id=doc_to_string>
+			<pre>to_string(tbl) converts tbl to a human-readable string</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=unshift>unshift</a>
+		<div style="display: none;" class=func_doc id=doc_unshift>
+			<pre>unshift(array, item) Inserts item at the beginning of an array (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=values>values</a>
+		<div style="display: none;" class=func_doc id=doc_values>
+			<pre>values(object) Returns an array of all the property values in a table. (Note: order is not defined) (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=wrap>wrap</a>
+		<div style="display: none;" class=func_doc id=doc_wrap>
+			<pre>wrap(func, wrapper) Wraps the first function inside of the wrapper function, passing it as the first argument. This allows the wrapper to execute code before and after the function runs, adjust the arguments, and execute it conditionally. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+	</div>
+	
 	
 </div>
 
 <div class="span-one-third">
-    	
+    
+    <div class="category_list">
+		<span class="label success">geometric</span>
+		<!-- <h1>geometric</h1> -->
+		
+		<a href="#" class=has_doc id=acentroidvl>acentroidvl</a>
+		<div style="display: none;" class=func_doc id=doc_acentroidvl>
+			<pre>acentroidvl(vertex_list,n) computes the approximate centroid of a list of 
+vertices defining a closed polygon (not necessarily planar).
+The normalised vector, n, defines the plane on which the polygon approximately lies</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=centroid>centroid</a>
+		<div style="display: none;" class=func_doc id=doc_centroid>
+			<pre>centroid(point_list) computes the centroid of a 2d polygon defined by a list of vec3 (with z = 0)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=distribute_points_sphere>distribute_points_sphere</a>
+		<div style="display: none;" class=func_doc id=doc_distribute_points_sphere>
+			<pre>  distribute_points_sphere(n) returns n equally distributed points on a sphere.
+
+ "Distributing many points on a sphere" by E.B. Saff and A.B.J. Kuijlaars,
+  Mathematical Intelligencer 19.1 (1997) 5--11
+</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=line_exp_point_dist>line_exp_point_dist</a>
+		<div style="display: none;" class=func_doc id=doc_line_exp_point_dist>
+			<pre>line_exp_point_dist(p1,p2,q) calculates the distance from q to the explicit line (p1,p2)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=perp>perp</a>
+		<div style="display: none;" class=func_doc id=doc_perp>
+			<pre>perp(v) returns a normalised vector perpendicular to vec3 v</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=project>project</a>
+		<div style="display: none;" class=func_doc id=doc_project>
+			<pre>project(a,b) projects vec3 a onto vec3 b and returns the result</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=segment_point_dist>segment_point_dist</a>
+		<div style="display: none;" class=func_doc id=doc_segment_point_dist>
+			<pre>segment_point_dist(p1,p2,q) calculates the distance from q to the explicit line segment (p1,p2)</pre>
+		</div> 
+		
+
+	</div>
+	
+	
 </div>
 </div>
 
