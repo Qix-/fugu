@@ -47,9 +47,6 @@ MainWindow::MainWindow(QWidget *parent)
 	Ui::MainWindow ui;
 	ui.setupUi(this);
 
-	// override the Ui title and include the version number in there..
-	setWindowTitle(QString("fugu %1.%2.%3 (%4)").arg(FG_VERSION_MAJOR).arg(FG_VERSION_MINOR).arg(FG_VERSION_PATCH).arg(FG_VERSION_BUILD_HASH));
-
 	// set the icon
 	QIcon icon;
 	icon.addFile(":/res/fg_logo_16.png",QSize(16,16));
@@ -169,7 +166,11 @@ MainWindow::~MainWindow(){
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About fugu"),
-			tr("<p><b>fugu</b> is a code-oriented form generation tool.</p>"));
+			QString("<p><b>fugu</b> was developed by Ben Porter, Jon McCormack, and James Wetter, in association with CEMA and <a href=\"http://monash.edu\">Monash University</a>.</p>"
+					"<p>Version: <b>%1.%2.%3</b><br/>"
+					   "Build: <b>%4</b></p>").arg(FG_VERSION_MAJOR).arg(FG_VERSION_MINOR).arg(FG_VERSION_PATCH).arg(FG_VERSION_BUILD_HASH)
+			);
+
 }
 
 void MainWindow::newWindow(){
