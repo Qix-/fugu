@@ -42,7 +42,6 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	sInstance = this;
 
-
 	Ui::MainWindow ui;
 	ui.setupUi(this);
 
