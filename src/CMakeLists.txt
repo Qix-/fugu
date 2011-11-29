@@ -4,7 +4,15 @@ project(FG)
 set(BASE_DIR ${FG_SOURCE_DIR}/..) 
 set(CMAKE_INSTALL_PREFIX ${BASE_DIR}/bin)
 
-ENABLE_TESTING()
+set (FG_VERSION_MAJOR 0)
+set (FG_VERSION_MINOR 1)
+set (FG_VERSION_PATCH 0)
+execute_process(COMMAND hg tip --template "{node|short}" OUTPUT_VARIABLE FG_VERSION_BUILD_HASH)
+
+configure_file (
+  "${FG_SOURCE_DIR}/fg_config.h.in"
+  "${FG_BINARY_DIR}/fg_config.h"
+  )
 	
 if(WIN32)
 	# set(CMAKE_CXX_FLAGS "-D LUABIND_DYNAMIC_LINK") 
@@ -53,6 +61,7 @@ endif(APPLE)
 include_directories(${BASE_DIR}/include)
 include_directories(${BASE_DIR}/include/vcg)
 include_directories(${BASE_DIR}/include/lua)
+include_directories("${FG_BINARY_DIR}")
 
 # fg includes
 include_directories(${FG_SOURCE_DIR})

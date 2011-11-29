@@ -22,6 +22,7 @@
 #include "ui_exportdialog.h"
 
 #include "html_template.h"
+#include "fg_config.h"
 
 MainWindow* MainWindow::sInstance = NULL;
 
@@ -40,10 +41,14 @@ MainWindow::MainWindow(QWidget *parent)
 //,mStdOutRedirector(NULL)
 ,mRedirector(NULL)
 {
+
 	sInstance = this;
 
 	Ui::MainWindow ui;
 	ui.setupUi(this);
+
+	// override the Ui title and include the version number in there..
+	setWindowTitle(QString("fugu %1.%2.%3 (%4)").arg(FG_VERSION_MAJOR).arg(FG_VERSION_MINOR).arg(FG_VERSION_PATCH).arg(FG_VERSION_BUILD_HASH));
 
 	// set the icon
 	QIcon icon;

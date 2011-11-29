@@ -1,0 +1,5 @@
+// the configured options and settings for Tutorial
+#define FG_VERSION_MAJOR @FG_VERSION_MAJOR@
+#define FG_VERSION_MINOR @FG_VERSION_MINOR@
+#define FG_VERSION_PATCH @FG_VERSION_PATCH@
+#define FG_VERSION_BUILD_HASH "@FG_VERSION_BUILD_HASH@"
