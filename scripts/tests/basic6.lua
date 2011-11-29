@@ -25,7 +25,7 @@ local exF = function(x)
 end 
 
 function setup()
-	m = fg.mesh.primitives.sphere()	
+	m = sphere()	
 	fgu:addMesh(m)
 	
 	-- select a random vertex
@@ -36,7 +36,7 @@ function update(dt)
 	time = time + dt
 	if (time > .01) then		
 		length, expansion = exF(ex)
-		fg.extrude(m,v,1,v:getN(),length,expansion)
+		extrude_and_scale(m,v,v.n,length,expansion)
 		time = 0
 		ex = ex + 1
 		

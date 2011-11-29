@@ -334,8 +334,11 @@ namespace fg {
 		}
 
         Vec3 Turtle::getHeading()
+            {return mState.frame * Vec3(0.,0.,1.) - getPosition();}
+        
+        Mat4 Turtle::getFrame()
         {
-            return mState.frame * Vec3(0.,0.,1.) - getPosition();
+        	return mState.frame;
         }
 
         Vec3 Turtle::getUp()

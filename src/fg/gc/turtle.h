@@ -50,6 +50,7 @@ namespace fg {
 				Vec3 getPosition();
                 Vec3 getHeading();
                 Vec3 getUp();
+				Mat4 getFrame();
                 boost::shared_ptr<Mesh> getMesh( );
 				boost::shared_ptr<Mesh> getMesh( int gc );
 				int getNumGC( );

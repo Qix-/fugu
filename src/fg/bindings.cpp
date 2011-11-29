@@ -49,6 +49,7 @@
 #include "fg/meshoperators.h"
 #include "fg/pos.h"
 #include "fg/phyllo.h"
+#include "fg/geometry_wrapper.h"
 
 #include "fg/gc/turtle.h"
 
@@ -71,7 +72,7 @@ namespace fg {
 
 		// fg/functions.h
 		module(L)[
-		   def("min", &min<double>),
+		   // def("min", &min<double>), // use lua's standard min
 
 		   def("lerp", &lerp<double, double>),
 		   def("lerp", &lerp<Vec3, double>),
@@ -86,8 +87,8 @@ namespace fg {
            def("bias", &fg::bias<double>),
            def("gain", &fg::gain<double>),
            def("gamma", &gammaCorrect<double>),
-           def("invSqrt", &invSqrt<double>),
-           def("sqrt", (double(*)(double)) &std::sqrt),
+           def("inv_sqrt", &invSqrt<double>),
+           // def("sqrt", (double(*)(double)) &std::sqrt), // use luas std sqrt
            def("sqr", &sqr<double>),
            def("sign", &sign<double>),
 
@@ -95,16 +96,17 @@ namespace fg {
 		   def("noise", (double(*)(double,double)) &noise),
 		   def("noise", (double(*)(double,double,double)) &noise),
                        
-           def("fracSum", (double(*)(double,double,double,int,double))&fracSum),
+           def("frac_sum", (double(*)(double,double,double,int,double))&fracSum),
            def("turbulence", (double(*)(double,double,double,int,double))&turbulence),
 
 		   def("random", (double(*)()) &fg::random),
 		   def("random", (double(*)(double,double)) &fg::random),
-           def("randomN", (double(*)(double,double))&randomN),
+           def("randomN", (double(*)(double,double))&randomN), // TODO: deprecate
+           def("gauss", (double(*)(double,double))&randomN),
                   
-           def("getEllipseArea", (double(*)(double,double,double))&getEllipseArea),
-           def("findEllipseH", (double(*)(double,double,double))&findEllipseH),
-           def("getAngleFromH", (double(*)(double,double,double))&getAngleFromH)
+           def("get_ellipse_area", (double(*)(double,double,double))&getEllipseArea),
+           def("find_ellipse_h", (double(*)(double,double,double))&findEllipseH),
+           def("get_angle_from_h", (double(*)(double,double,double))&getAngleFromH)
 		   ];
 
 
@@ -179,6 +181,17 @@ namespace fg {
 
 		   // transform methods
 		   .def("set", (void(fg::Mat4::*)(const Vec3&, const Vec3&, const Vec3&)) &fg::Mat4::set)
+		   .def("set_basis", (Mat4&(fg::Mat4::*)(const Vec3&, const Vec3&, const Vec3&)) &fg::Mat4::set)
+		   .def("set_translate", (Mat4&(fg::Mat4::*)(double,double,double)) &fg::Mat4::setTranslate)
+		   .def("set_translate", (Mat4&(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setTranslate)
+		   .def("set_rotate_rad", (Mat4&(fg::Mat4::*)(double,double,double,double)) &fg::Mat4::setRotateRad)
+		   .def("set_rotate_rad", (Mat4&(fg::Mat4::*)(double,const Vec3&)) &fg::Mat4::setRotateRad)
+		   .def("set_rotate",  (Mat4&(fg::Mat4::*)(const Vec3&,const Vec3&)) &fg::Mat4::setRotate)
+		   .def("set_scale", (Mat4&(fg::Mat4::*)(double,double,double)) &fg::Mat4::setScale)
+		   .def("set_scale", (Mat4&(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setScale)
+		   .def("set_scale", (Mat4&(fg::Mat4::*)(double)) &fg::Mat4::setScale)
+
+		   // TODO: deprecate this syntax style
 		   .def("setBasis", (Mat4&(fg::Mat4::*)(const Vec3&, const Vec3&, const Vec3&)) &fg::Mat4::set)
 		   .def("setTranslate", (Mat4&(fg::Mat4::*)(double,double,double)) &fg::Mat4::setTranslate)
 		   .def("setTranslate", (Mat4&(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setTranslate)
@@ -195,12 +208,21 @@ namespace fg {
 		   class_<fg::Universe>("universe")
 		   .def(tostring(const_self))
 		   .def("addMesh", &fg::Universe::addMesh) // deprecated..
+		   .def("add_mesh", &fg::Universe::addMesh) // deprecated..
 		   .def("add", (void(fg::Universe::*) (boost::shared_ptr<MeshNode>)) &fg::Universe::add)
 		   .def("add", (void(fg::Universe::*) (boost::shared_ptr<Node>)) &fg::Universe::add)
+
 		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
 		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
 		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
 		   .def("makeChildOf", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
+
+		   .def("make_child_of", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
+		   .def("make_child_of", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
+		   .def("make_child_of", (void(fg::Universe::*)(boost::shared_ptr<Node> parent, boost::shared_ptr<MeshNode>)) &fg::Universe::makeChildOf)
+		   .def("make_child_of", (void(fg::Universe::*)(boost::shared_ptr<MeshNode> parent, boost::shared_ptr<Node>)) &fg::Universe::makeChildOf)
+
+
 		   .property("t", &fg::Universe::time)
 		   .def("time", &fg::Universe::time)
 		];
@@ -214,6 +236,9 @@ namespace fg {
 		  .def("getTransform", &fg::Node::getRelativeTransform)
 		  .def("setTransform", &fg::Node::setRelativeTransform)
 
+		  .def("get_transform", &fg::Node::getRelativeTransform)
+		  .def("set_transform", &fg::Node::setRelativeTransform)
+
 		  // .property("transform", &fg::Node::getRelativeTransform, &fg::Node::setRelativeTransform)
 		];
 
@@ -224,6 +249,7 @@ namespace fg {
 		   .def(tostring(const_self))
 
 		   .def("setMesh", &fg::MeshNode::setMesh)
+		   .def("set_mesh", &fg::MeshNode::setMesh)
 		];
 
 		// fg/vertex.h
@@ -232,23 +258,39 @@ namespace fg {
 		   .def(tostring(const_self))
 
 		   // Properties
+		   //TODO: deprecate old style
 		   .def("getPos", &fg::VertexProxy::getPos)
 		   .def("setPos", (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setPos))
 		   .def("setPos", (void(fg::VertexProxy::*)(double,double,double)) (&fg::VertexProxy::setPos))
+		   .def("get_pos", &fg::VertexProxy::getPos)
+		   .def("set_pos", (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setPos))
+		   .def("set_pos", (void(fg::VertexProxy::*)(double,double,double)) (&fg::VertexProxy::setPos))
+
 		   .property("p", &fg::VertexProxy::getPos, (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setPos))
 
 		   .def("getN", &fg::VertexProxy::getN)
+		   .def("get_n", &fg::VertexProxy::getN)
+
 		   .property("n", &fg::VertexProxy::getN)
 		   .def("calculateNormal", &fg::VertexProxy::calculateNormal)
+		   .def("calculate_normal", &fg::VertexProxy::calculateNormal)
 		   // class_<fg::Mesh::VertexContainer>("vertexcontainer"),
 
 		   .def("getColour", &fg::VertexProxy::getColour)
 		   .def("setColour", (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setColour))
 		   .def("setColour", (void(fg::VertexProxy::*)(double,double,double)) (&fg::VertexProxy::setColour))
 
+		   .def("get_colour", &fg::VertexProxy::getColour)
+		   .def("set_colour", (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setColour))
+		   .def("set_colour", (void(fg::VertexProxy::*)(double,double,double)) (&fg::VertexProxy::setColour))
+
+		   .property("c", &fg::VertexProxy::getColour, (void(fg::VertexProxy::*)(fg::Vec3)) (&fg::VertexProxy::setColour))
+
 		   .def("setUV", &fg::VertexProxy::setUV)
+		   .def("set_uv", &fg::VertexProxy::setUV)
 
 		   .def("getAdjacentFace", &fg::VertexProxy::getAdjacentFace)
+		   .def("get_adjacent_face", &fg::VertexProxy::getAdjacentFace)
 
 		   .property("valid", &fg::VertexProxy::isValid)
 
@@ -260,9 +302,13 @@ namespace fg {
 		   class_<fg::FaceProxy>("face")
 		   .def(tostring(const_self))
 
+		   // TODO: deprecate old syntax
 		   .def("getN", &fg::FaceProxy::getN)
+		   .def("get_n", &fg::FaceProxy::getN)
+
 		   .property("n", &fg::FaceProxy::getN)
 		   .def("calculateNormal", &fg::FaceProxy::calculateNormal)
+		   .def("calculate_normal", &fg::FaceProxy::calculateNormal)
 
 		   .def("v", &fg::FaceProxy::getV)
 		   .def("getV", &fg::FaceProxy::getV)
@@ -281,9 +327,14 @@ namespace fg {
 		  .def(constructor<const Pos&>())
 		  .def(tostring(const_self))
 
+		  // TODO: deprecate old sytnax
 		  .def("flipV", &fg::Pos::flipV)
 		  .def("flipE", &fg::Pos::flipE)
 		  .def("flipF", &fg::Pos::flipF)
+
+		  .def("flip_v", &fg::Pos::flipV)
+		  .def("flip_e", &fg::Pos::flipE)
+		  .def("flip_f", &fg::Pos::flipF)
 
 		  .property("v", &fg::Pos::getV)
 		  .property("e", &fg::Pos::getE)
@@ -308,19 +359,29 @@ namespace fg {
 		   .def(tostring(const_self))
 
 		   // Selectors
+		   // Move selectors to free functions
 		   .def("selectAllVertices", &Mesh::selectAllVertices)
 		   .def("selectAllFaces", &Mesh::selectAllFaces)
 
 		   .def("selectRandomVertex", &Mesh::selectRandomVertex)
 		   .def("selectRandomFace", &Mesh::selectRandomFace)
 
+		   .def("select_all_vertices", &Mesh::selectAllVertices)
+		   .def("select_all_faces", &Mesh::selectAllFaces)
+
+		   .def("select_random_vertex", &Mesh::selectRandomVertex)
+		   .def("select_random_face", &Mesh::selectRandomFace)
+
 		   .def("subdivide", &Mesh::subdivide)
-		   .def("smoothSubdivide", &Mesh::smoothSubdivide)
+		   .def("smoothSubdivide", &Mesh::smoothSubdivide) // TODO: deprecate
+		   .def("smooth_subdivide", &Mesh::smoothSubdivide)
 		   .def("sync", &Mesh::sync)
+		   .def("apply_transform", &Mesh::applyTransform) // TODO: deprecate
 		   .def("applyTransform", &Mesh::applyTransform)
 		   .def("clone", &Mesh::clone)
 
 		   .scope [
+		           // TODO: these have been moved to global namespace
 			   class_<fg::Mesh::Primitives>("primitives")
 			   .scope [
 			           def("cube",&fg::Mesh::Primitives::Cube),
@@ -339,17 +400,31 @@ namespace fg {
 		   ]
 		];
 
+		module(L)[
+			def("cube",&fg::Mesh::Primitives::Cube),
+			def("icosahedron",&fg::Mesh::Primitives::Icosahedron),
+			def("sphere",&fg::Mesh::Primitives::Sphere),
+			def("tetrahedron", &fg::Mesh::Primitives::Tetrahedron),
+			def("dodecahedron", &fg::Mesh::Primitives::Dodecahedron),
+			def("octahedron", &fg::Mesh::Primitives::Octahedron),
+			def("cone", &fg::Mesh::Primitives::Cone), // (r1,r2,subdiv=36)
+			def("cylinder", &fg::Mesh::Primitives::Cylinder), // (slices) // ,stacks)
+			def("iso", (shared_ptr<fg::Mesh>(*)(int,luabind::object)) &fg::Mesh::Primitives::Iso)
+		];
+
 		// fg/meshoperators.h
 		module(L,"fg")[
-		   def("extrude", (void(*)(Mesh*,VertexProxy,double))&fg::extrude),
-		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double))&fg::extrude),
+		   def("_extrude", (void(*)(Mesh*,VertexProxy,double))&fg::extrude),
+		   def("_extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double))&fg::extrude),
 		   def("getVerticesAtDistance", getVerticesAtDistance),
 		   def("getVerticesWithinDistance", getVerticesWithinDistance),
 		   def("nloop", nloop),
+
 		   def("splitEdge", splitEdge),
+		   def("split_edge", splitEdge),
 
 		   /// \deprecated
-		   def("extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double,double))&fg::extrude)
+		   def("_extrude", (void(*)(Mesh*,VertexProxy,int,Vec3,double,double))&fg::extrude)
 		];
 
 		// fg/turtle.h
@@ -368,6 +443,10 @@ namespace fg {
 		   .def("setCrossSection",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCrossSection)
 		   .def("pushState",&fg::gc::Turtle::pushState)
 		   .def("popState",&fg::gc::Turtle::popState)
+
+		   .def("push",&fg::gc::Turtle::pushState)
+		   .def("pop",&fg::gc::Turtle::popState)
+
 		   .def("setCarrierMode",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCarrierMode)
 
 		   .def("beginCrossSection",&fg::gc::Turtle::beginCrossSection)
@@ -382,6 +461,9 @@ namespace fg {
 		   .def("getPosition",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getPosition)
 		   .def("getHeading",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getHeading)
 		   .def("getUp",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getUp)
+		   .def("getFrame",(fg::Mat4(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getFrame)
+		   .def("get_frame",(fg::Mat4(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getFrame)
+
 		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getMesh)
 
 		   .def("getNumEndCaps",&fg::gc::Turtle::getNumEndCaps)
@@ -389,6 +471,14 @@ namespace fg {
 
 		   .def("getNumGC",&fg::gc::Turtle::getNumGC)
 		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(int))&fg::gc::Turtle::getMesh)
+
+
+		];
+
+		// fg/geometry_wrapper.h
+		module(L)[
+		    def("line_exp_point_dist",line_exp_point_dist_3d),
+		    def("segment_point_dist",segment_point_dist_3d)
 		];
 
 		return 0;

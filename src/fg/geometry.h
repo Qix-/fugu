@@ -9,7 +9,8 @@
  * The computer code and data files described and made available on this web page are distributed under the GNU LGPL license.
  */
 
-
+#include <string>
+using std::string;
 
 void angle_box_2d ( double dist, double p1[2], double p2[2], double p3[2], 
   double p4[2], double p5[2] );

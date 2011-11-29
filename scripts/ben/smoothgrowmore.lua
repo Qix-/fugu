@@ -4,16 +4,6 @@
 
 module(...,package.seeall)
 
-require 'table'
-require 'fgx.mesh'
-require 'fgx.extrude'
-require 'fgx.pos'
-require 'fgx.nloop'
-require 'fgx.math'
-require 'fgx.transform'
-require 'fgx.util' -- table.find
-local meshops = require 'fgx.meshops'
-
 local smoothGrowth -- object which performs the smooth growth
 local newSmoothGrowth -- constructor for object
 local nextvert 
@@ -21,13 +11,12 @@ local n, m
 local vertices, vertex
 
 function setup()
-	m = fg.mesh.primitives.icosahedron() -- cube()
-	m:smoothSubdivide(2)
-	-- m:subdivide(2)
-	n = fg.meshnode(m)
+	m = icosahedron() -- cube()
+	m:smooth_subdivide(2)
+	n = meshnode(m)
 	fgu:add(n)
 	
-	vertices = fgx.mesh.vertexlist(m)
+	vertices = vertexlist(m)
 	smoothGrowth = nil
 end
 
@@ -47,13 +36,13 @@ end -- empty
 -- and remove its immediate neighbours
 nextvert = function(m)
 	if #vertices==0 then return nil end 
-	local v = vertices[math.ceil(random()*#vertices)]
-	local all = fgx.nloop.loopv(v)
-	table.insert(all,v)
+	local v = vertices[ceil(random()*#vertices)]
+	local all = loopv(v)
+	insert(all,v)
 	
 	for _,u in ipairs(all) do
-		i,_ = table.find(vertices, function(x) return u==x end)
-		if i then table.remove(vertices, i)	end
+		i,_ = find(vertices, function(x) return u==x end)
+		if i then remove(vertices, i)	end
 	end
 	
 	return v	
@@ -76,13 +65,12 @@ newSmoothGrowth = function(m,v)
 			
 	obj.update = function(self,dt)
 		self.time = self.time + dt
-		
 		if (self.state=="waiting") then
 			if (self.stateChange <= self.time) then
 				self.state = self.nextState
 			end
 		elseif (self.state=="inset") then
-			meshops.inset(self.m,self.v,.8)
+			inset(self.m,self.v,.8)
 			self.state = "waiting"
 			self.nextState = "pull"
 			self.stateChange = self.time + 1
@@ -98,7 +86,7 @@ newSmoothGrowth = function(m,v)
 				-- reaches the right scale, 
 				-- and becomes circular				
 				local t = self.pullDist/self.PULLDIST -- amount done
-				local outer = fgx.pos.capov(self.cap)
+				local outer = capov(self.cap)
 				local center = vec3(0,0,0)
 				for i,ov in ipairs(outer) do
 					-- move in growing direction
@@ -112,7 +100,7 @@ newSmoothGrowth = function(m,v)
 					-- current, start, end radii
 					local cr = distance(ov.p,center)
 					local sr = self.capRadii[i]					
-					local tr = math.max(1,self.SPEED*dt + (cr-sr)/(er-sr))
+					local tr = max(1,self.SPEED*dt + (cr-sr)/(er-sr))
 					local d = normalise(ov.p-center)
 					ov.p = center + d*lerp(sr,er,tr)
 					-- scale from the center some amount
@@ -130,18 +118,18 @@ newSmoothGrowth = function(m,v)
 			end		
 		elseif (self.state=="insetagain") then
 			-- inset a tiny bit and store the cap for subsequent pulls								
-			self.cap = meshops.inset(self.m,self.v,.99)
+			self.cap = inset(self.m,self.v,.99)
 			-- compute the avg radius of this cap so we can circulise it
 			-- also store the current radius of each outer vert
 			self.capRadii = {}
-			local outer = fgx.pos.capov(self.cap)
-			local center = vec3(0,0,0)
-			for i,ov in ipairs(outer) do
+			local outer = capov(self.cap)
+			local center = vec3(0,0,0)			
+			for _,ov in ipairs(outer) do
 				center = center + ov.p
 			end
-			center = center/#outer
+			center = center/#outer			
 			local avgRadius = 0
-			for i,ov in ipairs(outer) do				
+			for _,ov in ipairs(outer) do				
 				local r = distance(ov.p,center)
 				self.capRadii[#self.capRadii+1] = r
 				avgRadius = avgRadius + r
@@ -150,7 +138,7 @@ newSmoothGrowth = function(m,v)
 			self.capAvgRadius = avgRadius
 			
 			self.state = "pull"
-			self.pullDist = nil --reset
+			self.pullDist = nil --reset			
 		elseif (self.state=="done") then 
 			return false -- finished!
 		end			
