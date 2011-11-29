@@ -5,7 +5,7 @@ local node = {}
 
 function setup()
 
-	b = new_holdfast(10.,2.,6.,.5)
+	b = new_holdfast(15.,2.,6.,.5)
 
     donatello = fg.turtle()
 	donatello:pitch(-math.pi*.5)
@@ -90,7 +90,7 @@ function new_root(length,width,meander)
 			bert:yaw(rateCur/2)
 			bert:addPoint(2)
 			pos = bert:getPosition()
-			rateCur = rateCur + self.rootMeander * fracSum(pos.x, pos.y, pos.z, 1, 1)
+			rateCur = rateCur + self.rootMeander * frac_sum(pos.x, pos.y, pos.z, 1, 1)
 			bert:yaw(rateCur/2)
 			bert:move(stepLength)
 			distance = distance + self.stepLength
