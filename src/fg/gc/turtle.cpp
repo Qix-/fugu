@@ -333,6 +333,16 @@ namespace fg {
 			return mState.frame * Vec3(0.,0.,0.);
 		}
 
+        Vec3 Turtle::getHeading()
+        {
+            return mState.frame * Vec3(0.,0.,1.) - getPosition();
+        }
+
+        Vec3 Turtle::getUp()
+        {
+            return mState.frame * Vec3(0.,1.,0.) - getPosition();
+        }
+
         boost::shared_ptr< Mesh > Turtle::getMesh( )
         {
 			Mesh::MeshBuilder mb;
