@@ -88,8 +88,8 @@ function new_brachioles(width,length,n)
 			length = randomN(self.segLength, self.segLength * .1)
 
 			pos = bert:getPosition()
-			theta = self.meander * fracSum(pos.x, pos.y, pos.z, 3, 1.5)
-			theta2 = self.meander2 * fracSum(pos.x, pos.y, pos.z, 1, 1)
+			theta = self.meander * frac_sum(pos.x, pos.y, pos.z, 3, 1.5)
+			theta2 = self.meander2 * frac_sum(pos.x, pos.y, pos.z, 1, 1)
 
  			bert:yaw(theta)
 			bert:pitch(theta)

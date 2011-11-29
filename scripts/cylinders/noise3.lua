@@ -54,8 +54,8 @@ function create_branch(depth,length,width,segs,points,ratio,angle,meander,noise,
 
 		pos = bert:getPosition()
         pos = pos + offset
-		rateCur = rateCur + meander * fracSum(pos.x, pos.y, pos.z, 1, 1)
-		rateCur2 = rateCur2 + meander * fracSum(pos.x, pos.y, pos.z, 1, 1)
+		rateCur = rateCur + meander * frac_sum(pos.x, pos.y, pos.z, 1, 1)
+		rateCur2 = rateCur2 + meander * frac_sum(pos.x, pos.y, pos.z, 1, 1)
 		bert:yaw(rateCur/2)
 		bert:pitch(rateCur2/2)
 
@@ -114,7 +114,7 @@ function make_cs(npoints,noise,offset,bert)
 	local cpos
     cpos = bert:getPosition()
     --cpos = cpos + offset
-    local dis = noise * fracSum(cpos.x, cpos.y, cpos.z, 1, 1)
+    local dis = noise * frac_sum(cpos.x, cpos.y, cpos.z, 1, 1)
     bert:setFrame(pos,heading,up)
     bert:setFrame( vec3( math.cos(2*math.pi), math.sin(2*math.pi), 0 ) * (1+dis),
                       vec3( -math.sin(2*math.pi), math.cos(2*math.pi), 0 ),
@@ -128,7 +128,7 @@ function make_cs(npoints,noise,offset,bert)
                           vec3( 0, 0, 1 ) )
 	    cpos = bert:getPosition()-- + offset
         --cpos = cpos + offset
-        dis = noise * fracSum(cpos.x, cpos.y, cpos.z, 3, 1.5)
+        dis = noise * frac_sum(cpos.x, cpos.y, cpos.z, 3, 1.5)
         bert:setFrame(pos,heading,up)
         bert:setFrame( vec3( math.cos(2*i*math.pi/npoints), math.sin(2*i*math.pi/npoints), 0 ) * (1+dis),
                           vec3( -math.sin(2*i*math.pi/npoints), math.cos(2*i*math.pi/npoints), 0 ),
@@ -142,7 +142,7 @@ function make_cs(npoints,noise,offset,bert)
                           vec3( 0, 0, 1 ) )
 	cpos = bert:getPosition()-- + offset
     --cpos = cpos + offset
-    dis = noise * fracSum(cpos.x, cpos.y, cpos.z, 3, 1.5)
+    dis = noise * frac_sum(cpos.x, cpos.y, cpos.z, 3, 1.5)
     bert:setFrame(pos,heading,up)
     bert:setFrame( vec3( math.cos(2*math.pi*(1-1/npoints)), math.sin(2*math.pi*(1-1/npoints)), 0 ) * (1+dis),
                       vec3( -math.sin(2*math.pi*(1-1/npoints)), math.cos(2*math.pi*(1-1/npoints)), 0 ),

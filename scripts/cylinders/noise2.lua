@@ -40,7 +40,7 @@ function make_root(n,npcs,ncs,noise,noise2,width,l,offset1,offset2,luke)
 	    luke:move(l)
 
 		pos = luke:getPosition() + offset2
-		rateCur = rateCur + noise2 * fracSum(pos.x, pos.y, pos.z, 1, 1)
+		rateCur = rateCur + noise2 * frac_sum(pos.x, pos.y, pos.z, 1, 1)
 		--rateCur2 = rateCur2 + noise2 * fracSum(pos.x, pos.y, pos.z, 1, 1)
 		luke:yaw(rateCur/2)
 		luke:pitch(rateCur2/2)
@@ -80,7 +80,7 @@ function make_cs(npoints,noise,offset,luke)
 	local cpos
     cpos = luke:getPosition()
     --cpos = cpos + offset
-    local dis = noise * fracSum(cpos.x, cpos.y, cpos.z, 1, 1)
+    local dis = noise * frac_sum(cpos.x, cpos.y, cpos.z, 1, 1)
     luke:setFrame(pos,heading,up)
     luke:setFrame( vec3( math.cos(2*math.pi), math.sin(2*math.pi), 0 ) * (1+dis),
                       vec3( -math.sin(2*math.pi), math.cos(2*math.pi), 0 ),
@@ -94,7 +94,7 @@ function make_cs(npoints,noise,offset,luke)
                           vec3( 0, 0, 1 ) )
 	    cpos = luke:getPosition()-- + offset
         --cpos = cpos + offset
-        dis = noise * fracSum(cpos.x, cpos.y, cpos.z, 3, 1.5)
+        dis = noise * frac_sum(cpos.x, cpos.y, cpos.z, 3, 1.5)
         luke:setFrame(pos,heading,up)
         luke:setFrame( vec3( math.cos(2*i*math.pi/npoints), math.sin(2*i*math.pi/npoints), 0 ) * (1+dis),
                           vec3( -math.sin(2*i*math.pi/npoints), math.cos(2*i*math.pi/npoints), 0 ),
@@ -108,7 +108,7 @@ function make_cs(npoints,noise,offset,luke)
                           vec3( 0, 0, 1 ) )
 	cpos = luke:getPosition()-- + offset
     --cpos = cpos + offset
-    dis = noise * fracSum(cpos.x, cpos.y, cpos.z, 3, 1.5)
+    dis = noise * frac_sum(cpos.x, cpos.y, cpos.z, 3, 1.5)
     luke:setFrame(pos,heading,up)
     luke:setFrame( vec3( math.cos(2*math.pi*(1-1/npoints)), math.sin(2*math.pi*(1-1/npoints)), 0 ) * (1+dis),
                       vec3( -math.sin(2*math.pi*(1-1/npoints)), math.cos(2*math.pi*(1-1/npoints)), 0 ),
