@@ -4,15 +4,6 @@
 
 module(...,package.seeall)
 
-require 'table'
-require 'fgx.mesh'
-require 'fgx.extrude'
-require 'fgx.pos'
-require 'fgx.nloop'
-require 'fgx.math'
-require 'fgx.transform'
-require 'fgx.util' -- table.find
-
 someGlobalVar = 1
 
 local meshops = require 'fgx.meshops'
@@ -24,32 +15,13 @@ local n, m
 local vertices, vertex
 
 function setup()
-	-- here we are creating a new mesh, an icosahedron..
-	-- we can modify the script and press "RELOAD" to re-run it...
-	-- m = fg.mesh.primitives.icosahedron()
-  	-- m = fg.mesh.primitives.dodecahedron()  	
-  	m = fg.mesh.primitives.octahedron()
-  	m:smoothSubdivide(2)
-  	
-  	--[[
-  	p.cube(),
-		p.sphere(),
-		p.icosahedron(),
-		p.tetrahedron(),
-		p.dodecahedron(),
-		p.octahedron(), 
-		-- p.hexahedron(), 
-		p.cone(1,0.1,32),
-		p.cylinder(32)
-  	
-  	--]]
-	
-	n = fg.meshnode(m)
-	fgu:add(n)
-	
-	vertices = fgx.mesh.vertexlist(m)
+  m = octahedron()
+  m:smooth_subdivide(2)
+  n = meshnode(m)
+	fgu:add(n)	
+	vertices = vertexlist(m)
 	for _,v in ipairs(vertices) do
-		v:setUV(0,0)
+		v:set_uv(0,0)
 	end	
 	
 	smoothGrowth = nil

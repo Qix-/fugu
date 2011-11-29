@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Fugu</title>
+    <meta name="description" content="fugu is software for creating 3D geometry from code">
+    <meta name="author" content="Ben Porter">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+		<link href="bootstrap.min.css" rel="stylesheet">
+		<link href="fugu.css" rel="stylesheet">
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  </head>
+
+  <body>
+
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <a class="brand" href="#">fugu</a>
+          <ul class="nav">
+						<li class="active"><a href="index.html">Home</a></li>
+						<li><a href="reference.html">Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <header class="jumbotron masthead" id="overview">
+      <div class="inner">
+        <div class="container">
+					<h1>Fugu</h1>		<!--  <img src="img/fg_logo_64.png"> -->
+          <p class="lead">
+					Fugu is a cross-platform application for creating animated 3D forms with code. It allows users to rapidly design animated, growing organic forms by writing scripts in <a href="http://lua.org">Lua</a>. It is currently in early development and looks like this:</p>					 
+					 <div class="subhead">
+					 <div class="row">
+				<div class="span3">&nbsp;</div>
+				<div class="span10">
+					<a href="gallery/fuguscreen_21112011.png"><img src="gallery/fuguscreen_21112011_half.png" alt="fugu screen shot"></a>
+				</div>
+			</div>
+				<div class="span3">&nbsp;</div>
+			</div>	
+		</div>
+
+      </div>
+		</header>
+
+<!-- Quickstart options
+    ================================================== -->
+    <div class="quickstart">
+      <div class="container">
+        <div class="row">
+          <div class="span5">
+            <h6>Download</h6>
+						<p>Fugu runs on Windows and MacOSX.</p><p><span class="label important">Important</span> Fugu is alpha software and will surely contain bugs; however, it should work well enough for you to enjoy it, so check it out and report any problems you have.</p>
+						<p><a href="" class="btn primary">Windows</a> <a href="" class="btn primary">OSX</a></p>
+						
+          </div>
+          <div class="span5">
+            <h6>Help</h6>
+						<p>Fugu contains a number of examples demonstrating its functionality. Just go to the File-&gt;Examples menu. There is also an online function reference and a discussion site. </p><p><a href="reference.html" class="btn primary">Reference</a> <a target="_blank" href="http://groups.google.com/group/fugu_app" class="btn primary">Discussion &raquo;</a></p>
+          </div>
+					<div class="span5">
+            <h6>Development</h6>
+            <p>Fugu is open-source and lives on Bitbucket. Got bugs? Please use the issue tracker on bitbucket to report them. Want to submit a patch? Feel free!</p>
+						<p><a target="_blank" href="https://bitbucket.org/bpio/fg" class="btn primary">Fugu on Bitbucket &raquo;</a></p>
+          </div>
+        </div><!-- /row -->
+      </div>
+    </div>
+
+		<div class="container content">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="span-one-third">
+					<h2>Features</h2>
+					<p>Current features:
+					<ul>
+						<li>Fully integrated environment with code pane, 3D view and error console</li>
+						<li>A suite of mesh primitives, mesh operations, and functions</li>
+						<li>OBJ exporter</li>
+						<li>Fully hideable UI for presentations</li>
+						<li>User-defined sliders for parametric control</li>
+						<li>View a mesh in real-time subdivided and smoothed</li>
+						<li>TODO: finish this</li>
+					</ul>
+					Planned features:
+					<ul>
+						<li>Support for custom GLSL shaders</li>
+						<li>Support for custom exporters</li>
+						<li>Multi-threading and other optimisations</li>
+						<li><i>A lot more</i> mesh operations</li>
+						<li>Faster subdivision (GPU-based)</li>
+						<li>TODO: finish this</li>
+					</ul>
+					</p>
+        </div>       
+        <div class="span-two-thirds">
+ <h2>Acknowledgements</h2>
+ <p>Fugu was conceived and developed by <a href="http://bp.io">Ben Porter</a>, <a href="http://diotima.infotech.monash.edu.au/~jonmc/sa/">Jon McCormack</a> and <a href="http://users.monash.edu.au/~jpwet1/">James Wetter</a>, in association with <a href="http://www.csse.monash.edu.au/~cema/">CEMA</a> and <a href="http://monash.edu">Monash University</a>. This research was funded by TODO: grant details. </p>
+
+ <p>Fugu depends on a number of open-source libraries and wouldn't exist without them. These are:
+ 
+ 	<ul>
+		<li>Qt</li>
+		<li>Lua</li>
+		<li>VCGLib</li>
+		<li>Underscore</li>
+		<li>GEOMTRY</li>
+		<li>TODO: finish this</li>
+	</ul></p>
+
+		 <p>If you are interested in code and form, you might want to check out these similar projects:
+		 <ul>
+			 <li><a href="http://structuresynth.sourceforge.net/">Structure Synth</a></li>
+			 <li>Processing</li>
+			 <li>Cinder</li>
+			 <li>Blender</li>
+			 <li>TODO: put all influences/similar things here</li>
+		 </ul>
+		 </p>
+		 
+		 <p>This website was built with <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>
+
+       </div>
+		 </div>
+
+		
+
+
+
+		<footer>&nbsp;</footer>
+    </div> <!-- /container -->
+
+  </body>
+</html>

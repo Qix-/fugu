@@ -1,9 +1,9 @@
 syntax:glob
 *~
 *.swp
-build
+build-*
 *.DS_Store
 .project
 bin
-doc/html
+doc/cpp/html
 *.orig

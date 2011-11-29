@@ -38,6 +38,9 @@
 #include <vector>
 #include <list>
 
+// luabind
+#include <luabind/object.hpp>
+
 // BOOST
 #include <boost/shared_ptr.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -81,6 +84,8 @@ namespace fg {
 			// static boost::shared_ptr<Mesh> Hexahedron();
 			static boost::shared_ptr<Mesh> Cone(double r1, double r2, const int SubDiv = 36);
 			static boost::shared_ptr<Mesh> Cylinder(int slices); // , int stacks);
+
+			static boost::shared_ptr<Mesh> Iso(int resolution, luabind::object& function);
 
 			private:
 			static boost::shared_ptr<Mesh> sync(Mesh* m);
