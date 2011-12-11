@@ -3,7 +3,7 @@
 -- @author ben
 --]]
 
-function extrude(mesh,vertex,magnitude)
+function extrude_simple(mesh,vertex,magnitude)
 	fg._extrude(mesh,vertex,1,vertex.n,magnitude)
 end
 -- documentation is combined with the overloaded version
@@ -11,7 +11,11 @@ end
 
 
 
-function extrude(mesh,vertex,direction,magnitude)
+function extrude(mesh,vertex,a,b)
+	if (b==nil) then return extrude_simple(mesh,vertex,a) end
+	-- else
+	local direction = a
+	local magnitude = b
 	local ddotd = dot(direction,direction)
 	local vdotd = dot(vertex.p,direction)
 	local vp = vertex.p + direction*magnitude
