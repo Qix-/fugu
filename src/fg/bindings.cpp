@@ -39,6 +39,7 @@
 
 #include "fg/vec3.h"
 #include "fg/mat4.h"
+#include "fg/quat.h"
 #include "fg/universe.h"
 #include "fg/functions.h"
 #include "fg/node.h"
@@ -158,7 +159,7 @@ namespace fg {
 		module(L)[
 		   class_<fg::Mat4>("mat4")
 		   .def(constructor<>())
-		   /* // Would like to do this but luabind can only take up to 10 params
+		   /*// TODO: Would like to do this but luabind can only take up to 10 params (need to change the #defines in luabind)
 		   .def(constructor<double,double,double,double,
 				   double,double,double,double,
 				   double,double,double,double,
@@ -201,6 +202,27 @@ namespace fg {
 		   .def("setScale", (Mat4&(fg::Mat4::*)(double,double,double)) &fg::Mat4::setScale)
 		   .def("setScale", (Mat4&(fg::Mat4::*)(const Vec3&)) &fg::Mat4::setScale)
 		   .def("setScale", (Mat4&(fg::Mat4::*)(double)) &fg::Mat4::setScale)
+		];
+
+		// fg/quat.h
+		module(L)[
+		   class_<fg::Quat>("quat")
+		   .def(constructor<>())
+		   .def(constructor<double, double, double, double>())
+		   .def(constructor<const Vec3&, double>())
+		   .def(constructor<const Vec3&, const Vec3&>())
+		   .def(constructor<double,double,double>())
+		   .def(constructor<const Mat4&>())
+		   .def(constructor<const Vec3&, const Vec3&, const Vec3&>())
+		   .def(tostring(const_self))
+
+		   // operators
+		   .def(const_self * other<const fg::Quat&>())
+		   .def(const_self + other<const fg::Quat&>())
+		   .def(const_self - other<const fg::Quat&>())
+
+		   .def(const_self * double())
+		   .def(const_self * other<const fg::Vec3&>())
 		];
 
 		// fg/universe.h
