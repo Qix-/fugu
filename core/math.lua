@@ -101,6 +101,17 @@ document[[mat4 represents a 4d matrix. Example usage:
 
 categorise(mat4,"math")
 
+document[[quat represents a quaternion. It has a number of constructors:	
+	quat(a,x,y,z)
+	quat(axis:vec3, radians)
+	quat(from:vec3, to:vec3)
+	quat(x_rot,y_rot,z_rot)
+	quat(mat4)
+	quat(xaxis:vec3,yaxis:vec3,zaxis:vec3)	
+	]](quat)
+
+categorise(quat,"math")
+
 -- extra maths/geometric functions
 
 half_pi = pi/2

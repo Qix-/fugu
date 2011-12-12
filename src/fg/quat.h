@@ -54,6 +54,7 @@ namespace fg {
 
             Quat inverted() const; // whats this? as opposed to inverse? (BP) 
 			                       // good question. (JW)
+            						// lol (BP)
             void invert();
             Quat inverse() const;
 
