@@ -431,16 +431,23 @@ namespace fg {
 		module(L,"fg")[
 		   class_<fg::gc::Turtle>("turtle")
 		   .def(constructor<>())
-		   .def("move",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::move)
-		   .def("yaw",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::yaw)
-		   .def("roll",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::roll)
-		   .def("pitch",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::pitch)
+		   .def("move",(fg::gc::Turtle&(fg::gc::Turtle::*)(double))&fg::gc::Turtle::move)
+		   .def("yaw",(fg::gc::Turtle&(fg::gc::Turtle::*)(double))&fg::gc::Turtle::yaw)
+		   .def("roll",(fg::gc::Turtle&(fg::gc::Turtle::*)(double))&fg::gc::Turtle::roll)
+		   .def("pitch",(fg::gc::Turtle&(fg::gc::Turtle::*)(double))&fg::gc::Turtle::pitch)
 
-		   .def("setFrame",(void(fg::gc::Turtle::*)(Vec3,Vec3,Vec3))&fg::gc::Turtle::setFrame)
-		   .def("setFrameRel",(void(fg::gc::Turtle::*)(Vec3,Vec3,Vec3))&fg::gc::Turtle::setFrameRel)
-		   .def("setStiffness",(void(fg::gc::Turtle::*)(double,double))&fg::gc::Turtle::setStiffness)
-		   .def("setScale",(void(fg::gc::Turtle::*)(double))&fg::gc::Turtle::setScale)
-		   .def("setCrossSection",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCrossSection)
+		   .def("setFrame",(fg::gc::Turtle&(fg::gc::Turtle::*)(Vec3,Vec3,Vec3))&fg::gc::Turtle::setFrame)
+		   .def("setFrameRel",(fg::gc::Turtle&(fg::gc::Turtle::*)(Vec3,Vec3,Vec3))&fg::gc::Turtle::setFrameRel)
+		   .def("setStiffness",(fg::gc::Turtle&(fg::gc::Turtle::*)(double,double))&fg::gc::Turtle::setStiffness)
+		   .def("setScale",(fg::gc::Turtle&(fg::gc::Turtle::*)(double))&fg::gc::Turtle::setScale)
+		   .def("setCrossSection",(fg::gc::Turtle&(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCrossSection)
+
+		   .def("set_frame",(fg::gc::Turtle&(fg::gc::Turtle::*)(Vec3,Vec3,Vec3))&fg::gc::Turtle::setFrame)
+		   .def("set_frame_rel",(fg::gc::Turtle&(fg::gc::Turtle::*)(Vec3,Vec3,Vec3))&fg::gc::Turtle::setFrameRel)
+		   .def("set_stiffness",(fg::gc::Turtle&(fg::gc::Turtle::*)(double,double))&fg::gc::Turtle::setStiffness)
+		   .def("set_scale",(fg::gc::Turtle&(fg::gc::Turtle::*)(double))&fg::gc::Turtle::setScale)
+		   .def("set_cross_section",(fg::gc::Turtle&(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCrossSection)
+
 		   .def("pushState",&fg::gc::Turtle::pushState)
 		   .def("popState",&fg::gc::Turtle::popState)
 
@@ -448,23 +455,37 @@ namespace fg {
 		   .def("pop",&fg::gc::Turtle::popState)
 
 		   .def("setCarrierMode",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCarrierMode)
+		   .def("set_carrier_mode",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::setCarrierMode)
 
 		   .def("beginCrossSection",&fg::gc::Turtle::beginCrossSection)
 		   .def("endCrossSection",(int(fg::gc::Turtle::*)(void))&fg::gc::Turtle::endCrossSection)
 
+		   .def("begin_cross_section",&fg::gc::Turtle::beginCrossSection)
+		   .def("end_cross_section",(int(fg::gc::Turtle::*)(void))&fg::gc::Turtle::endCrossSection)
+
 		   .def("beginCylinder",&fg::gc::Turtle::beginCylinder)
 		   .def("endCylinder",(void(fg::gc::Turtle::*)(void))&fg::gc::Turtle::endCylinder)
 		   .def("endCylinder",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::endCylinder)
-		   .def("addPoint",(void(fg::gc::Turtle::*)(void))&fg::gc::Turtle::addPoint)
-		   .def("addPoint",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::addPoint)
+		   .def("addPoint",(fg::gc::Turtle&(fg::gc::Turtle::*)(void))&fg::gc::Turtle::addPoint)
+		   .def("addPoint",(fg::gc::Turtle&(fg::gc::Turtle::*)(int))&fg::gc::Turtle::addPoint)
+
+		   .def("begin_cylinder",&fg::gc::Turtle::beginCylinder)
+		   .def("end_cylinder",(void(fg::gc::Turtle::*)(void))&fg::gc::Turtle::endCylinder)
+		   .def("end_cylinder",(void(fg::gc::Turtle::*)(int))&fg::gc::Turtle::endCylinder)
+		   .def("add_point",(fg::gc::Turtle&(fg::gc::Turtle::*)(void))&fg::gc::Turtle::addPoint)
+		   .def("add_point",(fg::gc::Turtle&(fg::gc::Turtle::*)(int))&fg::gc::Turtle::addPoint)
 
 		   .def("getPosition",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getPosition)
 		   .def("getHeading",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getHeading)
 		   .def("getUp",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getUp)
 		   .def("getFrame",(fg::Mat4(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getFrame)
+		   .def("get_position",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getPosition)
+		   .def("get_heading",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getHeading)
+		   .def("get_up",(fg::Vec3(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getUp)
 		   .def("get_frame",(fg::Mat4(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getFrame)
 
 		   .def("getMesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getMesh)
+		   .def("mesh",(boost::shared_ptr<Mesh>(fg::gc::Turtle::*)(void))&fg::gc::Turtle::getMesh)
 
 		   .def("getNumEndCaps",&fg::gc::Turtle::getNumEndCaps)
 		   .def("getEndCap",&fg::gc::Turtle::getEndCap)

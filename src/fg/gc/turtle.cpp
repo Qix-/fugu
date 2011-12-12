@@ -57,49 +57,55 @@ namespace fg {
             }
         }
 
-		void Turtle::setFrameRel( Vec3 pos, Vec3 heading, Vec3 up)
+		Turtle& Turtle::setFrameRel( Vec3 pos, Vec3 heading, Vec3 up)
 		{
 			Mat4 tmp1, tmp2;
 			tmp1.setTranslate( pos.getX(), pos.getY(), pos.getZ() );
 			tmp2.set( up.cross(heading), up, heading );
 
 			mState.frame = mState.frame * tmp1 * tmp2;
+			return *this;
 		}
 
-        void Turtle::setFrame( Vec3 pos, Vec3 heading, Vec3 up )
+        Turtle& Turtle::setFrame( Vec3 pos, Vec3 heading, Vec3 up )
 		{
 			Mat4 tmp1, tmp2;
 			tmp1.setTranslate( pos.getX(), pos.getY(), pos.getZ() );
 			tmp2.set( up.cross(heading), up, heading );
 			mState.frame = tmp1 * tmp2;
+			return *this;
 		}
 
-        void Turtle::move( double distance )
+        Turtle& Turtle::move( double distance )
         {
             Mat4 trans;
             trans.SetTranslate( 0., 0., distance );
             mState.frame = mState.frame * trans;
+            return *this;
         }
 
-        void Turtle::yaw( double theta )
+        Turtle& Turtle::yaw( double theta )
         {
             Mat4 rot;
             rot.SetRotateRad( -theta, Vec3( 0., 1., 0. ) );
             mState.frame = mState.frame * rot;
+            return *this;
         }
 
-        void Turtle::pitch( double theta )
+        Turtle& Turtle::pitch( double theta )
         {
             Mat4 rot;
             rot.SetRotateRad( theta, Vec3( 1., 0., 0. ) );
             mState.frame = mState.frame * rot;
+            return *this;
         }
 
-        void Turtle::roll( double theta )
+        Turtle& Turtle::roll( double theta )
         {
             Mat4 rot;
             rot.SetRotateRad( theta, Vec3( 0., 0., 1. ) );
             mState.frame = mState.frame * rot;
+            return *this;
         }
 
         void Turtle::beginCylinder()
@@ -141,12 +147,13 @@ namespace fg {
 			mState.stiffnessArr.push_back( mState.stiffness );
         }
 
-        void Turtle::addPoint( )
+        Turtle& Turtle::addPoint( )
 		{
 			addPoint( 5 );
+			return *this;
 		}
 
-        void Turtle::addPoint( int n )
+        Turtle& Turtle::addPoint( int n )
         {
 			mState.strips.push_back( n );
 
@@ -176,6 +183,7 @@ namespace fg {
 			}
             mState.prevFrames.push_back( mState.frame );
 			mState.stiffnessArr.push_back( mState.stiffness );
+			return *this;
         }
 
         void Turtle::endCylinder( )
@@ -267,30 +275,35 @@ namespace fg {
 			                      *( mScalers.back() ), mState.scaleDomains, mState.strips ) );
         }
 
-		void Turtle::setStiffness(double s1, double s2)
+		Turtle& Turtle::setStiffness(double s1, double s2)
 		{
 			mState.stiffness = std::pair<double,double> (s1,s2);
+			return *this;
 		}
 
-		void Turtle::setScale(double scale)
+		Turtle& Turtle::setScale(double scale)
 		{
 			mState.scale = scale;
+			return *this;
 		}
 
-		void Turtle::setCrossSection(int index)
+		Turtle& Turtle::setCrossSection(int index)
 		{
 			mState.currentCS = clamp<int>( index, 0, mCrossSecLibrary.size() - 1 );
+			return *this;
 		}
 
-		void Turtle::pushState()
+		Turtle& Turtle::pushState()
 		{
 			mStateStack.push( mState );
+			return *this;
 		}
 
-		void Turtle::popState()
+		Turtle& Turtle::popState()
 		{
 			mState = mStateStack.top();
 			mStateStack.pop();
+			return *this;
 		}
 
 		void Turtle::setCarrierMode( int carrierMode )

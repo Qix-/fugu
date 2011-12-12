@@ -175,7 +175,8 @@ namespace fg {
 				lua_getfield(L,-2,"setup");
 
 				if (!lua_isfunction(L,-1)){
-					error("Script \"%s\" doesn't have a setup function", scriptFileName.c_str());
+					// error("Script \"%s\" doesn't have a setup function", scriptFileName.c_str());
+					std::cout << "Warning: " << scriptFileName << " doesn't have a setup function!\n";
 				}
 				else // call the setup function now..
 				{
@@ -188,7 +189,8 @@ namespace fg {
 				// check that the module has an update function
 				lua_getfield(L,-2,"update");
 				if (!lua_isfunction(L,-1)){
-					error("Script \"%s\" doesn't have a update function",scriptFileName.c_str());
+					// error("Script \"%s\" doesn't have a update function",scriptFileName.c_str());
+					std::cout << "Warning: " << scriptFileName << " doesn't have an update function!\n";
 				}
 				else // keep a reference to this function so we can call it later
 				{

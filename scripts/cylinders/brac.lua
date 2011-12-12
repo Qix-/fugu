@@ -5,7 +5,7 @@ local node = {}
 
 function setup()
 
-	b = new_brachioles(.15,1.2,3)
+	b = new_brachioles(.15,1.2,5)
 
     donatello = fg.turtle()
 	donatello:pitch(-math.pi*.5)
