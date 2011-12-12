@@ -5,7 +5,7 @@ set(BASE_DIR ${FG_SOURCE_DIR}/..)
 set(CMAKE_INSTALL_PREFIX ${BASE_DIR}/bin)
 
 set (FG_VERSION_MAJOR 0)
-set (FG_VERSION_MINOR 1)
+set (FG_VERSION_MINOR 2)
 set (FG_VERSION_PATCH 0)
 execute_process(COMMAND hg tip --template "{node|short}" OUTPUT_VARIABLE FG_VERSION_BUILD_HASH)
 

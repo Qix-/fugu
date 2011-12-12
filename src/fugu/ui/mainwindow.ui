@@ -658,6 +658,8 @@ QDockWidget {
     <addaction name="actionExport"/>
     <addaction name="actionNew"/>
     <addaction name="separator"/>
+    <addaction name="actionReset_To_Factory_Settings"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -681,8 +683,11 @@ QDockWidget {
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="action_Reference"/>
+    <addaction name="actionFugu_Reference"/>
+    <addaction name="actionFugu_Website"/>
     <addaction name="action_About"/>
+    <addaction name="separator"/>
+    <addaction name="action_Reference"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -853,7 +858,7 @@ QDockWidget {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Build HTML Reference</string>
+    <string>Dev: BuildHTMLRef()</string>
    </property>
   </action>
   <action name="actionToggleLighting">
@@ -1201,6 +1206,30 @@ QDockWidget {
    </property>
    <property name="text">
     <string>Code</string>
+   </property>
+  </action>
+  <action name="actionFugu_Website">
+   <property name="text">
+    <string>Fugu Website</string>
+   </property>
+   <property name="statusTip">
+    <string>Opens the Fugu Website in a browser</string>
+   </property>
+  </action>
+  <action name="actionFugu_Reference">
+   <property name="text">
+    <string>Fugu Reference</string>
+   </property>
+   <property name="statusTip">
+    <string>Opens the reference in a browser</string>
+   </property>
+  </action>
+  <action name="actionReset_To_Factory_Settings">
+   <property name="text">
+    <string>Reset To Factory Settings</string>
+   </property>
+   <property name="statusTip">
+    <string>Resets user settings back to defaults</string>
    </property>
   </action>
  </widget>
@@ -1908,6 +1937,54 @@ QDockWidget {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionReset_To_Factory_Settings</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>resetToFactorySettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>511</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionFugu_Website</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openFuguWebsite()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>511</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionFugu_Reference</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openFuguReference()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>511</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>about()</slot>
@@ -1939,5 +2016,8 @@ QDockWidget {
   <slot>setBackgroundHorizonColour()</slot>
   <slot>setBackgroundSkyColour()</slot>
   <slot>tabChanged(int)</slot>
+  <slot>resetToFactorySettings()</slot>
+  <slot>openFuguWebsite()</slot>
+  <slot>openFuguReference()</slot>
  </slots>
 </ui>

@@ -22,6 +22,7 @@
 FGView::FGView(QWidget *parent)
 : QGLWidget(parent) // NOTE: GLformat set in main.cpp
 , mUniverse(NULL) // Very important to intialise as null
+, mSaveSettings(true)
 {
 	// set camera defaults
 	mZoom = 0;
@@ -55,16 +56,18 @@ FGView::FGView(QWidget *parent)
 
 FGView::~FGView()
 {
-	QSettings settings("MonashUniversity", "Fugu");
+	if (mSaveSettings){
+		QSettings settings("MonashUniversity", "Fugu");
 
-	settings.setValue("view/origin",mOrigin);
-	settings.setValue("view/ground",mGround);
-	settings.setValue("view/showNodeAxes",mShowNodeAxes);
-	settings.setValue("view/lighting",mLighting);
-	settings.setValue("view/showOverWire",mShowOverWire);
+		settings.setValue("view/origin",mOrigin);
+		settings.setValue("view/ground",mGround);
+		settings.setValue("view/showNodeAxes",mShowNodeAxes);
+		settings.setValue("view/lighting",mLighting);
+		settings.setValue("view/showOverWire",mShowOverWire);
 
-	settings.setValue("view/bghorizon", mBackgroundHorizon);
-	settings.setValue("view/bgsky", mBackgroundSky);
+		settings.setValue("view/bghorizon", mBackgroundHorizon);
+		settings.setValue("view/bgsky", mBackgroundSky);
+	}
 }
 
 QSize FGView::minimumSizeHint() const

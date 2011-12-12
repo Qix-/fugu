@@ -89,6 +89,10 @@ public slots:
 	void setBackgroundHorizonColour();
 	void setBackgroundSkyColour();
 
+	void resetToFactorySettings();
+	void openFuguWebsite();
+	void openFuguReference();
+
 private:
 
 	void openFile(const QString &path = QString());

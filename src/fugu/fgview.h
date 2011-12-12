@@ -33,6 +33,8 @@ public:
 	inline bool showOverWire(){return mShowOverWire;}
 	inline bool lighting(){return mLighting;}
 
+	inline void setSaveSettings(bool ss){mSaveSettings = ss;}
+
 public slots:
 	void resetCamera();
 
@@ -121,6 +123,8 @@ private:
 	QGLShaderProgram* mOverWireShader;
 
 	// QGLShaderProgram* mSubdivisionShader;
+
+	bool mSaveSettings;
 };
 
 #endif
