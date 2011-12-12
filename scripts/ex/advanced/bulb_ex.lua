@@ -46,6 +46,7 @@ end
 -- create a new bulb program at the specified vertex
 -- this creates a new object with an update(dt) function
 -- the update function returns false once the growth is complete
+-- the internal logic is a simple state machine
 new_bulb = function(the_mesh,the_vertex)
 	local states = {
 		waiting = 1,
@@ -68,8 +69,8 @@ new_bulb = function(the_mesh,the_vertex)
 		time=0,
 		state=states.waiting,
 		next_state=states.pull,
-		state_change=.01}
-		
+		state_change=.01}	
+	
 	local actions = {}
 	actions[states.waiting] = function(self,dt)
 		if (self.state_change <= self.time) then
