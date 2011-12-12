@@ -1270,3 +1270,21 @@ void MainWindow::setBackgroundSkyColour(){
 		mFGView->setBackgroundSkyColour(col);
 	}
 }
+
+void MainWindow::resetToFactorySettings(){
+	QMessageBox::StandardButton button = QMessageBox::question(this,"Reset To Factory Settings","Resetting to Factory Settings. This will close Fugu. (You will need to restart manually.) Proceed?",QMessageBox::Ok|QMessageBox::Cancel);
+	if (button==QMessageBox::Ok){
+		QSettings settings("MonashUniversity", "Fugu");
+		settings.clear();
+		mFGView->setSaveSettings(false);
+		QApplication::exit(0);
+	}
+}
+
+void MainWindow::openFuguWebsite(){
+	QDesktopServices::openUrl(QUrl("http://bp.io/fugu"));
+}
+
+void MainWindow::openFuguReference(){
+	QDesktopServices::openUrl(QUrl("http://bp.io/fugu/reference.html"));
+}
