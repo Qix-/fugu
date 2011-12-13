@@ -9,7 +9,7 @@ require "core.transform"
 require "core.nloop"
 require "core.mesh"
 require "core.pos"
-require "core.node"
+require "core.universe"
 require "core.geometry"
 require "core.turtle"
 -- include underscore into global namespace

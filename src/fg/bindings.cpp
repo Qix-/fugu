@@ -218,8 +218,11 @@ namespace fg {
 
 		   // operators
 		   .def(const_self * other<const fg::Quat&>())
+
+		   /*
 		   .def(const_self + other<const fg::Quat&>())
 		   .def(const_self - other<const fg::Quat&>())
+		   */
 
 		   .def(const_self * double())
 		   .def(const_self * other<const fg::Vec3&>())

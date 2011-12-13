@@ -31,6 +31,7 @@
           <ul class="nav">
 						<li><a href="index.html">Home</a></li>
 						<li class="active"><a href="reference.html">Reference</a></li>
+						<li><a href="img/screenshot.png">Screenshot</a></li>
           </ul>
         </div>
       </div>
@@ -39,7 +40,7 @@
 		<div class="container content">
 
 	<div class="page-header">
-    <h1>Fugu Reference <small>built on 29/11/2011</small></h1>
+    <h1>Fugu Reference <small>built on 13/12/2011</small></h1>
   </div>
 
 <div class="row">
@@ -107,6 +108,40 @@
 		</div> 
 		
 
+		<a href="#" class=has_doc id=turtle>turtle</a>
+		<div style="display: none;" class=func_doc id=doc_turtle>
+			<pre>turtle() creates a turtle.
+	A turtle can be used either:
+	- as a navigation tool 
+	- or to create generalised cylinders
+	Check the examples for more info.
+	
+	Member functions:
+	move(dist) 
+	yaw(angle)
+	roll(angle)
+	pitch(angle)	
+	set_frame(pos,heading,up) -- sets the turtles position heading and orientation
+	set_stiffness(s1,s2) -- controls the shape of the generalised cylinder 
+	set_scale(scale) -- controls the shape of the generalised cylinder
+	set_cross_section(index) -- controls the shape of the generalised cylinder 	
+	push -- record current state/position
+	pop -- restore to old state/position	
+	set_carrier_mode(cm) -- cm=0 use linear interpolation, cm=1 use bezier interpolation 	
+	begin_cross_section 
+	end_cross_section 	
+	begin_cylinder
+	end_cylinder
+	add_point(n)	
+	get_position
+	get_heading
+	get_up
+	get_frame	
+	mesh():mesh -- generate and return the generalised cylinder	
+</pre>
+		</div> 
+		
+
 	</div>
 	
 
@@ -137,16 +172,35 @@
 		
 		<a href="#" class=has_doc id=meshnode>meshnode</a>
 		<div style="display: none;" class=func_doc id=doc_meshnode>
-			<pre>A meshnode is a node that references a mesh. 
-When placed in a universe it transforms that mesh. 
-Multiple meshnodes can reference the same mesh.</pre>
+			<pre>A meshnode is a node that references and transforms a mesh. Multiple meshnodes can reference the same mesh.
+	Example usage:
+	m = cube()
+	n = meshnode(m)
+	n:set_transform(R(half_pi,vec3(0,1,0))) -- rotate the mesh 45 degrees around the y axis
+	m2 = dodecahedron()
+	n:set_mesh(m2) -- change the mesh this node is referencing
+	</pre>
 		</div> 
 		
 
 		<a href="#" class=has_doc id=node>node</a>
 		<div style="display: none;" class=func_doc id=doc_node>
-			<pre>A node is a positionable and orientable object. 
-Every object in a universe is a node.</pre>
+			<pre>A node is a positionable and orientable object in a universe.
+	Example usage:
+	n = node()
+	n:set_transform(T(3,0,0)) -- translate by 3 units in the x direction	
+	</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=universe>universe</a>
+		<div style="display: none;" class=func_doc id=doc_universe>
+			<pre>A universe stores all nodes. 
+	There is only one universe, called "fgu". Example usage:
+	fgu:add(n) -- adds a node n to the universe
+	fgu:make_child_of(parent,child) -- spatially links child to parent
+	fgu.t -- returns the age of the universe (in seconds)   
+	</pre>
 		</div> 
 		
 
@@ -160,7 +214,7 @@ Every object in a universe is a node.</pre>
 		
 		<a href="#" class=has_doc id=abs>abs</a>
 		<div style="display: none;" class=func_doc id=doc_abs>
-			<pre>abs(x) absolute</pre>
+			<pre>abs(x) returns x if x&gt;=0 and -x if x&lt;0</pre>
 		</div> 
 		
 
@@ -419,6 +473,19 @@ Every object in a universe is a node.</pre>
 		</div> 
 		
 
+		<a href="#" class=has_doc id=quat>quat</a>
+		<div style="display: none;" class=func_doc id=doc_quat>
+			<pre>quat represents a quaternion. It has a number of constructors:	
+	quat(a,x,y,z) build component-wise
+	quat(axis:vec3, radians) rotate around an axis
+	quat(from:vec3, to:vec3) rotates a vector from to align with to
+	quat(x_rot,y_rot,z_rot) rotation from euler angles
+	quat(mat4) build from rotation matrix
+	quat(xaxis:vec3,yaxis:vec3,zaxis:vec3) specify a basis to transform to
+	</pre>
+		</div> 
+		
+
 		<a href="#" class=has_doc id=rad>rad</a>
 		<div style="display: none;" class=func_doc id=doc_rad>
 			<pre>rad(deg) deg to rad</pre>
@@ -592,7 +659,14 @@ random_vec3(low,high) is equivalent to vec3(random(low,high),random(low,high),ra
 
 		<a href="#" class=has_doc id=face>face</a>
 		<div style="display: none;" class=func_doc id=doc_face>
-			<pre>face is a triangle in a mesh</pre>
+			<pre>a face is a triangle within a mesh.
+	Attributes:
+	n -- normal
+	valid -- true if the face is still part of a mesh
+	Member functions:
+	calculate_normal -- recalculate the normal
+	v(i) -- return the i'th vertex of this face (i = 0 to 2)
+</pre>
 		</div> 
 		
 
@@ -634,7 +708,7 @@ random_vec3(low,high) is equivalent to vec3(random(low,high),random(low,high),ra
 
 		<a href="#" class=has_doc id=iso>iso</a>
 		<div style="display: none;" class=func_doc id=doc_iso>
-			<pre>iso(res,f) creates an isosurface from function f(x,y,z) within a 2x2x2 space</pre>
+			<pre>iso(res,f) creates an isosurface from function f(x,y,z) within a 2x2x2 space of resolution res</pre>
 		</div> 
 		
 
@@ -646,7 +720,14 @@ random_vec3(low,high) is equivalent to vec3(random(low,high),random(low,high),ra
 
 		<a href="#" class=has_doc id=mesh>mesh</a>
 		<div style="display: none;" class=func_doc id=doc_mesh>
-			<pre>mesh is a 2-manifold triangular mesh</pre>
+			<pre>mesh is a triangular mesh. You construct a mesh as a primitive (cube,icosahedron,etc.) or with load_mesh().
+	Member functions:
+	subdivide(n) -- subdivide the mesh n times
+	smooth_subdivide(n) -- smooth subdivide the mesh n times (Loop Subdivision)
+	sync() -- recalculate all the vertex and face normals
+	apply_transform(mtx) -- apply the transform matrix to the mesh vertices
+	clone():mesh -- copy the mesh 		
+</pre>
 		</div> 
 		
 
@@ -658,13 +739,26 @@ random_vec3(low,high) is equivalent to vec3(random(low,high),random(low,high),ra
 
 		<a href="#" class=has_doc id=octahedron>octahedron</a>
 		<div style="display: none;" class=func_doc id=doc_octahedron>
-			<pre>octahedron() makes a octahedron mesh</pre>
+			<pre>octahedron() makes an octahedron mesh</pre>
 		</div> 
 		
 
 		<a href="#" class=has_doc id=pos>pos</a>
 		<div style="display: none;" class=func_doc id=doc_pos>
-			<pre>a pos is a (vertex,edge,face) triple that uniquely identifies a position on a mesh</pre>
+			<pre>a pos is a (vertex,edge,face) triple that uniquely identifies a position on a mesh.
+	Constructors:
+	pos(f,e,v) -- construct from a face, edge(int) and vertex
+	pos(f,v) -- construct from a face and vertex	
+	Attributes:
+	v -- the vertex
+	e -- the edge (an integer from 0 to 2)
+	f -- the face
+	Properties:
+	flip_v, flip_e, flip_f -- navigate the mesh
+	
+	A pos can walk around a mesh by calling flip_v, flip_e or flip_f. 
+	flip_v, for instance, changes the pos by selecting the pos that has the same e and f, but differs in v.	
+</pre>
 		</div> 
 		
 
@@ -692,9 +786,53 @@ random_vec3(low,high) is equivalent to vec3(random(low,high),random(low,high),ra
 		</div> 
 		
 
+		<a href="#" class=has_doc id=turtle>turtle</a>
+		<div style="display: none;" class=func_doc id=doc_turtle>
+			<pre>turtle() creates a turtle.
+	A turtle can be used either:
+	- as a navigation tool 
+	- or to create generalised cylinders
+	Check the examples for more info.
+	
+	Member functions:
+	move(dist) 
+	yaw(angle)
+	roll(angle)
+	pitch(angle)	
+	set_frame(pos,heading,up) -- sets the turtles position heading and orientation
+	set_stiffness(s1,s2) -- controls the shape of the generalised cylinder 
+	set_scale(scale) -- controls the shape of the generalised cylinder
+	set_cross_section(index) -- controls the shape of the generalised cylinder 	
+	push -- record current state/position
+	pop -- restore to old state/position	
+	set_carrier_mode(cm) -- cm=0 use linear interpolation, cm=1 use bezier interpolation 	
+	begin_cross_section 
+	end_cross_section 	
+	begin_cylinder
+	end_cylinder
+	add_point(n)	
+	get_position
+	get_heading
+	get_up
+	get_frame	
+	mesh():mesh -- generate and return the generalised cylinder	
+</pre>
+		</div> 
+		
+
 		<a href="#" class=has_doc id=vertex>vertex</a>
 		<div style="display: none;" class=func_doc id=doc_vertex>
-			<pre>vertex is a mesh vertex</pre>
+			<pre>a vertex is a part of a mesh.
+	Attributes:
+	p -- position
+	n -- normal	(read-only)
+	c -- colour
+	valid -- true if the vertex is still part of a mesh
+	Member functions:
+	calculate_normal -- recalculate the normal based on the adjacent faces	
+	set_uv(u,v) -- set the uv coordinates
+	get_adjacent_face -- returns an adjacent face	
+</pre>
 		</div> 
 		
 

@@ -2,9 +2,8 @@
 	docs (and placeholders) for the ui routines
 --]]
 
-
 if (add_slider==nil) then
-	add_slider = function(var,params) end
+	add_slider = function(var,params) print("adding") end
 end
 
 document[[add_slider {...} adds a slider to the ui in fugu
