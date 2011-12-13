@@ -1,0 +1,15 @@
+Developers:
+	- Benjamin Porter
+	- Jon McCormack
+	- James Wetter
+
+Libraries:
+	- VCGLib
+	- Qt
+	- Boost
+	- GEOMETRY (JBurkardt)
+	- Lua
+	- Luabind
+	- GLEW
+	- Underscore.lua
+	- Other sources are documented in the code

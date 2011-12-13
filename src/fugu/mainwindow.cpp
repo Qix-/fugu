@@ -417,6 +417,9 @@ void MainWindow::load(){
 			if (filebase.endsWith(".lua")){
 				filebase.truncate(filebase.length()-4);
 			}
+
+			// TODO: should load script on another thread...
+			// Can use ProgressDialog to show dialog
 			mUniverse->loadScript(filebase.toStdString());
 
 			mFGView->setUniverse(mUniverse);

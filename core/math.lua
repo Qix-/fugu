@@ -8,7 +8,7 @@ require 'core.util'
 require "math"
 dontimport = set {"random", "randomseed"}
 mathdocs = {
-	abs = "abs(x) absolute",
+	abs = "abs(x) returns x if x>=0 and -x if x<0",
 	acos = "acos(x) arc cosine",
 	asin = "asin(x) arc sine",
 	atan = "atan(x) arc tangent",
@@ -102,12 +102,12 @@ document[[mat4 represents a 4d matrix. Example usage:
 categorise(mat4,"math")
 
 document[[quat represents a quaternion. It has a number of constructors:	
-	quat(a,x,y,z)
-	quat(axis:vec3, radians)
-	quat(from:vec3, to:vec3)
-	quat(x_rot,y_rot,z_rot)
-	quat(mat4)
-	quat(xaxis:vec3,yaxis:vec3,zaxis:vec3)	
+	quat(a,x,y,z) build component-wise
+	quat(axis:vec3, radians) rotate around an axis
+	quat(from:vec3, to:vec3) rotates a vector from to align with to
+	quat(x_rot,y_rot,z_rot) rotation from euler angles
+	quat(mat4) build from rotation matrix
+	quat(xaxis:vec3,yaxis:vec3,zaxis:vec3) specify a basis to transform to
 	]](quat)
 
 categorise(quat,"math")

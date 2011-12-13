@@ -9,10 +9,21 @@ pos = fg.pos
 
 -- help
 
-document[[a pos is a (vertex,edge,face) triple that uniquely identifies a position on a mesh]](pos)
+document[[a pos is a (vertex,edge,face) triple that uniquely identifies a position on a mesh.
+	Constructors:
+	pos(f,e,v) -- construct from a face, edge(int) and vertex
+	pos(f,v) -- construct from a face and vertex	
+	Attributes:
+	v -- the vertex
+	e -- the edge (an integer from 0 to 2)
+	f -- the face
+	Properties:
+	flip_v, flip_e, flip_f -- navigate the mesh
+	
+	A pos can walk around a mesh by calling flip_v, flip_e or flip_f. 
+	flip_v, for instance, changes the pos by selecting the pos that has the same e and f, but differs in v.	
+]](pos)
 categorise(pos,"mesh")
-
-
 
 -- helpers
 

@@ -17,9 +17,35 @@ vertex = fg.vertex
 -- help
 
 -- types
-document[[mesh is a 2-manifold triangular mesh]](mesh)
-document[[vertex is a mesh vertex]](vertex)
-document[[face is a triangle in a mesh]](face)
+document[[a vertex is a part of a mesh.
+	Attributes:
+	p -- position
+	n -- normal	(read-only)
+	c -- colour
+	valid -- true if the vertex is still part of a mesh
+	Member functions:
+	calculate_normal -- recalculate the normal based on the adjacent faces	
+	set_uv(u,v) -- set the uv coordinates
+	get_adjacent_face -- returns an adjacent face	
+]](vertex)
+
+document[[a face is a triangle within a mesh.
+	Attributes:
+	n -- normal
+	valid -- true if the face is still part of a mesh
+	Member functions:
+	calculate_normal -- recalculate the normal
+	v(i) -- return the i'th vertex of this face (i = 0 to 2)
+]](face)
+
+document[[mesh is a triangular mesh. You construct a mesh as a primitive (cube,icosahedron,etc.) or with load_mesh().
+	Member functions:
+	subdivide(n) -- subdivide the mesh n times
+	smooth_subdivide(n) -- smooth subdivide the mesh n times (Loop Subdivision)
+	sync() -- recalculate all the vertex and face normals
+	apply_transform(mtx) -- apply the transform matrix to the mesh vertices
+	clone():mesh -- copy the mesh 		
+]](mesh)
 
 foreach({mesh,vertex,face}, function(_,f) categorise(f,"mesh") end)
 
@@ -29,10 +55,10 @@ document[[sphere() makes a spherical mesh]](sphere)
 document[[icosahedron() makes an icosahedron mesh]](icosahedron)
 document[[tetrahedron() makes a tetrahedron mesh]](tetrahedron)
 document[[dodecahedron() makes a dodecahedron mesh]](dodecahedron)
-document[[octahedron() makes a octahedron mesh]](octahedron)
+document[[octahedron() makes an octahedron mesh]](octahedron)
 document[[cone(outer_radius,inner_radius,resolution) makes a cone mesh]](cone)
 document[[cylinder(res) makes a cylinder mesh]](cylinder)
-document[[iso(res,f) creates an isosurface from function f(x,y,z) within a 2x2x2 space]](iso)
+document[[iso(res,f) creates an isosurface from function f(x,y,z) within a 2x2x2 space of resolution res]](iso)
 
 foreach({cube,sphere,icosahedron,tetrahedron,dodecahedron,octahedron,cone,cylinder,iso}, function(_,f) categorise(f,"mesh") end)
 
