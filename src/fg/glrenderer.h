@@ -59,6 +59,7 @@ namespace fg {
 			COLOUR_FACE_MANIFOLD,
 		};
 
+		static inline void setTexturePath(std::string tp){sTexturePath = tp;}
 		static void renderMesh(Mesh* m, RenderMeshMode rmm = RENDER_FLAT, ColourMode cm = COLOUR_NONE);
 		static void renderMesh(boost::shared_ptr<Mesh> m, RenderMeshMode rmm = RENDER_FLAT, ColourMode cm = COLOUR_NONE);
 		static void renderMeshNode(boost::shared_ptr<MeshNode> m, RenderMeshMode rmm = RENDER_FLAT, ColourMode cm = COLOUR_NONE);
@@ -89,6 +90,9 @@ namespace fg {
         static void glutWireCone( GLdouble base, GLdouble height, GLint slices, GLint stacks);
 
 	private:
+
+        static std::string sTexturePath;
+
         // shared GLUT helpers..
         static void fghCircleTable(double **sint,double **cost,const int n);
 	};
