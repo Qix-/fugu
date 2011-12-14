@@ -150,7 +150,7 @@ MainWindow::MainWindow(QWidget *parent)
 	buildExamplesMenu();
 
 	// load a script
-	newEditor(new QFile("../scripts/ex/basic/superformula_ex.lua"));
+	newEditor(new QFile(QString(FG_SCRIPTS_LOCATION) + "ex/basic/intro_ex.lua"));
 }
 
 MainWindow::~MainWindow(){
@@ -166,7 +166,7 @@ MainWindow::~MainWindow(){
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About fugu"),
-			QString("<p><b>fugu</b> was developed by Ben Porter, Jon McCormack, and James Wetter, in association with CEMA and <a href=\"http://monash.edu\">Monash University</a>.</p>"
+			QString("<p><b>fugu</b> was developed by Ben Porter, Jon McCormack, and James Wetter, in association with CEMA and Monash University.</p>"
 					"<p>Version: <b>%1.%2.%3</b><br/>"
 					   "Build: <b>%4</b></p>").arg(FG_VERSION_MAJOR).arg(FG_VERSION_MINOR).arg(FG_VERSION_PATCH).arg(FG_VERSION_BUILD_HASH)
 			);
@@ -247,7 +247,7 @@ void MainWindow::openFile(const QString &path)
 	QString fileName = path;
 	if (fileName.isNull()){
 		QStringList fileNames = QFileDialog::getOpenFileNames(this,
-				tr("Open File"), "../scripts", "fugu scripts (*.lua)");
+				tr("Open File"), QString(FG_SCRIPTS_LOCATION), "fugu scripts (*.lua)");
 		foreach(QString file, fileNames){
 			// check if its already open...
 			// if so, just switch to that file
@@ -408,7 +408,7 @@ void MainWindow::load(){
 			QDir dir = info.dir();
 			// dir.makeAbsolute();
 			mUniverse->addScriptDirectory((dir.absolutePath() + "/?.lua").toStdString());
-			mUniverse->addScriptDirectory("../scripts/?.lua");
+			mUniverse->addScriptDirectory((QString(FG_SCRIPTS_LOCATION) + "?.lua").toStdString());
 
 			// load the add_slider callbacks
 			setupAddSliderCallback(mUniverse->getLuaState());
@@ -845,11 +845,11 @@ void MainWindow::buildReference() // build the html reference
 		}
 	}
 
-	QFile file("../doc/ref/reference.html");
+	QFile file(QString(FG_BASE_LOCATION) + "doc/ref/reference.html");
 	if (file.open(QIODevice::WriteOnly)){
 		QTextStream out(&file);
 
-		tmpl::html_template templ("../doc/ref/reference.tmpl");
+		tmpl::html_template templ((QString(FG_BASE_LOCATION) + "doc/ref/reference.tmpl").toStdString());
 		templ("DATE") = QDate::currentDate().toString("dd/MM/yyyy").toStdString();
 
 		typedef tuple<std::string,std::string,std::string> string3;
@@ -955,7 +955,7 @@ void MainWindow::buildExamplesMenu(){
 	QMenu* menuExamples = findChild<QMenu*>("menuFile")->findChild<QMenu*>("menuExamples");
 	menuExamples->clear();
 
-	QDir examplesDir = QDir("../scripts/ex");
+	QDir examplesDir = QDir(QString(FG_SCRIPTS_LOCATION) + "ex");
 
 	foreach(QString subdir, examplesDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot)){
 		QMenu* subMenu = new QMenu(subdir,menuExamples);
@@ -1285,9 +1285,9 @@ void MainWindow::resetToFactorySettings(){
 }
 
 void MainWindow::openFuguWebsite(){
-	QDesktopServices::openUrl(QUrl("http://bp.io/fugu"));
+	QDesktopServices::openUrl(QUrl(QString(FUGU_URL)));
 }
 
 void MainWindow::openFuguReference(){
-	QDesktopServices::openUrl(QUrl("http://bp.io/fugu/reference.html"));
+	QDesktopServices::openUrl(QUrl(QString(FUGU_URL) + "reference.html"));
 }

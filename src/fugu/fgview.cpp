@@ -12,6 +12,9 @@
 
 #include "fg/glrenderer.h"
 
+
+#include "fg_config.h"
+
 #include "trackball.h"
 
 
@@ -216,8 +219,8 @@ void FGView::initializeGL()
 
 	// load the shaders
 	mPhongShader = new QGLShaderProgram(context());
-	QFile phongV("../assets/shaders/phong.vert");
-	QFile phongF("../assets/shaders/phong.frag");
+	QFile phongV(QString(FG_BASE_LOCATION) + "assets/shaders/phong.vert");
+	QFile phongF(QString(FG_BASE_LOCATION) + "assets/shaders/phong.frag");
 	if (phongV.open(QFile::ReadOnly | QFile::Text)
 			and
 			phongF.open(QFile::ReadOnly | QFile::Text))
@@ -230,12 +233,12 @@ void FGView::initializeGL()
 		mPhongShader->setUniformValue("shininess",(GLfloat)5);
 	}
 	else {
-		std::cerr << "Couldn't load ../assets/shaders/phong.vert or phong.frag\n";
+		std::cerr << "Couldn't load phong.vert or phong.frag\n";
 	}
 
 	mOverWireShader = new QGLShaderProgram(context());
-	QFile wireV("../assets/shaders/overwire.vert");
-	QFile wireF("../assets/shaders/passthru.frag");
+	QFile wireV(QString(FG_BASE_LOCATION) + "assets/shaders/overwire.vert");
+	QFile wireF(QString(FG_BASE_LOCATION) + "assets/shaders/passthru.frag");
 	if (wireV.open(QFile::ReadOnly | QFile::Text)
 			and
 			wireF.open(QFile::ReadOnly | QFile::Text))
@@ -246,7 +249,7 @@ void FGView::initializeGL()
 		// mPhongShader->bind();
 	}
 	else {
-		std::cerr << "Couldn't load ../assets/shaders/overwire.vert or passthru.frag\n";
+		std::cerr << "Couldn't load overwire.vert or passthru.frag\n";
 	}
 
 	/*

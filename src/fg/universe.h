@@ -52,7 +52,7 @@ namespace fg {
 	public:
 		typedef std::list<boost::shared_ptr<Mesh> > MeshContainer;
 
-		Universe();
+		Universe(std::string baseDir="../");
 		~Universe();
 
 		void addScriptDirectory(std::string scriptPath);
@@ -129,6 +129,8 @@ namespace fg {
 
 		std::list<boost::shared_ptr<Node> > mNodes;
 		std::list<boost::shared_ptr<MeshNode> > mMeshNodes;
+
+		std::string mBaseDir;
 
 	private: // helpers
 		int setLuaPath( std::string path );

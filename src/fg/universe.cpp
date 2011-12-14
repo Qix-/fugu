@@ -85,13 +85,14 @@ namespace fg {
 		throw(std::runtime_error(std::string(expandedMessage)));
 	}
 
-	Universe::Universe():
+	Universe::Universe(std::string baseDir):
 	L(NULL),
 	mLoadedScripts(),
 	mMeshes(),
 	mTime(0),
 	mNodeGraph(),
-	mChangedNodeGraph(false)
+	mChangedNodeGraph(false),
+	mBaseDir(baseDir)
 	{
 		// Global setup
 		std::srand(std::time(NULL));
@@ -106,7 +107,7 @@ namespace fg {
 		lua_register(L, "fgerrorfunc", debugFileAndLine);
 
 		// and finally load the core library..
-		setLuaPath("../?.lua");  // assume this is run from inside the bin/
+		setLuaPath(mBaseDir + "?.lua");  // assume this is run from inside the bin/
 		lua_getglobal(L, "require");
 		lua_pushstring(L, "core.main");
 		if (lua_pcall(L, 1, 1, 0)){
