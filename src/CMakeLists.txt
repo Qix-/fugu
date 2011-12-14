@@ -11,7 +11,7 @@ endif(WIN32)
 
 set (FG_VERSION_MAJOR 0)
 set (FG_VERSION_MINOR 2)
-set (FG_VERSION_PATCH 0)
+set (FG_VERSION_PATCH 1)
 execute_process(COMMAND hg tip --template "{node|short}" OUTPUT_VARIABLE FG_VERSION_BUILD_HASH)
 
 set (FG_BASE_LOCATION "./")

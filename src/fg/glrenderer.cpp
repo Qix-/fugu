@@ -57,6 +57,8 @@ void DrawWrapper(MyGLRenderer& tm, fg::GLRenderer::ColourMode cm){
 
 namespace fg {
 
+	std::string GLRenderer::sTexturePath = "../assets/UV.ppm";
+
 	void GLRenderer::renderMesh(Mesh* m, RenderMeshMode rmm, ColourMode cm){
 		// vcg::GlTrimesh<fg::MeshImpl> tm;
 		MyGLRenderer tm;
@@ -92,9 +94,9 @@ namespace fg {
 
 				if (!isTexLoaded){
 					// make sure the texture is loaded...
-					Ppm ppm("../assets/UV.ppm");
+					Ppm ppm(sTexturePath.c_str()); // "../assets/UV.ppm");
 					if (not ppm.IsValid()){
-						throw(std::runtime_error("Can't load ../assets/UV.ppm"));
+						throw(std::runtime_error(std::string("Can't load ") + sTexturePath));
 					}
 					else {
 						tex = ppm.GetGLTex();

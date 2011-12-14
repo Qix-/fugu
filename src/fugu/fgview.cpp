@@ -55,6 +55,9 @@ FGView::FGView(QWidget *parent)
 	// theme...
 	mBackgroundHorizon = settings.value("view/bghorizon", QColor(79,79,79)).value<QColor>();
 	mBackgroundSky = settings.value("view/bgsky", QColor(16,16,16)).value<QColor>();
+
+	// set texture path
+	fg::GLRenderer::setTexturePath(std::string(FG_BASE_LOCATION) + "assets/UV.ppm");
 }
 
 FGView::~FGView()
