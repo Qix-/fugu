@@ -74,8 +74,21 @@ ENDIF(MINGW)
 target_link_libraries(fugu ${ALL_LIBS}) 
 
 # install fgv into bin
-install(TARGETS fugu DESTINATION .)
+install(TARGETS fugu 
+	RUNTIME DESTINATION .
+	LIBRARY DESTINATION lib
+  	ARCHIVE DESTINATION lib)
 
-install(DIRECTORY ui/res DESTINATION ui/res)
+# install(DIRECTORY ui/res DESTINATION ui)
+install(DIRECTORY ${BASE_DIR}/assets DESTINATION .)
+install(DIRECTORY ${BASE_DIR}/scripts/ex DESTINATION scripts)
+install(DIRECTORY ${BASE_DIR}/tools DESTINATION .)
+
+install(DIRECTORY ${BASE_DIR}/core DESTINATION .)
+install(FILES 
+	${BASE_DIR}/README
+	${BASE_DIR}/LICENSE
+	${BASE_DIR}/CREDITS
+	DESTINATION .)
 
 

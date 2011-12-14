@@ -2,12 +2,21 @@ cmake_minimum_required(VERSION 2.8)
 project(FG)
 
 set(BASE_DIR ${FG_SOURCE_DIR}/..) 
-set(CMAKE_INSTALL_PREFIX ${BASE_DIR}/bin)
+
+if (WIN32)
+	set(CMAKE_INSTALL_PREFIX ${BASE_DIR}/fugu_win)
+else(WIN32)
+	set(CMAKE_INSTALL_PREFIX ${BASE_DIR}/fugu_osx)
+endif(WIN32)
 
 set (FG_VERSION_MAJOR 0)
 set (FG_VERSION_MINOR 2)
 set (FG_VERSION_PATCH 0)
 execute_process(COMMAND hg tip --template "{node|short}" OUTPUT_VARIABLE FG_VERSION_BUILD_HASH)
+
+set (FG_BASE_LOCATION "./")
+set (FG_SCRIPTS_LOCATION "scripts/")
+set (FUGU_URL "http://bp.io/fugu/")
 
 configure_file (
   "${FG_SOURCE_DIR}/fg_config.h.in"
@@ -18,7 +27,7 @@ if(WIN32)
 	# set(CMAKE_CXX_FLAGS "-D LUABIND_DYNAMIC_LINK") 
 	# MAYBE NEED THIS FOR VCG/GL stuff?!	
 	# set(CMAKE_CXX_FLAGS "-pg -D GLEW_STATIC") #enable PROFILING
-	set(CMAKE_CXX_FLAGS "-D GLEW_STATIC -Wno-deprecated")
+	set(CMAKE_CXX_FLAGS " -O3 -D GLEW_STATIC -Wno-deprecated")
 	SET(GL_LIBS glew32s glfw opengl32 glu32)
 	SET(LUA_LIBS lua luabind)
 	SET(BOOST_LIBS boost_filesystem-mgw45-mt-1_46_1 boost_system-mgw45-mt-1_46_1)
@@ -26,7 +35,7 @@ if(WIN32)
 endif(WIN32)
 
 if(APPLE)
-    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -D GLEW_STATIC")
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -O3 -D GLEW_STATIC")
 	FIND_LIBRARY(COCOA_LIBRARY Cocoa)
 	#find_package(Boost COMPONENTS system filesystem REQUIRED)
 	#include_directories(${Boost_INCLUDE_DIRS})
