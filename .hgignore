@@ -9,3 +9,5 @@ doc/cpp/html
 *.orig
 fugu_win
 fugu_osx
+*.blend?
+
