@@ -3,12 +3,12 @@ Welcome to fugu!
 	
 Fugu lets you create 3D animated forms by writing code in a language called Lua. 
 
-This file is an introduction to fugu. It should get you up and running in no time. (Font too small? Press Ctrl-Plus to embiggen it.)
+This file is an introduction to fugu. It should get you up and running in no time. (Font too small? Press Ctrl-Plus (or Cmd-Plus) to embiggen it.)
 
 The interface
 -------------
 * This is the code pane. It allows you to edit and make scripts. You can have more than one script open at a time. Switch between them using the tabs.
-* To the right is the view pane. It shows the current form. You can left-click and drag to rotate. Right-click and draw to zoom (or cmd-click on mac). And ctrl+left-click and drag to move.
+* To the right is the view pane. It shows the current form. You can left-click and drag to rotate. Right-click and draw to zoom (or ctrl-click on mac). And ctrl+left-click and drag to move (cmd-click on mac).
 * The console lies below. It informs you if there are any errors with the script.
 * The buttons above, from left to right are:
   [Activate] Select the current script as the one to run. An icon appears in the tab of the currently active script.
