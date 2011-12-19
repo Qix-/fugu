@@ -150,7 +150,7 @@ MainWindow::MainWindow(QWidget *parent)
 	buildExamplesMenu();
 
 	// load a script
-	newEditor(new QFile(QString(FG_SCRIPTS_LOCATION) + "ex/basic/intro_ex.lua"));
+	newEditor(new QFile(QCoreApplication::applicationDirPath() + "/" + QString(FG_SCRIPTS_LOCATION) + "ex/basic/intro_ex.lua"));
 }
 
 MainWindow::~MainWindow(){
@@ -247,7 +247,7 @@ void MainWindow::openFile(const QString &path)
 	QString fileName = path;
 	if (fileName.isNull()){
 		QStringList fileNames = QFileDialog::getOpenFileNames(this,
-				tr("Open File"), QString(FG_SCRIPTS_LOCATION), "fugu scripts (*.lua)");
+				tr("Open File"), QCoreApplication::applicationDirPath() + "/" + QString(FG_SCRIPTS_LOCATION), "fugu scripts (*.lua)");
 		foreach(QString file, fileNames){
 			// check if its already open...
 			// if so, just switch to that file
@@ -398,7 +398,7 @@ void MainWindow::load(){
 
 		try {
 			// Create a new universe
-			mUniverse = new fg::Universe();
+			mUniverse = new fg::Universe((QCoreApplication::applicationDirPath() + "/").toStdString());
 
 			// add the search paths
 			QString filename = mFileNames[mActiveScript];
@@ -408,7 +408,7 @@ void MainWindow::load(){
 			QDir dir = info.dir();
 			// dir.makeAbsolute();
 			mUniverse->addScriptDirectory((dir.absolutePath() + "/?.lua").toStdString());
-			mUniverse->addScriptDirectory((QString(FG_SCRIPTS_LOCATION) + "?.lua").toStdString());
+			mUniverse->addScriptDirectory((QCoreApplication::applicationDirPath() + "/" + QString(FG_SCRIPTS_LOCATION) + "?.lua").toStdString());
 
 			// load the add_slider callbacks
 			setupAddSliderCallback(mUniverse->getLuaState());
@@ -792,7 +792,7 @@ void MainWindow::buildFuguKeywordSet(){
 	if (mUniverse==NULL){
 		tmpuni = true;
 		try {
-			mUniverse = new fg::Universe();
+			mUniverse = new fg::Universe((QCoreApplication::applicationDirPath() + "/").toStdString());
 		}
 		catch (std::runtime_error& e){
 			mSimulationMode = SM_ERROR;
@@ -832,7 +832,8 @@ void MainWindow::buildReference() // build the html reference
 	if (mUniverse==NULL){
 		tmpuni = true;
 		try {
-			mUniverse = new fg::Universe();
+			// mUniverse = new fg::Universe();
+			mUniverse = new fg::Universe((QCoreApplication::applicationDirPath() + "/").toStdString());
 		}
 		catch (std::runtime_error& e){
 			mSimulationMode = SM_ERROR;
@@ -845,11 +846,11 @@ void MainWindow::buildReference() // build the html reference
 		}
 	}
 
-	QFile file(QString(FG_BASE_LOCATION) + "doc/ref/reference.html");
+	QFile file(QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "doc/ref/reference.html");
 	if (file.open(QIODevice::WriteOnly)){
 		QTextStream out(&file);
 
-		tmpl::html_template templ((QString(FG_BASE_LOCATION) + "doc/ref/reference.tmpl").toStdString());
+		tmpl::html_template templ((QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "doc/ref/reference.tmpl").toStdString());
 		templ("DATE") = QDate::currentDate().toString("dd/MM/yyyy").toStdString();
 
 		typedef tuple<std::string,std::string,std::string> string3;
@@ -955,7 +956,7 @@ void MainWindow::buildExamplesMenu(){
 	QMenu* menuExamples = findChild<QMenu*>("menuFile")->findChild<QMenu*>("menuExamples");
 	menuExamples->clear();
 
-	QDir examplesDir = QDir(QString(FG_SCRIPTS_LOCATION) + "ex");
+	QDir examplesDir = QDir(QCoreApplication::applicationDirPath() + "/" + QString(FG_SCRIPTS_LOCATION) + "ex");
 
 	foreach(QString subdir, examplesDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot)){
 		QMenu* subMenu = new QMenu(subdir,menuExamples);
