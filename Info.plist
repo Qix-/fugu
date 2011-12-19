@@ -1,0 +1,9 @@
+{
+	CFBundleDisplayName = FuguOSX;
+	CFBundleExecutable = FuguOSX;
+	CFBundleIdentifier = "io.bp.fugu";
+	CFBundleName = FuguOSX;
+	CFBundlePackageType = APPL;
+	CFBundleSignature = fugu;
+	CFBundleVersion = 1;
+}

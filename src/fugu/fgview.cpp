@@ -57,7 +57,7 @@ FGView::FGView(QWidget *parent)
 	mBackgroundSky = settings.value("view/bgsky", QColor(16,16,16)).value<QColor>();
 
 	// set texture path
-	fg::GLRenderer::setTexturePath(std::string(FG_BASE_LOCATION) + "assets/UV.ppm");
+	fg::GLRenderer::setTexturePath((QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "assets/UV.ppm").toStdString());
 }
 
 FGView::~FGView()
@@ -222,8 +222,8 @@ void FGView::initializeGL()
 
 	// load the shaders
 	mPhongShader = new QGLShaderProgram(context());
-	QFile phongV(QString(FG_BASE_LOCATION) + "assets/shaders/phong.vert");
-	QFile phongF(QString(FG_BASE_LOCATION) + "assets/shaders/phong.frag");
+	QFile phongV(QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "assets/shaders/phong.vert");
+	QFile phongF(QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "assets/shaders/phong.frag");
 	if (phongV.open(QFile::ReadOnly | QFile::Text)
 			and
 			phongF.open(QFile::ReadOnly | QFile::Text))
@@ -240,8 +240,8 @@ void FGView::initializeGL()
 	}
 
 	mOverWireShader = new QGLShaderProgram(context());
-	QFile wireV(QString(FG_BASE_LOCATION) + "assets/shaders/overwire.vert");
-	QFile wireF(QString(FG_BASE_LOCATION) + "assets/shaders/passthru.frag");
+	QFile wireV(QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "assets/shaders/overwire.vert");
+	QFile wireF(QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "assets/shaders/passthru.frag");
 	if (wireV.open(QFile::ReadOnly | QFile::Text)
 			and
 			wireF.open(QFile::ReadOnly | QFile::Text))

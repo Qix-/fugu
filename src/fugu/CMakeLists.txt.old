@@ -67,34 +67,46 @@ FILE(GLOB HEADER_INC "*.inc")
 
 SET(EVERYTHING ${SRC} ${MOC_SRC} ${HEADERS} ${HEADER_INC} ${UIS_H} ${RC_SRC})
 
-# specify bundle properties
-IF (APPLE)
-	SET(MACOSX_BUNDLE_ICON_FILE fugu_bundle.icns)
-	SET_SOURCE_FILES_PROPERTIES(${BASE_DIR}/fugu_bundle.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-	SET(EVERYTHING ${EVERYTHING} ${BASE_DIR}/fugu_bundle.icns)
-ENDIF()
-
-
 IF(MINGW)
 	add_executable(fugu ${EVERYTHING} ui/icon.rc) #add WIN32 to remove cmd window 
 ELSE() #APPLE
-	add_executable(fugu MACOSX_BUNDLE ${EVERYTHING})
+	add_executable(fugu ${EVERYTHING})
 ENDIF() 
 target_link_libraries(fugu ${ALL_LIBS}) 
 
+
 # install rules
+
+IF (APPLE)
+	#SET(CMAKE_INSTALL_NAME_DIR "@executable_prefix/.")
+
+#	SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)	
+	#the RPATH to be used when installing, but only if it's not a system directory
+#	LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+#	IF("${isSystemDir}" STREQUAL "-1")
+#	   SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/.")
+#	ENDIF("${isSystemDir}" STREQUAL "-1")
+endif()
 
 install(TARGETS fugu
 	RUNTIME DESTINATION .
-	BUNDLE DESTINATION .
 	LIBRARY DESTINATION .
   	ARCHIVE DESTINATION .)
 
+if (APPLE)
+	set(APPS ${CMAKE_INSTALL_PREFIX}/fugu)  # paths to executables
+	set(DIRS ${QT_LIBRARY_DIR})   # directories to search for prerequisites
+	INSTALL(CODE "
+   		include(BundleUtilities)
+   		fixup_bundle(\"${APPS}\"   \"\"   \"${DIRS}\")
+   		" COMPONENT Runtime)
+endif()
 
 # install(DIRECTORY ui/res DESTINATION ui)
 install(DIRECTORY ${BASE_DIR}/assets DESTINATION .)
 install(DIRECTORY ${BASE_DIR}/scripts/ex DESTINATION scripts)
 install(DIRECTORY ${BASE_DIR}/tools DESTINATION .)
+
 install(DIRECTORY ${BASE_DIR}/core DESTINATION .)
 install(FILES 
 	${BASE_DIR}/README.txt
@@ -103,21 +115,12 @@ install(FILES
 	DESTINATION .)
 
 if (APPLE)
-	set(APPS ${CMAKE_INSTALL_PREFIX}/fugu.app)  # paths to executables
-	set(DIRS ${QT_LIBRARY_DIR})   # directories to search for prerequisites
-	INSTALL(CODE "
-   		include(BundleUtilities)
-   		fixup_bundle(\"${APPS}\"   \"\"   \"${DIRS}\")
-   		" COMPONENT Runtime)
-endif()
-
-#if (APPLE)
-#	SET(CPACK_GENERATOR "Bundle")		
-#	SET(CPACK_PACKAGE_FILE_NAME "FuguOSX.${FG_VERSION_MAJOR}.${FG_VERSION_MINOR}.${FG_VERSION_PATCH}")
-#	SET(CPACK_BUNDLE_ICON "${BASE_DIR}/fugu_bundle.icns")
-#	SET(CPACK_BUNDLE_NAME "FuguOSX")
-#	SET(CPACK_BUNDLE_PLIST "${BASE_DIR}/Info.plist")
-#	SET(CPACK_BUNDLE_STARTUP_COMMAND "${BASE_DIR}/src/run_fugu_osx.sh")
-#	INCLUDE(CPack)
+	SET(CPACK_GENERATOR "Bundle")		
+	SET(CPACK_PACKAGE_FILE_NAME "FuguOSX.${FG_VERSION_MAJOR}.${FG_VERSION_MINOR}.${FG_VERSION_PATCH}")
+	SET(CPACK_BUNDLE_ICON "${BASE_DIR}/fugu_bundle.icns")
+	SET(CPACK_BUNDLE_NAME "FuguOSX")
+	SET(CPACK_BUNDLE_PLIST "${BASE_DIR}/Info.plist")
+	SET(CPACK_BUNDLE_STARTUP_COMMAND "${BASE_DIR}/src/run_fugu_osx.sh")
+	INCLUDE(CPack)
 
-#endif()
+endif()
