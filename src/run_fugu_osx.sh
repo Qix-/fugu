@@ -11,7 +11,7 @@ echo "running $0"
 echo "FUGU_BUNDLE: $FUGU_BUNDLE"
 
 # Setup temporary runtime files
-export "DYLD_LIBRARY_PATH=$FUGU_RESOURCES/lib"
+export "DYLD_LIBRARY_PATH=$FUGU_RESOURCES"
 export "PATH=$FUGU_RESOURCES:$PATH"
 
 # export

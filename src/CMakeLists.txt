@@ -20,7 +20,8 @@ if (WIN32)
 	set (FG_SCRIPTS_LOCATION "${FG_BASE_LOCATION}/scripts/")
 elseif(APPLE)
 	# the bundle puts the binary three dirs deep 
-	set (FG_BASE_LOCATION "../../../")
+	# set (FG_BASE_LOCATION "../../../")
+	set (FG_BASE_LOCATION "./")
 	set (FG_SCRIPTS_LOCATION "${FG_BASE_LOCATION}/scripts/")
 endif()
 

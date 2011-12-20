@@ -673,7 +673,8 @@ void MainWindow::exportSimulation(){
 		ui.setupUi(mExportDialog);
 
 		QLineEdit* qe = mExportDialog->findChild<QLineEdit*>("dirLineEdit");
-		qe->setText(QDir("export").absolutePath());
+		QString path = QCoreApplication::applicationDirPath() + "/export";
+		qe->setText(QDir(path).absolutePath());
 
 		QPushButton* chooseDir = mExportDialog->findChild<QPushButton*>("chooseDirectoryPushButton");
 		connect(chooseDir, SIGNAL(pressed()), this, SLOT(exportSimulationChooseDir()));

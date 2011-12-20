@@ -1,6 +1,6 @@
 find_package(Qt4 COMPONENTS Qt3Support QtOpenGL QtGui QtCore REQUIRED)
 set(QT_USE_QTOPENGL TRUE)
-set(QT_USE_IMPORTED_TARGETS TRUE)
+#set(QT_USE_IMPORTED_TARGETS TRUE)
 SET( QT_USE_QT3SUPPORT TRUE )  
 include(${QT_USE_FILE})
 
@@ -68,17 +68,18 @@ FILE(GLOB HEADER_INC "*.inc")
 SET(EVERYTHING ${SRC} ${MOC_SRC} ${HEADERS} ${HEADER_INC} ${UIS_H} ${RC_SRC})
 
 # specify bundle properties
+IF (FALSE)
 IF (APPLE)
 	SET(MACOSX_BUNDLE_ICON_FILE fugu_bundle.icns)
 	SET_SOURCE_FILES_PROPERTIES(${BASE_DIR}/fugu_bundle.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 	SET(EVERYTHING ${EVERYTHING} ${BASE_DIR}/fugu_bundle.icns)
 ENDIF()
-
+ENDIF(FALSE)
 
 IF(MINGW)
 	add_executable(fugu ${EVERYTHING} ui/icon.rc) #add WIN32 to remove cmd window 
 ELSE() #APPLE
-	add_executable(fugu MACOSX_BUNDLE ${EVERYTHING})
+	add_executable(fugu ${EVERYTHING}) # MACOSX_BUNDLE 
 ENDIF() 
 target_link_libraries(fugu ${ALL_LIBS}) 
 
@@ -102,6 +103,7 @@ install(FILES
 	${BASE_DIR}/CREDITS.txt
 	DESTINATION .)
 
+if (FALSE)
 if (APPLE)
 	set(APPS ${CMAKE_INSTALL_PREFIX}/fugu.app)  # paths to executables
 	set(DIRS ${QT_LIBRARY_DIR})   # directories to search for prerequisites
@@ -110,14 +112,31 @@ if (APPLE)
    		fixup_bundle(\"${APPS}\"   \"\"   \"${DIRS}\")
    		" COMPONENT Runtime)
 endif()
+endif(FALSE)
 
-#if (APPLE)
-#	SET(CPACK_GENERATOR "Bundle")		
-#	SET(CPACK_PACKAGE_FILE_NAME "FuguOSX.${FG_VERSION_MAJOR}.${FG_VERSION_MINOR}.${FG_VERSION_PATCH}")
-#	SET(CPACK_BUNDLE_ICON "${BASE_DIR}/fugu_bundle.icns")
-#	SET(CPACK_BUNDLE_NAME "FuguOSX")
-#	SET(CPACK_BUNDLE_PLIST "${BASE_DIR}/Info.plist")
-#	SET(CPACK_BUNDLE_STARTUP_COMMAND "${BASE_DIR}/src/run_fugu_osx.sh")
-#	INCLUDE(CPack)
+if (APPLE)
+	# INSTALL QT LIBRARIES
+	INSTALL(FILES
+	${QT_LIBRARY_DIR}/Qt3Support.framework/Versions/4/Qt3Support
+	${QT_LIBRARY_DIR}/QtSql.framework/Versions/4/QtSql
+	${QT_LIBRARY_DIR}/QtCore.framework/Versions/4/QtCore
+	${QT_LIBRARY_DIR}/QtOpenGL.framework/Versions/4/QtOpenGL
+	${QT_LIBRARY_DIR}/QtXml.framework/Versions/4/QtXml
+	${QT_LIBRARY_DIR}/QtGui.framework/Versions/4/QtGui
+	${QT_LIBRARY_DIR}/QtNetwork.framework/Versions/4/QtNetwork
+	DESTINATION .
+	)
+
+	INSTALL(DIRECTORY
+	${BASE_DIR}/qt_menu.nib
+	DESTINATION .)
+
+	SET(CPACK_GENERATOR "Bundle")		
+	SET(CPACK_PACKAGE_FILE_NAME "FuguOSX.${FG_VERSION_MAJOR}.${FG_VERSION_MINOR}.${FG_VERSION_PATCH}")
+	SET(CPACK_BUNDLE_ICON "${BASE_DIR}/fugu_bundle.icns")
+	SET(CPACK_BUNDLE_NAME "FuguOSX")
+	SET(CPACK_BUNDLE_PLIST "${BASE_DIR}/Info.plist")
+	SET(CPACK_BUNDLE_STARTUP_COMMAND "${BASE_DIR}/src/run_fugu_osx.sh")
+	INCLUDE(CPack)
 
-#endif()
+endif()
