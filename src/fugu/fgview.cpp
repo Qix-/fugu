@@ -2,13 +2,18 @@
 
 #include <GL/glew.h>
 #include <QtOpenGL>
+
 #include <QGLShaderProgram>
+#include <QGLFramebufferObject>
+
 #include <QSettings>
 
 #include <cmath>
 #include <cstring>
 
 #include "fgview.h"
+
+#include "fg/functions.h"
 
 #include "fg/glrenderer.h"
 
@@ -22,10 +27,15 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
+
+#define CHECK_FOR_GL_ERROR() checkForOpenGLError(__LINE__)
+
 FGView::FGView(QWidget *parent)
-: QGLWidget(parent) // NOTE: GLformat set in main.cpp
-, mUniverse(NULL) // Very important to intialise as null
-, mSaveSettings(true)
+:QGLWidget(parent) // NOTE: GLformat set in main.cpp
+,mUniverse(NULL) // Very important to intialise as null
+,mSaveSettings(true)
+,mAOShader(NULL)
+,mFBO(NULL)
 {
 	// set camera defaults
 	mZoom = 0;
@@ -220,40 +230,21 @@ void FGView::initializeGL()
 	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-	// load the shaders
-	mPhongShader = new QGLShaderProgram(context());
-	QFile phongV(QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "assets/shaders/phong.vert");
-	QFile phongF(QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "assets/shaders/phong.frag");
-	if (phongV.open(QFile::ReadOnly | QFile::Text)
-			and
-			phongF.open(QFile::ReadOnly | QFile::Text))
-	{
-		mPhongShader->addShaderFromSourceCode(QGLShader::Vertex, phongV.readAll());
-		mPhongShader->addShaderFromSourceCode(QGLShader::Fragment, phongF.readAll());
-		mPhongShader->link();
-		// mPhongShader->bind();
 
+	CHECK_FOR_GL_ERROR();
+
+	// load the shaders
+	mPhongShader = loadShader("phong_vert.glsl","phong_frag.glsl");
+	if (mPhongShader){
 		mPhongShader->setUniformValue("shininess",(GLfloat)5);
 	}
-	else {
-		std::cerr << "Couldn't load phong.vert or phong.frag\n";
-	}
+	CHECK_FOR_GL_ERROR();
 
-	mOverWireShader = new QGLShaderProgram(context());
-	QFile wireV(QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "assets/shaders/overwire.vert");
-	QFile wireF(QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "assets/shaders/passthru.frag");
-	if (wireV.open(QFile::ReadOnly | QFile::Text)
-			and
-			wireF.open(QFile::ReadOnly | QFile::Text))
-	{
-		mOverWireShader->addShaderFromSourceCode(QGLShader::Vertex, wireV.readAll());
-		mOverWireShader->addShaderFromSourceCode(QGLShader::Fragment, wireF.readAll());
-		mOverWireShader->link();
-		// mPhongShader->bind();
-	}
-	else {
-		std::cerr << "Couldn't load overwire.vert or passthru.frag\n";
-	}
+	mOverWireShader = loadShader("overwire_vert.glsl","passthru_frag.glsl");
+	CHECK_FOR_GL_ERROR();
+
+	mAOShader = loadShader("ao_vert.glsl", "ao_frag.glsl");
+	CHECK_FOR_GL_ERROR();
 
 	/*
 	mSubdivisionShader = new QGLShaderProgram(context());
@@ -275,10 +266,19 @@ void FGView::initializeGL()
 		std::cerr << "Couldn't load subdivision shader\n";
 	}
 	*/
+
+	int w = width(), h = height();
+	mFBO = new QGLFramebufferObject(w,h,QGLFramebufferObject::Depth);
+
+	CHECK_FOR_GL_ERROR();
 }
 
 void FGView::paintGL()
 {
+	mFBO->bind();
+
+	CHECK_FOR_GL_ERROR();
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	gluLookAt(0,0,4,   0,0,0,   0,1,0);
@@ -290,6 +290,8 @@ void FGView::paintGL()
 		glTranslatef(mCameraTranslation[0],
 				mCameraTranslation[1],
 				mCameraTranslation[2]);
+
+
 
 		// draw encapsulating sphere...
 		glPushAttrib(GL_DEPTH_BUFFER_BIT);
@@ -409,8 +411,48 @@ void FGView::paintGL()
 				}
 			}
 		}
+
 	}
 	glPopMatrix();
+	mFBO->release();
+
+	CHECK_FOR_GL_ERROR();
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	gluOrtho2D(0,width(),0,height());
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	// draw the fbo
+	// drawTexture(QRectF(0,0,width(),height()),mFBO->texture());
+
+	// draw a red aligning quad
+	glColor3f(1,0,0);
+	glBegin(GL_QUADS);
+	for(int i=0;i<10;i++){
+		glVertex2f(fg::random()*width(),0);
+		glVertex2f(width()/2,0);
+		glVertex2f(width()/2,fg::random()*height()/2);
+		glVertex2f(0,height()/2);
+	}
+	glEnd();
+
+
+
+	// Draw the FBO to the screen...
+	// GLuint glFBO = mFBO->handle();
+	// glGetFramebufferAttachmentParameter(glFBO,GL_DEPTH_ATTACHMENT,);
+
+
+	//QRect rect(0, 0, render_fbo->width(), render_fbo->height());
+	//QGLFramebufferObject::blitFramebuffer(target,targetRect,mFBO,mFBO->)
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+
 }
 
 void FGView::resizeGL(int width, int height)
@@ -556,4 +598,34 @@ void FGView::resetCamera()
     }
     mCameraTranslation[0] = mCameraTranslation[1] = mCameraTranslation[2] = 0;
     update();
+}
+
+QGLShaderProgram* FGView::loadShader(const char* vtxFileName, const char* fragFileName){
+	QGLShaderProgram* prog = new QGLShaderProgram(context());
+	QFile vs(QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "assets/shaders/" + vtxFileName);
+	QFile fs(QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "assets/shaders/" + fragFileName);
+	if (vs.open(QFile::ReadOnly | QFile::Text)
+			and
+			fs.open(QFile::ReadOnly | QFile::Text))
+	{
+		prog->addShaderFromSourceCode(QGLShader::Vertex, vs.readAll());
+		prog->addShaderFromSourceCode(QGLShader::Fragment, fs.readAll());
+		prog->link();
+		std::cout << "Linked shader log: " << prog->log().toStdString();
+		return prog;
+	}
+	else {
+		std::cerr << "Couldn't load shader: " << vtxFileName << "/" << fragFileName << "\n";
+		return NULL;
+	}
+}
+
+void FGView::checkForOpenGLError(int line){
+	GLenum error = glGetError();
+	if (error!=GL_NO_ERROR){
+		const GLubyte* str = gluErrorString(error);
+		if (str){
+			std::cerr << "GL ERROR: " << str << " (line " << line << " in fgview.cpp)\n";
+		}
+	}
 }
