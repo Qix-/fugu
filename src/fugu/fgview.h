@@ -9,6 +9,7 @@
 // ref: http://prideout.net/blog/?p=1
 
 class QGLShaderProgram;
+class QGLFramebufferObject;
 
 class FGView : public QGLWidget
 {
@@ -78,6 +79,10 @@ protected:
 	void drawGroundPlane();
 
 private:
+
+	QGLShaderProgram* loadShader(const char* vtxFileName, const char* fragFileName);
+	void checkForOpenGLError(int line);
+
 	// The universe we are currently viewing
 	// NULL if none
 	fg::Universe* mUniverse;
@@ -121,6 +126,9 @@ private:
 
 	QGLShaderProgram* mPhongShader;
 	QGLShaderProgram* mOverWireShader;
+	QGLShaderProgram* mAOShader;
+
+	QGLFramebufferObject* mFBO;
 
 	// QGLShaderProgram* mSubdivisionShader;
 
