@@ -754,6 +754,8 @@ QDockWidget {
    <addaction name="actionSetDrawPhong"/>
    <addaction name="actionSetDrawTextured"/>
    <addaction name="separator"/>
+   <addaction name="actionToggleSSAO"/>
+   <addaction name="separator"/>
    <addaction name="actionToggleShowOverWire"/>
    <addaction name="separator"/>
    <addaction name="actionSetColourNone"/>
@@ -1087,12 +1089,11 @@ QDockWidget {
    <property name="checked">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/res/overwire.png</normaloff>:/res/overwire.png</iconset>
-   </property>
    <property name="text">
     <string>Show Wire Over Mesh</string>
+   </property>
+   <property name="iconText">
+    <string>Over Wire</string>
    </property>
   </action>
   <action name="actionMakeCurrentScriptActive">
@@ -1232,6 +1233,23 @@ QDockWidget {
     <string>Resets user settings back to defaults</string>
    </property>
   </action>
+  <action name="actionToggleSSAO">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>ToggleSSAO</string>
+   </property>
+   <property name="iconText">
+    <string>AO</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle SSAO</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1258,6 +1276,7 @@ QDockWidget {
     <slot>setColourModeVertex()</slot>
     <slot>toggleShowOverWire(bool)</slot>
     <slot>resetCamera()</slot>
+    <slot>toggleSSAO(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -1982,6 +2001,22 @@ QDockWidget {
     <hint type="destinationlabel">
      <x>511</x>
      <y>383</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionToggleSSAO</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>fgview</receiver>
+   <slot>toggleSSAO(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>872</x>
+     <y>409</y>
     </hint>
    </hints>
   </connection>

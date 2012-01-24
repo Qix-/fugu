@@ -1,8 +1,7 @@
-#include <QtGui>
-
 #include <GL/glew.h>
-#include <QtOpenGL>
 
+#include <QtGui>
+#include <QtOpenGL>
 #include <QGLShaderProgram>
 #include <QGLFramebufferObject>
 
@@ -36,7 +35,9 @@ FGView::FGView(QWidget *parent)
 ,mSaveSettings(true)
 ,mAOShader(NULL)
 ,mFBO(NULL)
+,mSSAO(true)
 {
+
 	// set camera defaults
 	mZoom = 0;
 	resetCamera();
@@ -140,6 +141,11 @@ void FGView::toggleLighting(bool on){
 	update();
 }
 
+void FGView::toggleSSAO(bool on){
+	mSSAO = on;
+	update();
+}
+
 void FGView::setNumberOfSubdivs(int num){
 	mNumberSubdivs = num;
 	update();
@@ -208,6 +214,14 @@ void FGView::setBackgroundSkyColour(QColor c){
 
 void FGView::initializeGL()
 {
+	GLenum err = glewInit();
+	if (GLEW_OK != err)
+	{
+	  /* Problem: glewInit failed, something is seriously wrong. */
+	  std::cerr << "Error: " << glewGetErrorString(err) << "\n";
+	}
+	std::cout << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << "\n";
+
 	qglClearColor(QColor(0,0,0));
 
 	//glEnable(GL_CULL_FACE);
@@ -268,14 +282,33 @@ void FGView::initializeGL()
 	*/
 
 	int w = width(), h = height();
-	mFBO = new QGLFramebufferObject(w,h,QGLFramebufferObject::Depth);
 
-	CHECK_FOR_GL_ERROR();
+	if (not QGLFramebufferObject::hasOpenGLFramebufferObjects()){
+		std::cerr << "System doesn't support framebuffer objects";
+	}
+	else if (!GLEW_EXT_framebuffer_object or glGetFramebufferAttachmentParameterivEXT==NULL)
+	{
+		std::cerr << "Can't find EXT_framebuffer_object!\n";
+	}
+	else {
+		mFBO = new QGLFramebufferObject(w,h,QGLFramebufferObject::Depth);
+		if (!mFBO->isValid()){
+			std::cerr << "Framebuffer invalid\n";
+			delete mFBO;
+			mFBO = NULL;
+		}
+		CHECK_FOR_GL_ERROR();
+	}
 }
 
 void FGView::paintGL()
 {
-	mFBO->bind();
+	if (mSSAO and mFBO){
+		mFBO->bind();
+		if (!mFBO->isBound()){
+			std::cerr << "Couldn't bind framebuffer";
+		}
+	}
 
 	CHECK_FOR_GL_ERROR();
 
@@ -285,13 +318,10 @@ void FGView::paintGL()
 
 	glPushMatrix();
 	{
-
 		glMultMatrixf((GLfloat*) mRotationMatrix);
 		glTranslatef(mCameraTranslation[0],
 				mCameraTranslation[1],
 				mCameraTranslation[2]);
-
-
 
 		// draw encapsulating sphere...
 		glPushAttrib(GL_DEPTH_BUFFER_BIT);
@@ -414,45 +444,153 @@ void FGView::paintGL()
 
 	}
 	glPopMatrix();
-	mFBO->release();
 
-	CHECK_FOR_GL_ERROR();
+	if (mSSAO and mFBO){
+		GLuint glFBO = mFBO->handle();
+		CHECK_FOR_GL_ERROR();
+		GLint result;
+		static GLuint depthTex = -1;
+		static bool initDepthTex = false;
+		if (!initDepthTex){
+			initDepthTex = true;
+			glGenTextures(1,&depthTex);
+			glBindTexture(GL_TEXTURE_2D, depthTex);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	gluOrtho2D(0,width(),0,height());
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width(), height(), 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
+		}
 
-	// draw the fbo
-	// drawTexture(QRectF(0,0,width(),height()),mFBO->texture());
+		CHECK_FOR_GL_ERROR();
 
-	// draw a red aligning quad
-	glColor3f(1,0,0);
-	glBegin(GL_QUADS);
-	for(int i=0;i<10;i++){
-		glVertex2f(fg::random()*width(),0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, depthTex);
+		glCopyTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT,0,0,width(),height(),0);
+
+		//}
+
+		CHECK_FOR_GL_ERROR();
+		GLuint fboTex = mFBO->texture();
+		CHECK_FOR_GL_ERROR();
+		mFBO->release();
+
+
+		CHECK_FOR_GL_ERROR();
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		gluOrtho2D(0,width(),0,height());
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+
+		// draw the fbo
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_DEPTH_TEST);
+
+		/*
+
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, depthTex);
+		glColor3f(1,1,1);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0,0);
+		glVertex2f(0,0);
+		glTexCoord2f(1,0);
 		glVertex2f(width()/2,0);
-		glVertex2f(width()/2,fg::random()*height()/2);
+		glTexCoord2f(1,1);
+		glVertex2f(width()/2,height()/2);
+		glTexCoord2f(0,1);
 		glVertex2f(0,height()/2);
+		glEnd();
+
+		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, fboTex);
+		glTranslatef(0,height()/2,0);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0,0);
+		glVertex2f(0,0);
+		glTexCoord2f(1,0);
+		glVertex2f(width()/2,0);
+		glTexCoord2f(1,1);
+		glVertex2f(width()/2,height()/2);
+		glTexCoord2f(0,1);
+		glVertex2f(0,height()/2);
+		glEnd();
+		glPopMatrix();
+		*/
+
+
+		//mAOShader->bind();
+
+		CHECK_FOR_GL_ERROR();
+
+		if (true)
+		{
+			if (not mAOShader->bind()){
+				std::cerr << "Couldn't bind AO shader\n";
+			}
+
+			int uniformTex0 = mAOShader->uniformLocation("texture0");
+			int uniformTex1 = mAOShader->uniformLocation("texture1");
+			int uniformCR = mAOShader->uniformLocation("camerarange");
+			int uniformSS = mAOShader->uniformLocation("screensize");
+
+			CHECK_FOR_GL_ERROR();
+
+			if (uniformTex0==-1) std::cerr << "Couldn't find texture0\n";
+			else mAOShader->setUniformValue(uniformTex0, 0); // (GLuint)depthTex);
+			if (uniformTex1==-1) std::cerr << "Couldn't find texture1\n";
+			else mAOShader->setUniformValue(uniformTex1, 1); // (GLuint)fboTex);
+			if (uniformCR==-1) std::cerr << "Couldn't find camerarange\n";
+			else mAOShader->setUniformValue(uniformCR,0.1,100);
+			if (uniformSS==-1) std::cerr << "Couldn't find screensize\n";
+			else mAOShader->setUniformValue(uniformSS,width(),height());
+
+			glEnable(GL_TEXTURE_2D);
+			glActiveTexture(GL_TEXTURE0 + 0);
+			glBindTexture(GL_TEXTURE_2D, depthTex);
+			glActiveTexture(GL_TEXTURE0 + 1);
+			glBindTexture(GL_TEXTURE_2D, fboTex);
+
+			CHECK_FOR_GL_ERROR();
+
+			glPushMatrix();
+			// glTranslatef(width()/2,0,0);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0,0);
+			glVertex2f(0,0);
+			glTexCoord2f(1,0);
+			glVertex2f(width(),0);
+			glTexCoord2f(1,1);
+			glVertex2f(width(),height());
+			glTexCoord2f(0,1);
+			glVertex2f(0,height());
+			glEnd();
+			glPopMatrix();
+
+			mAOShader->release();
+
+			glActiveTexture(GL_TEXTURE0 + 0);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+		CHECK_FOR_GL_ERROR();
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
+
+
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
 	}
-	glEnd();
-
-
-
-	// Draw the FBO to the screen...
-	// GLuint glFBO = mFBO->handle();
-	// glGetFramebufferAttachmentParameter(glFBO,GL_DEPTH_ATTACHMENT,);
-
-
-	//QRect rect(0, 0, render_fbo->width(), render_fbo->height());
-	//QGLFramebufferObject::blitFramebuffer(target,targetRect,mFBO,mFBO->)
-
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-
 }
 
 void FGView::resizeGL(int width, int height)
@@ -627,5 +765,8 @@ void FGView::checkForOpenGLError(int line){
 		if (str){
 			std::cerr << "GL ERROR: " << str << " (line " << line << " in fgview.cpp)\n";
 		}
+	}
+	else {
+		// std::cout << "GL is fine at line " << line << " (in fgview.cpp)\n";
 	}
 }

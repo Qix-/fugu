@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
 	mEditors = findChild<QTabWidget*>("editors");
 
 	// connect streams to console widget
-	redirectStreams();
+	//redirectStreams();
 
 	// QTimer::singleShot(1, this, SLOT(redirectStreams()));
 
@@ -158,8 +158,10 @@ MainWindow::~MainWindow(){
 	settings.setValue("window/maximised", isMaximized());
 	settings.setValue("editor/showLineNumbers", findChild<QAction*>("actionShowLineNumbers")->isChecked());
 
-	mRedirector->quit();
-	delete mRedirector;
+	if (mRedirector){
+		mRedirector->quit();
+		delete mRedirector;
+	}
 	// mStdOutRedirector->quit();
 }
 
