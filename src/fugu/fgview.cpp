@@ -36,6 +36,8 @@ FGView::FGView(QWidget *parent)
 ,mAOShader(NULL)
 ,mFBO(NULL)
 ,mSSAO(true)
+,mDepthTex(0)
+,mShadersAvailable(false)
 {
 
 	// set camera defaults
@@ -244,66 +246,69 @@ void FGView::initializeGL()
 	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-
 	CHECK_FOR_GL_ERROR();
 
-	// load the shaders
-	mPhongShader = loadShader("phong_vert.glsl","phong_frag.glsl");
-	if (mPhongShader){
-		mPhongShader->setUniformValue("shininess",(GLfloat)5);
-	}
-	CHECK_FOR_GL_ERROR();
+	mShadersAvailable = QGLShaderProgram::hasOpenGLShaderPrograms(context());
 
-	mOverWireShader = loadShader("overwire_vert.glsl","passthru_frag.glsl");
-	CHECK_FOR_GL_ERROR();
-
-	mAOShader = loadShader("ao_vert.glsl", "ao_frag.glsl");
-	CHECK_FOR_GL_ERROR();
-
-	/*
-	mSubdivisionShader = new QGLShaderProgram(context());
-	QFile subdivV("../assets/shaders/subdivision_vs.glsl");
-	QFile subdivG("../assets/shaders/subdivision_gs.glsl");
-	QFile subdivF("../assets/shaders/subdivision_fs.glsl");
-	if (subdivV.open(QFile::ReadOnly | QFile::Text)
-		and subdivG.open(QFile::ReadOnly | QFile::Text)
-		and subdivF.open(QFile::ReadOnly | QFile::Text))
-	{
-		mSubdivisionShader->addShaderFromSourceCode(QGLShader::Vertex, subdivV.readAll());
-		mSubdivisionShader->addShaderFromSourceCode(QGLShader::Geometry, subdivG.readAll());
-		mSubdivisionShader->addShaderFromSourceCode(QGLShader::Fragment, subdivF.readAll());
-		mSubdivisionShader->setGeometryInputType ( GL_TRIANGLES );
-		mSubdivisionShader->setGeometryOutputType ( GL_TRIANGLE_STRIP );
-		mSubdivisionShader->link();
-	}
-	else {
-		std::cerr << "Couldn't load subdivision shader\n";
-	}
-	*/
-
-	int w = width(), h = height();
-
-	if (not QGLFramebufferObject::hasOpenGLFramebufferObjects()){
-		std::cerr << "System doesn't support framebuffer objects";
-	}
-	else if (!GLEW_EXT_framebuffer_object or glGetFramebufferAttachmentParameterivEXT==NULL)
-	{
-		std::cerr << "Can't find EXT_framebuffer_object!\n";
-	}
-	else {
-		mFBO = new QGLFramebufferObject(w,h,QGLFramebufferObject::Depth);
-		if (!mFBO->isValid()){
-			std::cerr << "Framebuffer invalid\n";
-			delete mFBO;
-			mFBO = NULL;
+	if (mShadersAvailable){
+		// load the shaders
+		mPhongShader = loadShader("phong_vert.glsl","phong_frag.glsl");
+		if (mPhongShader){
+			mPhongShader->setUniformValue("shininess",(GLfloat)5);
 		}
 		CHECK_FOR_GL_ERROR();
+
+		mOverWireShader = loadShader("overwire_vert.glsl","passthru_frag.glsl");
+		CHECK_FOR_GL_ERROR();
+
+		mAOShader = loadShader("ao_vert.glsl", "ao_frag.glsl");
+		CHECK_FOR_GL_ERROR();
+
+		/*
+		mSubdivisionShader = new QGLShaderProgram(context());
+		QFile subdivV("../assets/shaders/subdivision_vs.glsl");
+		QFile subdivG("../assets/shaders/subdivision_gs.glsl");
+		QFile subdivF("../assets/shaders/subdivision_fs.glsl");
+		if (subdivV.open(QFile::ReadOnly | QFile::Text)
+			and subdivG.open(QFile::ReadOnly | QFile::Text)
+			and subdivF.open(QFile::ReadOnly | QFile::Text))
+		{
+			mSubdivisionShader->addShaderFromSourceCode(QGLShader::Vertex, subdivV.readAll());
+			mSubdivisionShader->addShaderFromSourceCode(QGLShader::Geometry, subdivG.readAll());
+			mSubdivisionShader->addShaderFromSourceCode(QGLShader::Fragment, subdivF.readAll());
+			mSubdivisionShader->setGeometryInputType ( GL_TRIANGLES );
+			mSubdivisionShader->setGeometryOutputType ( GL_TRIANGLE_STRIP );
+			mSubdivisionShader->link();
+		}
+		else {
+			std::cerr << "Couldn't load subdivision shader\n";
+		}
+		*/
+
+		int w = width(), h = height();
+
+		if (not QGLFramebufferObject::hasOpenGLFramebufferObjects()){
+			std::cerr << "System doesn't support framebuffer objects";
+		}
+		else if (!GLEW_EXT_framebuffer_object or glGetFramebufferAttachmentParameterivEXT==NULL)
+		{
+			std::cerr << "Can't find EXT_framebuffer_object!\n";
+		}
+		else {
+			mFBO = new QGLFramebufferObject(w,h,QGLFramebufferObject::Depth);
+			if (!mFBO->isValid()){
+				std::cerr << "Framebuffer invalid\n";
+				delete mFBO;
+				mFBO = NULL;
+			}
+			CHECK_FOR_GL_ERROR();
+		}
 	}
 }
 
 void FGView::paintGL()
 {
-	if (mSSAO and mFBO){
+	if (mShadersAvailable and mSSAO and mFBO){
 		mFBO->bind();
 		if (!mFBO->isBound()){
 			std::cerr << "Couldn't bind framebuffer";
@@ -380,7 +385,7 @@ void FGView::paintGL()
 					m->setMesh(clone);
 				}
 
-				if (mPhongShader!=NULL and mMeshMode==MM_PHONG){
+				if (mShadersAvailable and mPhongShader!=NULL and mMeshMode==MM_PHONG){
 					mPhongShader->bind();
 					mPhongShader->setUniformValue("shininess",(GLfloat)25);
 
@@ -404,11 +409,11 @@ void FGView::paintGL()
 
 				fg::GLRenderer::renderMeshNode(m,rmm,mColourMode); // fg::GLRenderer::RenderMeshMode(DRAW_MODE));
 
-				if (mPhongShader!=NULL and mMeshMode==MM_PHONG){
+				if (mShadersAvailable and mPhongShader!=NULL and mMeshMode==MM_PHONG){
 					mPhongShader->release();
 				}
 
-				if (mShowOverWire){
+				if (mShadersAvailable and mShowOverWire){
 					if (mMeshMode==MM_FLAT or mMeshMode==MM_PHONG or mMeshMode==MM_SMOOTH or mMeshMode==MM_TEXTURED){
 
 						mOverWireShader->bind();
@@ -427,7 +432,7 @@ void FGView::paintGL()
 
 
 
-			if (mPhongShader!=NULL){
+			if (mShadersAvailable and mPhongShader!=NULL){
 				mPhongShader->release();
 			}
 
@@ -445,31 +450,14 @@ void FGView::paintGL()
 	}
 	glPopMatrix();
 
-	if (mSSAO and mFBO){
+	if (mShadersAvailable and mSSAO and mFBO){
 		GLuint glFBO = mFBO->handle();
 		CHECK_FOR_GL_ERROR();
 		GLint result;
-		static GLuint depthTex = -1;
-		static bool initDepthTex = false;
-		if (!initDepthTex){
-			initDepthTex = true;
-			glGenTextures(1,&depthTex);
-			glBindTexture(GL_TEXTURE_2D, depthTex);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width(), height(), 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
-		}
-
-		CHECK_FOR_GL_ERROR();
 
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, depthTex);
+		glBindTexture(GL_TEXTURE_2D, mDepthTex);
 		glCopyTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT,0,0,width(),height(),0);
-
-		//}
 
 		CHECK_FOR_GL_ERROR();
 		GLuint fboTex = mFBO->texture();
@@ -487,105 +475,63 @@ void FGView::paintGL()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
-
-		// draw the fbo
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
 
-		/*
-
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, depthTex);
-		glColor3f(1,1,1);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0,0);
-		glVertex2f(0,0);
-		glTexCoord2f(1,0);
-		glVertex2f(width()/2,0);
-		glTexCoord2f(1,1);
-		glVertex2f(width()/2,height()/2);
-		glTexCoord2f(0,1);
-		glVertex2f(0,height()/2);
-		glEnd();
-
-		glPushMatrix();
-		glBindTexture(GL_TEXTURE_2D, fboTex);
-		glTranslatef(0,height()/2,0);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0,0);
-		glVertex2f(0,0);
-		glTexCoord2f(1,0);
-		glVertex2f(width()/2,0);
-		glTexCoord2f(1,1);
-		glVertex2f(width()/2,height()/2);
-		glTexCoord2f(0,1);
-		glVertex2f(0,height()/2);
-		glEnd();
-		glPopMatrix();
-		*/
-
-
 		//mAOShader->bind();
+		CHECK_FOR_GL_ERROR();
+
+		if (not mAOShader->bind()){
+			std::cerr << "Couldn't bind AO shader\n";
+		}
+
+		int uniformTex0 = mAOShader->uniformLocation("texture0");
+		int uniformTex1 = mAOShader->uniformLocation("texture1");
+		int uniformCR = mAOShader->uniformLocation("camerarange");
+		int uniformSS = mAOShader->uniformLocation("screensize");
 
 		CHECK_FOR_GL_ERROR();
 
-		if (true)
-		{
-			if (not mAOShader->bind()){
-				std::cerr << "Couldn't bind AO shader\n";
-			}
+		if (uniformTex0==-1) std::cerr << "Couldn't find texture0\n";
+		else mAOShader->setUniformValue(uniformTex0, 0);
+		if (uniformTex1==-1) std::cerr << "Couldn't find texture1\n";
+		else mAOShader->setUniformValue(uniformTex1, 1);
+		if (uniformCR==-1) std::cerr << "Couldn't find camerarange\n";
+		else mAOShader->setUniformValue(uniformCR,0.1,100);
+		if (uniformSS==-1) std::cerr << "Couldn't find screensize\n";
+		else mAOShader->setUniformValue(uniformSS,width(),height());
 
-			int uniformTex0 = mAOShader->uniformLocation("texture0");
-			int uniformTex1 = mAOShader->uniformLocation("texture1");
-			int uniformCR = mAOShader->uniformLocation("camerarange");
-			int uniformSS = mAOShader->uniformLocation("screensize");
+		glEnable(GL_TEXTURE_2D);
+		glActiveTexture(GL_TEXTURE0 + 0);
+		glBindTexture(GL_TEXTURE_2D, mDepthTex);
+		glActiveTexture(GL_TEXTURE0 + 1);
+		glBindTexture(GL_TEXTURE_2D, fboTex);
 
-			CHECK_FOR_GL_ERROR();
+		CHECK_FOR_GL_ERROR();
 
-			if (uniformTex0==-1) std::cerr << "Couldn't find texture0\n";
-			else mAOShader->setUniformValue(uniformTex0, 0); // (GLuint)depthTex);
-			if (uniformTex1==-1) std::cerr << "Couldn't find texture1\n";
-			else mAOShader->setUniformValue(uniformTex1, 1); // (GLuint)fboTex);
-			if (uniformCR==-1) std::cerr << "Couldn't find camerarange\n";
-			else mAOShader->setUniformValue(uniformCR,0.1,100);
-			if (uniformSS==-1) std::cerr << "Couldn't find screensize\n";
-			else mAOShader->setUniformValue(uniformSS,width(),height());
+		glPushMatrix();
+		// glTranslatef(width()/2,0,0);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0,0);
+		glVertex2f(0,0);
+		glTexCoord2f(1,0);
+		glVertex2f(width(),0);
+		glTexCoord2f(1,1);
+		glVertex2f(width(),height());
+		glTexCoord2f(0,1);
+		glVertex2f(0,height());
+		glEnd();
+		glPopMatrix();
 
-			glEnable(GL_TEXTURE_2D);
-			glActiveTexture(GL_TEXTURE0 + 0);
-			glBindTexture(GL_TEXTURE_2D, depthTex);
-			glActiveTexture(GL_TEXTURE0 + 1);
-			glBindTexture(GL_TEXTURE_2D, fboTex);
+		mAOShader->release();
 
-			CHECK_FOR_GL_ERROR();
-
-			glPushMatrix();
-			// glTranslatef(width()/2,0,0);
-			glBegin(GL_QUADS);
-			glTexCoord2f(0,0);
-			glVertex2f(0,0);
-			glTexCoord2f(1,0);
-			glVertex2f(width(),0);
-			glTexCoord2f(1,1);
-			glVertex2f(width(),height());
-			glTexCoord2f(0,1);
-			glVertex2f(0,height());
-			glEnd();
-			glPopMatrix();
-
-			mAOShader->release();
-
-			glActiveTexture(GL_TEXTURE0 + 0);
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
+		glActiveTexture(GL_TEXTURE0 + 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		CHECK_FOR_GL_ERROR();
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
-
 
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
@@ -600,6 +546,39 @@ void FGView::resizeGL(int width, int height)
 	gluPerspective(60, 1.0*width/height, 0.1, 100);
 	glViewport(0,0,width,height);
 	glMatrixMode(GL_MODELVIEW);
+
+
+	if (mShadersAvailable){
+
+		if (mFBO){
+			delete mFBO;
+		}
+		mFBO = new QGLFramebufferObject(width,height,QGLFramebufferObject::Depth);
+		if (!mFBO->isValid()){
+			std::cerr << "Framebuffer invalid\n";
+			delete mFBO;
+			mFBO = NULL;
+		}
+
+		// std::cout << "Resizing depth texture (" << width << "," << height << ")\n";
+
+		// create the new depth texture
+		if (glIsTexture(mDepthTex)){
+			glDeleteTextures(1,&mDepthTex);
+		}
+
+		glEnable(GL_TEXTURE_2D);
+		glGenTextures(1,&mDepthTex);
+		glBindTexture(GL_TEXTURE_2D, mDepthTex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
+		CHECK_FOR_GL_ERROR();
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 }
 
 void FGView::mousePressEvent(QMouseEvent *event)
