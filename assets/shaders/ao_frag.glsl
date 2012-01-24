@@ -16,7 +16,7 @@ float readDepth( in vec2 coord ) {
 
 float compareDepths( in float depth1, in float depth2 ) {
 	float aoCap = 1.0;
-	float aoMultiplier=10000.0;
+	float aoMultiplier=1000.0;
 	float depthTolerance=0.000;
 	float aorange = 10.0;// units in space the AO effect extends to (this gets divided by the camera far range
 	float diff = sqrt( clamp(1.0-(depth1-depth2) / (aorange/(camerarange.y-camerarange.x)),0.0,1.0) );

@@ -131,7 +131,10 @@ private:
 	QGLShaderProgram* mOverWireShader;
 	QGLShaderProgram* mAOShader;
 
+	GLuint mDepthTex;
 	QGLFramebufferObject* mFBO;
+
+	bool mShadersAvailable;
 
 	// QGLShaderProgram* mSubdivisionShader;
 
