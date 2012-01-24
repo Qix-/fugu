@@ -44,6 +44,8 @@ public slots:
 	void toggleShowNodeAxes(bool show);
 	void toggleShowOverWire(bool show);
 	void toggleLighting(bool on);
+	void toggleSSAO(bool on);
+
 	void setNumberOfSubdivs(int num);
 	void setSubdivs0();
 	void setSubdivs1();
@@ -118,6 +120,7 @@ private:
 	bool mGround;
 	bool mShowNodeAxes; // show node axes
 	bool mLighting;
+	bool mSSAO;
 	bool mShowOverWire;
 	int mNumberSubdivs;
 	enum MeshMode { MM_SMOOTH, MM_FLAT, MM_WIRE, MM_POINTS, MM_TEXTURED, MM_PHONG };

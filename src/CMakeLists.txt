@@ -37,6 +37,7 @@ if(WIN32)
 	# MAYBE NEED THIS FOR VCG/GL stuff?!	
 	# set(CMAKE_CXX_FLAGS "-pg -D GLEW_STATIC") #enable PROFILING
 	set(CMAKE_CXX_FLAGS " -O3 -D GLEW_STATIC -Wno-deprecated")
+	#set(CMAKE_CXX_FLAGS " -g -D GLEW_STATIC -Wno-deprecated")
 	SET(GL_LIBS glew32s glfw opengl32 glu32)
 	SET(LUA_LIBS lua luabind)
 	SET(BOOST_LIBS boost_filesystem-mgw45-mt-1_46_1 boost_system-mgw45-mt-1_46_1)
