@@ -886,69 +886,60 @@ QDockWidget {
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/res/wire.png</normaloff>:/res/wire.png</iconset>
-   </property>
    <property name="text">
     <string>Wireframe</string>
+   </property>
+   <property name="iconText">
+    <string>Wire</string>
    </property>
   </action>
   <action name="actionSetDrawFlat">
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/res/flat.png</normaloff>:/res/flat.png</iconset>
-   </property>
    <property name="text">
     <string>Flat Shaded</string>
+   </property>
+   <property name="iconText">
+    <string>Flat</string>
    </property>
   </action>
   <action name="actionSetDrawSmooth">
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/res/smooth.png</normaloff>:/res/smooth.png</iconset>
-   </property>
    <property name="text">
     <string>Smooth Shaded</string>
+   </property>
+   <property name="iconText">
+    <string>Phong</string>
    </property>
   </action>
   <action name="actionSetDrawPhong">
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/res/phong.png</normaloff>:/res/phong.png</iconset>
-   </property>
    <property name="text">
     <string>Phong Shaded</string>
+   </property>
+   <property name="iconText">
+    <string>Phong</string>
    </property>
   </action>
   <action name="actionSetDrawPoints">
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/res/points.png</normaloff>:/res/points.png</iconset>
-   </property>
    <property name="text">
+    <string>Points</string>
+   </property>
+   <property name="iconText">
     <string>Points</string>
    </property>
   </action>
   <action name="actionSetDrawTextured">
    <property name="checkable">
     <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/res/textured.png</normaloff>:/res/textured.png</iconset>
    </property>
    <property name="text">
     <string>Textured</string>
@@ -1051,21 +1042,16 @@ QDockWidget {
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/res/colour_none.png</normaloff>:/res/colour_none.png</iconset>
-   </property>
    <property name="text">
     <string>Don't Colour</string>
+   </property>
+   <property name="iconText">
+    <string>No Colour</string>
    </property>
   </action>
   <action name="actionSetColourVertex">
    <property name="checkable">
     <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/res/colour_vertex.png</normaloff>:/res/colour_vertex.png</iconset>
    </property>
    <property name="text">
     <string>Colour Vertices</string>
@@ -1090,10 +1076,10 @@ QDockWidget {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Wire Over Mesh</string>
+    <string>Show Wire Cage Over Mesh</string>
    </property>
    <property name="iconText">
-    <string>Over Wire</string>
+    <string>Cage</string>
    </property>
   </action>
   <action name="actionMakeCurrentScriptActive">

@@ -61,6 +61,10 @@ end
 -- Below lies the definition of some helper functions for this script.
 
 get_flux = function(x,y,z,t)
+  local detail = 4
+	x = detail*x
+	y = detail*y
+	z = detail*z
 	return vec3(
 		noise (x,y,z+t),
 		noise (x+t,y,z),

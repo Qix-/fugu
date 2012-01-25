@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
 	mEditors = findChild<QTabWidget*>("editors");
 
 	// connect streams to console widget
-	//redirectStreams();
+	redirectStreams();
 
 	// QTimer::singleShot(1, this, SLOT(redirectStreams()));
 
@@ -849,11 +849,11 @@ void MainWindow::buildReference() // build the html reference
 		}
 	}
 
-	QFile file(QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "doc/ref/reference.html");
+	QFile file(QCoreApplication::applicationDirPath() + "/../" + QString(FG_BASE_LOCATION) + "doc/ref/reference.html");
 	if (file.open(QIODevice::WriteOnly)){
 		QTextStream out(&file);
 
-		tmpl::html_template templ((QCoreApplication::applicationDirPath() + "/" + QString(FG_BASE_LOCATION) + "doc/ref/reference.tmpl").toStdString());
+		tmpl::html_template templ((QCoreApplication::applicationDirPath() + "/../" + QString(FG_BASE_LOCATION) + "doc/ref/reference.tmpl").toStdString());
 		templ("DATE") = QDate::currentDate().toString("dd/MM/yyyy").toStdString();
 
 		typedef tuple<std::string,std::string,std::string> string3;
