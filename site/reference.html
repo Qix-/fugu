@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Fugu Reference</title>
+    <meta name="description" content="fugu is software for creating 3D geometry from code">
+    <meta name="author" content="Ben Porter">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+		<link href="bootstrap.css" rel="stylesheet">
+		<link href="fugu.css" rel="stylesheet">
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  </head>
+
+  <body>
+
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <a class="brand" href="#">fugu</a>
+          <ul class="nav">
+						<li><a href="index.html">Home</a></li>
+						<li class="active"><a href="reference.html">Reference</a></li>
+						<li><a href="gallery.html">Gallery</a></li>
+          </ul>
+        </div>
+      </div>
+		</div>
+
+		<div class="container content">
+
+	<div class="page-header">
+    <h1>Fugu Reference <small>built on 25/01/2012</small></h1>
+  </div>
+
+<div class="row">
+<div class="span-one-third">
+    
+
+    <div class="category_list">
+		<span class="label success">ui</span>
+		<!-- <h1>ui</h1> -->
+		
+		<a href="#" class=has_doc id=></a>
+		<div style="display: none;" class=func_doc id=doc_>
+			<pre>add_slider {...} adds a slider to the ui in fugu
+	E.g., add_slider {var="x", value=1, low=0, high=10} creates a slider that 
+	binds to the variable "x" in the active module's namespace.	 
+</pre>
+		</div> 
+		
+
+	</div>
+	
+
+
+    <div class="category_list">
+		<span class="label success">transform</span>
+		<!-- <h1>transform</h1> -->
+		
+		<a href="#" class=has_doc id=R>R</a>
+		<div style="display: none;" class=func_doc id=doc_R>
+			<pre>R(rad,axis), R(rad,x,y,z) generates a matrix that will rotate a point a number of radians around the specified axis (vec3)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=Rv>Rv</a>
+		<div style="display: none;" class=func_doc id=doc_Rv>
+			<pre>Rv(a:vec3,b:vec3) generates a matrix that will rotate vector a to align with vector b</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=S>S</a>
+		<div style="display: none;" class=func_doc id=doc_S>
+			<pre>S(s:vec3) generates a matrix that scales a point by the vector s</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=T>T</a>
+		<div style="display: none;" class=func_doc id=doc_T>
+			<pre>T(vec3), T(x,y,z) generates a matrix that translates a point by the given vector</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=scalef>scalef</a>
+		<div style="display: none;" class=func_doc id=doc_scalef>
+			<pre>scalef(poslist,center,amount): scales a list of faces around a specified point
+	amount 	= 0 -&gt; all vertices will be moved to the center point
+   			= 1 -&gt; all vertices will remain in place
+   			in (0,1) -&gt; faces will shrink
+   			&gt;1 -&gt; faces will grow</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=transformf>transformf</a>
+		<div style="display: none;" class=func_doc id=doc_transformf>
+			<pre>transformf(poslist,T) applies transform T to each vertex in poslist</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=turtle>turtle</a>
+		<div style="display: none;" class=func_doc id=doc_turtle>
+			<pre>turtle() creates a turtle.
+	A turtle can be used either:
+	- as a navigation tool 
+	- or to create generalised cylinders
+	Check the examples for more info.
+	
+	Member functions:
+	move(dist) 
+	yaw(angle)
+	roll(angle)
+	pitch(angle)	
+	set_frame(pos,heading,up) -- sets the turtles position heading and orientation
+	set_stiffness(s1,s2) -- controls the shape of the generalised cylinder 
+	set_scale(scale) -- controls the shape of the generalised cylinder
+	set_cross_section(index) -- controls the shape of the generalised cylinder 	
+	push -- record current state/position
+	pop -- restore to old state/position	
+	set_carrier_mode(cm) -- cm=0 use linear interpolation, cm=1 use bezier interpolation 	
+	begin_cross_section 
+	end_cross_section 	
+	begin_cylinder
+	end_cylinder
+	add_point(n)	
+	get_position
+	get_heading
+	get_up
+	get_frame	
+	mesh():mesh -- generate and return the generalised cylinder	
+</pre>
+		</div> 
+		
+
+	</div>
+	
+
+
+    <div class="category_list">
+		<span class="label success">help</span>
+		<!-- <h1>help</h1> -->
+		
+		<a href="#" class=has_doc id=help>help</a>
+		<div style="display: none;" class=func_doc id=doc_help>
+			<pre>help(func) prints the documentation for a given object. Assign documentation with the document function.</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=show_commands>show_commands</a>
+		<div style="display: none;" class=func_doc id=doc_show_commands>
+			<pre>show_commands() prints all documented commands</pre>
+		</div> 
+		
+
+	</div>
+	
+
+
+    <div class="category_list">
+		<span class="label success">universe</span>
+		<!-- <h1>universe</h1> -->
+		
+		<a href="#" class=has_doc id=meshnode>meshnode</a>
+		<div style="display: none;" class=func_doc id=doc_meshnode>
+			<pre>A meshnode is a node that references and transforms a mesh. Multiple meshnodes can reference the same mesh.
+	Example usage:
+	m = cube()
+	n = meshnode(m)
+	n:set_transform(R(half_pi,vec3(0,1,0))) -- rotate the mesh 45 degrees around the y axis
+	m2 = dodecahedron()
+	n:set_mesh(m2) -- change the mesh this node is referencing
+	</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=node>node</a>
+		<div style="display: none;" class=func_doc id=doc_node>
+			<pre>A node is a positionable and orientable object in a universe.
+	Example usage:
+	n = node()
+	n:set_transform(T(3,0,0)) -- translate by 3 units in the x direction	
+	</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=universe>universe</a>
+		<div style="display: none;" class=func_doc id=doc_universe>
+			<pre>A universe stores all nodes. 
+	There is only one universe, called "fgu". Example usage:
+	fgu:add(n) -- adds a node n to the universe
+	fgu:make_child_of(parent,child) -- spatially links child to parent
+	fgu.t -- returns the age of the universe (in seconds)   
+	</pre>
+		</div> 
+		
+
+	</div>
+	
+
+
+    <div class="category_list">
+		<span class="label success">math</span>
+		<!-- <h1>math</h1> -->
+		
+		<a href="#" class=has_doc id=abs>abs</a>
+		<div style="display: none;" class=func_doc id=doc_abs>
+			<pre>abs(x) returns x if x&gt;=0 and -x if x&lt;0</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=acos>acos</a>
+		<div style="display: none;" class=func_doc id=doc_acos>
+			<pre>acos(x) arc cosine</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=asin>asin</a>
+		<div style="display: none;" class=func_doc id=doc_asin>
+			<pre>asin(x) arc sine</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=atan>atan</a>
+		<div style="display: none;" class=func_doc id=doc_atan>
+			<pre>atan(x) arc tangent</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=atan2>atan2</a>
+		<div style="display: none;" class=func_doc id=doc_atan2>
+			<pre>atan2(v1,v2) arc tan v1/v2</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=bias>bias</a>
+		<div style="display: none;" class=func_doc id=doc_bias>
+			<pre>bias(a,x) 1D bias function</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=ceil>ceil</a>
+		<div style="display: none;" class=func_doc id=doc_ceil>
+			<pre>ceil(x) smallest int &gt;= x</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=clamp>clamp</a>
+		<div style="display: none;" class=func_doc id=doc_clamp>
+			<pre>clamp(x,a,b) clamps x between a and b</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=cos>cos</a>
+		<div style="display: none;" class=func_doc id=doc_cos>
+			<pre>cos(rad) cosine</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=cosh>cosh</a>
+		<div style="display: none;" class=func_doc id=doc_cosh>
+			<pre>cosh(rad) hyperbolic cosine</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=cross>cross</a>
+		<div style="display: none;" class=func_doc id=doc_cross>
+			<pre>cross(a,b) computes the cross product of vec3 a and b</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=deg>deg</a>
+		<div style="display: none;" class=func_doc id=doc_deg>
+			<pre>deg(rad) rad to deg</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=distance>distance</a>
+		<div style="display: none;" class=func_doc id=doc_distance>
+			<pre>distance(a,b) computes the distance between points (vec3) a and b</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=dot>dot</a>
+		<div style="display: none;" class=func_doc id=doc_dot>
+			<pre>dot(a,b) computes the inner product of vec3 a and b</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=exp>exp</a>
+		<div style="display: none;" class=func_doc id=doc_exp>
+			<pre>exp(v) e^v</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=floor>floor</a>
+		<div style="display: none;" class=func_doc id=doc_floor>
+			<pre>floor(v) largest int &lt;= v</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=fmod>fmod</a>
+		<div style="display: none;" class=func_doc id=doc_fmod>
+			<pre>fmod(x,y) remainder of x/y</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=fmod>fmod</a>
+		<div style="display: none;" class=func_doc id=doc_fmod>
+			<pre>fmod(x,y) remainder of x/y</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=frac_sum>frac_sum</a>
+		<div style="display: none;" class=func_doc id=doc_frac_sum>
+			<pre>frac_sum(x,y,z,n,falloff) computes n octaves of summed fractal noise</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=frexp>frexp</a>
+		<div style="display: none;" class=func_doc id=doc_frexp>
+			<pre>frexp(v) mantissa, exp</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=gain>gain</a>
+		<div style="display: none;" class=func_doc id=doc_gain>
+			<pre>gain(g,x) gain control</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=gamma>gamma</a>
+		<div style="display: none;" class=func_doc id=doc_gamma>
+			<pre>gamma(g,x) standard gamma correct function</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=gauss>gauss</a>
+		<div style="display: none;" class=func_doc id=doc_gauss>
+			<pre>gauss(mean,var) returns a gaussian distributed random number</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=half_pi>half_pi</a>
+		<div style="display: none;" class=func_doc id=doc_half_pi>
+			<pre>half_pi = 0.5*pi</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=huge>huge</a>
+		<div style="display: none;" class=func_doc id=doc_huge>
+			<pre>huge is a constant larger than any numerical value</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=inv_sqrt>inv_sqrt</a>
+		<div style="display: none;" class=func_doc id=doc_inv_sqrt>
+			<pre>inv_sqrt(x) inverse square root</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=ldexp>ldexp</a>
+		<div style="display: none;" class=func_doc id=doc_ldexp>
+			<pre>ldexp(v1,v2) v1*2^v2</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=length>length</a>
+		<div style="display: none;" class=func_doc id=doc_length>
+			<pre>length(v) computes the length of vec3 v</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=lerp>lerp</a>
+		<div style="display: none;" class=func_doc id=doc_lerp>
+			<pre>lerp(a,b,t) interpolates between a and b</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=log>log</a>
+		<div style="display: none;" class=func_doc id=doc_log>
+			<pre>log(x) natural log</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=log10>log10</a>
+		<div style="display: none;" class=func_doc id=doc_log10>
+			<pre>log10(x) log 10</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=mat4>mat4</a>
+		<div style="display: none;" class=func_doc id=doc_mat4>
+			<pre>mat4 represents a 4d matrix. Example usage:
+	creation: m = mat4()
+	set to identity: m:set_basis(vec3(1,0,0),vec3(0,1,0),vec3(0,0,1))
+	element access: m:get(row,col) row=0..3,col=0..3
+	operators: m*2, m/3, m+n, m*n, m-n, -m
+	make transformation matrix: 
+		m:set_rotate_rad(angle,x,y,z)
+		m:set_rotate_rad(angle,axis)
+		m:set_translate(x,y,z)
+		also see global functions R,Rv,T,S for shorthand</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=max>max</a>
+		<div style="display: none;" class=func_doc id=doc_max>
+			<pre>max(x,...) max of one or more values</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=min>min</a>
+		<div style="display: none;" class=func_doc id=doc_min>
+			<pre>min(x,...) min of one or more values</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=mix>mix</a>
+		<div style="display: none;" class=func_doc id=doc_mix>
+			<pre>mix(a,b,t) mixes values a and b by amount t</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=modf>modf</a>
+		<div style="display: none;" class=func_doc id=doc_modf>
+			<pre>modf(x) return ix,dx where x=ix+dx and ix is an integer</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=noise>noise</a>
+		<div style="display: none;" class=func_doc id=doc_noise>
+			<pre>noise(x), noise(x,y), noise(x,y,z) computes 1D, 2D or 3D Perlin noise</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=normalise>normalise</a>
+		<div style="display: none;" class=func_doc id=doc_normalise>
+			<pre>normalise(v) returns vec3 v normlised</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=pi>pi</a>
+		<div style="display: none;" class=func_doc id=doc_pi>
+			<pre>pi constant</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=polar>polar</a>
+		<div style="display: none;" class=func_doc id=doc_polar>
+			<pre>polar(vec3), polar(x,y,z) convert cartesian to polar coordinates: r,theta,phi</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=pow>pow</a>
+		<div style="display: none;" class=func_doc id=doc_pow>
+			<pre>pow(v1,v2) v1^v2</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=pulse>pulse</a>
+		<div style="display: none;" class=func_doc id=doc_pulse>
+			<pre>pulse(a,b,x) combines 2 steps: returns 1 if x is between a and b</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=quat>quat</a>
+		<div style="display: none;" class=func_doc id=doc_quat>
+			<pre>quat represents a quaternion. It has a number of constructors:	
+	quat(a,x,y,z) build component-wise
+	quat(axis:vec3, radians) rotate around an axis
+	quat(from:vec3, to:vec3) rotates a vector from to align with to
+	quat(x_rot,y_rot,z_rot) rotation from euler angles
+	quat(mat4) build from rotation matrix
+	quat(xaxis:vec3,yaxis:vec3,zaxis:vec3) specify a basis to transform to
+	</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=rad>rad</a>
+		<div style="display: none;" class=func_doc id=doc_rad>
+			<pre>rad(deg) deg to rad</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=random>random</a>
+		<div style="display: none;" class=func_doc id=doc_random>
+			<pre>random(low=0,high=1) returns a random number between low and high inclusive </pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=random_vec3>random_vec3</a>
+		<div style="display: none;" class=func_doc id=doc_random_vec3>
+			<pre>random_vec3() is equivalent to vec3(random(),random(),random())
+random_vec3(sc) is equivalent to vec3(sc*random(),sc*random(),sc*random())
+random_vec3(low,high) is equivalent to vec3(random(low,high),random(low,high),random(low,high))</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=sign>sign</a>
+		<div style="display: none;" class=func_doc id=doc_sign>
+			<pre>sign(f) = the sign of f</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=sin>sin</a>
+		<div style="display: none;" class=func_doc id=doc_sin>
+			<pre>sin(rad) sine</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=sinh>sinh</a>
+		<div style="display: none;" class=func_doc id=doc_sinh>
+			<pre>sinh(rad) hyperbolic sine</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=slerp>slerp</a>
+		<div style="display: none;" class=func_doc id=doc_slerp>
+			<pre>slerp(a,b,t) spherically interpolates vec3 a and vec3 b</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=smoothstep>smoothstep</a>
+		<div style="display: none;" class=func_doc id=doc_smoothstep>
+			<pre>smoothstep(a,b,x) smooth interpolation using Horner's rule</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=sqr>sqr</a>
+		<div style="display: none;" class=func_doc id=doc_sqr>
+			<pre>sqr(x) = the square of x</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=sqrt>sqrt</a>
+		<div style="display: none;" class=func_doc id=doc_sqrt>
+			<pre>sqrt(x) square root</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=step>step</a>
+		<div style="display: none;" class=func_doc id=doc_step>
+			<pre>step(a,x) = 0 when x &lt; a, 1 otherwise</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=step_function>step_function</a>
+		<div style="display: none;" class=func_doc id=doc_step_function>
+			<pre>step_function(list) converts a list of (x,y) pairs into a step function. Example usage:
+	local f = step_function {{0,0},{.5,1},{1,0}}
+	f(0) -- returns 0
+	f(.2) -- returns 0
+	f(.5) -- returns 1
+	f(.8) -- returns 1
+	f(1.1) -- returns 0
+</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=tan>tan</a>
+		<div style="display: none;" class=func_doc id=doc_tan>
+			<pre>tan(rad) tangent</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=tanh>tanh</a>
+		<div style="display: none;" class=func_doc id=doc_tanh>
+			<pre>tanh(rad) hyperbolic tangent</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=turbulence>turbulence</a>
+		<div style="display: none;" class=func_doc id=doc_turbulence>
+			<pre>turbulence(x,y,z,n,falloff) computes n octaves of Perlin's turbulence function</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=two_pi>two_pi</a>
+		<div style="display: none;" class=func_doc id=doc_two_pi>
+			<pre>two_pi = 2*pi</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=vec3>vec3</a>
+		<div style="display: none;" class=func_doc id=doc_vec3>
+			<pre>vec3 represents a 3d vector. Example usage:
+	creation: v = vec3(1.5,0,4)
+	element access: v.x, v.y, v.z (or alternatively v.r, v.g, v.b)
+	operators: v*2, v/3, v+w, v-w, -v</pre>
+		</div> 
+		
+
+	</div>
+	
+	
+</div>
+
+<div class="span-one-third">
+    
+    <div class="category_list">
+		<span class="label success">mesh</span>
+		<!-- <h1>mesh</h1> -->
+		
+		<a href="#" class=has_doc id=capov>capov</a>
+		<div style="display: none;" class=func_doc id=doc_capov>
+			<pre>capov(cap:poslist) returns the outermost vertices of a cap (a fan of pos'es)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=cone>cone</a>
+		<div style="display: none;" class=func_doc id=doc_cone>
+			<pre>cone(outer_radius,inner_radius,resolution) makes a cone mesh</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=cube>cube</a>
+		<div style="display: none;" class=func_doc id=doc_cube>
+			<pre>cube() makes a cube mesh</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=cylinder>cylinder</a>
+		<div style="display: none;" class=func_doc id=doc_cylinder>
+			<pre>cylinder(res) makes a cylinder mesh</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=dodecahedron>dodecahedron</a>
+		<div style="display: none;" class=func_doc id=doc_dodecahedron>
+			<pre>dodecahedron() makes a dodecahedron mesh</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=extrude>extrude</a>
+		<div style="display: none;" class=func_doc id=doc_extrude>
+			<pre>extrude(m:mesh,v:vertex,[dir:vec3],magnitude)
+	Extrudes all neighbouring faces in the direction given (or the normal if dir is omitted), and re-orients the
+	faces to align perpendicularly along the extrusion axis
+	Note: Assumes direction is normalised. 
+	Returns the pos loop at the end of the extrusion</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=extrude_and_scale>extrude_and_scale</a>
+		<div style="display: none;" class=func_doc id=doc_extrude_and_scale>
+			<pre>extrude_and_scale(m:mesh,v:vertex,dir:vec3,magnitude,scale) extrudes and scales the faces adjacent to v</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=face>face</a>
+		<div style="display: none;" class=func_doc id=doc_face>
+			<pre>a face is a triangle within a mesh.
+	Attributes:
+	n -- normal
+	valid -- true if the face is still part of a mesh
+	Member functions:
+	calculate_normal -- recalculate the normal
+	v(i) -- return the i'th vertex of this face (i = 0 to 2)
+</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=facelist>facelist</a>
+		<div style="display: none;" class=func_doc id=doc_facelist>
+			<pre>facelist(m:mesh) returns a list of all faces in the mesh m</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=flattenvl>flattenvl</a>
+		<div style="display: none;" class=func_doc id=doc_flattenvl>
+			<pre>flattenvl(m:mesh,vl:list,p:vec3,n:vec3) flattens a list of vertices, vl, so they align on the plane specified by p and n</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=foreachv>foreachv</a>
+		<div style="display: none;" class=func_doc id=doc_foreachv>
+			<pre>foreachv(m:mesh,f:function) applies f to each vertex in m</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=icosahedron>icosahedron</a>
+		<div style="display: none;" class=func_doc id=doc_icosahedron>
+			<pre>icosahedron() makes an icosahedron mesh</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=ifaces>ifaces</a>
+		<div style="display: none;" class=func_doc id=doc_ifaces>
+			<pre>ifaces(faces:poslist) returns an iterator over the faces in this poslist</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=inset>inset</a>
+		<div style="display: none;" class=func_doc id=doc_inset>
+			<pre>inset(m:mesh,v:vertex,s:number) insets all the faces surrounding vertex v and scales them by s</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=iso>iso</a>
+		<div style="display: none;" class=func_doc id=doc_iso>
+			<pre>iso(res,f) creates an isosurface from function f(x,y,z) within a 2x2x2 space of resolution res</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=load_mesh>load_mesh</a>
+		<div style="display: none;" class=func_doc id=doc_load_mesh>
+			<pre>load_mesh(file) loads a mesh from a file. supported formats: obj</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=loopp>loopp</a>
+		<div style="display: none;" class=func_doc id=doc_loopp>
+			<pre>loopp(v:vertex) returns the loop of pos'es surrounding v</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=loopv>loopv</a>
+		<div style="display: none;" class=func_doc id=doc_loopv>
+			<pre>loopv(v:vertex) returns the loop of vertices surrounding v</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=mesh>mesh</a>
+		<div style="display: none;" class=func_doc id=doc_mesh>
+			<pre>mesh is a triangular mesh. You construct a mesh as a primitive (cube,icosahedron,etc.) or with load_mesh().
+	Member functions:
+	subdivide(n) -- subdivide the mesh n times
+	smooth_subdivide(n) -- smooth subdivide the mesh n times (Loop Subdivision)
+	sync() -- recalculate all the vertex and face normals
+	apply_transform(mtx) -- apply the transform matrix to the mesh vertices
+	clone():mesh -- copy the mesh 		
+</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=nearbyv>nearbyv</a>
+		<div style="display: none;" class=func_doc id=doc_nearbyv>
+			<pre>nearbyv(m:mesh,v:vertex,n:integer) returns a list of vertices with edge distance n of v</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=octahedron>octahedron</a>
+		<div style="display: none;" class=func_doc id=doc_octahedron>
+			<pre>octahedron() makes an octahedron mesh</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=pos>pos</a>
+		<div style="display: none;" class=func_doc id=doc_pos>
+			<pre>a pos is a (vertex,edge,face) triple that uniquely identifies a position on a mesh.
+	Constructors:
+	pos(f,e,v) -- construct from a face, edge(int) and vertex
+	pos(f,v) -- construct from a face and vertex	
+	Attributes:
+	v -- the vertex
+	e -- the edge (an integer from 0 to 2)
+	f -- the face
+	Properties:
+	flip_v, flip_e, flip_f -- navigate the mesh
+	
+	A pos can walk around a mesh by calling flip_v, flip_e or flip_f. 
+	flip_v, for instance, changes the pos by selecting the pos that has the same e and f, but differs in v.	
+</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=sphere>sphere</a>
+		<div style="display: none;" class=func_doc id=doc_sphere>
+			<pre>sphere() makes a spherical mesh</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=split_edge>split_edge</a>
+		<div style="display: none;" class=func_doc id=doc_split_edge>
+			<pre>split_edge(mesh,pos) splits the edge in pos into two and retriangulates the adjacent faces</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=tetrahedron>tetrahedron</a>
+		<div style="display: none;" class=func_doc id=doc_tetrahedron>
+			<pre>tetrahedron() makes a tetrahedron mesh</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=tofaces>tofaces</a>
+		<div style="display: none;" class=func_doc id=doc_tofaces>
+			<pre>tofaces(vl:list) returns a list of those faces adjacent to the vertices in vl</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=turtle>turtle</a>
+		<div style="display: none;" class=func_doc id=doc_turtle>
+			<pre>turtle() creates a turtle.
+	A turtle can be used either:
+	- as a navigation tool 
+	- or to create generalised cylinders
+	Check the examples for more info.
+	
+	Member functions:
+	move(dist) 
+	yaw(angle)
+	roll(angle)
+	pitch(angle)	
+	set_frame(pos,heading,up) -- sets the turtles position heading and orientation
+	set_stiffness(s1,s2) -- controls the shape of the generalised cylinder 
+	set_scale(scale) -- controls the shape of the generalised cylinder
+	set_cross_section(index) -- controls the shape of the generalised cylinder 	
+	push -- record current state/position
+	pop -- restore to old state/position	
+	set_carrier_mode(cm) -- cm=0 use linear interpolation, cm=1 use bezier interpolation 	
+	begin_cross_section 
+	end_cross_section 	
+	begin_cylinder
+	end_cylinder
+	add_point(n)	
+	get_position
+	get_heading
+	get_up
+	get_frame	
+	mesh():mesh -- generate and return the generalised cylinder	
+</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=vertex>vertex</a>
+		<div style="display: none;" class=func_doc id=doc_vertex>
+			<pre>a vertex is a part of a mesh.
+	Attributes:
+	p -- position
+	n -- normal	(read-only)
+	c -- colour
+	valid -- true if the vertex is still part of a mesh
+	Member functions:
+	calculate_normal -- recalculate the normal based on the adjacent faces	
+	set_uv(u,v) -- set the uv coordinates
+	get_adjacent_face -- returns an adjacent face	
+</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=vertexlist>vertexlist</a>
+		<div style="display: none;" class=func_doc id=doc_vertexlist>
+			<pre>vertexlist(m:mesh) returns a list of all vertices in the mesh m</pre>
+		</div> 
+		
+
+	</div>
+	
+
+    <div class="category_list">
+		<span class="label success">util</span>
+		<!-- <h1>util</h1> -->
+		
+		<a href="#" class=has_doc id=></a>
+		<div style="display: none;" class=func_doc id=doc_>
+			<pre>sort(table [,comp])
+	sorts table elements in a given order, in-place, from table[1] to table[n]
+	comp is an optional comparison function s.t., comp(a,b) = true if a&lt;b.</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=all>all</a>
+		<div style="display: none;" class=func_doc id=doc_all>
+			<pre>all(iter, [func]) Returns true if func(item) returns true for all item in items. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=any>any</a>
+		<div style="display: none;" class=func_doc id=doc_any>
+			<pre>any(iter, [func]) Returns true if func(item) returns true for any item in items. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=choose>choose</a>
+		<div style="display: none;" class=func_doc id=doc_choose>
+			<pre>choose(list) returns a random element from list</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=collect>collect</a>
+		<div style="display: none;" class=func_doc id=doc_collect>
+			<pre>collect is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=compose>compose</a>
+		<div style="display: none;" class=func_doc id=doc_compose>
+			<pre>compose(func1, func2, [...]) Returns the composition of a list of functions, where each function consumes the return value of the function that follows. In math terms, composing the functions f(), g(), and h() produces f(g(h())). (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=concat>concat</a>
+		<div style="display: none;" class=func_doc id=doc_concat>
+			<pre>concat(table [,sep [,i [,j]]]) returns table[i]..sep..table[i+1].. ..sep..table[j]</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=copy>copy</a>
+		<div style="display: none;" class=func_doc id=doc_copy>
+			<pre>copy(table) returns a (deep) copy of a table</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=curry>curry</a>
+		<div style="display: none;" class=func_doc id=doc_curry>
+			<pre>curry(func, arg) Creates a wrapper function substituing the supplied arg for the first argument in original function. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=detect>detect</a>
+		<div style="display: none;" class=func_doc id=doc_detect>
+			<pre>detect(iter, func) Looks through a list returning the first element that matches a truth function. The function returns as soon as it finds an acceptable element. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=each>each</a>
+		<div style="display: none;" class=func_doc id=doc_each>
+			<pre>each(iter, func)  Passes each value to function(i) and returns the input. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=every>every</a>
+		<div style="display: none;" class=func_doc id=doc_every>
+			<pre>every is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=extend>extend</a>
+		<div style="display: none;" class=func_doc id=doc_extend>
+			<pre>extend(destination, source) Copy all of the properties in the source object over to the destination object. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=filter>filter</a>
+		<div style="display: none;" class=func_doc id=doc_filter>
+			<pre>filter is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=find>find</a>
+		<div style="display: none;" class=func_doc id=doc_find>
+			<pre>find(l,f) finds element v of l satisfying f(v)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=first>first</a>
+		<div style="display: none;" class=func_doc id=doc_first>
+			<pre>first(array, [length]) Returns the first element of an array. Optionally it will return an array of the first n items. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=flatten>flatten</a>
+		<div style="display: none;" class=func_doc id=doc_flatten>
+			<pre>flatten(array) Flattens a nested array (the nesting can be to any depth). (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=foldl>foldl</a>
+		<div style="display: none;" class=func_doc id=doc_foldl>
+			<pre>foldl is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=for_each>for_each</a>
+		<div style="display: none;" class=func_doc id=doc_for_each>
+			<pre>for_each is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=foreach>foreach</a>
+		<div style="display: none;" class=func_doc id=doc_foreach>
+			<pre>foreach(table, f) executes f on each element of table</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=head>head</a>
+		<div style="display: none;" class=func_doc id=doc_head>
+			<pre>head is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=include>include</a>
+		<div style="display: none;" class=func_doc id=doc_include>
+			<pre>include is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=inject>inject</a>
+		<div style="display: none;" class=func_doc id=doc_inject>
+			<pre>inject is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=insert>insert</a>
+		<div style="display: none;" class=func_doc id=doc_insert>
+			<pre>insert(table, [pos,] value) inserts value at position pos in table</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=invoke>invoke</a>
+		<div style="display: none;" class=func_doc id=doc_invoke>
+			<pre>invoke(list_of_items, function_name) Calls a function with specified name on each item using the colon operator. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=is_empty>is_empty</a>
+		<div style="display: none;" class=func_doc id=doc_is_empty>
+			<pre>is_empty(object) Returns true if object contains no values. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=is_equal>is_equal</a>
+		<div style="display: none;" class=func_doc id=doc_is_equal>
+			<pre>is_equal is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=join>join</a>
+		<div style="display: none;" class=func_doc id=doc_join>
+			<pre>join(array) Returns a string with all items in the array concatenated together with an optional separator. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=keys>keys</a>
+		<div style="display: none;" class=func_doc id=doc_keys>
+			<pre>keys(object) Returns an array of all the property names in a table. (Note: order is not defined) (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=map>map</a>
+		<div style="display: none;" class=func_doc id=doc_map>
+			<pre>map(iter, func) Produces a new array by mapping each value in iter through a transformation function. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=maxn>maxn</a>
+		<div style="display: none;" class=func_doc id=doc_maxn>
+			<pre>maxn(table) returns the largest positive numerical index of table</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=pluck>pluck</a>
+		<div style="display: none;" class=func_doc id=doc_pluck>
+			<pre>pluck(iter, property_name) An convenient version of the common use-case of mapextracting a list of properties. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=pop>pop</a>
+		<div style="display: none;" class=func_doc id=doc_pop>
+			<pre>pop(array) Removes and returns the last item in an array (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=push>push</a>
+		<div style="display: none;" class=func_doc id=doc_push>
+			<pre>push(array, item) Inserts item at the end of an array (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=reduce>reduce</a>
+		<div style="display: none;" class=func_doc id=doc_reduce>
+			<pre>reduce(iter, memo, func) Boils down a list of values into a single value. Memo is the initial state of the reduction, and each successive step of it should be returned by func. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=reject>reject</a>
+		<div style="display: none;" class=func_doc id=doc_reject>
+			<pre>reject(iter, func) Removes items that match the provided criteria. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=remove>remove</a>
+		<div style="display: none;" class=func_doc id=doc_remove>
+			<pre>remove(table [,pos]) 
+	removes the element at position pos from table, shifting down other elements to 
+	close the space. returns the removed element. pos defaults to #table.</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=rest>rest</a>
+		<div style="display: none;" class=func_doc id=doc_rest>
+			<pre>rest(array, [start_index]) Returns an array of all items except the first. Optionally it will start at start_index. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=reverse>reverse</a>
+		<div style="display: none;" class=func_doc id=doc_reverse>
+			<pre>reverse(iter, [comparison_func]) Iterates over all the items and returns a new array with the items in reverse order. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=select>select</a>
+		<div style="display: none;" class=func_doc id=doc_select>
+			<pre>select(iter, func) Removes items that do not match the provided criteria. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=set>set</a>
+		<div style="display: none;" class=func_doc id=doc_set>
+			<pre>set(l) converts list l to a set</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=shift>shift</a>
+		<div style="display: none;" class=func_doc id=doc_shift>
+			<pre>shift(array) Removes and returns the first item in an array (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=slice>slice</a>
+		<div style="display: none;" class=func_doc id=doc_slice>
+			<pre>slice(array, start_index, length) Returns a section of an array starting with start_index of length items length. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=some>some</a>
+		<div style="display: none;" class=func_doc id=doc_some>
+			<pre>some is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=sort>sort</a>
+		<div style="display: none;" class=func_doc id=doc_sort>
+			<pre>sort(iter, [comparison_func]), Returns an array with all elements sorted by the comparison function, by default it uses the &lt; operator. If an array is passed in it will sort the elements in place and not create a new array. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=tail>tail</a>
+		<div style="display: none;" class=func_doc id=doc_tail>
+			<pre>tail is documented externally at http://mirven.github.com/underscore.lua/</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=to_array>to_array</a>
+		<div style="display: none;" class=func_doc id=doc_to_array>
+			<pre>to_array(iter) Collects all values into a new array. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=to_string>to_string</a>
+		<div style="display: none;" class=func_doc id=doc_to_string>
+			<pre>to_string(tbl) converts tbl to a human-readable string</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=unshift>unshift</a>
+		<div style="display: none;" class=func_doc id=doc_unshift>
+			<pre>unshift(array, item) Inserts item at the beginning of an array (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=values>values</a>
+		<div style="display: none;" class=func_doc id=doc_values>
+			<pre>values(object) Returns an array of all the property values in a table. (Note: order is not defined) (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=wrap>wrap</a>
+		<div style="display: none;" class=func_doc id=doc_wrap>
+			<pre>wrap(func, wrapper) Wraps the first function inside of the wrapper function, passing it as the first argument. This allows the wrapper to execute code before and after the function runs, adjust the arguments, and execute it conditionally. (see http://mirven.github.com/underscore.lua/ for more info.)</pre>
+		</div> 
+		
+
+	</div>
+	
+	
+</div>
+
+<div class="span-one-third">
+    
+    <div class="category_list">
+		<span class="label success">geometric</span>
+		<!-- <h1>geometric</h1> -->
+		
+		<a href="#" class=has_doc id=acentroidvl>acentroidvl</a>
+		<div style="display: none;" class=func_doc id=doc_acentroidvl>
+			<pre>acentroidvl(vertex_list,n) computes the approximate centroid of a list of 
+vertices defining a closed polygon (not necessarily planar).
+The normalised vector, n, defines the plane on which the polygon approximately lies</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=centroid>centroid</a>
+		<div style="display: none;" class=func_doc id=doc_centroid>
+			<pre>centroid(point_list) computes the centroid of a 2d polygon defined by a list of vec3 (with z = 0)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=distribute_points_sphere>distribute_points_sphere</a>
+		<div style="display: none;" class=func_doc id=doc_distribute_points_sphere>
+			<pre>  distribute_points_sphere(n) returns n equally distributed points on a sphere.
+
+ "Distributing many points on a sphere" by E.B. Saff and A.B.J. Kuijlaars,
+  Mathematical Intelligencer 19.1 (1997) 5--11
+</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=line_exp_point_dist>line_exp_point_dist</a>
+		<div style="display: none;" class=func_doc id=doc_line_exp_point_dist>
+			<pre>line_exp_point_dist(p1,p2,q) calculates the distance from q to the explicit line (p1,p2)</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=perp>perp</a>
+		<div style="display: none;" class=func_doc id=doc_perp>
+			<pre>perp(v) returns a normalised vector perpendicular to vec3 v</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=project>project</a>
+		<div style="display: none;" class=func_doc id=doc_project>
+			<pre>project(a,b) projects vec3 a onto vec3 b and returns the result</pre>
+		</div> 
+		
+
+		<a href="#" class=has_doc id=segment_point_dist>segment_point_dist</a>
+		<div style="display: none;" class=func_doc id=doc_segment_point_dist>
+			<pre>segment_point_dist(p1,p2,q) calculates the distance from q to the explicit line segment (p1,p2)</pre>
+		</div> 
+		
+
+	</div>
+	
+	
+</div>
+</div>
+
+<div class="row">
+<div style="display:none" id="doc" class="span16"></div>
+</div>
+
+
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+	var currentDocName = null;
+	var currentDocString = null;
+	var slideSpeed = 0; 
+	
+	$(".category_list a.has_no_doc").click(function () {
+		return false;
+	});
+	
+	$(".category_list a.has_doc").click(function () { 
+		/* console.log($(this)[0].id); */
+		
+		if (currentDocName==$(this)[0].id) {
+			currentDocString.hide(slideSpeed, function() {
+					$("#doc").empty();
+					currentDocString = null;
+					currentDocName = null;
+					$("#doc").hide();
+			});
+		}
+		else {		
+			$("#doc").show();
+			currentDocName = $(this)[0].id;
+			var el = $("#doc_" + currentDocName);
+			if (currentDocString) {
+				currentDocString.hide(slideSpeed, function() {
+					$("#doc").empty();
+					currentDocString = el.clone();		
+					$("#doc").append(currentDocString);
+					currentDocString.show(slideSpeed);		
+				});
+			}
+			else {
+				$("#doc").empty();
+				currentDocString = el.clone();		
+				$("#doc").append(currentDocString);
+				currentDocString.show(slideSpeed);		
+			}
+			
+		}		
+		
+		return true;	 
+	});
+});    
+    
+</script>
+   
+</body>
+</html>
