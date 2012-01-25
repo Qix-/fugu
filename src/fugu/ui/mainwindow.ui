@@ -1133,7 +1133,7 @@ QDockWidget {
     <string>Full Screen</string>
    </property>
    <property name="shortcut">
-    <string>F11</string>
+    <string>Ctrl+F</string>
    </property>
   </action>
   <action name="actionToolBar">
