@@ -12,16 +12,28 @@ local nextvert
 local n, m
 local vertices, vertex
 
+local opp = {} -- original vertex positions (polar)
+local sf, apply_sf, wave, awave -- superformula function 
+
 function setup()
-  m = octahedron()
-  m:smooth_subdivide(2)
-  n = meshnode(m)
-	fgu:add(n)	
+
+m = icosahedron()
+	m:subdivide(3)
 	vertices = vertexlist(m)
+	for i,v in ipairs(vertices) do
+		local r,th,ph = polar(v.p.x,v.p.y,v.p.z)
+		ph = ph - pi/2 -- fix the range of ph 
+		opp[i] = {r,th,ph}
+	end
+	m:sync()
+	fgu:add(meshnode(m))
+		
+	apply_sf(
+		{a=1,b=1,m=7,n1=1.1,n2=1.1,n3=1.6},
+		{a=1,b=1,m=0.48,n1=0.2,n2=1.7,n3=1.7})	
 	for _,v in ipairs(vertices) do
 		v:set_uv(0,0)
 	end	
-	
 	smoothGrowth = nil
 end
 
@@ -58,7 +70,7 @@ newSmoothGrowth = function(m,v)
 		v=v,		
 		INSET = .8, -- scale on first inset 
 		SPEED = .7,
-		CIRC_SPEED = .1, -- speed the cap becomes circular
+		CIRC_SPEED = .5, -- speed the cap becomes circular
 		FL_SPEED = .1, -- speed the cap flattens
 		PULLDIST = .3, -- distance to pull the leading vertex
 		NUMSEGS = 4,
@@ -219,4 +231,38 @@ newSmoothGrowth = function(m,v)
 	end
 	
 	return obj
+end
+
+apply_sf = function(s1,s2)
+	for i,v in ipairs(vertices) do		
+		local r,th,ph = opp[i][1],opp[i][2],opp[i][3]		
+		v.p = sf(s1,s2,-th,ph) -- negating theta helps..
+		v.c = vec3(awave(1.2,ph),awave(1,th),awave(1,0))
+	end
+end
+
+local function sf_r(p,ang)
+	local term = p.m*ang/4	
+	return pow(
+		pow(abs((1/p.a) * cos(term)),p.n2) + 
+		pow(abs((1/p.b) * sin(term)),p.n3),
+		-1/p.n1)		
+end
+
+-- params: shape 1, shape 2, theta, phi
+sf = function(s1,s2,th,ph) 
+	local cosphi = cos(ph)
+	local r1 = sf_r(s1,th)
+	local r2 = sf_r(s2,ph)
+	local x = r1*cos(th)*r2*cosphi
+	local y = r1*sin(th)*r2*cosphi	
+	local z = r2*sin(ph)
+	return vec3(x,y,z)
+end
+
+wave = function(p,o)
+	return sin(p*fgu.t+o)
+end
+awave = function(p,o)
+	return .5+.5*sin(p*fgu.t+o)
 end

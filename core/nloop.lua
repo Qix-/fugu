@@ -25,6 +25,7 @@ function loopv(v)
 	return result
 end
 document[[loopv(v:vertex) returns the loop of vertices surrounding v]](loopv)
+categorise(loopv,"mesh")
 
 -- Returns the loop of pos'es surrounding v
 function loopp(v)
@@ -49,3 +50,4 @@ function loopp(v)
 	return result
 end
 document[[loopp(v:vertex) returns the loop of pos'es surrounding v]](loopp)
+categorise(loopp,"mesh")
