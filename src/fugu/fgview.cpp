@@ -493,9 +493,9 @@ void FGView::paintGL()
 		CHECK_FOR_GL_ERROR();
 
 		if (uniformTex0==-1) std::cerr << "Couldn't find texture0\n";
-		else mAOShader->setUniformValue(uniformTex0, 0);
+		else mAOShader->setUniformValue(uniformTex0, (GLuint)0);
 		if (uniformTex1==-1) std::cerr << "Couldn't find texture1\n";
-		else mAOShader->setUniformValue(uniformTex1, 1);
+		else mAOShader->setUniformValue(uniformTex1, (GLuint)1);
 		if (uniformCR==-1) std::cerr << "Couldn't find camerarange\n";
 		else mAOShader->setUniformValue(uniformCR,0.1,100);
 		if (uniformSS==-1) std::cerr << "Couldn't find screensize\n";
