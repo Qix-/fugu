@@ -45,7 +45,7 @@ if(WIN32)
 endif(WIN32)
 
 if(APPLE)
-	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -O3 -D GLEW_STATIC")
+	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -arch x86_64 -Xarch_x86_64 -O3 -D GLEW_STATIC")
 	FIND_LIBRARY(COCOA_LIBRARY Cocoa)
 	#find_package(Boost COMPONENTS system filesystem REQUIRED)
 	#include_directories(${Boost_INCLUDE_DIRS})
