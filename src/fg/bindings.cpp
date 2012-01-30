@@ -14,7 +14,7 @@
  *   |_| |_  | animation and generation 
  *       |___| of 3D forms
  *
- *   Copyright (c) 2011 Centre for Electronic Media Art (CEMA)
+ *   Copyright (c) 2012 Centre for Electronic Media Art (CEMA)
  *   Monash University, Australia. All rights reserved.
  *
  *   Use of this software is governed by the terms outlined in 
