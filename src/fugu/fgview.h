@@ -9,7 +9,10 @@
 // ref: http://prideout.net/blog/?p=1
 
 class QGLShaderProgram;
-class QGLFramebufferObject;
+
+#ifdef ENABLE_SSAO
+	class QGLFramebufferObject;
+#endif
 
 class FGView : public QGLWidget
 {
@@ -132,7 +135,10 @@ private:
 	QGLShaderProgram* mAOShader;
 
 	GLuint mDepthTex;
+
+#ifdef ENABLE_SSAO
 	QGLFramebufferObject* mFBO;
+#endif
 
 	bool mShadersAvailable;
 

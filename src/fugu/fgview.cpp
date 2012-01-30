@@ -3,7 +3,10 @@
 #include <QtGui>
 #include <QtOpenGL>
 #include <QGLShaderProgram>
-#include <QGLFramebufferObject>
+
+#ifdef ENABLE_SSAO
+	#include <QGLFramebufferObject>
+#endif
 
 #include <QSettings>
 
@@ -34,7 +37,9 @@ FGView::FGView(QWidget *parent)
 ,mUniverse(NULL) // Very important to intialise as null
 ,mSaveSettings(true)
 ,mAOShader(NULL)
-,mFBO(NULL)
+#ifdef ENABLE_SSAO
+	,mFBO(NULL)
+#endif
 ,mSSAO(true)
 ,mDepthTex(0)
 ,mShadersAvailable(false)
@@ -144,8 +149,10 @@ void FGView::toggleLighting(bool on){
 }
 
 void FGView::toggleSSAO(bool on){
+#ifdef ENABLE_SSAO
 	mSSAO = on;
 	update();
+#endif
 }
 
 void FGView::setNumberOfSubdivs(int num){
@@ -261,8 +268,10 @@ void FGView::initializeGL()
 		mOverWireShader = loadShader("overwire_vert.glsl","passthru_frag.glsl");
 		CHECK_FOR_GL_ERROR();
 
+#ifdef ENABLE_SSAO
 		mAOShader = loadShader("ao_vert.glsl", "ao_frag.glsl");
 		CHECK_FOR_GL_ERROR();
+#endif
 
 		/*
 		mSubdivisionShader = new QGLShaderProgram(context());
@@ -285,6 +294,7 @@ void FGView::initializeGL()
 		}
 		*/
 
+#ifdef ENABLE_SSAO
 		int w = width(), h = height();
 
 		if (not QGLFramebufferObject::hasOpenGLFramebufferObjects()){
@@ -303,17 +313,21 @@ void FGView::initializeGL()
 			}
 			CHECK_FOR_GL_ERROR();
 		}
+#endif
+
 	}
 }
 
 void FGView::paintGL()
 {
+#ifdef ENABLE_SSAO
 	if (mShadersAvailable and mSSAO and mFBO){
 		mFBO->bind();
 		if (!mFBO->isBound()){
 			std::cerr << "Couldn't bind framebuffer";
 		}
 	}
+#endif
 
 	CHECK_FOR_GL_ERROR();
 
@@ -450,6 +464,7 @@ void FGView::paintGL()
 	}
 	glPopMatrix();
 
+#ifdef ENABLE_SSAO
 	if (mShadersAvailable and mSSAO and mFBO){
 		GLuint glFBO = mFBO->handle();
 		CHECK_FOR_GL_ERROR();
@@ -537,6 +552,7 @@ void FGView::paintGL()
 		glPopMatrix();
 		glMatrixMode(GL_MODELVIEW);
 	}
+#endif
 }
 
 void FGView::resizeGL(int width, int height)
@@ -550,6 +566,7 @@ void FGView::resizeGL(int width, int height)
 
 	if (mShadersAvailable){
 
+#ifdef ENABLE_SSAO
 		if (mFBO){
 			delete mFBO;
 		}
@@ -578,6 +595,7 @@ void FGView::resizeGL(int width, int height)
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
 		CHECK_FOR_GL_ERROR();
 		glBindTexture(GL_TEXTURE_2D, 0);
+#endif
 	}
 }
 
