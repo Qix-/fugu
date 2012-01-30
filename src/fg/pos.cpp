@@ -1,3 +1,28 @@
+/**
+ * \file
+ * \brief A Pos is a (vertex,edge,face) tuple, which can be used to navigate a mesh.
+ * \author ben
+  *
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___
+ *   |  _|___
+ *   |  _| . | fg: real-time procedural
+ *   |_| |_  | animation and generation
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2012 Centre for Electronic Media Art (CEMA)
+ *   Monash University, Australia. All rights reserved.
+ *
+ *   Use of this software is governed by the terms outlined in
+ *   the LICENSE file.
+ *
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
+ */
+
 #include "fg/pos.h"
 
 #include <vcg/simplex/vertex/base.h>

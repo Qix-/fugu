@@ -1,5 +1,24 @@
-/* A simple class for encapsulating PPM images 
- * BP 12.05.05
+/**
+ * \file
+ * \brief A simple class for encapsulating PPM images
+ * \author ben
+  *
+ * \cond showlicense
+ * \verbatim
+ * --------------------------------------------------------------
+ *    ___
+ *   |  _|___
+ *   |  _| . | fg: real-time procedural
+ *   |_| |_  | animation and generation
+ *       |___| of 3D forms
+ *
+ *   Copyright (c) 2005 Ben Porter
+ *   Use of this software is governed by the terms outlined in
+ *   the LICENSE file.
+ *
+ * --------------------------------------------------------------
+ * \endverbatim
+ * \endcond
  */
 
 #ifndef PPM_H
