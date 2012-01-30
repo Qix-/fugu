@@ -11,7 +11,7 @@ endif(WIN32)
 
 set (FG_VERSION_MAJOR 0)
 set (FG_VERSION_MINOR 2)
-set (FG_VERSION_PATCH 1)
+set (FG_VERSION_PATCH 2)
 execute_process(COMMAND hg tip --template "{node|short}" OUTPUT_VARIABLE FG_VERSION_BUILD_HASH)
 
 # set locations, these are _relative_ to the binary dir
@@ -36,7 +36,7 @@ if(WIN32)
 	# set(CMAKE_CXX_FLAGS "-D LUABIND_DYNAMIC_LINK") 
 	# MAYBE NEED THIS FOR VCG/GL stuff?!	
 	# set(CMAKE_CXX_FLAGS "-pg -D GLEW_STATIC") #enable PROFILING
-	set(CMAKE_CXX_FLAGS " -O3 -D GLEW_STATIC -Wno-deprecated")
+	set(CMAKE_CXX_FLAGS " -O3 -D GLEW_STATIC -D ENABLE_SSAO -Wno-deprecated")
 	#set(CMAKE_CXX_FLAGS " -g -D GLEW_STATIC -Wno-deprecated")
 	SET(GL_LIBS glew32s glfw opengl32 glu32)
 	SET(LUA_LIBS lua luabind)

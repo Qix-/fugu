@@ -143,6 +143,11 @@ MainWindow::MainWindow(QWidget *parent)
 	this->addAction(ui.actionFull_Screen);
 	this->addAction(ui.actionReload);
 
+#ifndef ENABLE_SSAO
+	// disable ssao button
+	findChild<QAction*>("actionToggleSSAO")->setEnabled(false);
+#endif
+
 	// build the set of fugu keywords
 	buildFuguKeywordSet();
 
