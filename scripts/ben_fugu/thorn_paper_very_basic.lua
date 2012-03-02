@@ -1,41 +1,55 @@
---[[
-	Demonstrates how to create an extrusion and make it circular.
-	BP 22/11/2011	
---]]
-
 module(...,package.seeall)
 
-local bulb, new_bulb, m, vertices, v, next_vert
+local m, spike, new_spike, next_vert
 
 function setup()
-  --m = load_mesh("C:\\Users\\ben\\Documents\\Research\\bunny\\bunny_low_fixed.obj")	
-	--m:smooth_subdivide(1)
-	m = icosahedron() -- cube()
+	m = icosahedron()
 	m:smooth_subdivide(3)
 	local n = meshnode(m)
 	fgu:add(n)
 	
-	vertices = vertexlist(m)
-	bulb = nil
+	vertices = {}
+	local all_vertices = vertexlist(m)
+	while #all_vertices>0 do 
+		vertices[#vertices+1] = next_vert(all_vertices)
+	end
+	spike = nil
 end
+	
+	--[[
+	spikes = {}
+	for i=1,6 do
+		spikes[i] = new_spike(m,vertices[i])
+	end
+	--[ [
+	each(vertices, function(v)
+		spikes[#spikes+1] = new_spike(m,v)
+	end)
+	
+end
+--]]
 
 function update(dt)
-	if bulb~=nil then
-		local more = bulb:update(dt)
-		if (not more) then 
-			bulb = nil
+	
+		if (spike~=nil) then
+			local continue = spike:update(dt)
+			if (not continue) then 
+				spike=nil 
+			end
 		end
-	elseif #vertices>0 then
-		next_vert()
-		bulb = new_bulb(m,v)
-	end
-end -- empty
+		if (spike==nil and #vertices>0) then
+			local v = vertices[#vertices]			
+			remove(vertices,#vertices)
+			spike = new_spike(m,v)
+		end
+	
+end
 
 -- get the next random vertex from vertices, 
 -- and remove its immediate neighbours
-next_vert = function()
+next_vert = function(vertices)
 	if #vertices==0 then return nil end 
-	v= choose(vertices)
+	local v = vertices[1] -- just choose the first one
 	local neighbours = loopv(v)
 	insert(neighbours,v)
 	each(neighbours, 
@@ -43,96 +57,83 @@ next_vert = function()
 			i,_ = find(vertices, function(x) return u==x end)
 			if i then remove(vertices, i)	end
 		end)
+	return v
 end
 
--- create a new bulb program at the specified vertex
+-- create a new spike program at the specified vertex
 -- this creates a new object with an update(dt) function
 -- the update function returns false once the growth is complete
 -- the internal logic is a simple state machine
-new_bulb = function(the_mesh,the_vertex)
+new_spike = function(the_mesh,the_vertex)
 	local states = {
-		waiting = 1,
-		pull = 2,
-		inset = 3,
-		insetagain = 4,
-		done = 5
+		move = 1,
+		inset = 2,
+		done = 3
 	}
 
+	local SPEED = 4	
+	local SEG_LENGTH = .1
+	local NUM_SEGS = 5
+	local SHRINK = .8
+		
 	local obj = {
 		m=the_mesh,
 		v=the_vertex,
 		
-		SPEED = 4,
-		PULL_DIST = 0.1,
-		TOTAL_SEGS = 5,
-		RADII = {1,.5,1.7,.9,.5},
-		num_segs = 1,
-				
-		time=0,
-		state=states.waiting,
-		next_state=states.pull,
-		state_change=.01}	
+		n=the_vertex.n,	
+		seg = 1,
+		distance = 0,
+		cap = nil,
+		
+		state=states.move,
+		next_state=nil
+		}	
 	
-	local actions = {}
-	actions[states.waiting] = function(self,dt)
-		if (self.state_change <= self.time) then
-			self.state = self.next_state
-		end
-	end
-	
-	actions[states.inset] = function(self,dt)
-		inset(self.m,self.v,.8)
-		self.state = states.waiting
-		self.next_state = states.pull
-		self.state_change = self.time + 1
-	end
-	
-	actions[states.pull] = function(self,dt)
-		if self.pull_dist==nil then
-			self.pull_dist = 0
-		end	
-		local dist = self.SPEED*dt
-		self.v.p = self.v.p + self.v.n*dist
+	local actions = {}	
+	actions[states.move] = function(self,dt)
+		local dist = SPEED*dt
+		self.v.p = self.v.p + self.n*dist
 		if (self.cap) then
 			-- adjust the outer loop on the cap
 			-- so it grows in the normal, 
 			-- reaches the right scale, 
-			-- and becomes circular				
-			local t = self.pull_dist/self.PULL_DIST -- amount done
+			-- becomes circular				
+			-- and then rotates to orient in the growth dir
+			local t = self.distance/SEG_LENGTH -- amount done
 			local outer = capov(self.cap)
 			local center = vec3(0,0,0)
 			for i,ov in ipairs(outer) do
 				-- move in growing direction
-				ov.p = ov.p + self.v.n*dist
+				ov.p = ov.p + self.n*dist
 				center = center + ov.p
 			end
 			center = center/#outer
-			local er = self.cap_avg_radius * self.RADII[self.num_segs]
+			local er = self.cap_avg_radius * SHRINK
 			for i,ov in ipairs(outer) do
 				-- make a bit more circular
 				-- current, start, end radii
 				local cr = distance(ov.p,center)
 				local sr = self.cap_radii[i]					
-				local tr = max(1,self.SPEED*dt + (cr-sr)/(er-sr))
+				local tr = max(1,SPEED*dt + (cr-sr)/(er-sr))
 				local d = normalise(ov.p-center)
 				ov.p = center + d*lerp(sr,er,tr)
-				-- scale from the center some amount
-				-- ov.p = lerp(center,ov.p,1.01)
 			end
+			-- finally flatten in the growth dir
+			flattenvl(self.m,outer,self.v.p,self.n)
 		end			
-		self.pull_dist = self.pull_dist + dist			
-		if (self.pull_dist > self.PULL_DIST) then
-			self.num_segs = self.num_segs + 1
-			if (self.num_segs < self.TOTAL_SEGS) then
-				self.state = states.insetagain
+		self.distance = self.distance + dist			
+		if (self.distance > SEG_LENGTH) then
+			self.seg = self.seg + 1
+			if (self.seg <= NUM_SEGS) then
+				self.state = states.inset
 			else
 				self.state = states.done
 			end
 		end		
 	end
 
-	actions[states.insetagain] = function(self,dt)
-		-- inset a tiny bit and store the cap for subsequent pulls								
+	actions[states.inset] = function(self,dt)
+		-- inset a tiny bit and store the cap for subsequent moves
 		self.cap = inset(self.m,self.v,.99)
 		-- compute the avg radius of this cap so we can circulise it
 		-- also store the current radius of each outer vert
@@ -151,12 +152,12 @@ new_bulb = function(the_mesh,the_vertex)
 		end
 		avg_radius = avg_radius/#outer
 		self.cap_avg_radius = avg_radius		
-		self.state = states.pull
-		self.pull_dist = nil
+		self.state = states.move
+		self.distance = 0
 	end	
 	
 	obj.update = function(self,dt) 
-		self.time = self.time + dt
+		--self.time = self.time + dt
 		if obj.state==states.done or obj.state==nil then 
 			return false
 		else 
