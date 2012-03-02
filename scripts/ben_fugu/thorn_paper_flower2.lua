@@ -4,7 +4,7 @@ local m, spike, new_spike, next_vert
 
 function setup()
 	m = icosahedron()
-	m:smooth_subdivide(3)
+	m:smooth_subdivide(4) -- 3
 	local n = meshnode(m)
 	fgu:add(n)
 	
@@ -70,6 +70,8 @@ new_spike = function(the_mesh,the_vertex)
 		inset = 2,
 		done = 3
 	}
+	
+	local dy = (the_vertex.p.y+1.2)/2.4
 
 	local obj = {
 		m=the_mesh,
@@ -79,10 +81,14 @@ new_spike = function(the_mesh,the_vertex)
 		axis_of_rotation=cross(the_vertex.n,vec3(0,1,0)),			
 		seg = 1,
 		
-		SPEED = 3, -- 4,
-		SEG_LENGTH = 0.1,
+		-- SPEED = (1.2+(2-the_vertex.p.y)) * 3, -- 4,
+		SPEED = sqr((1.5-dy) * 3), -- 4,
+		
+		SEG_LENGTH = sqr(1-dy)*0.5,
 		NUM_SEGS = 10, -- 7,
-		RADII = {.8,.5,.6,.7,.8,.7,.6, 1.2, 3, .5},
+		--RADII = {.8,.5,.6,.7,.8,.7,.6, 1.2, 3, .5},
+		RADII = {.9,.7,.8,.9,.8,.8,.7, 1.2, 3, .8},
+		ROTATION_RAD = .1 + (1-dy)*.05,
 		
 		--time=0,
 		state=states.move,
@@ -90,13 +96,16 @@ new_spike = function(the_mesh,the_vertex)
 		--state_change=.01
 		}	
 	
+	-- don't extrude things pointing directly up or down
+	if (length(obj.axis_of_rotation)<.01) then return nil end
+	
 	local actions = {}	
 	actions[states.move] = function(self,dt)
 		if self.distance==nil then
 			self.distance = 0
 		end	
 		local dist = self.SPEED*dt
-		local q = quat(self.axis_of_rotation,.1)
+		local q = quat(self.axis_of_rotation,self.ROTATION_RAD)
 		local dir = q*self.v.n
 		
 		self.v.p = self.v.p + dir*dist
