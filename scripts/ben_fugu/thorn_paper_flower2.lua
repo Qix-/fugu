@@ -10,24 +10,15 @@ function setup()
 	
 	vertices = {}
 	local all_vertices = vertexlist(m)
+	each(all_vertices, function(v)
+		v:set_uv(0,0)
+	end)
+	
 	while #all_vertices>0 do 
 		vertices[#vertices+1] = next_vert(all_vertices)
 	end
 	spike = nil
-end
-	
-	--[[
-	spikes = {}
-	for i=1,6 do
-		spikes[i] = new_spike(m,vertices[i])
-	end
-	--[ [
-	each(vertices, function(v)
-		spikes[#spikes+1] = new_spike(m,v)
-	end)
-	
-end
---]]
+end	
 
 function update(dt)
 	
@@ -90,6 +81,8 @@ new_spike = function(the_mesh,the_vertex)
 		RADII = {.9,.7,.8,.9,.8,.8,.7, 1.2, 3, .8},
 		ROTATION_RAD = .1 + (1-dy)*.05,
 		
+		v_coord = random(),
+		
 		--time=0,
 		state=states.move,
 		next_state=nil,
@@ -107,8 +100,10 @@ new_spike = function(the_mesh,the_vertex)
 		local dist = self.SPEED*dt
 		local q = quat(self.axis_of_rotation,self.ROTATION_RAD)
 		local dir = q*self.v.n
+		local u = (self.seg - 1 + self.distance/self.SEG_LENGTH)/self.NUM_SEGS 
 		
 		self.v.p = self.v.p + dir*dist
+		self.v:set_uv(u,self.v_coord)
 		if (self.cap) then
 			-- adjust the outer loop on the cap
 			-- so it grows in the normal, 
@@ -120,6 +115,7 @@ new_spike = function(the_mesh,the_vertex)
 			local center = vec3(0,0,0)
 			for i,ov in ipairs(outer) do
 				-- move in growing direction
+				ov:set_uv(u,self.v_coord)
 				ov.p = ov.p + dir*dist
 				center = center + ov.p
 			end
