@@ -111,7 +111,7 @@ function Underscore.funcs.detect(list, func)
 	return nil	
 end
 
-function Underscore.funcs.select(list, func)
+function Underscore.funcs.filter(list, func)
 	local selected = {}
 	for i in Underscore.iter(list) do
 		if func(i) then selected[#selected+1] = i end
@@ -391,7 +391,7 @@ Underscore.funcs.for_each = Underscore.funcs.each
 Underscore.funcs.collect = Underscore.funcs.map
 Underscore.funcs.inject = Underscore.funcs.reduce
 Underscore.funcs.foldl = Underscore.funcs.reduce
-Underscore.funcs.filter = Underscore.funcs.select
+-- Underscore.funcs.filter = Underscore.funcs.select
 Underscore.funcs.every = Underscore.funcs.all
 Underscore.funcs.some = Underscore.funcs.any
 Underscore.funcs.head = Underscore.funcs.first
