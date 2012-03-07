@@ -1,0 +1,13 @@
+syntax:glob
+*~
+*.swp
+build-*
+*.DS_Store
+.project
+bin
+doc/cpp/html
+*.orig
+fugu_win
+fugu_osx
+*.blend?
+
