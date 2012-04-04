@@ -45,6 +45,7 @@
           <a class="brand" href="#">fugu</a>
           <ul class="nav">
 						<li class="active"><a href="index.html">Home</a></li>
+						<li><a href="about.html">About</a></li>
 						<li><a href="reference.html">Reference</a></li>
 						<li><a href="gallery.html">Gallery</a></li>
           </ul>
@@ -55,18 +56,14 @@
     <header class="jumbotron masthead" id="overview">
       <div class="inner">
         <div class="container">
-					<h1>Fugu</h1>		<!--  <img src="img/fg_logo_64.png"> -->
-          <p class="lead">
-					Fugu is a cross-platform application for creating animated 3D forms with code. It allows users to rapidly design animated, growing organic forms by writing scripts in Lua. It can make things like this:</p>					 
+					
+					<h1>Fugu</h1>
+					<p class="lead"> Procedural geometry with Lua.</p>
 					 <div class="subhead">
 					 <div class="row">
-							<div class="span-one-third">&nbsp;</div>
-							<div class="span-one-third">
-								<center><img src="img/bulb.gif"></center>
-								<!--
-								<a href="gallery/fuguscreen_21112011.png"><img src="gallery/fuguscreen_21112011_half.png" alt="fugu screen shot"></a> -->
+							<div class="fill">
+								<center><img src="img/fugu_plant.png"></center>
 							</div>
-							<div class="span-one-third">&nbsp;</div>
 						</div>
 			</div>	
 		</div>
@@ -81,81 +78,23 @@
         <div class="row">
           <div class="span5">
             <h6>Download</h6>
-						<p>Fugu runs on Windows and MacOSX.</p><p><span class="label important">Important</span> Fugu is alpha software and will surely contain bugs; however, it should work well enough for you to enjoy it, so check it out and report any problems you have.</p>
-						<p><a href="fugu_win_022.zip" class="btn primary">Windows (v0.2.2)</a> <a href="FuguOSX.0.2.1.dmg" class="btn primary">OSX (v0.2.1)</a></p>
+						<p>Fugu runs on Windows and OS X. It is <i>alpha</i> software and will surely contain bugs, but it should work well enough for you to enjoy it, so check it out and please report any problems you have.</p>
+						<p><a href="fugu_win_022.zip" class="btn primary">Windows (v0.2.2)</a> <a href="FuguOSX.0.2.1.dmg" class="btn primary">OS X (v0.2.1)</a></p>
 						
           </div>
           <div class="span5">
             <h6>Info</h6>
-						<p>Fugu contains a number of examples demonstrating its functionality. Just go to the File-&gt;Examples menu. There is also an online function reference and a discussion site. </p><p><a href="reference.html" class="btn primary">Reference</a> <a target="_blank" href="http://groups.google.com/group/fugu_app" class="btn primary">Discussion &raquo;</a></p>
+						<p>To learn Fugu, you can access a number of examples from the File/Examples menu in the software. There is also an online function reference and a discussion site. </p><p><a href="reference.html" class="btn primary">Reference</a> <a target="_blank" href="http://groups.google.com/group/fugu_app" class="btn primary">Discussion &raquo;</a></p>
           </div>
 					<div class="span5">
             <h6>Development</h6>
-						<p>Fugu is open source! The source can be accessed at bitbucket and is governed by the GPL. <span class="label important">Got bugs?</span> Please report them as issues on the bitbucket site. <a href="http://bp.io/post/911">Read my post-mortem here.</a></p>
+						<p>Fugu is open source! The source can be accessed at bitbucket and is governed by the GPL. <b>Got bugs?</b> Please report them as issues on the bitbucket site.</p>
 						<p><a href="http://bitbucket.org/bpio/fg" class="btn primary">http://bitbucket.org/bpio/fg</a></p>
           </div>
         </div><!-- /row -->
       </div>
     </div>
-
-		<div class="container content">
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="span-one-third">
-					<h2>Features</h2>
-					<p>Current features:
-					<ul>
-						<li>Fully integrated environment with code pane, 3D view and error console</li>
-						<li>A suite of mesh primitives, mesh operations, and functions</li>
-						<li>OBJ exporter</li>
-						<li>Fully hideable UI for presentations</li>
-						<li>User-defined sliders for parametric control</li>
-						<li>View a mesh in real-time subdivided and smoothed</li>
-						<li>and more...</li>
-					</ul>
-					Planned features:
-					<ul>
-						<li>Support for custom GLSL shaders</li>
-						<li>Support for custom exporters</li>
-						<li>Multi-threading and other optimisations</li>
-						<li>More mesh operations</li>
-						<li>Faster subdivision (GPU-based)</li>
-						<li>and more...</li>
-					</ul>
-					</p>
-        </div>       
-        <div class="span-two-thirds">
-					<h2>Acknowledgements</h2>
-				
- <p>Fugu was conceived and developed by <a href="http://bp.io">Ben Porter</a>, <a href="http://diotima.infotech.monash.edu.au/~jonmc/sa/">Jon McCormack</a> and <a href="http://users.monash.edu.au/~jpwet1/">James Wetter</a>, in association with <a href="http://www.csse.monash.edu.au/~cema/">CEMA</a> and <a href="http://monash.edu">Monash University</a>. This project was supported by funding from an Australian Research Council Discovery Projects grant #DP1094064. </p>
-
- <p>Fugu depends on a number of open-source libraries and wouldn't exist without them. These include:
- 
- 	<ul>
-		<li><a href="http://qt.nokia.com/">Qt</a></li>
-		<li><a href="http://lua.org">Lua</a> and <a href="http://www.rasterbar.com/products/luabind/">Luabind</a></li>
-		<li><a href="http://www.boost.org/">Boost</a></li>
-		<li><a href="http://vcg.sourceforge.net">VCGLib</a></li>
-		<li><a href="http://mirven.github.com/underscore.lua/">Underscore</a></li>
-		<li><a href="http://people.sc.fsu.edu/~jburkardt/cpp_src/geometry/geometry.html">GEOMETRY</a></li>
-		<li><a href="http://glew.sourceforge.net/">GLEW</a></li>
-		<li>and more...</li>
-	</ul></p>
-
-		 <p>If you are interested in code and form, you might also want to check out these similar projects:
-		 <ul>
-			 <li><a href="http://structuresynth.sourceforge.net/">Structure Synth</a></li>
-			 <li><a href="http://processing.org/">Processing</a></li>
-			 <li><a href="http://nodebox.net/">Nodebox</a></li>
-			 <li><a href="http://libcinder.org/">Cinder</a></li>
-			 <li><a href="http://www.blender.org">Blender</a></li>
-		 </ul>
-		 </p>
-		 
-		 <p>This website was built with <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>
-     </div>
-	 </div>
-	<footer>&nbsp;</footer>
+		<!-- <footer>&nbsp;</footer> -->
   </div> <!-- /container -->
 
   </body>

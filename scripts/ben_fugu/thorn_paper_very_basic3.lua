@@ -88,15 +88,16 @@ new_spike = function(the_mesh,the_vertex)
 		if (self.cap) then
 			local outer = capov(self.cap)
 			local center = vec3(0,0,0)
-			for i,ov in ipairs(outer) do
+			for _,ov in ipairs(outer) do
 				ov.p = ov.p + self.n*dist
 				center = center + ov.p
 			end
-			center = center/#outer			
-			for i,ov in ipairs(outer) do
-				local cr = distance(ov.p,center)
-				local d = normalise(ov.p-center)
-				ov.p = center + d*cr*SHRINK 
+			center = center/#outer
+			for _,ov in ipairs(outer) do
+				--local cr = distance(ov.p,center)
+				--local d = normalise(ov.p-center)
+				--ov.p = center + d*cr*SHRINK 
+				ov.p = center + (ov.p-center)*SHRINK
 			end
 			flattenvl(self.m,outer,self.v.p,self.n)
 		end			
