@@ -8,7 +8,7 @@
 
 using namespace std;
 
-# include "geometry.H"
+# include "geometry.h"
 
 //****************************************************************************80
 
