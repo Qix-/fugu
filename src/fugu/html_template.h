@@ -31,7 +31,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <assert.h>
-#include <cstddef.h>
+#include <cstddef>
 
 
 /*!\mainpage
