@@ -38,7 +38,7 @@ Linux/Ubuntu/Debian
 
 Fugu uses Qt extensively, so you will need to have that installed (version 4.7.4 or later). For the osx/make and windows/mingw targets, most of the dependencies have been prebuilt and reside in lib/. If you target other systems, e.g., Visual Studio, then you may need to build the dependencies for that target. 
 
-For Linux (on Debian), you'll need qt4, lua5.1, libglfw2, libglew, libluabind, boost, libboost-system-dev, libboost-filesystem, libqscintilla2-dev
+For Linux (on Ubuntu), you'll need build-essential, cmake, qt4-dev, liblua-dev, freeglut3-dev, libglew-dev, libluabind, libboost-dev, libboost-system-dev, libboost-filesystem-dev, libqscintilla2-dev
 
 I'm sure there's something I've left out, so please let me know if you have any trouble,
 Ben Porter (01/2012)
