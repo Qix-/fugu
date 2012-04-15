@@ -40,5 +40,7 @@ Fugu uses Qt extensively, so you will need to have that installed (version 4.7.4
 
 For Linux (on Ubuntu), you'll need build-essential, cmake, qt4-dev, liblua-dev, freeglut3-dev, libglew-dev, libluabind, libboost-dev, libboost-system-dev, libboost-filesystem-dev, libqscintilla2-dev
 
+On Fedora systems, install cmake, gcc, gcc-c++, boost, boost-devel, qt, qt-devel, lua, luabind, luabind-devel,freeglut, freeglut-devel, glew, qscintilla, qscintilla-devel
+
 I'm sure there's something I've left out, so please let me know if you have any trouble,
 Ben Porter (01/2012)
