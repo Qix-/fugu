@@ -202,19 +202,19 @@ extern "C" {
 #ifndef GL_VERSION_1_1
 #define GL_VERSION_1_1 1
 
-#if defined(__APPLE__)
+/*#if defined(__APPLE__)
 typedef unsigned long GLenum;
 typedef unsigned long GLbitfield;
 typedef unsigned long GLuint;
 typedef long GLint;
 typedef long GLsizei;
-#else
+#else*/
 typedef unsigned int GLenum;
 typedef unsigned int GLbitfield;
 typedef unsigned int GLuint;
 typedef int GLint;
 typedef int GLsizei;
-#endif
+//#endif
 typedef unsigned char GLboolean;
 typedef signed char GLbyte;
 typedef short GLshort;
