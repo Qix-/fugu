@@ -26,7 +26,11 @@
 #include <GL/glew.h>
 
 #include <QtGui>
+//in Apple if glew.h is include not necéssary include QtOpenGl. If QtOpenGl include error on some function that will not be set correctly as glActiveTexture
+//By doing this may have suddenly activate ENABLE_SSAO.
+#ifndef _APPLE
 #include <QtOpenGL>
+#endif
 #include <QGLShaderProgram>
 
 #ifdef ENABLE_SSAO
@@ -286,6 +290,7 @@ void FGView::initializeGL()
 		// load the shaders
 		mPhongShader = loadShader("phong_vert.glsl","phong_frag.glsl");
 		if (mPhongShader){
+			mPhongShader->bind();
 			mPhongShader->setUniformValue("shininess",(GLfloat)5);
 		}
 		CHECK_FOR_GL_ERROR();
@@ -428,12 +433,12 @@ void FGView::paintGL()
 					mPhongShader->bind();
 					mPhongShader->setUniformValue("shininess",(GLfloat)25);
 
-#ifdef _WIN32
+//#ifdef _WIN32
 					mPhongShader->setUniformValue("useVertexColour",(GLint)GL_FALSE);
 					if (mColourMode==fg::GLRenderer::COLOUR_VERTEX){
 					 	mPhongShader->setUniformValue("useVertexColour",(GLint)GL_TRUE);
 					}
-#endif
+//#endif
 
 				}
 
