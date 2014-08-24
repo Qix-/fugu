@@ -1,5 +1,7 @@
 Fugu/fg is a system for procedurally generating animated geometric forms in real-time. Fugu can be downloaded from http://bp.io/fugu, an online reference and gallery is also located there.
 
+NOTE: FUGU IS NO LONGER MAINTAINED. But if you submit a patch I'll apply it to the main branch. - Ben
+
 This readme is for people who want to compile and hack the source of fugu. Please see LICENSE.txt for the license governing use of the fg source, and CREDITS.txt for a list of programmers on the project and list of libraries used.
 
 Directory Structure
